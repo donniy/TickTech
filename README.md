@@ -2,4 +2,4 @@
 
 ## Documentatie
  - Flask: https://flask.pocoo.org/docs/1.0
- - Angular: https://angular.io/docs
+ - Vue: https://vuejs.org/v2/guide
