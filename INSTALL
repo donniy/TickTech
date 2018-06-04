@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
-currdir=$(pwd)
-cd "app/frontend" &&
-#npm install &&
-#npm run build &&
-cd $currdir &&
-virtualenv venv &&
-source venv/bin/activate &&
+envname="venv"
+
+if [[ -n $1 ]]
+then
+   envname=$1
+fi
+
+virtualenv $envname &&
+source $envname/bin/activate &&
 pip install -r requirements.txt
