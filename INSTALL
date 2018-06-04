@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+currdir=$(pwd)
+cd "app/frontend" &&
+#npm install &&
+#npm run build &&
+cd $currdir &&
+virtualenv venv &&
+source venv/bin/activate &&
+pip install -r requirements.txt
