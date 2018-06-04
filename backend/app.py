@@ -49,6 +49,7 @@ class Ticket(db.Model):
             'title': self.title,
             'course_id': self.course_id,
             'status': self.status.serialize,
+            'user_id': self.user_id
         }
 
 class TicketStatus(db.Model):
@@ -74,6 +75,15 @@ def retrieve_course_tickets(course_id):
     # TODO: Controleer of degene die hierheen request permissies heeft.
     tickets = Ticket.query.filter_by(course_id=course_id).all()
     return json_list(tickets)
+
+@app.route('/api/ticket/<ticket_id>')
+def retrieve_single_ticket(ticket_id):
+    """
+    Geeft een enkel ticket.
+    """
+    # TODO: Controlleer rechten
+    ticket = Ticket.query.get(ticket_id)
+    return jsonify(ticket.serialize)
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')

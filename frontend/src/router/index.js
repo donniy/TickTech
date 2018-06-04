@@ -11,7 +11,12 @@ const routerOptions = [
         path: '/course/:course_id',
         name: 'CourseTickets',
         component: 'CourseTickets',
-    }
+    },
+    {
+        path: '/ticket/:ticket_id',
+        name: 'SingleTicket',
+        component: 'SingleTicket',
+    },
 ]
 
 const routes = routerOptions.map(route => {

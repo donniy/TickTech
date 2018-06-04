@@ -1,13 +1,18 @@
 <template>
     <div>
-        <h1>Ticktes in {{ $route.params.course_id }}</h1>
-        {{ status }}
+        <h1>Tickets in {{ $route.params.course_id }}</h1>
+        <ticket
+            v-for="ticket in tickets"
+            v-bind:key="ticket.id"
+            v-bind:ticket="ticket"
+        ></ticket>
     </div>
 </template>
 
 <script>
 
 import axios from 'axios'
+import Ticket from './Ticket.vue'
 
 export default {
   data () {
@@ -22,8 +27,9 @@ export default {
       const path = '/api/course/' + this.$route.params.course_id
       axios.get(path)
       .then(response => {
-        this.tickets = response.data
+        this.tickets = response.data.json_list
         this.status = 'Retrieved data'
+        console.log(response.data.json_list)
         console.log(response)
       })
       .catch(error => {
@@ -38,6 +44,9 @@ export default {
   },
   mounted: function () {
     this.created()
+  },
+  components: {
+    'ticket': Ticket,
   }
 }
 
