@@ -1,0 +1,13 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Test lijst met tickets</title>
+    </head>
+    <body>
+        <ul>
+        {% for ticket in tickets %}
+        <li>{{ ticket.title }}</li>
+        {% endfor %}
+        </ul>
+    </body>
+</html>
