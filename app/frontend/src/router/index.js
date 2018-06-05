@@ -17,6 +17,10 @@ const routerOptions = [
         name: 'SingleTicket',
         component: 'SingleTicket',
     },
+    { // NOTE: Deze moet onderaan blijven staan! Anders krijg je altijd 404
+        path: '*',
+        component: 'NotFound'
+    }
 ]
 
 const routes = routerOptions.map(route => {
