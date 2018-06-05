@@ -1,4 +1,5 @@
 import os
+import requests
 from flask import Flask, render_template, jsonify
 from flask import Flask
 from . import database
@@ -59,6 +60,12 @@ def create_app(test_config=None):
     @app.route('/', defaults={'path': ''})
     @app.route('/<path:path>')
     def render_vue(path):
+        if app.debug:
+            try:
+                res = requests.get('http://localhost:8080/{}'.format(path)).text
+                return res
+            except:
+                return "Je gebruikt dev mode maar hebt je Vue development server niet draaien"
         return render_template("index.html")
 
 
