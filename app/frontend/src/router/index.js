@@ -17,6 +17,11 @@ const routerOptions = [
         name: 'SingleTicket',
         component: 'SingleTicket',
     },
+    {
+        path: '/form/',
+        name: 'Ask-a-Question',
+        component: 'StudentForm',
+    }
 ]
 
 const routes = routerOptions.map(route => {
@@ -31,5 +36,5 @@ Vue.use(Router)
 export default new Router({
     routes,
     mode: 'history'
-    
+
 })
