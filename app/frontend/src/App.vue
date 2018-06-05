@@ -1,23 +1,19 @@
 <template>
-  <div id="app">
-    <img style="width: 128px" src="./assets/logo.png">
-    <router-view/>
-  </div>
+    <div id="app">
+        <nav class="navbar navbar-light bg-light">
+            <a class="navbar-brand" href="/">
+    <img src="./assets/logo.png" class="d-inline-block align-top" width="30" height="30" alt="TikTech"> Tickets
+            </a>
+        </nav>
+        <div class="navbar-spacing"></div>
+        <div class="container">
+        <router-view/>
+        </div>
+    </div>
 </template>
 
 <script>
 export default {
-  name: 'App'
+    name: 'App'
 }
 </script>
-
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
