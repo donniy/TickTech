@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
 import App from './App'
+import VeeValidate from 'vee-validate';
 import router from './router'
 
 Vue.config.productionTip = false

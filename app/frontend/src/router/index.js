@@ -17,7 +17,12 @@ const routerOptions = [
         name: 'SingleTicket',
         component: 'SingleTicket',
     },
-    { // NOTE: Deze moet onderaan blijven staan! Anders krijg je altijd 404
+    {
+        path: '/StudentForm/',
+        name: 'StudentForm',
+        component: 'StudentForm',
+    },
+    {
         path: '*',
         component: 'NotFound'
     }
@@ -35,5 +40,5 @@ Vue.use(Router)
 export default new Router({
     routes,
     mode: 'history'
-    
+
 })
