@@ -1,3 +1,2 @@
 export FLASK_ENV=development
-FLASK_APP=app/backend/app.py flask run
-
+FLASK_APP=app/backend/flaskr flask run
