@@ -44,13 +44,6 @@ def create_app(test_config=None):
     database.init_db()
 
 
-    statusses = TicketStatus.query.all()
-    for status in statusses:
-        print(status.id)
-    print(len(Ticket.query.all()))
-    tickets = Ticket.query.filter_by(course_id='1')
-
-
     @app.route('/api/course/<course_id>')
     def retrieve_course_tickets(course_id):
         """
