@@ -1,13 +1,15 @@
+from flask import current_app, g
 from flask import Flask, render_template, jsonify
+from flask.cli import with_appcontext
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
-app = Flask(__name__,
-            static_folder = "../dist/static",
-            template_folder = "../dist")
-# Deze database is een tijdelijke sqlite database.
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
-db = SQLAlchemy(app)
+db = SQLAlchemy()
+
+def init_db():
+    SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/test.db'
+    return db
+
 
 def json_list(l):
     """
@@ -36,7 +38,7 @@ class Ticket(db.Model):
     # in de commandline. Op die manier kan je data maken en weergeven zonder formulier.
     def __repr__(self):
         return '<Ticket {}>'.format(self.title)
-    
+
     @property
     def serialize(self):
         """
@@ -65,28 +67,3 @@ class TicketStatus(db.Model):
             'id': self.id,
             'name': self.name
         }
-
-
-@app.route('/api/course/<course_id>')
-def retrieve_course_tickets(course_id):
-    """
-    Geeft alle ticktes over gegeven course.
-    """
-    # TODO: Controleer of degene die hierheen request permissies heeft.
-    tickets = Ticket.query.filter_by(course_id=course_id).all()
-    return json_list(tickets)
-
-@app.route('/api/ticket/<ticket_id>')
-def retrieve_single_ticket(ticket_id):
-    """
-    Geeft een enkel ticket.
-    """
-    # TODO: Controlleer rechten
-    ticket = Ticket.query.get(ticket_id)
-    return jsonify(ticket.serialize)
-
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def render_vue(path):
-    return render_template("index.html")
-
