@@ -1,10 +1,34 @@
 <template>
     <div>
         <div class="vertical-menu">
-            <a href="#" class="active">Home</a>
-            <a href="#">My Tickets</a>
+            <a href="#" class="active" >My Tickets</a>
             <a href="#">Submit a Ticket</a>
             <a href="#">Archive</a>
+        </div>
+        <div class="ticket-menu">
+            <table>
+                <tr>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Course</th>
+                    <th>Date</th>
+                    <th>Operator</th>
+                </tr>
+                <tr href="&">
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                </tr>
+                <tr>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                </tr>
+                </table>
         </div>
     </div>
 </template>
@@ -33,3 +57,7 @@
     color: white;
 }
 </style>
+
+<!-- <script>
+    <tr onclick="document.location = 'links.html';">
+</script> -->
