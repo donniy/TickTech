@@ -5,6 +5,7 @@ import App from './App'
 import VeeValidate from 'vee-validate';
 import router from './router'
 
+Vue.use(VeeValidate);
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

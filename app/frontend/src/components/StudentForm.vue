@@ -12,18 +12,29 @@
                             <div>
                                 <input name="name" v-model="form.name" v-validate="'required|min:1'" type="text" placeholder="Full name">
                             </div>
+                            <p v-show="errors.has('name')">
+                                {{ errors.first('name') }}
+                            </p>
                             <div>
-                                <input name="name" v-model="form.sudentid" v-validate="'required|min:5'" type="number" placeholder="Student Number">
+                                <input name="StudentID" v-model="form.sudentid" v-validate="'required|min:6'" type="number" placeholder="Student Number">
                             </div>
+                            <p v-show="errors.has('StudentID')">
+                                {{ errors.first('StudentID') }}
+                            </p>
                         </div>
 
+                        <!-- Content -->
                         <div>
                             <label>Message</label>
                             <div>
-                                <textarea name="message" v-validate="'required'" placeholder="Message" v-model="form.message"></textarea>
+                                <textarea name="message" class="textarea" v-validate="'required'" placeholder="Message" v-model="form.message"></textarea>
                             </div>
+                            <p v-show="errors.has('message')">
+                                {{ errors.first('message') }}
+                            </p>
                         </div>
 
+                        <!-- Category -->
                         <div>
                             <label>Category</label>
                             <div>
@@ -38,6 +49,7 @@
                             </div>
                         </div>
 
+                        <!-- Submit -->
                         <div>
                             <div>
                                 <button>
@@ -57,13 +69,14 @@
 
 
 import axios from 'axios'
+import VeeValidate from 'vee-validate';
 
 export default {
     data () {
         return {
             form: {
                 name: "",
-                studentid: "",
+                StudentID: "",
                 message: "",
                 label_class: "",
             },
