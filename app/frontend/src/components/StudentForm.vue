@@ -7,44 +7,33 @@
                 <section>
                     <!--Student name and number  -->
                     <form v-on:submit.prevent="$validator.validateAll(); console.log(form);">
-                        <div>
-                            <label>Name and student number</label>
-                            <div>
-                                <input name="name" v-model="form.name" v-validate="'required|min:1'" type="text" placeholder="Full name">
-                            </div>
-                            <div>
-                                <input name="name" v-model="form.sudentid" v-validate="'required|min:5'" type="number" placeholder="Student Number">
-                            </div>
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input id="name" class="form-control" name="name" v-model="form.name" v-validate="'required|min:1'" type="text" placeholder="Full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="studentnumber">Student number</label>
+                            <input class="form-control" id="studentnumber" name="studentnumber" v-model="form.sudentid" v-validate="'required|min:5'" type="number" placeholder="Student Number">
                         </div>
 
-                        <div>
-                            <label>Message</label>
-                            <div>
-                                <textarea name="message" v-validate="'required'" placeholder="Message" v-model="form.message"></textarea>
-                            </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" class="form-control" name="message" v-validate="'required'" placeholder="Message" v-model="form.message"></textarea>
                         </div>
 
-                        <div>
-                            <label>Category</label>
-                            <div>
-                                <div>
-                                    <select v-model="form.label_class">
-                                        <option disabled value="">Nothing selected</option>
-                                        <option v-for="option in options.labels" v-bind:value="option.value">
-                                            {{ option.text }}
-                                        </option>
-            					    </select>
-                                </div>
-                            </div>
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <select id="category" class="form-control custom-select" v-model="form.label_class">
+                                <option disabled value="">Nothing selected</option>
+                                <option v-for="option in options.labels" v-bind:value="option.value">
+                                {{ option.text }}
+                                </option>
+                            </select>
                         </div>
 
-                        <div>
-                            <div>
-                                <button>
-            								Submit
-            			        </button>
-                            </div>
-                        </div>
+                        <button class="btn btn-primary">
+                            Submit
+                        </button>
 
                     </form>
                 </section>
@@ -54,7 +43,6 @@
 </template>
 
 <script>
-
 
 import axios from 'axios'
 
@@ -75,7 +63,7 @@ export default {
                     { value: "Deadlines", text: "Deadlines" },
                     { value: "Absense", text: "Absense" },
                     { value: "Course guide", text: "Course" }
-                    ]
+                ]
             }
         }
     }
