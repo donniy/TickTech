@@ -1,0 +1,32 @@
+.navbar-spacing {
+    height: 2em;
+}
+
+.bg-light {
+    background-color: #FFF;
+    border-bottom: 1px solid rgba(#000, 0.7);
+}
+
+.form-control {
+    border-radius: 0;
+}
+
+.btn {
+    border-radius: 0;
+}
+
+.btn-primary {
+    background-color: $default-red;
+    border-color: $default-red;
+}
+
+.btn-primary:focus,
+.btn-primary:hover {
+    background-color: darken($default-red, 5%);
+    border-color: darken($default-red, 5%);
+}
+
+.btn-primary:not(:disabled):not(.disabled):active {
+    background-color: darken($default-red, 7%);
+    border-color: darken($default-red, 7%);
+}
