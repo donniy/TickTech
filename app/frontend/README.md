@@ -1,6 +1,6 @@
-# ticktech-frontend
+# frontend
 
-> The front end of the TickTech ticket system
+> A Vue.js project
 
 ## Build Setup
 
