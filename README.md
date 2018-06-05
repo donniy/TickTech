@@ -3,7 +3,7 @@
 
 ### Dependencies
 - python3
-- pip
+- pip3
 
 
 ### Installation
@@ -26,7 +26,7 @@ virtual environment directory to git!
 ```sh
 virtualenv venv
 source venv/bin/activate
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 These are all the steps needed for installation.
 
