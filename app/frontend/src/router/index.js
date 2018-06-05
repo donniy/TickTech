@@ -13,6 +13,11 @@ const routerOptions = [
         component: 'CourseTickets',
     },
     {
+        path: '/student',
+        name: 'student',
+        component: 'student',
+    },
+    {
         path: '/ticket/:ticket_id',
         name: 'SingleTicket',
         component: 'SingleTicket',
