@@ -90,7 +90,7 @@ class Message(db.Model):
     @property
     def serialize(self):
         """
-        Zet dit ticket om in json. Dit is alles wat de front-end kan zien,
+        Zet de message om in json. Dit is alles wat de front-end kan zien,
         dus zorg dat er geen gevoelige info in zit.
         """
         return {
