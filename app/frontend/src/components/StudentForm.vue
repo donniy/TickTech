@@ -25,7 +25,7 @@
                         <div class="form-group">
                             <label for="message">Message</label>
                             <textarea id="message" class="form-control" name="message" v-validate="'required'" placeholder="Message" v-model="form.message"></textarea>
-                            <div v-show="errors.has('message')" class="invalid-feedback">
+                            <div v-if="errors.has('message')" class="invalid-feedback">
                                 {{ errors.first('message') }}
                             </div>
                         </div>
