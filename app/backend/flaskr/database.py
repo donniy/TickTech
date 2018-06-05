@@ -25,3 +25,5 @@ def json_list(l):
     Maak JSON van de lijst.
     """
     return jsonify(json_list=[i.serialize for i in l])
+
+

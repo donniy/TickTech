@@ -60,7 +60,7 @@ def create_app(test_config=None):
         Geeft een enkel ticket.
         """
         # TODO: Controlleer rechten
-        ticket = ticket.Ticket.query.get(ticket_id)
+        ticket = Ticket.query.get(ticket_id)
         return jsonify(ticket.serialize)
 
     @app.route('/', defaults={'path': ''})
