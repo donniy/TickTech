@@ -1,10 +1,11 @@
 import os
 import requests
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 from flask import Flask
 from flaskr import database
 from datetime import datetime
 from flaskr.models.ticket import *
+from flask_wtf.csrf import CSRFProtect
 
 db = database.db
 
@@ -21,9 +22,24 @@ def create_app(test_config=None):
                 static_folder = "../../dist/static",
                 template_folder = "../../dist")
 
+
+    if os.environ['FLASK_ENV'] == 'development':
+        # When in development mode, we proxy the local Vue server. This means
+        # CSRF Protection is not available. Make sure to test application in
+        # production mode as well.
+        app.config['WTF_CSRF_CHECK_DEFAULT'] = False
+    
+    
+    csrf = CSRFProtect(app)
+
+    db_uri = os.environ['DATABASE_CONNECTION']
+
+    if db_uri in [None, '']:
+        db_uri = 'sqlite:////tmp/test.db'
+
     app.config.from_mapping(
         SECRET_KEY='dev',
-        SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/test.db'
+        SQLALCHEMY_DATABASE_URI=db_uri
     )
 
 
@@ -53,6 +69,14 @@ def create_app(test_config=None):
         # TODO: Controleer of degene die hierheen request permissies heeft.
         tickets = Ticket.query.filter_by(course_id=course_id).all()
         return database.json_list(tickets)
+    
+    @app.route('/api/ticket/<ticket_id>/reply', methods=['POST'])
+    def reply_message(ticket_id):
+        """
+        Tijdelijke functie, geeft altijd success terug en het bericht.
+        """
+        return jsonify({'status': "success", 'message': {'text': request.json.get("message"), 'user_id': 12345678, 'id': 5}})
+
 
     @app.route('/api/ticket/<ticket_id>')
     def retrieve_single_ticket(ticket_id):
