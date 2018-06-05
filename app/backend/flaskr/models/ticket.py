@@ -1,7 +1,7 @@
 from datetime import datetime
 from flaskr import database
 
-db = database.get_db()
+db = database.db
 
 class Ticket(db.Model):
     """
