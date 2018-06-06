@@ -23,7 +23,13 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="message">Message</label>
+                            <input id="subject" class="form-control-title" v-validate="'required|max:50'"name="subject" v-model="form.subject" type="text" placeholder="Title">
+                            <div v-show="errors.has('subject')" class="invalid-feedback">
+                                {{ errors.first('subject') }}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <textarea id="message" class="form-control" name="message" v-validate="'required'" placeholder="Message" v-model="form.message"></textarea>
                             <div v-if="errors.has('message')" class="invalid-feedback">
                                 {{ errors.first('message') }}
@@ -82,6 +88,7 @@ export default {
                 message: "",
                 courseid: "",
                 labelid: "",
+                subject: "",
             },  categories: {
                 courses:[
                     { value: "Prosoft", text: "Project software engineering"},
@@ -123,8 +130,8 @@ export default {
             const path = '/api/ticket/submit'
             axios_csrf.post(path, this.form)
             .then(response => {
+                window.location = "/ticket/" + response.data.ticketid;
                 this.form = ''
-                window.location = "/";
             }).catch(error => {
                     console.log(error)
             })

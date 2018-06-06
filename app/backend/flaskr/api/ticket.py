@@ -3,6 +3,7 @@ from flaskr.models.Message import *
 from flaskr import database
 from . import apiBluePrint
 from flask import jsonify, request, escape
+import uuid, datetime
 
 
 @apiBluePrint.route('/ticket/<ticket_id>')
@@ -48,24 +49,35 @@ def get_ticket_messages(ticket_id):
     return database.json_list(list(ticket.messages))
 
 @apiBluePrint.route('/ticket/submit', methods=['POST'])
-def get_ticket():
+def create_ticket():
     """
-    Checkt ticket submission en add to database.
+    Check ticket submission and add to database.
     """
-
-    if ticketValidate(request):
-        # TODO add to database.
-        return jsonify({'status': "success"});
-    # Just return, form is invalid so a failure will occur clientside.
-    return;
-
-def ticketValidate(request):
-
     name = escape(request.json["name"])
     studentid = escape(request.json["studentid"])
     message = escape(request.json["message"])
     courseid = escape(request.json["courseid"])
+    print(courseid)
     labelid = escape(request.json["labelid"])
+    subject = escape(request.json["subject"])
+    email = "notimplemented@nothing.nope"
+
+    # Validate and then create the ticket.
+    if ticketValidate(name, studentid, message, courseid, labelid, subject):
+
+        ticket_new = ticket_constructor(name, studentid, message, courseid, labelid, subject, email)
+        try:
+            database.addItemSafelyToDB(ticket_new)
+        except database.DatabaseInsertException as DBerror:
+            print(DBerror)
+            #Need to handle this better somehow. It should never happen though.
+
+
+        return jsonify({'status': "success", 'ticketid' : str(ticket_new.id)});
+    # Just return, form is invalid so a failure will occur clientside.
+    return;
+
+def ticketValidate(name, studentid, message, courseid, labelid, subject):
 
     # Names can only contain letters, spaces, - or ' in some cases.
     for letter in name:
@@ -81,6 +93,10 @@ def ticketValidate(request):
     except ValueError:
         return False
 
+
+    if len(subject) > 50:
+        return False
+
     # Course and labelid shoudl be valid (Implement through server checking)
 
     #TODO implement LTI checking for course/student accessability and validity.
@@ -90,3 +106,21 @@ def ticketValidate(request):
         return False
 
     return True
+
+def ticket_constructor(name, studentid, message, courseid, labelid, subject, email):
+
+    # Create new ticket and add data.
+    ticket_new = Ticket()
+    ticket_new.user_id = studentid
+    ticket_new.course_id = courseid #TODO get actual courseid in stead of course from form
+    ticket_new.status_id = 1
+    ticket_new.label_id = 1#labelid #TODO get actual label id from db instead of name.
+    if len(subject) > 0:
+        ticket_new.title = subject
+
+    # TODO: Decide on string (uuid.uuid4()) or int id (current).
+    ticket_new.id = uuid.uuid1().int % 9223372036854775807
+    ticket_new.email = email
+    ticket_new.timestamp = datetime.datetime.now()
+
+    return ticket_new
