@@ -67,9 +67,12 @@ class Ticket(db.Model):
         """
         status = TicketStatus.query.get(self.status_id)
         if status is None:
-            raise ValueError("No valid status found with status_id: {0}"
-                             .format(self.status_id))
+            debug_message = "No valid status found with " + \
+                            "status_id: {0}".format(self.status_id)
 
+            db_error = database.DatabaseInsertException(debug_message)
+            db_error.response_message = "TEST"
+            raise db_error
 
 
 

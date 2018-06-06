@@ -51,7 +51,7 @@ def get_ticket_messages(ticket_id):
     ticket = Ticket.query.get(ticket_id)
     print(database.json_list(ticket.messages))
     return database.json_list(list(ticket.messages))
-    
+
 # TODO: Deze verplaatsen naar user zodra die beschikbaar is
 @apiBluePrint.route('/student/ticket/<ticket_id>/reply', methods=['POST'])
 def student_reply_message(ticket_id):
@@ -102,6 +102,7 @@ def create_ticket():
     # Just return, form is invalid so a failure will occur clientside.
     return;
 
+
 def ticketValidate(name, studentid, message, courseid, labelid, subject):
 
     # Names can only contain letters, spaces, - or ' in some cases.
@@ -131,6 +132,7 @@ def ticketValidate(name, studentid, message, courseid, labelid, subject):
         return False
 
     return True
+
 
 def ticket_constructor(name, studentid, message, courseid, labelid, subject, email):
 
