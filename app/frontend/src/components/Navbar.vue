@@ -1,5 +1,5 @@
 <template>
-    <nav class="navbar navbar-light navbar-expand-lg" style="background-color: #CA0033;">
+    <nav class="navbar navbar-tiktech navbar-expand-lg">
         <a class="navbar-brand" href="/">
             <img src="../assets/logo.png" class="d-inline-block align-top" width="30" height="30" alt="TikTech"> Tickets
         </a>
