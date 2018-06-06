@@ -8,6 +8,12 @@ body {
     height: 3em;
 }
 
+p.def-error-msg {
+    margin-top: 0.5em;
+    opacity:0.9;
+    color: darken($default-red, 10%);
+}
+
 h1 {
     margin-left: 1em;
     opacity: 0.7;
@@ -27,6 +33,27 @@ h1 {
     border-radius: 0;
 }
 
+.btn-submit {
+    background-color: $default-green;
+    border-color: $default-green;
+}
+
+.btn-submit:focus,
+.btn-submit:hover {
+    background-color: darken($default-green, 5%);
+    border-color: darken($default-green, 5%);
+}
+
+.btn-submit:not(.disabled):active {
+    background-color: darken($default-green, 7%);
+    border-color: darken($default-green, 7%);
+}
+
+.btn-submit:disabled {
+    background-color: darken($text-color-lighter, 7%);
+    border-color: darken($text-color-lighter, 7%);
+}
+
 .btn-primary {
     background-color: $default-red;
     border-color: $default-red;
@@ -38,9 +65,14 @@ h1 {
     border-color: darken($default-red, 5%);
 }
 
-.btn-primary:not(:disabled):not(.disabled):active {
+.btn-primary:not(.disabled):active {
     background-color: darken($default-red, 7%);
     border-color: darken($default-red, 7%);
+}
+
+.btn-primary:disabled {
+    background-color: darken($text-color-lighter, 7%);
+    border-color: darken($text-color-lighter, 7%);
 }
 
 .list-ticket {

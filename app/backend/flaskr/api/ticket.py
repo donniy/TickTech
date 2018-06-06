@@ -17,3 +17,11 @@ def reply_message(ticket_id):
     Tijdelijke functie, geeft altijd success terug en het bericht.
     """
     return jsonify({'status': "success", 'message': {'text': request.json.get("message"), 'user_id': 12345678, 'id': 5}})
+
+@apiBluePrint.route('/ticket/submit', methods=['POST'])
+def get_ticket():
+    """
+    Checkt ticket submission en add aan database.
+    """
+    print(request.json)
+    return jsonify({'status': "success"});

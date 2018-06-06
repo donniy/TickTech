@@ -6,7 +6,7 @@
 
                 <section>
                     <!--Student name and number  -->
-                    <form v-on:submit.prevent="$validator.validateAll(); console.log(form);">
+                    <form v-on:submit.prevent="sendTicket;">
                         <div class="form-group">
                             <label for="name">Name</label>
                             <input id="name" class="form-control" name="name" v-model="form.name" v-validate="'required|min:1'" type="text" placeholder="Full name">
@@ -32,9 +32,9 @@
 
                         <div class="form-group">
                             <label for="course">Course</label>
-                            <select id="course" class="form-control custom-select" v-model="form.label_class">
+                            <select id="course" class="form-control custom-select" v-model="form.courseid">
                                 <option disabled value="">Nothing selected</option>
-                                <option v-for="option in options.courses" v-bind:value="option.value">
+                                <option v-for="option in categories.courses" v-bind:value="option.value">
                                 {{ option.text }}
                                 </option>
                             </select>
@@ -44,14 +44,18 @@
                             <label for="category">Category</label>
                             <select id="category" class="form-control custom-select" v-model="form.label_class">
                                 <option disabled value="">Nothing selected</option>
-                                <option v-for="option in options" v-bind:value="option.value">{{ option.text }}</option>
+                                <option v-for="option in categories.labels[form.courseid]" v-bind:value="option.value">{{ option.text }}</option>
                             </select>
 
                         </div>
 
-                        <button class="btn btn-primary" v-bind:disabled="errors.any()">
+                        <button v-on:click="sendTicket" class="btn btn-primary" v-bind:disabled="errors.any()">
                             Submit
                         </button>
+
+                        <p class="def-error-msg" v-show="errors.any()">
+                            Please fill out the form correctly
+                        </p>
 
                     </form>
                 </section>
@@ -65,6 +69,10 @@
 import axios from 'axios'
 import VeeValidate from 'vee-validate';
 
+const axios_csrf = axios.create({
+  headers: {'X-CSRFToken': csrf_token}
+});
+
 export default {
     data () {
         return {
@@ -72,9 +80,9 @@ export default {
                 name: "",
                 StudentID: "",
                 message: "",
+                courseid: "",
                 label_class: "",
-            },
-            options: {
+            },  categories: {
                 courses:[
                     { value: "Prosoft", text: "Project software engineering"},
                     { value: "ATF", text: "Automaten en formele talen"},
@@ -107,23 +115,24 @@ export default {
         }
     }, computed: {
         options: function(event) {
-            return labels[this.category]
+            return categories.labels[form.courseid]
         }
     }, methods: {
-        sendForm () {
-        const path = '/api/ticket/' + this.$route.params.ticket_id + '/submit'
-        axios_csrf.post(path, {message: this.form})
-        .then(response => {
-            this.messages.push(response.data.message)
-            this.reply = ''
+        sendTicket () {
+            this.$validator.validateAll()
+            const path = '/api/ticket/submit'
+            axios_csrf.post(path, this.form)
+            .then(response => {
+                this.form = ''
+                window.location = "/";
+            }).catch(error => {
+                    console.log(error)
             })
-            .catch(error => {
-                console.log(error)
-            })
+
+        }, onChange: function(e) {
+          console.log(event.srcElement.value);
+          this.categories = this.categories
         }
-    }, onChange: function(e) {
-      console.log(event.srcElement.value);
-      this.options = this.options
     }
 }
 
