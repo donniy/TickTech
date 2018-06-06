@@ -3,6 +3,12 @@ from flaskr import database
 
 db = database.db
 
+labels_helper = db.Table(
+    'labels',
+    db.Column('label_id', db.Integer, db.ForeignKey('ticket_label.id'), primary_key=True),
+    db.Column('ticket_id', db.Integer, db.ForeignKey('ticket.id'), primary_key=True))
+
+
 class Ticket(db.Model):
     """
     Een ticket.
@@ -13,12 +19,11 @@ class Ticket(db.Model):
 
     status_id = db.Column(db.Integer, db.ForeignKey(
         'ticket_status.id'), default=0, nullable=False)
-    label_id = db.Column(db.Integer, db.ForeignKey(
-        'ticket_label.id'), default=0, nullable=False)
 
     email = db.Column(db.String(120), unique=False, nullable=True)
     title = db.Column(db.String(255), unique=False, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
 
     # Dit is hoe je een relatie maakt. ticket.status geeft een TicketStatus object met
     # de status van dit ticket. backref betekent: maak een veld 'tickets' op TicketStatus
@@ -26,9 +31,11 @@ class Ticket(db.Model):
     status = db.relationship(
         'TicketStatus', backref=db.backref('tickets', lazy=True))
 
-    # Zie status hierboven, labelvariant van gemaakt.
-    label = db.relationship(
-        'TicketLabel', backref=db.backref('tickets', lazy=True))
+    #Many to many relation
+    labels = db.relationship(
+        "TicketLabel", secondary=labels_helper, lazy='subquery',
+        backref=db.backref('tickets', lazy=True))
+
 
     # Dit is een soort toString zoals in Java, voor het gebruiken van de database
     # in de commandline. Op die manier kan je data maken en weergeven zonder formulier.
@@ -47,9 +54,32 @@ class Ticket(db.Model):
             'title': self.title,
             'course_id': self.course_id,
             'status': self.status.serialize,
-            'label': self.label.serialize,
+            'labels': database.serialize_list(self.labels),
             'user_id': self.user_id
         }
+
+    @property
+    def checkValid(self):
+        """
+        Checks if an object is valid to insert into a database. So all
+        fields that should be set, are set. If a value is not set, throw
+        for now a ValueError().
+        """
+        status = TicketStatus.query.get(self.status_id)
+        if status is None:
+            raise ValueError("No valid status found with status_id: {0}"
+                             .format(self.status_id))
+
+
+    @property
+    def close(self):
+        closed_status = TicketStatus.query.filter_by(name='closed').first()
+        if closed_status is None:
+            return
+        self.status_id = closed_status.id
+
+
+
 
 
 class TicketStatus(db.Model):
@@ -65,6 +95,10 @@ class TicketStatus(db.Model):
             'id': self.id,
             'name': self.name
         }
+
+    @property
+    def checkValid(self):
+        pass
 
 
 class TicketLabel(db.Model):
@@ -84,3 +118,7 @@ class TicketLabel(db.Model):
             'course_id': self.course_id,
             'name': self.name
         }
+
+    @property
+    def checkValid(self):
+        pass

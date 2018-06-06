@@ -13,6 +13,11 @@ const routerOptions = [
         component: 'CourseTickets',
     },
     {
+        path: '/mytickets/',
+        name: 'mytickets',
+        component: 'mytickets',
+    },
+    {
         path: '/ticket/:ticket_id',
         name: 'SingleTicket',
         component: 'SingleTicket',
@@ -23,9 +28,29 @@ const routerOptions = [
         component: 'UserTickets',
     },
     {
+        path:'/courses',
+        name:'CourseOverview',
+        component:'CourseOverview',
+    },
+    {
         path: '/form/',
         name: 'AskAQuestion',
         component: 'StudentForm',
+    },
+    {
+        path: '/ta/:ta_id/inbox',
+        name: 'TAInbox',
+        component: 'TA_Inbox'
+    },
+    {
+        path: '/student/ticket/:ticket_id',
+        name: 'StudentViewTicket',
+        component: 'StudentTicket',
+    },
+    {
+        path: '/sort',
+        name: 'SortingTickets',
+        component: 'SortingTickets'
     },
     {
         path: '*',

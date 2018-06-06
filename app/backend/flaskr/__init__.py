@@ -8,9 +8,10 @@ from flask_wtf.csrf import CSRFProtect
 import os.path
 from flaskr.models import Message
 from flaskr.models import ticket
+from flask_socketio import SocketIO, send, emit, join_room, leave_room
 
 db = database.db
-
+socketio = None
 
 def create_app(test_config=None):
     """
@@ -33,6 +34,9 @@ def create_app(test_config=None):
 
 
     csrf = CSRFProtect(app)
+
+    global socketio
+    socketio = SocketIO(app)
 
     db_uri = os.environ.get('DATABASE_CONNECTION')
 
@@ -80,5 +84,10 @@ def create_app(test_config=None):
                 return "Je gebruikt dev mode maar hebt je Vue development server niet draaien"
         return render_template("index.html")
 
+
+    @socketio.on('join-room')
+    def on_message(data):
+        #TODO: Check if allowed to join room
+        join_room(data['room'])
 
     return app
