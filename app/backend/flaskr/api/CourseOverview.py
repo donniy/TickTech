@@ -1,6 +1,7 @@
 from . import apiBluePrint
 from flaskr import jsonify
 
+
 # remember to add file in __init__
 @apiBluePrint.route('/courses')
 def retrieve_courses():

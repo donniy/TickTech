@@ -43,6 +43,11 @@ const routerOptions = [
         component: 'StudentTicket',
     },
     {
+        path: '/sort',
+        name: 'SortingTickets',
+        component: 'SortingTickets'
+    },
+    {
         path: '*',
         component: 'NotFound'
     }
