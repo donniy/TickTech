@@ -23,9 +23,15 @@ const routerOptions = [
         component: 'SingleTicket',
     },
     {
+<<<<<<< HEAD
         path:'/courses',
         name:'CourseOverview',
         component:'CourseOverview',
+=======
+        path: '/user/:user_id',
+        name: 'UserTickets',
+        component: 'UserTickets',
+>>>>>>> 14-display-tickets-of-specific-user
     },
     {
         path: '/form/',
