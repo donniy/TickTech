@@ -34,3 +34,16 @@
       </tbody>
     </table>
 </template>
+
+<script>
+export default {
+    data () {
+        return {
+
+        }
+    },
+    mounted: function() {
+        this.$emit('tab-activate', 'my-tickets')
+    }
+}
+</script>
