@@ -77,6 +77,18 @@ export default {
                 ]
             }
         }
+    }, methods: {
+        sendForm () {
+        const path = '/api/ticket/' + this.$route.params.ticket_id + '/reply'
+        axios_csrf.post(path, {message: this.form})
+        .then(response => {
+            this.messages.push(response.data.message)
+            this.reply = ''
+            })
+            .catch(error => {
+                console.log(error)
+            })
+        }
     }
 }
 
