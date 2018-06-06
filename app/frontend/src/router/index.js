@@ -38,6 +38,11 @@ const routerOptions = [
         component: 'TA_Inbox'
     },
     {
+        path: '/student/ticket/:ticket_id',
+        name: 'StudentViewTicket',
+        component: 'StudentTicket',
+    },
+    {
         path: '*',
         component: 'NotFound'
     }

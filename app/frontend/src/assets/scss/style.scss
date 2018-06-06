@@ -86,9 +86,11 @@ a.list-ticket:hover, a.list-ticket:focus {
 }
 
 .reply-area {
-    position: fixed;
+    width: 100%;
     bottom: 1em;
     display: flex;
+    margin-top: 2em;
+    margin-bottom: 4em;
 }
 
 .message {
@@ -100,6 +102,8 @@ a.list-ticket:hover, a.list-ticket:focus {
         color: $default-red;
         font-size: 1rem;
         font-weight: bold;
+        margin-left: 1em;
+        margin-right: 1em;
     }
 }
 
@@ -108,7 +112,7 @@ a.list-ticket:hover, a.list-ticket:focus {
         box-shadow: 0 2px 4px 0 rgba(50,50,93,.1);
         border: 0;
         flex-grow: 4;
-        resize: horizontal;
+        resize: none;
         height: 4em;
         padding: 0.5em;
     }
