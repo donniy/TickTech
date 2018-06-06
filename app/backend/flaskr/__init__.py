@@ -5,7 +5,7 @@ from flask import Flask
 from flaskr import database
 from datetime import datetime
 from flask_wtf.csrf import CSRFProtect
-
+import os.path
 from flaskr.models import Message
 from flaskr.models import ticket
 
@@ -30,8 +30,8 @@ def create_app(test_config=None):
         # CSRF Protection is not available. Make sure to test application in
         # production mode as well.
         app.config['WTF_CSRF_CHECK_DEFAULT'] = False
-    
-    
+
+
     csrf = CSRFProtect(app)
 
     db_uri = os.environ.get('DATABASE_CONNECTION')
@@ -60,10 +60,9 @@ def create_app(test_config=None):
 
     db.init_app(app)
 
-    #Create and populate the database
-    app.app_context().push()
-    database.init_db()
-
+    if not os.path.isfile(db_uri):
+        app.app_context().push()
+        database.init_db()
 
     # Setup blueprints
     from .api import apiBluePrint
