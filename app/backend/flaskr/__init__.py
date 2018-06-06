@@ -1,10 +1,10 @@
 import os
 import requests
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 from flask import Flask
 from flaskr import database
 from datetime import datetime
-import os
+from flask_wtf.csrf import CSRFProtect
 
 from flaskr.models import Message
 from flaskr.models import ticket
@@ -24,9 +24,24 @@ def create_app(test_config=None):
                 static_folder = "../../dist/static",
                 template_folder = "../../dist")
 
+
+    if os.environ['FLASK_ENV'] == 'development':
+        # When in development mode, we proxy the local Vue server. This means
+        # CSRF Protection is not available. Make sure to test application in
+        # production mode as well.
+        app.config['WTF_CSRF_CHECK_DEFAULT'] = False
+    
+    
+    csrf = CSRFProtect(app)
+
+    db_uri = os.environ.get('DATABASE_CONNECTION')
+
+    if db_uri in [None, '']:
+        db_uri = 'sqlite:////tmp/test.db'
+
     app.config.from_mapping(
         SECRET_KEY='dev',
-        SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(app.instance_path, 'test.db')
+        SQLALCHEMY_DATABASE_URI=db_uri
     )
 
 
@@ -53,7 +68,6 @@ def create_app(test_config=None):
     # Setup blueprints
     from .api import apiBluePrint
     app.register_blueprint(apiBluePrint)
-
 
     # Setup routing for vuejs.
     @app.route('/', defaults={'path': ''})

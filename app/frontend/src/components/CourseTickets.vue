@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>Tickets in {{ $route.params.course_id }}</h1>
+        <h1>Tickets in cursus {{ $route.params.course_id }}</h1>
         <ticket
             v-for="ticket in tickets"
             v-bind:key="ticket.id"
