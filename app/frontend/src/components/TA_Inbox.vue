@@ -4,8 +4,8 @@
 
 
         <b-table striped hover :items="cases">
-            <template slot="name" slot-scope="data">
-                <a :href="`#${data.value.replace(/[^a-z]+/i,'-').toLowerCase()}`">
+            <template slot="id" slot-scope="data">
+                <a :href="`#${data.value}`">
                 {{data.value}}
                 </a>
             </template>
