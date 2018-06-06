@@ -1,6 +1,14 @@
 <template>
     <div id="app">
+<<<<<<< HEAD
         <navbar v-bind:active="active"></navbar>
+=======
+        <nav class="navbar navbar-light navbar-tiktech">
+            <a class="navbar-brand" href="/">
+    <img src="./assets/logo.png" class="d-inline-block align-top" width="30" height="30" alt="TikTech"> Tickets
+            </a>
+        </nav>
+>>>>>>> master
         <div class="navbar-spacing"></div>
         <div class="container">
         <router-view v-on:tab-activate="active = arguments[0]"/>

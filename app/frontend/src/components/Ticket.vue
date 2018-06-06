@@ -1,7 +1,8 @@
 <template>
-    <div>
-        <h2><a v-bind:href="'/ticket/' + ticket.id">{{ticket.user_id}}: {{ticket.title}}</a></h2>
-    </div>
+    <a v-bind:href="'/ticket/' + ticket.id" class="list-ticket">
+        <h3>{{ticket.title}}</h3>
+        Status: {{ticket.status.name}} - Gesteld door: {{ticket.user_id}}
+    </a>
 </template>
 
 <script>
