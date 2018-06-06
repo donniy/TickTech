@@ -16,9 +16,9 @@
                         </div>
                         <div class="form-group">
                             <label for="studentnumber">Student number</label>
-                            <input class="form-control" id="studentnumber" name="studentnumber" v-model="form.sudentid" v-validate="'required|min:5'" type="number" placeholder="Student Number">
-                            <div v-show="errors.has('StudentID')" class="invalid-feedback">
-                                {{ errors.first('StudentID') }}
+                            <input class="form-control" id="studentnumber" name="studentnumber" v-model="form.studentid" v-validate="'required'" type="number" placeholder="Student Number">
+                            <div v-show="errors.has('studentid')" class="invalid-feedback">
+                                {{ errors.first('studentid') }}
                             </div>
                         </div>
 
@@ -32,7 +32,7 @@
 
                         <div class="form-group">
                             <label for="course">Course</label>
-                            <select id="course" class="form-control custom-select" v-model="form.courseid">
+                            <select id="course" v-validate="'required'" class="form-control custom-select" v-model="form.courseid">
                                 <option disabled value="">Nothing selected</option>
                                 <option v-for="option in categories.courses" v-bind:value="option.value">
                                 {{ option.text }}
@@ -42,7 +42,7 @@
                         </div>
                         <div class="form-group">
                             <label for="category">Category</label>
-                            <select id="category" class="form-control custom-select" v-model="form.label_class">
+                            <select id="category" v-validate="'required'" class="form-control custom-select" v-model="form.labelid">
                                 <option disabled value="">Nothing selected</option>
                                 <option v-for="option in categories.labels[form.courseid]" v-bind:value="option.value">{{ option.text }}</option>
                             </select>
@@ -78,10 +78,10 @@ export default {
         return {
             form: {
                 name: "",
-                StudentID: "",
+                studentid: "",
                 message: "",
                 courseid: "",
-                label_class: "",
+                labelid: "",
             },  categories: {
                 courses:[
                     { value: "Prosoft", text: "Project software engineering"},
