@@ -4,8 +4,10 @@ from flask import Flask, render_template, jsonify, request
 from flask import Flask
 from flaskr import database
 from datetime import datetime
-from flaskr.models.ticket import *
 from flask_wtf.csrf import CSRFProtect
+
+from flaskr.models import Message
+from flaskr.models import ticket
 
 db = database.db
 
@@ -39,7 +41,11 @@ def create_app(test_config=None):
 
     app.config.from_mapping(
         SECRET_KEY='dev',
+<<<<<<< HEAD
         SQLALCHEMY_DATABASE_URI=db_uri
+=======
+        SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(app.instance_path, 'test.db')
+>>>>>>> master
     )
 
 
@@ -57,10 +63,13 @@ def create_app(test_config=None):
         pass
 
     db.init_app(app)
+
+    #Create and populate the database
     app.app_context().push()
     database.init_db()
 
 
+<<<<<<< HEAD
     @app.route('/api/course/<course_id>')
     def retrieve_course_tickets(course_id):
         """
@@ -86,7 +95,14 @@ def create_app(test_config=None):
         # TODO: Controlleer rechten
         ticket = Ticket.query.get(ticket_id)
         return jsonify(ticket.serialize)
+=======
+    # Setup blueprints
+    from .api import apiBluePrint
+    app.register_blueprint(apiBluePrint)
 
+>>>>>>> master
+
+    # Setup routing for vuejs.
     @app.route('/', defaults={'path': ''})
     @app.route('/<path:path>')
     def render_vue(path):
