@@ -13,9 +13,9 @@ const routerOptions = [
         component: 'CourseTickets',
     },
     {
-        path: '/student',
-        name: 'student',
-        component: 'student',
+        path: '/mytickets/',
+        name: 'mytickets',
+        component: 'mytickets',
     },
     {
         path: '/ticket/:ticket_id',
