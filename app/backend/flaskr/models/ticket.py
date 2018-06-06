@@ -71,6 +71,15 @@ class Ticket(db.Model):
                              .format(self.status_id))
 
 
+    @property
+    def close(self):
+        closed_status = TicketStatus.query.filter_by(name='closed').first()
+        if closed_status is None:
+            return
+        self.status_id = closed_status.id
+
+
+
 
 
 class TicketStatus(db.Model):
