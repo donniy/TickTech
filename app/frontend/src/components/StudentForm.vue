@@ -132,6 +132,9 @@ export default {
         }, onChange: function(e) {
           console.log(event.srcElement.value);
           this.categories = this.categories
+        },
+        mounted: function() {
+            this.$emit('tab-activate', 'submit-ticket')
         }
     }
 }

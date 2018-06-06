@@ -30,6 +30,7 @@ class Ticket(db.Model):
     label = db.relationship(
         'TicketLabel', backref=db.backref('tickets', lazy=True))
 
+
     # Dit is een soort toString zoals in Java, voor het gebruiken van de database
     # in de commandline. Op die manier kan je data maken en weergeven zonder formulier.
     def __repr__(self):
@@ -51,6 +52,22 @@ class Ticket(db.Model):
             'user_id': self.user_id
         }
 
+    @property
+    def checkValid(self):
+        """
+        Checks if an object is valid to insert into a database. So all
+        fields that should be set, are set. If a value is not set, throw
+        for now a ValueError().
+        """
+        if self.status is None:
+            raise ValueError("No valid status found with status_id: {0}"
+                             .format(self.status_id))
+        if self.label is None:
+            raise ValueError("No valid label found with label_id: {0}"
+                             .format(self.label_id))
+
+
+
 
 class TicketStatus(db.Model):
     """
@@ -65,6 +82,10 @@ class TicketStatus(db.Model):
             'id': self.id,
             'name': self.name
         }
+
+    @property
+    def checkValid(self):
+        pass
 
 
 class TicketLabel(db.Model):
@@ -84,3 +105,7 @@ class TicketLabel(db.Model):
             'course_id': self.course_id,
             'name': self.name
         }
+
+    @property
+    def checkValid(self):
+        pass
