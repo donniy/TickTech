@@ -41,11 +41,7 @@ def create_app(test_config=None):
 
     app.config.from_mapping(
         SECRET_KEY='dev',
-<<<<<<< HEAD
         SQLALCHEMY_DATABASE_URI=db_uri
-=======
-        SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(app.instance_path, 'test.db')
->>>>>>> master
     )
 
 
@@ -69,38 +65,9 @@ def create_app(test_config=None):
     database.init_db()
 
 
-<<<<<<< HEAD
-    @app.route('/api/course/<course_id>')
-    def retrieve_course_tickets(course_id):
-        """
-        Geeft alle ticktes over gegeven course.
-        """
-        # TODO: Controleer of degene die hierheen request permissies heeft.
-        tickets = Ticket.query.filter_by(course_id=course_id).all()
-        return database.json_list(tickets)
-    
-    @app.route('/api/ticket/<ticket_id>/reply', methods=['POST'])
-    def reply_message(ticket_id):
-        """
-        Tijdelijke functie, geeft altijd success terug en het bericht.
-        """
-        return jsonify({'status': "success", 'message': {'text': request.json.get("message"), 'user_id': 12345678, 'id': 5}})
-
-
-    @app.route('/api/ticket/<ticket_id>')
-    def retrieve_single_ticket(ticket_id):
-        """
-        Geeft een enkel ticket.
-        """
-        # TODO: Controlleer rechten
-        ticket = Ticket.query.get(ticket_id)
-        return jsonify(ticket.serialize)
-=======
     # Setup blueprints
     from .api import apiBluePrint
     app.register_blueprint(apiBluePrint)
-
->>>>>>> master
 
     # Setup routing for vuejs.
     @app.route('/', defaults={'path': ''})
