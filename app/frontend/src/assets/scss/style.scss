@@ -103,6 +103,21 @@ a.list-ticket:hover, a.list-ticket:focus {
     }
 }
 
+.note {
+    margin-top: 1em;
+}
+
+.note {
+    h4 {
+        color:$default-red;
+        font-size: 1rem;
+        font-weight: bold;
+    }
+}
+.note-add-button {
+    margin: 15px 10px;
+}
+
 .reply-area {
     textarea {
         box-shadow: 0 2px 4px 0 rgba(50,50,93,.1);
