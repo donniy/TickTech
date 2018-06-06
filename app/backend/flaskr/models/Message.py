@@ -35,3 +35,7 @@ class Message(db.Model):
             'timestamp': self.timestamp,
             'reply_id': self.reply_id
         }
+
+    @property
+    def checkValid():
+        pass
