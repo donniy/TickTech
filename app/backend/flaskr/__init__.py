@@ -32,7 +32,7 @@ def create_app(test_config=None):
     
     csrf = CSRFProtect(app)
 
-    db_uri = os.environ['DATABASE_CONNECTION']
+    db_uri = os.environ.get('DATABASE_CONNECTION')
 
     if db_uri in [None, '']:
         db_uri = 'sqlite:////tmp/test.db'
