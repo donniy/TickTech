@@ -82,3 +82,13 @@ def addTicket(user_id=1, email="test@email.com", course_id="1", status_id=1, tit
     t.label_id = 1
     succes = addItemSafelyToDB(t)
     print(succes)
+
+def addNote(user_id=1, ticket_id=1,text="", timestamp=datetime.now()):
+    from flaskr.models import Note
+    n = Note.Note()
+    n.user_id = user_id
+    n.ticket_id = ticket_id
+    n.text = text
+    n.timestamp = timestamp
+    success = addItemSafelyToDB(n)
+    print(success)

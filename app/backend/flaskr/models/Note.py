@@ -10,7 +10,7 @@ class Note(db.Model):
     note_id = db.Column(db.Integer, primary_key=True)
 
     ticket_id = db.Column(db.Integer, db.ForeignKey('ticket.id'), default=0, nullable=False)
-    message_id = db.Column(db.Integer, db.ForeignKey('message.message_id'), default=0,nullable=True)
+    # message_id = db.Column(db.Integer, db.ForeignKey('message.message_id'), default=0,nullable=True)
 
     user_id = db.Column(db.Integer, nullable=False)
 
