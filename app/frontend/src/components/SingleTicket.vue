@@ -49,6 +49,16 @@ export default {
                 console.log(error)
             })
         },
+        getMessages () {
+            const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
+            axios.get(path)
+            .then(response => {
+                this.messages = response.data.json_list
+            })
+            .catch(error => {
+                console.log(error)
+            })
+        },
         sendReply () {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/reply'
             axios_csrf.post(path, {message: this.reply})
