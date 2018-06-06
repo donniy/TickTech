@@ -6,6 +6,9 @@ import os.path
 
 db = SQLAlchemy()
 
+class DatabaseInsertException(Exception):
+    pass
+
 def init_db():
     db.create_all()
     addTicketStatus()
@@ -20,33 +23,22 @@ def json_list(l):
 
 
 # Use these functions if you want to add items to
+
 # to the database.
-def addListSafelyToDB(items):
-    """
-    Add a list of items safely to the database
-    by checking if the item is valid.
-    If an item is not valid it will be discarded/
-    """
-    succes = []
-    for item in items:
-        try:
-            print(item)
-            item.checkValid
-            db.session.add(item)
-            succes += [True]
-        except ValueError as err:
-            print(err)
-            succes += [False]
-    db.session.commit()
-    return succes
-
-
 def addItemSafelyToDB(item):
     """
     Add the item to the db by checking
     if the item is valid. The error can be logged.
     """
-    return addListSafelyToDB([item])
+    try:
+        item.checkValid
+        db.session.add(item)
+    except ValueError as err:
+        raise DatabaseInsertException("Object could not be added to database" +
+                                      ", with value error: {0}".format(err))
+
+    db.session.commit()
+
 
 #end functions for insertion for database.
 
@@ -76,9 +68,11 @@ def addTicket(user_id=1, email="test@email.com", course_id="1", status_id=1, tit
     t.user_id = user_id
     t.email = email
     t.course_id = course_id
-    t.status_id = 1
+    t.status_id = 1000
     t.title = title
     t.timestamp = timestamp
     t.label_id = 1
-    succes = addItemSafelyToDB(t)
-    print(succes)
+    try:
+        succes = addItemSafelyToDB(t)
+    except DatabaseInsertException as exp:
+        print(exp)

@@ -59,10 +59,13 @@ class Ticket(db.Model):
         fields that should be set, are set. If a value is not set, throw
         for now a ValueError().
         """
-        if self.status is None:
+        status = TicketStatus.query.get(self.status_id)
+        if status is None:
             raise ValueError("No valid status found with status_id: {0}"
                              .format(self.status_id))
-        if self.label is None:
+
+        label = TicketLabel.query.get(self.label_id)
+        if label is None:
             raise ValueError("No valid label found with label_id: {0}"
                              .format(self.label_id))
 
