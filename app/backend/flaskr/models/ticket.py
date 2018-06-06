@@ -60,7 +60,7 @@ class Ticket(db.Model):
         for now a ValueError().
         """
         if self.status is None:
-            raise ValueError("No valid session found with session_id: {0}"
+            raise ValueError("No valid status found with status_id: {0}"
                              .format(self.status_id))
         if self.label is None:
             raise ValueError("No valid label found with label_id: {0}"
