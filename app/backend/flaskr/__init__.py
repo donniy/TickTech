@@ -2,7 +2,13 @@ import os
 import requests
 from flask import Flask, render_template, jsonify
 from flask import Flask
-from . import database
+from flaskr import database
+from datetime import datetime
+
+from flaskr.models import Message
+from flaskr.models import ticket
+
+db = database.db
 
 def create_app(test_config=None):
     """
@@ -35,8 +41,10 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    db = database.init_db()
+
     db.init_app(app)
+    app.app_context().push()
+    database.init_db()
 
 
     @app.route('/api/course/<course_id>')
@@ -45,7 +53,7 @@ def create_app(test_config=None):
         Geeft alle ticktes over gegeven course.
         """
         # TODO: Controleer of degene die hierheen request permissies heeft.
-        tickets = database.Ticket.query.filter_by(course_id=course_id).all()
+        tickets = ticket.Ticket.query.filter_by(course_id=course_id).all()
         return database.json_list(tickets)
 
     @app.route('/api/ticket/<ticket_id>')
@@ -54,8 +62,8 @@ def create_app(test_config=None):
         Geeft een enkel ticket.
         """
         # TODO: Controlleer rechten
-        ticket = database.Ticket.query.get(ticket_id)
-        return jsonify(ticket.serialize)
+        ticketObj = ticket.Ticket.query.get(ticket_id)
+        return jsonify(ticketObj.serialize)
 
     @app.route('/', defaults={'path': ''})
     @app.route('/<path:path>')
