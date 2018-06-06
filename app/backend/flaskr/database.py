@@ -68,7 +68,7 @@ def addTicket(user_id=1, email="test@email.com", course_id="1", status_id=1, tit
     t.user_id = user_id
     t.email = email
     t.course_id = course_id
-    t.status_id = 1000
+    t.status_id = 1
     t.title = title
     t.timestamp = timestamp
     t.label_id = 1
