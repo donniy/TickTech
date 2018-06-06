@@ -37,5 +37,5 @@ class Message(db.Model):
         }
 
     @property
-    def checkValid():
+    def checkValid(self):
         pass
