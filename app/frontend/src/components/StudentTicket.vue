@@ -87,6 +87,7 @@ export default {
         messageAdded: function (data) {
             console.log(data)
             this.messages.push(data)
+            document.body.scrollTop = document.body.scrollHeight;
         }
     }
 }
