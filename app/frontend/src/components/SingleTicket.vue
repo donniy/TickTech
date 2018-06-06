@@ -49,12 +49,24 @@ export default {
                 console.log(error)
             })
         },
+        getMessages () {
+            const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
+            axios.get(path)
+            .then(response => {
+                this.messages = response.data.json_list
+            })
+            .catch(error => {
+                console.log(error)
+            })
+        },
         sendReply () {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/reply'
             axios_csrf.post(path, {message: this.reply})
             .then(response => {
-                this.messages.push(response.data.message)
-                this.reply = ''
+                if (response.data.status == "success") {
+                    this.messages.push(response.data.message)
+                    this.reply = ''
+                }
             })
             .catch(error => {
                 console.log(error)
@@ -63,7 +75,7 @@ export default {
     },
     mounted: function () {
         this.getTicket()
-        console.log(csrf_token);
+        this.getMessages()
     },
     components: {
         'message': Message,

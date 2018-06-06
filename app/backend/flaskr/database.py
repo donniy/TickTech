@@ -6,6 +6,9 @@ import os.path
 
 db = SQLAlchemy()
 
+class DatabaseInsertException(Exception):
+    pass
+
 def init_db():
     db.create_all()
     addTicketStatus()
@@ -19,13 +22,32 @@ def json_list(l):
     return jsonify(json_list=[i.serialize for i in l])
 
 
+# Use these functions if you want to add items to
+
+# to the database.
+def addItemSafelyToDB(item):
+    """
+    Add the item to the db by checking
+    if the item is valid. The error can be logged.
+    """
+    try:
+        item.checkValid
+        db.session.add(item)
+    except ValueError as err:
+        raise DatabaseInsertException("Object could not be added to database" +
+                                      ", with value error: {0}".format(err))
+
+    db.session.commit()
+
+
+#end functions for insertion for database.
+
 #just for testing
 def addTicketStatus(name="Needs help"):
     from flaskr.models import ticket
     ts = ticket.TicketStatus()
     ts.name = name
-    db.session.add(ts)
-    db.session.commit()
+    addItemSafelyToDB(ts)
 
 
 def addTicketLabel(ticked_id=1, course_id="1", name="test"):
@@ -34,8 +56,7 @@ def addTicketLabel(ticked_id=1, course_id="1", name="test"):
     tl.ticked_id = ticked_id
     tl.course_id = course_id
     tl.name = name
-    db.session.add(tl)
-    db.session.commit()
+    addItemSafelyToDB(tl)
 
 
 #just for testing
@@ -47,9 +68,11 @@ def addTicket(user_id=1, email="test@email.com", course_id="1", status_id=1, tit
     t.user_id = user_id
     t.email = email
     t.course_id = course_id
-    t.status_id = status_id
+    t.status_id = 1
     t.title = title
     t.timestamp = timestamp
     t.label_id = 1
-    db.session.add(t)
-    db.session.commit()
+    try:
+        succes = addItemSafelyToDB(t)
+    except DatabaseInsertException as exp:
+        print(exp)
