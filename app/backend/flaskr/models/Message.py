@@ -28,8 +28,8 @@ class Message(db.Model):
         dus zorg dat er geen gevoelige info in zit.
         """
         return {
-            'message_id': self.message_id,
-            'ticket_id': self.ticket_id,
+            'id': self.message_id,
+            'ticket': self.ticket.serialize,
             'user_id': self.user_id,
             'message': self.message,
             'timestamp': self.timestamp,

@@ -24,4 +24,4 @@ def reply_message(ticket_id):
     db.session.add(message)
     db.session.commit()
 
-    return jsonify({'status': "success", 'message': {'text': request.json.get("message"), 'user_id': 12345678, 'id': 5}})
+    return jsonify({'status': "success", 'message': message.serialize})
