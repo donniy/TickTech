@@ -4,11 +4,13 @@ from flask import Flask, render_template, jsonify
 from flask import Flask
 from flaskr import database
 from datetime import datetime
+import os
 
 from flaskr.models import Message
 from flaskr.models import ticket
 
 db = database.db
+
 
 def create_app(test_config=None):
     """
@@ -24,7 +26,7 @@ def create_app(test_config=None):
 
     app.config.from_mapping(
         SECRET_KEY='dev',
-        SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/test.db'
+        SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(app.instance_path, 'test.db')
     )
 
 
@@ -41,30 +43,19 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-
     db.init_app(app)
+
+    #Create and populate the database
     app.app_context().push()
     database.init_db()
 
 
-    @app.route('/api/course/<course_id>')
-    def retrieve_course_tickets(course_id):
-        """
-        Geeft alle ticktes over gegeven course.
-        """
-        # TODO: Controleer of degene die hierheen request permissies heeft.
-        tickets = ticket.Ticket.query.filter_by(course_id=course_id).all()
-        return database.json_list(tickets)
+    # Setup blueprints
+    from .api import apiBluePrint
+    app.register_blueprint(apiBluePrint)
 
-    @app.route('/api/ticket/<ticket_id>')
-    def retrieve_single_ticket(ticket_id):
-        """
-        Geeft een enkel ticket.
-        """
-        # TODO: Controlleer rechten
-        ticketObj = ticket.Ticket.query.get(ticket_id)
-        return jsonify(ticketObj.serialize)
 
+    # Setup routing for vuejs.
     @app.route('/', defaults={'path': ''})
     @app.route('/<path:path>')
     def render_vue(path):
