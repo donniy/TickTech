@@ -38,6 +38,11 @@ const routerOptions = [
         component: 'TA_Inbox'
     },
     {
+        path: '/sort',
+        name: 'SortingTickets',
+        component: 'SortingTickets'
+    },
+    {
         path: '*',
         component: 'NotFound'
     }
