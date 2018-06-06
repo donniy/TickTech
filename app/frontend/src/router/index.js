@@ -28,6 +28,11 @@ const routerOptions = [
         component: 'StudentForm',
     },
     {
+        path: '/ta/:ta_id/inbox',
+        name: 'TAInbox',
+        component: 'TA_Inbox'
+    },
+    {
         path: '*',
         component: 'NotFound'
     }
