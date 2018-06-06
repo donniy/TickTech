@@ -2,13 +2,13 @@
     <div>
         <a v-bind:href="'/course/' + ticket.course_id" class="btn btn-primary back-button">&laquo; Terug naar cursus</a>
         <br /><br />
-        <h1>Ticket Info</h1>
+        <h1>Mijn ticket</h1>
         <div class="material-card">
             <h2>{{ticket.title}}</h2>
             Status: {{ticket.status.name}}
         </div>
 
-        <message v-bind:self="12345678" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
+        <message v-bind:self="567" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
 
         <form v-on:submit.prevent="sendReply" class="reply-area">
             <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
@@ -60,7 +60,7 @@ export default {
             })
         },
         sendReply () {
-            const path = '/api/ticket/' + this.$route.params.ticket_id + '/reply'
+            const path = '/api/student/ticket/' + this.$route.params.ticket_id + '/reply'
             axios_csrf.post(path, {message: this.reply})
             .then(response => {
                 if (response.data.status == "success") {
@@ -77,16 +77,18 @@ export default {
         this.getMessages()
         this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
     },
+    components: {
+        'message': Message,
+    },
     sockets: {
         connect: function () {
+            console.log("Socket connection!")
         },
         messageAdded: function (data) {
             console.log(data)
             this.messages.push(data)
+            document.body.scrollTop = document.body.scrollHeight;
         }
-    },
-    components: {
-        'message': Message,
     }
 }
 
