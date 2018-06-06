@@ -45,18 +45,9 @@ def create_app(test_config=None):
 
     db.init_app(app)
 
-
-    """
-    Will setup the testdb if there is no db yet.
-    However in debug mode this function will be called multiple
-    times, so with an os variable we prevent from multiple insertions.
-    This is kinda hacky.
-    """
-    if not os.environ.get('INITIAL_FLASK_RUN') \
-       and not os.path.isfile(app.config['SQLALCHEMY_DATABASE_URI']):
-        os.environ['INITIAL_FLASK_RUN'] = "true"
-        app.app_context().push()
-        database.init_db()
+    #Create and populate the database
+    app.app_context().push()
+    database.init_db()
 
 
     # Setup blueprints

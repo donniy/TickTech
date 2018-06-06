@@ -17,6 +17,7 @@ def json_list(l):
     """
     return jsonify(json_list=[i.serialize for i in l])
 
+
 #just for testing
 def addTicketStatus(name="Needs help"):
     from flaskr.models import ticket
@@ -24,6 +25,7 @@ def addTicketStatus(name="Needs help"):
     ts.name = name
     db.session.add(ts)
     db.session.commit()
+
 
 #just for testing
 def addTicket(user_id=1, email="test@email.com", course_id="1", status_id=1, title="test",
