@@ -1,16 +1,16 @@
 <template>
-    <div class="material-card message">
-        <h4>{{message.user_id}}:</h4>
-        <p>
+    <div :class="'message' + (self == message.user_id ? ' text-right' : '')">
+        <h4>{{message.user_id}}</h4>
+        <div class="material-card">
             {{message.text}}
-        </p>
+        </div>
     </div>
 </template>
 
 <script>
 
   export default {
-      props: ['message'],
+      props: ['message', 'self'],
       data: function () {
           return {};
       }
