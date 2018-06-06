@@ -19,6 +19,23 @@ h1 {
     border: none;
 }
 
+.nav-link {
+    color: #000;
+}
+
+.active, .nav-item:hover {
+    background-color: $default-red;
+    color: white;
+        a{
+            color:white;
+        }
+}
+
+.nav-link:active, .nav-link:hover {
+    background-color: $default-red;
+    color: white;
+}
+
 .form-control {
     border-radius: 0;
 }

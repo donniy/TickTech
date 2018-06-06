@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+.vscode
+.vscode/*
+
 # Distribution / packaging
 .Python
 #build/
@@ -25,6 +28,8 @@ wheels/
 *.egg
 MANIFEST
 package-lock.json
+
+app/dist
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

@@ -19,13 +19,43 @@ def json_list(l):
     return jsonify(json_list=[i.serialize for i in l])
 
 
+# Use these functions if you want to add items to
+# to the database.
+def addListSafelyToDB(items):
+    """
+    Add a list of items safely to the database
+    by checking if the item is valid.
+    If an item is not valid it will be discarded/
+    """
+    succes = []
+    for item in items:
+        try:
+            print(item)
+            item.checkValid
+            db.session.add(item)
+            succes += [True]
+        except ValueError as err:
+            print(err)
+            succes += [False]
+    db.session.commit()
+    return succes
+
+
+def addItemSafelyToDB(item):
+    """
+    Add the item to the db by checking
+    if the item is valid. The error can be logged.
+    """
+    return addListSafelyToDB([item])
+
+#end functions for insertion for database.
+
 #just for testing
 def addTicketStatus(name="Needs help"):
     from flaskr.models import ticket
     ts = ticket.TicketStatus()
     ts.name = name
-    db.session.add(ts)
-    db.session.commit()
+    addItemSafelyToDB(ts)
 
 
 def addTicketLabel(ticked_id=1, course_id="1", name="test"):
@@ -34,8 +64,7 @@ def addTicketLabel(ticked_id=1, course_id="1", name="test"):
     tl.ticked_id = ticked_id
     tl.course_id = course_id
     tl.name = name
-    db.session.add(tl)
-    db.session.commit()
+    addItemSafelyToDB(tl)
 
 
 #just for testing
@@ -47,9 +76,9 @@ def addTicket(user_id=1, email="test@email.com", course_id="1", status_id=1, tit
     t.user_id = user_id
     t.email = email
     t.course_id = course_id
-    t.status_id = status_id
+    t.status_id = 1
     t.title = title
     t.timestamp = timestamp
     t.label_id = 1
-    db.session.add(t)
-    db.session.commit()
+    succes = addItemSafelyToDB(t)
+    print(succes)

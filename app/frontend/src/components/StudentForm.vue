@@ -77,6 +77,9 @@ export default {
                 ]
             }
         }
+    },
+    mounted: function() {
+        this.$emit('tab-activate', 'submit-ticket')
     }
 }
 
