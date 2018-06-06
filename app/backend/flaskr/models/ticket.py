@@ -3,7 +3,6 @@ from flaskr import database
 
 db = database.db
 
-
 class Ticket(db.Model):
     """
     Een ticket.
