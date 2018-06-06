@@ -18,6 +18,11 @@ const routerOptions = [
         component: 'SingleTicket',
     },
     {
+        path:'/courses',
+        name:'CourseOverview',
+        component:'CourseOverview',
+    },
+    {
         path: '/form/',
         name: 'AskAQuestion',
         component: 'StudentForm',
