@@ -23,14 +23,14 @@
                         </div>
 
                         <div class="form-group">
-                            <input id="subject" class="form-control-title" v-validate="'required|max:50'"name="subject" v-model="form.subject" type="text" placeholder="Title">
+                            <input id="subject" class="form-control-title" v-validate="'required|max:50'"name="subject" v-model="form.subject" type="text" placeholder="Subject">
                             <div v-show="errors.has('subject')" class="invalid-feedback">
                                 {{ errors.first('subject') }}
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <textarea id="message" class="form-control" name="message" v-validate="'required'" placeholder="Message" v-model="form.message"></textarea>
+                            <textarea-autosize id="message" class="form-control" name="message" v-validate="'required'" placeholder="Message" v-model="form.message"></textarea-autosize>
                             <div v-if="errors.has('message')" class="invalid-feedback">
                                 {{ errors.first('message') }}
                             </div>
