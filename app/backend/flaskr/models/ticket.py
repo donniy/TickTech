@@ -47,19 +47,19 @@ class Ticket(db.Model):
     @property
     def serialize(self):
         """
-        Zet dit ticket om in json. Dit is alles wat de front-end kan zien,
+        Zet dit ticket om in json. Dit is alles wat de frontend kan zien,
         dus zorg dat er geen gevoelige info in zit.
         """
         return {
             'id': self.id,
-            'timestamp': self.timestamp,
-            'title': self.title,
+            'user_id': self.user_id,
             'course_id': self.course_id,
+            'email': self.email,
+            'title': self.title,
+            'timestamp': self.timestamp,
             'status': self.status.serialize,
-            'labels': database.serialize_list(self.labels),
-            'user_id': self.user_id
+            'labels': database.serialize_list(self.labels)
         }
-
 
     @property
     def checkValid(self):
@@ -94,7 +94,7 @@ class TicketStatus(db.Model):
     De status van een ticket die kan worden ingesteld.
     """
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
+    name = db.Column(db.String(50), nullable=False, default="Pending")
 
     @property
     def serialize(self):
@@ -121,7 +121,6 @@ class TicketLabel(db.Model):
     def serialize(self):
         return {
             'id': self.id,
-            'ticket_id':  self.ticket_id,
             'course_id': self.course_id,
             'name': self.name
         }
