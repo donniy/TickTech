@@ -1,6 +1,9 @@
 <template>
     <div>
         <a v-bind:href="'/course/' + ticket.course_id" class="btn btn-primary back-button">&laquo; Terug naar cursus</a>
+        <button class="btn btn-primary close-button" @click="showModal = true">Close Ticket</button>
+        <modal  v-if="showModal" @yes="closeTicket()" @close="showModal = false">
+        </modal>
         <br /><br />
         <div class="row">
             <div class="col-md-8 col-sm-8 col-lg-8 col-xs-12">
@@ -45,6 +48,8 @@
 
 import axios from 'axios'
 import Message from './Message.vue'
+
+import Modal from './ClosePrompt.vue'
 import Note from './Note.vue'
 
 const axios_csrf = axios.create({
@@ -54,6 +59,7 @@ const axios_csrf = axios.create({
 export default {
     data () {
         return {
+            showModal: false,
             ticket: {title: '', status: {name: ''}, course_id: ''},
             reply: '',
             messages: [],
@@ -105,6 +111,15 @@ export default {
                 console.log(error)
             })
         },
+        closeTicket () {
+            this.showModal = false
+            const path = '/api/ticket/' + this.$route.params.ticket_id + '/close'
+            axios_csrf.post(path)
+            .then(response => {
+                // TODO: Iets van een notificatie ofzo? '234 closed this ticket'? iig niet meer hardcoden "closed"
+                this.ticket.status.name = "closed"
+            })
+        },
         addNote(){
             console.log(this.noteTextArea)
             const path = '/api/note/add'
@@ -141,6 +156,7 @@ export default {
     },
     components: {
         'message': Message,
+        'modal' : Modal,
         'note': Note
     }
 }
