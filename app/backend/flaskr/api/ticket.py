@@ -27,6 +27,7 @@ def retrieve_single_ticket(ticket_id):
     return jsonify(ticketObj.serialize)
 
 
+
 @apiBluePrint.route('/ticket/<ticket_id>/reply', methods=['POST'])
 def reply_message(ticket_id):
     """
@@ -61,6 +62,7 @@ def get_ticket_messages(ticket_id):
     ticket = Ticket.query.get(ticket_id)
     print(database.json_list(ticket.messages))
     return database.json_list(list(ticket.messages))
+
 
 
 # TODO: Deze verplaatsen naar user zodra die beschikbaar is
@@ -146,6 +148,7 @@ def ticketValidate(name, studentid, message, courseid, labelid, subject):
     return True
 
 
+
 def ticket_constructor(name, studentid, message, courseid, labelid, subject, email):
 
     # Create new ticket and add data.
@@ -157,8 +160,8 @@ def ticket_constructor(name, studentid, message, courseid, labelid, subject, ema
     if len(subject) > 0:
         ticket_new.title = subject
 
-    # TODO: Decide on string (uuid.uuid4()) or int id (current).
-    ticket_new.id = uuid.uuid1().int % 9223372036854775807
+    #Probably witch to uuid.uuid4() and always check for primary key violation.
+    ticket_new.id = uuid.uuid1()
     ticket_new.email = email
     ticket_new.timestamp = datetime.datetime.now()
 
