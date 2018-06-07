@@ -47,19 +47,19 @@ class Ticket(db.Model):
     @property
     def serialize(self):
         """
-        Zet dit ticket om in json. Dit is alles wat de front-end kan zien,
+        Zet dit ticket om in json. Dit is alles wat de frontend kan zien,
         dus zorg dat er geen gevoelige info in zit.
         """
         return {
             'id': self.id,
-            'timestamp': self.timestamp,
-            'title': self.title,
+            'user_id': self.user_id,
             'course_id': self.course_id,
+            'email': self.email,
+            'title': self.title,
+            'timestamp': self.timestamp,
             'status': self.status.serialize,
-            'labels': database.serialize_list(self.labels),
-            'user_id': self.user_id
+            'labels': database.serialize_list(self.labels)
         }
-
 
     @property
     def checkValid(self):
