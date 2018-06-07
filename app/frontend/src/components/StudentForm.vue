@@ -2,26 +2,35 @@
     <div>
         <div>
             <section>
-                <h1>Submit a question to the Mailing list</h1>
+                <h1>Submit a question to the mailing list</h1>
 
                 <section>
                     <!--Student name and number  -->
                     <form v-on:submit.prevent="sendTicket;">
                         <div class="form-group">
-                            <label for="name">Name</label>
+                            <label for="name">Full name</label>
                             <input id="name" class="form-control" name="name" v-model="form.name" v-validate="'required|min:1'" type="text" placeholder="Full name">
                             <div v-show="errors.has('name')" class="invalid-feedback">
                                 {{ errors.first('name') }}
                             </div>
                         </div>
+
                         <div class="form-group">
-                            <label for="studentnumber">Student number</label>
-                            <input class="form-control" id="studentnumber" name="studentnumber" v-model="form.studentid" v-validate="'required'" type="number" placeholder="Student Number">
+                            <label for="studentid">Student ID</label>
+                            <input class="form-control" id="studentid" name="studentid" v-model="form.studentid" v-validate="'required|min:1|numeric'" type="text" placeholder="Student ID">
                             <div v-show="errors.has('studentid')" class="invalid-feedback">
                                 {{ errors.first('studentid') }}
                             </div>
                         </div>
 
+                        <div class="form-group">
+                                <label for="email">Email address</label>
+                                <input id="email" class="form-control" name="email" v-model="form.email" v-validate="'required|min:1'" type="text" placeholder="Email address">
+                                <div v-show="errors.has('email')" class="invalid-feedback">
+                                    {{ errors.first('email') }}
+                                </div>  
+                        </div>
+                        
                         <div class="form-group">
                             <input id="subject" class="form-control-title" v-validate="'required|max:50'"name="subject" v-model="form.subject" type="text" placeholder="Subject">
                             <div v-show="errors.has('subject')" class="invalid-feedback">
@@ -30,7 +39,7 @@
                         </div>
 
                         <div class="form-group">
-                            <textarea-autosize id="message" class="form-control" name="message" v-validate="'required'" placeholder="Message" v-model="form.message"></textarea-autosize>
+                            <textarea id="message" class="form-control" name="message" v-validate="'required'" placeholder="Message" v-model="form.message"></textarea>
                             <div v-if="errors.has('message')" class="invalid-feedback">
                                 {{ errors.first('message') }}
                             </div>
@@ -85,6 +94,7 @@ export default {
             form: {
                 name: "",
                 studentid: "",
+                email: "",
                 message: "",
                 courseid: "",
                 labelid: "",
