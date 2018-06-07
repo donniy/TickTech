@@ -112,7 +112,7 @@ def ticketValidate(name, studentid, email, subject, message, courseid, labelid):
         if not letter.isalpha() and not letter in " '-":
             return False
 
-    #TODO implement check validation email (is it even possible?)        
+    #TODO implement check validation email (is it even possible?)
 
     # A number should be within certain bounds and only numerical.
     try:

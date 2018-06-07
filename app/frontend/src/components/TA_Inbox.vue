@@ -5,9 +5,9 @@
 
         <b-table striped hover :items="cases">
             <template slot="id" slot-scope="data">
-                <a v-bind:href="'/ticket/'+data.value">
-                {{data.value}}
-                </a>
+              <a v-bind:href="'/ticket/'+data.value">
+                  {{data.value}}
+              </a>
             </template>
         </b-table>
     </div>

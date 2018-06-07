@@ -19,6 +19,8 @@ class Ticket(db.Model):
     user_id = db.Column(db.Integer, nullable=False)
     course_id = db.Column(db.String(120), unique=False, nullable=False)
 
+    ta_id = db.Column(db.Integer, nullable=True)
+
     status_id = db.Column(db.Integer, db.ForeignKey(
         'ticket_status.id'), default=0, nullable=False)
 
@@ -50,10 +52,14 @@ class Ticket(db.Model):
         Zet dit ticket om in json. Dit is alles wat de frontend kan zien,
         dus zorg dat er geen gevoelige info in zit.
         """
+
+        if self.ta_id is None:
+            self.ta_id = "None"
         return {
             'id': self.id,
             'user_id': self.user_id,
             'course_id': self.course_id,
+            'ta_id' : self.ta_id,
             'email': self.email,
             'title': self.title,
             'timestamp': self.timestamp,
