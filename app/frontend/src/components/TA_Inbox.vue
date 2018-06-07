@@ -3,7 +3,13 @@
         <h1>Welkom {{TA.name}}</h1>
 
 
-        <b-table striped hover :items="cases"></b-table>
+        <b-table striped hover :items="cases">
+            <template slot="id" slot-scope="data">
+                <a v-bind:href="'/ticket/'+data.value">
+                {{data.value}}
+                </a>
+            </template>
+        </b-table>
     </div>
 </template>
 
