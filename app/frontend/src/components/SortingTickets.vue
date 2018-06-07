@@ -22,7 +22,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="ticket in tickets">
+                <tr v-for="ticket in sorted_tickets">
                     <td> {{ticket.title}} </td>
                     <td> {{ticket.status}} </td>
                     <td> {{ticket.course}} </td>
@@ -54,19 +54,9 @@ export default {
         }
     },
 
-    methods: {
-        sort_tickets () {
-            this.tickets.sort((a, b) => a[this.sorting_criteria] > b[this.sorting_criteria])
-        }
-    },
-
-    mounted: function () {
-        this.sort_tickets()
-    },
-
-    watch: {
-        sorting_criteria: function (val) {
-            this.sort_tickets()
+    computed: {
+        sorted_tickets: function () {
+            return this.tickets.sort((a, b) => a[this.sorting_criteria] > b[this.sorting_criteria])
         }
     }
 }
