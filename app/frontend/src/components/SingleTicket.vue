@@ -1,7 +1,9 @@
 <template>
     <div>
         <a v-bind:href="'/course/' + ticket.course_id" class="btn btn-primary back-button">&laquo; Terug naar cursus</a>
-        <a v-bind:href="ticket.course_id + '/closeticket'" class="btn btn-primary close-button">Close Ticket</a>
+        <button class="btn btn-primary close-button" @click="showModal = true">Close Ticket</button>
+        <modal v-if="showModal" @close="showModal = false">
+        </modal>
         <br /><br />
         <h1>Ticket Info</h1>
         <div class="material-card">
@@ -26,6 +28,8 @@
 
 import axios from 'axios'
 import Message from './Message.vue'
+import Modal from './ClosePrompt.vue'
+
 
 const axios_csrf = axios.create({
   headers: {'X-CSRFToken': csrf_token}
@@ -34,6 +38,7 @@ const axios_csrf = axios.create({
 export default {
     data () {
         return {
+            showModal: false,
             ticket: {title: '', status: {name: ''}, course_id: ''},
             reply: '',
             messages: [],
@@ -71,7 +76,7 @@ export default {
             .catch(error => {
                 console.log(error)
             })
-        }
+        },
     },
     mounted: function () {
         this.getTicket()
@@ -88,6 +93,7 @@ export default {
     },
     components: {
         'message': Message,
+        'modal' : Modal,
     }
 }
 

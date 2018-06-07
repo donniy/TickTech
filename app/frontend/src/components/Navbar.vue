@@ -5,7 +5,7 @@
         </a>
         <ul class="navbar-nav mr-auto">
             <li :class="'nav-item ' + (active == 'my-tickets' ? 'active' : '')">
-                <a class="nav-link" href="/mytickets">My Tickets <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/user/1">My Tickets <span class="sr-only">(current)</span></a>
             </li>
             <li :class="'nav-item ' + (active == 'submit-ticket' ? 'active' : '')">
                 <a class="nav-link" href="/form">Submit a ticket</a>

@@ -11,7 +11,6 @@
 <script>
 
 import Navbar from './components/Navbar.vue'
-import modal from './components/modal.vue';
 
 export default {
     name: 'App',
@@ -22,17 +21,9 @@ export default {
     },
     components: {
         'navbar': Navbar,
-        modal,
     },
-    methods: {
-      showModal() {
-        this.isModalVisible = true;
-      },
-      closeModal() {
-        this.isModalVisible = false;
-    },
-  }
-};
+}
+
 </script>
 
 <style scoped>
