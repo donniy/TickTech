@@ -2,6 +2,8 @@ from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os.path
+from sqlalchemy_utils import UUIDType
+import uuid
 
 
 db = SQLAlchemy()
@@ -22,6 +24,7 @@ class DatabaseInsertException(DatabaseException):
 def init_db():
     db.create_all()
     addTicketStatus()
+    addTicketStatus("closed")
     addTicket()
 
 
@@ -91,17 +94,3 @@ def addTicket(user_id=1, email="test@email.com", course_id="1", status_id=1, tit
     except DatabaseInsertException as exp:
         print(exp.response_message)
 
-def addNote(user_id=1, ticket_id=1,text="", timestamp=datetime.now()):
-    from flaskr.models import Note
-    n = Note.Note()
-    n.user_id = user_id
-    n.ticket_id = ticket_id
-    n.text = text
-    n.timestamp = timestamp
-    try:
-        success = addItemSafelyToDB(n)
-        print(success)
-    except DatabaseInsertException as exp:
-        print(exp)
-
-        

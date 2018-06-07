@@ -1,6 +1,9 @@
 <template>
     <div>
         <a v-bind:href="'/course/' + ticket.course_id" class="btn btn-primary back-button">&laquo; Terug naar cursus</a>
+        <button class="btn btn-primary close-button" @click="showModal = true">Close Ticket</button>
+        <modal  v-if="showModal" @yes="closeTicket()" @close="showModal = false">
+        </modal>
         <br /><br />
         <div class="row">
             <div class="col-md-8 col-sm-8 col-lg-8 col-xs-12">
@@ -45,6 +48,8 @@
 
 import axios from 'axios'
 import Message from './Message.vue'
+
+import Modal from './ClosePrompt.vue'
 import Note from './Note.vue'
 
 const axios_csrf = axios.create({
@@ -54,6 +59,7 @@ const axios_csrf = axios.create({
 export default {
     data () {
         return {
+            showModal: false,
             ticket: {title: '', status: {name: ''}, course_id: ''},
             reply: '',
             messages: [],
@@ -68,16 +74,6 @@ export default {
             axios.get(path)
             .then(response => {
                 this.ticket = response.data
-
-                //get all notes
-                axios.get('/api/notes/'+this.$route.params.ticket_id)
-                .then(res => {
-                    this.notes = res.data
-                    console.log(res)
-                })
-                .catch(err => {
-                    console.log(err)
-                })
             })
             .catch(error => {
                 console.log(error)
@@ -93,6 +89,17 @@ export default {
                 console.log(error)
             })
         },
+        getNotes () {
+            //get all notes
+            axios.get('/api/notes/'+this.$route.params.ticket_id)
+            .then(res => {
+                this.notes = res.data.json_list
+                console.log(res)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
         sendReply () {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/reply'
             axios_csrf.post(path, {message: this.reply})
@@ -105,19 +112,29 @@ export default {
                 console.log(error)
             })
         },
+        closeTicket () {
+            this.showModal = false
+            const path = '/api/ticket/' + this.$route.params.ticket_id + '/close'
+            axios_csrf.post(path)
+            .then(response => {
+                // TODO: Iets van een notificatie ofzo? '234 closed this ticket'? iig niet meer hardcoden "closed"
+                this.ticket.status.name = "closed"
+            })
+        },
         addNote(){
             console.log(this.noteTextArea)
             const path = '/api/note/add'
             var noteData = {
                 "ticket_id":this.$route.params.ticket_id ,
-                "user_id":this.$route.params.user_id ,
-                "message":this.noteTextArea
+                "user_id":this.$route.params.user_id | 1 ,
+                "text":this.noteTextArea
             }
 
             axios_csrf.post(path, noteData)
             .then(response => {
                 this.noteTextArea = ""
                 this.$refs.popoverRef.$emit('close')
+                this.notes.push(response.data)
                 console.log("successfully sent note")
                 console.log(response)
             })
@@ -129,6 +146,7 @@ export default {
     mounted: function () {
         this.getTicket()
         this.getMessages()
+        this.getNotes()
         this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
     },
     sockets: {
@@ -141,6 +159,7 @@ export default {
     },
     components: {
         'message': Message,
+        'modal' : Modal,
         'note': Note
     }
 }

@@ -21,8 +21,9 @@ export default {
     },
     components: {
         'navbar': Navbar,
-    }
+    },
 }
+
 </script>
 
 <style scoped>

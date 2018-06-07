@@ -54,6 +54,7 @@ export default {
   },
   mounted: function () {
     this.created()
+    this.$emit('tab-activate', 'my-tickets')
   },
   components: {
     'ticket': Ticket,
