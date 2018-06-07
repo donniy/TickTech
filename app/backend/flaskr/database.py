@@ -76,9 +76,9 @@ def addTicket(user_id=1, email="test@email.com", course_id="1", status_id=1, tit
     t.title = title
     t.timestamp = timestamp
     t.label_id = 1
-    print(success)
     try:
-        succes = addItemSafelyToDB(t)
+        success = addItemSafelyToDB(t)
+        print(success)
     except DatabaseInsertException as exp:
         print(exp)
 
@@ -91,6 +91,7 @@ def addNote(user_id=1, ticket_id=1,text="", timestamp=datetime.now()):
     n.timestamp = timestamp
     try:
         success = addItemSafelyToDB(n)
-    except: DatabaseInsertException as exp:
+        print(success)
+    except DatabaseInsertException as exp:
         print(exp)
 

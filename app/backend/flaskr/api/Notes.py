@@ -22,6 +22,11 @@ def add_new_note():
     user_id = request.json.get('user_id')
     message = request.json.get('message')
 
-    success = database.addNote(user_id, ticket_id,message)
+    try:
+        success = database.addNote(user_id, ticket_id, message)
+        print(success)
+    except database.DatabaseInsertException as err:
+        print(err)
 
-    return jsonify({'test1':ticket_id,'test2':user_id,'test3':message,'success':success})
+    return
+    # return jsonify({'test1':ticket_id,'test2':user_id,'test3':message,'success':success})

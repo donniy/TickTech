@@ -17,7 +17,7 @@ class Note(db.Model):
     text = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-    ticket = db.relationship('Ticket', backref=db.backref('messages', lazy=True))
+    ticket = db.relationship('Ticket', backref=db.backref('notes', lazy=True))
     # message = db.relationship('Message', backref=db.backref('notes',lazy=True))
 
     def __repr__(self):
@@ -33,3 +33,13 @@ class Note(db.Model):
             'text': self.text,
             'timestamp': self.timestamp
         }
+
+
+    @property
+    def checkValid(self):
+        """
+        Checks if an object is valid to insert into a database. So all
+        fields that should be set, are set. If a value is not set, throw
+        for now a ValueError().
+        """
+        pass
