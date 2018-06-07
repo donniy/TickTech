@@ -1,5 +1,7 @@
 from datetime import datetime
 from flaskr import database
+from sqlalchemy_utils import UUIDType
+import uuid
 
 db = database.db
 
@@ -13,7 +15,7 @@ class Ticket(db.Model):
     """
     Een ticket.
     """
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(UUIDType(binary=False), primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)
     course_id = db.Column(db.String(120), unique=False, nullable=False)
 
@@ -58,6 +60,7 @@ class Ticket(db.Model):
             'user_id': self.user_id
         }
 
+
     @property
     def checkValid(self):
         """
@@ -73,6 +76,7 @@ class Ticket(db.Model):
             db_error = database.DatabaseInsertException(debug_message)
             db_error.response_message = "TEST"
             raise db_error
+
 
     @property
     def close(self):
@@ -109,7 +113,7 @@ class TicketLabel(db.Model):
     Label van een ticket, die in kan worden gesteld.
     """
     id = db.Column(db.Integer, primary_key=True)
-    ticket_id = db.Column(db.Integer, unique=False, nullable=True)
+    ticket_id = db.Column(UUIDType(binary=False), unique=False, nullable=True)
     course_id = db.Column(db.String(120), unique=False, nullable=False)
     name = db.Column(db.String(50), nullable=False)
 
