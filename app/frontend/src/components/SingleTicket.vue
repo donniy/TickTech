@@ -10,7 +10,7 @@
                     Status: {{ticket.status.name}}
                 </div>
 
-                <message v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
+                <message v-bind:self="12345678" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
 
                 <form v-on:submit.prevent="sendReply" class="reply-area container">
                     <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
@@ -83,12 +83,23 @@ export default {
                 console.log(error)
             })
         },
+        getMessages () {
+            const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
+            axios.get(path)
+            .then(response => {
+                this.messages = response.data.json_list
+            })
+            .catch(error => {
+                console.log(error)
+            })
+        },
         sendReply () {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/reply'
             axios_csrf.post(path, {message: this.reply})
             .then(response => {
-                this.messages.push(response.data.message)
-                this.reply = ''
+                if (response.data.status == "success") {
+                    this.reply = ''
+                }
             })
             .catch(error => {
                 console.log(error)
@@ -117,7 +128,16 @@ export default {
     },
     mounted: function () {
         this.getTicket()
-        console.log(csrf_token);
+        this.getMessages()
+        this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
+    },
+    sockets: {
+        connect: function () {
+        },
+        messageAdded: function (data) {
+            console.log(data)
+            this.messages.push(data)
+        }
     },
     components: {
         'message': Message,

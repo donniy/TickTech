@@ -6,7 +6,7 @@
 
                 <section>
                     <!--Student name and number  -->
-                    <form v-on:submit.prevent="$validator.validateAll(); console.log(form);">
+                    <form v-on:submit.prevent="sendTicket;">
                         <div class="form-group">
                             <label for="name">Name</label>
                             <input id="name" class="form-control" name="name" v-model="form.name" v-validate="'required|min:1'" type="text" placeholder="Full name">
@@ -16,14 +16,20 @@
                         </div>
                         <div class="form-group">
                             <label for="studentnumber">Student number</label>
-                            <input class="form-control" id="studentnumber" name="studentnumber" v-model="form.sudentid" v-validate="'required|min:5'" type="number" placeholder="Student Number">
-                            <div v-show="errors.has('StudentID')" class="invalid-feedback">
-                                {{ errors.first('StudentID') }}
+                            <input class="form-control" id="studentnumber" name="studentnumber" v-model="form.studentid" v-validate="'required'" type="number" placeholder="Student Number">
+                            <div v-show="errors.has('studentid')" class="invalid-feedback">
+                                {{ errors.first('studentid') }}
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="message">Message</label>
+                            <input id="subject" class="form-control-title" v-validate="'required|max:50'"name="subject" v-model="form.subject" type="text" placeholder="Title">
+                            <div v-show="errors.has('subject')" class="invalid-feedback">
+                                {{ errors.first('subject') }}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <textarea id="message" class="form-control" name="message" v-validate="'required'" placeholder="Message" v-model="form.message"></textarea>
                             <div v-if="errors.has('message')" class="invalid-feedback">
                                 {{ errors.first('message') }}
@@ -31,19 +37,31 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="category">Category</label>
-                            <select id="category" class="form-control custom-select" v-model="form.label_class">
+                            <label for="course">Course</label>
+                            <select id="course" v-validate="'required'" class="form-control custom-select" v-model="form.courseid">
                                 <option disabled value="">Nothing selected</option>
-                                <option v-for="option in options.labels" v-bind:value="option.value">
+                                <option v-for="option in categories.courses" v-bind:value="option.value">
                                 {{ option.text }}
                                 </option>
                             </select>
 
                         </div>
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <select id="category" v-validate="'required'" class="form-control custom-select" v-model="form.labelid">
+                                <option disabled value="">Nothing selected</option>
+                                <option v-for="option in categories.labels[form.courseid]" v-bind:value="option.value">{{ option.text }}</option>
+                            </select>
 
-                        <button class="btn btn-primary">
+                        </div>
+
+                        <button v-on:click="sendTicket" class="btn btn-primary" v-bind:disabled="errors.any()">
                             Submit
                         </button>
+
+                        <p class="def-error-msg" v-show="errors.any()">
+                            Please fill out the form correctly
+                        </p>
 
                     </form>
                 </section>
@@ -57,29 +75,74 @@
 import axios from 'axios'
 import VeeValidate from 'vee-validate';
 
+const axios_csrf = axios.create({
+  headers: {'X-CSRFToken': csrf_token}
+});
+
 export default {
     data () {
         return {
             form: {
                 name: "",
-                StudentID: "",
+                studentid: "",
                 message: "",
-                label_class: "",
-            },
-            options: {
-                labels: [
-                    { value: "Assignment 1", text: "Ass1" },
-                    { value: "Assignment 2", text: "Ass2" },
-                    { value: "Assignment 3", text: "Ass3" },
-                    { value: "Deadlines", text: "Deadlines" },
-                    { value: "Absense", text: "Absense" },
-                    { value: "Course guide", text: "Course" }
-                ]
+                courseid: "",
+                labelid: "",
+                subject: "",
+            },  categories: {
+                courses:[
+                    { value: "Prosoft", text: "Project software engineering"},
+                    { value: "ATF", text: "Automaten en formele talen"},
+                    { value: "OS", text: "Operating systems"}
+                ], labels: {
+                    Prosoft: [
+                        { value: "Ass1", text: "Assignment 1" },
+                        { value: "Ass2", text: "Assignment 2" },
+                        { value: "Ass3", text: "Assignment 3" },
+                        { value: "Deadlines", text: "Deadlines" },
+                        { value: "Absense", text: "Absense" },
+                        { value: "Course", text: "Course Guide" }
+                    ], ATF: [
+                        { value: "Ass1", text: "Klachten" },
+                        { value: "Ass2", text: "Meer klachten" },
+                        { value: "Ass3", text: "Klachten extra" },
+                        { value: "Deadlines", text: "Deadlines" },
+                        { value: "Absense", text: "Absense" },
+                        { value: "Course", text: "Course Guide" }
+                    ], OS: [
+                        { value: "Ass1", text: "Hackme1" },
+                        { value: "Ass2", text: "Schedulers" },
+                        { value: "Ass3", text: "Cijfer info" },
+                        { value: "Deadlines", text: "Deadlines" },
+                        { value: "Absense", text: "Absense" },
+                        { value: "Course", text: "Course Guide" }
+                    ]
+                }
             }
         }
-    },
-    mounted: function() {
-        this.$emit('tab-activate', 'submit-ticket')
+    }, computed: {
+        options: function(event) {
+            return categories.labels[form.courseid]
+        }
+    }, methods: {
+        sendTicket () {
+            this.$validator.validateAll()
+            const path = '/api/ticket/submit'
+            axios_csrf.post(path, this.form)
+            .then(response => {
+                window.location = "/ticket/" + response.data.ticketid;
+                this.form = ''
+            }).catch(error => {
+                    console.log(error)
+            })
+
+        }, onChange: function(e) {
+          console.log(event.srcElement.value);
+          this.categories = this.categories
+        },
+        mounted: function() {
+            this.$emit('tab-activate', 'submit-ticket')
+        }
     }
 }
 
