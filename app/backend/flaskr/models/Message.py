@@ -10,7 +10,7 @@ class Message(db.Model):
     message_id = db.Column(db.Integer, primary_key=True)
     ticket_id = db.Column(db.Integer, db.ForeignKey('ticket.id'), default=0, nullable=False)
     user_id = db.Column(db.Integer, nullable=False)
-    message = db.Column(db.Text, nullable=False)
+    text = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     reply_id = db.Column(db.Integer, nullable=True)
 
@@ -28,10 +28,14 @@ class Message(db.Model):
         dus zorg dat er geen gevoelige info in zit.
         """
         return {
-            'message_id': self.message_id,
-            'ticket_id': self.ticket_id,
+            'id': self.message_id,
+            'ticket': self.ticket.serialize,
             'user_id': self.user_id,
-            'message': self.message,
+            'text': self.text,
             'timestamp': self.timestamp,
             'reply_id': self.reply_id
         }
+
+    @property
+    def checkValid(self):
+        pass

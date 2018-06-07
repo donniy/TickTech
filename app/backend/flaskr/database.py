@@ -6,26 +6,61 @@ import os.path
 
 db = SQLAlchemy()
 
+
+class DatabaseException(Exception):
+    def __init__(self, debug_message):
+        self.debug_message = debug_message
+
+
+class DatabaseInsertException(DatabaseException):
+    def __init__(self, debug_message):
+        super().__init__(debug_message)
+        self.response_message = response_message = ""
+
+
+
 def init_db():
     db.create_all()
     addTicketStatus()
     addTicket()
 
 
+def serialize_list(l):
+    return [i.serialize for i in l]
+
+
 def json_list(l):
     """
     Maak JSON van de lijst.
     """
-    return jsonify(json_list=[i.serialize for i in l])
+    return jsonify(json_list=serialize_list(l))
 
+
+# Use these functions if you want to add items to
+
+# to the database.
+def addItemSafelyToDB(item):
+    """
+    Add the item to the db by checking
+    if the item is valid. The error can be logged.
+    """
+    try:
+        item.checkValid
+    except DatabaseException as DBerror:
+        print("DEBUG: " + DBerror.debug_message)
+        raise DBerror
+    db.session.add(item)
+    db.session.commit()
+
+
+#end functions for insertion for database.
 
 #just for testing
 def addTicketStatus(name="Needs help"):
     from flaskr.models import ticket
     ts = ticket.TicketStatus()
     ts.name = name
-    db.session.add(ts)
-    db.session.commit()
+    addItemSafelyToDB(ts)
 
 
 def addTicketLabel(ticked_id=1, course_id="1", name="test"):
@@ -34,8 +69,7 @@ def addTicketLabel(ticked_id=1, course_id="1", name="test"):
     tl.ticked_id = ticked_id
     tl.course_id = course_id
     tl.name = name
-    db.session.add(tl)
-    db.session.commit()
+    addItemSafelyToDB(tl)
 
 
 #just for testing
@@ -47,9 +81,11 @@ def addTicket(user_id=1, email="test@email.com", course_id="1", status_id=1, tit
     t.user_id = user_id
     t.email = email
     t.course_id = course_id
-    t.status_id = status_id
+    t.status_id = 10000
     t.title = title
     t.timestamp = timestamp
     t.label_id = 1
-    db.session.add(t)
-    db.session.commit()
+    try:
+        succes = addItemSafelyToDB(t)
+    except DatabaseInsertException as exp:
+        print(exp.response_message)
