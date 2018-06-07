@@ -113,6 +113,7 @@ class TicketLabel(db.Model):
     Label van een ticket, die in kan worden gesteld.
     """
     id = db.Column(db.Integer, primary_key=True)
+    ticket_id = db.Column(UUIDType(binary=False), unique=False, nullable=True)
     course_id = db.Column(db.String(120), unique=False, nullable=False)
     name = db.Column(db.String(50), nullable=False)
 

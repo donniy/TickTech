@@ -86,6 +86,22 @@ def addTicket(user_id=1, email="test@email.com", course_id="1", status_id=1, tit
     t.timestamp = timestamp
     t.label_id = 1
     try:
-        succes = addItemSafelyToDB(t)
+        success = addItemSafelyToDB(t)
+        print(success)
     except DatabaseInsertException as exp:
         print(exp.response_message)
+
+def addNote(user_id=1, ticket_id=1,text="", timestamp=datetime.now()):
+    from flaskr.models import Note
+    n = Note.Note()
+    n.user_id = user_id
+    n.ticket_id = ticket_id
+    n.text = text
+    n.timestamp = timestamp
+    try:
+        success = addItemSafelyToDB(n)
+        print(success)
+    except DatabaseInsertException as exp:
+        print(exp)
+
+        

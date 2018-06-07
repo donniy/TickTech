@@ -8,13 +8,13 @@ import uuid, datetime
 
 
 #Make this post with a button.
-@apiBluePrint.route('/ticket/<ticket_id>/close')
+@apiBluePrint.route('/ticket/<ticket_id>/close', methods=['POST'])
 def close_ticket(ticket_id):
     """ Update this with a rights check."""
     ticket = Ticket.query.get(ticket_id)
     ticket.close
     db.session.commit()
-    return "ticket closed"
+    return jsonify({'status': "success", 'message': 'ticket closed'})
 
 
 @apiBluePrint.route('/ticket/<ticket_id>')
@@ -96,7 +96,6 @@ def create_ticket():
     studentid = escape(request.json["studentid"])
     message = escape(request.json["message"])
     courseid = escape(request.json["courseid"])
-    print(courseid)
     labelid = escape(request.json["labelid"])
     subject = escape(request.json["subject"])
     email = "notimplemented@nothing.nope"
