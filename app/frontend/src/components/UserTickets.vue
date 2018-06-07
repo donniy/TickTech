@@ -9,6 +9,7 @@
                     v-for="ticket in tickets"
                     v-bind:key="ticket.id"
                     v-bind:ticket="ticket"
+                    v-bind:base_url="'/student/ticket/'"
                 ></ticket>
             </b-card>
         </b-collapse>
