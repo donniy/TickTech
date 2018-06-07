@@ -52,6 +52,7 @@ def get_ticket_messages(ticket_id):
     print(database.json_list(ticket.messages))
     return database.json_list(list(ticket.messages))
 
+
 # TODO: Deze verplaatsen naar user zodra die beschikbaar is
 @apiBluePrint.route('/student/ticket/<ticket_id>/reply', methods=['POST'])
 def student_reply_message(ticket_id):
@@ -72,6 +73,7 @@ def student_reply_message(ticket_id):
     socketio.emit('messageAdded', {'text': message.text, 'user_id': message.user_id}, room=room)
 
     return jsonify({'status': "success", 'message': message.serialize})
+
 
 @apiBluePrint.route('/ticket/submit', methods=['POST'])
 def create_ticket():
