@@ -183,6 +183,27 @@ a.list-ticket:hover, a.list-ticket:focus {
     margin: 15px 10px;
 }
 
+.create-button {
+    margin-bottom: 40px;
+    width: 20%;
+    background-color: $default-red;
+    position: absolute;
+    bottom: 0;
+}
+.create-button:hover {
+    background-color: darken($default-red, 7%);
+}
+
+.dropdown-button {
+    background-color: darken(#FFF, 2%);
+    width: 100%;
+    color: $text-color-def;
+    font-size: 1.5em;
+}
+.dropdown-button:enabled:focus {
+    color: white;
+
+}
 .reply-area {
     textarea {
         box-shadow: 0 2px 4px 0 rgba(50,50,93,.1);
