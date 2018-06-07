@@ -1,6 +1,7 @@
 <template>
     <div>
         <a v-bind:href="'/course/' + ticket.course_id" class="btn btn-primary back-button">&laquo; Terug naar cursus</a>
+        <a v-bind:href="ticket.course_id + '/closeticket'" class="btn btn-primary close-button">Close Ticket</a>
         <br /><br />
         <h1>Ticket Info</h1>
         <div class="material-card">
