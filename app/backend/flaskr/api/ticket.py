@@ -96,7 +96,6 @@ def create_ticket():
     studentid = escape(request.json["studentid"])
     message = escape(request.json["message"])
     courseid = escape(request.json["courseid"])
-    print(courseid)
     labelid = escape(request.json["labelid"])
     subject = escape(request.json["subject"])
     email = "notimplemented@nothing.nope"
