@@ -116,7 +116,8 @@ export default {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/close'
             axios_csrf.post(path)
             .then(response => {
-                // TODO: Iets van een notificatie ofzo? '234 closed this ticket'?
+                // TODO: Iets van een notificatie ofzo? '234 closed this ticket'? iig niet meer hardcoden "closed"
+                this.ticket.status.name = "closed"
             })
         },
         addNote(){

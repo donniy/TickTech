@@ -22,6 +22,7 @@ class DatabaseInsertException(DatabaseException):
 def init_db():
     db.create_all()
     addTicketStatus()
+    addTicketStatus("closed")
     addTicket()
 
 
