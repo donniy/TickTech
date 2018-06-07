@@ -23,6 +23,11 @@ const routerOptions = [
         component: 'StudentForm',
     },
     {
+        path: '/login',
+        name: 'Login',
+        component: 'Login'
+    },
+    {
         path: '*',
         component: 'NotFound'
     }
