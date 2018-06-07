@@ -121,7 +121,6 @@ class TicketLabel(db.Model):
     def serialize(self):
         return {
             'id': self.id,
-            'ticket_id':  self.ticket_id,
             'course_id': self.course_id,
             'name': self.name
         }
