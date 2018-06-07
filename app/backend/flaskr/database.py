@@ -6,8 +6,18 @@ import os.path
 
 db = SQLAlchemy()
 
-class DatabaseInsertException(Exception):
-    pass
+
+class DatabaseException(Exception):
+    def __init__(self, debug_message):
+        self.debug_message = debug_message
+
+
+class DatabaseInsertException(DatabaseException):
+    def __init__(self, debug_message):
+        super().__init__(debug_message)
+        self.response_message = response_message = ""
+
+
 
 def init_db():
     db.create_all()
@@ -36,11 +46,10 @@ def addItemSafelyToDB(item):
     """
     try:
         item.checkValid
-        db.session.add(item)
-    except ValueError as err:
-        raise DatabaseInsertException("Object could not be added to database" +
-                                      ", with value error: {0}".format(err))
-
+    except DatabaseException as DBerror:
+        print("DEBUG: " + DBerror.debug_message)
+        raise DBerror
+    db.session.add(item)
     db.session.commit()
 
 
@@ -72,7 +81,7 @@ def addTicket(user_id=1, email="test@email.com", course_id="1", status_id=1, tit
     t.user_id = user_id
     t.email = email
     t.course_id = course_id
-    t.status_id = 1
+    t.status_id = 10000
     t.title = title
     t.timestamp = timestamp
     t.label_id = 1
@@ -80,7 +89,7 @@ def addTicket(user_id=1, email="test@email.com", course_id="1", status_id=1, tit
         success = addItemSafelyToDB(t)
         print(success)
     except DatabaseInsertException as exp:
-        print(exp)
+        print(exp.response_message)
 
 def addNote(user_id=1, ticket_id=1,text="", timestamp=datetime.now()):
     from flaskr.models import Note
@@ -95,3 +104,4 @@ def addNote(user_id=1, ticket_id=1,text="", timestamp=datetime.now()):
     except DatabaseInsertException as exp:
         print(exp)
 
+        
