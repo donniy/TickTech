@@ -12,7 +12,7 @@
 
           <div class="modal-body">
             <slot name="body">
-              <button class="btn btn-primary" @click="$emit('close')">
+              <button class="btn btn-primary" @click="$emit('yes')">
                 Yes
               </button>
               <button class="btn btn-primary close-button" @click="$emit('close')">

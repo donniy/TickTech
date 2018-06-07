@@ -2,7 +2,7 @@
     <div>
         <a v-bind:href="'/course/' + ticket.course_id" class="btn btn-primary back-button">&laquo; Terug naar cursus</a>
         <button class="btn btn-primary close-button" @click="showModal = true">Close Ticket</button>
-        <modal v-if="showModal" @close="showModal = false">
+        <modal  v-if="showModal" @yes="closeTicket()" @close="showModal = false">
         </modal>
         <br /><br />
         <h1>Ticket Info</h1>
@@ -77,6 +77,17 @@ export default {
                 console.log(error)
             })
         },
+        closeTicket () {
+            this.showModal = false
+            const path = '/api/ticket/' + this.$route.params.ticket_id + '/close'
+            axios_csrf.post(path)
+            .then(response => {
+                // TODO: Iets van een notificatie ofzo? '234 closed this ticket'?
+            })
+            .catch(error => {
+                console.log(error)
+            })
+        }
     },
     mounted: function () {
         this.getTicket()
