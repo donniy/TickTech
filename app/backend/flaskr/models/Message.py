@@ -1,5 +1,6 @@
 from datetime import datetime
 from flaskr import database
+from sqlalchemy_utils import UUIDType
 
 db = database.db
 
@@ -8,7 +9,7 @@ class Message(db.Model):
     Een message.
     """
     message_id = db.Column(db.Integer, primary_key=True)
-    ticket_id = db.Column(db.Integer, db.ForeignKey('ticket.id'), default=0, nullable=False)
+    ticket_id = db.Column(UUIDType(binary=False), db.ForeignKey('ticket.id'), default=0, nullable=False)
     user_id = db.Column(db.Integer, nullable=False)
     text = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
