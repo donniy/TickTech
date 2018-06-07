@@ -1,8 +1,17 @@
 <template>
     <div>
         <h1>Tickets in cursus {{ $route.params.course_id }}</h1>
+
+        Status:
+        <select v-model="status_filter">
+            <option> All </option>
+            <option> Needs help </option>
+            <option> Answered </option>
+        </select>
+
         <ticket
             v-for="ticket in tickets"
+            v-if="status_filter == 'All' || ticket.status.name == status_filter"
             v-bind:key="ticket.id"
             v-bind:ticket="ticket"
         ></ticket>
@@ -18,7 +27,9 @@ export default {
   data () {
     return {
       tickets: [],
-      status: 'not set'
+      status: 'not set',
+
+      status_filter: 'All'
     }
   },
   methods: {
