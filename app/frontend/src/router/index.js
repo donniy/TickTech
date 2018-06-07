@@ -37,13 +37,18 @@ const routerOptions = [
         name: 'AskAQuestion',
         component: 'StudentForm',
     },
+    // {
+    //     path: '/ticket/:ticket_id/closeticket',
+    //     name: 'closeticket',
+    //     component: 'modal'
+    // },
     {
         path: '/login',
         name: 'Login',
         component: 'Login'
     },
     {
-        path: '/ta/:ta_id/inbox',
+        path: '/ta/:ta_id',
         name: 'TAInbox',
         component: 'TA_Inbox'
     },

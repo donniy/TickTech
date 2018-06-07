@@ -6,7 +6,6 @@ from flask import jsonify, request, escape
 from flaskr import socketio
 import uuid, datetime
 
-
 #Make this post with a button.
 @apiBluePrint.route('/ticket/<ticket_id>/close', methods=['POST'])
 def close_ticket(ticket_id):
@@ -16,7 +15,6 @@ def close_ticket(ticket_id):
     db.session.commit()
     return jsonify({'status': "success", 'message': 'ticket closed'})
 
-
 @apiBluePrint.route('/ticket/<ticket_id>')
 def retrieve_single_ticket(ticket_id):
     """
@@ -25,8 +23,6 @@ def retrieve_single_ticket(ticket_id):
     # TODO: Controlleer rechten
     ticketObj = Ticket.query.get(ticket_id)
     return jsonify(ticketObj.serialize)
-
-
 
 @apiBluePrint.route('/ticket/<ticket_id>/reply', methods=['POST'])
 def reply_message(ticket_id):
@@ -54,16 +50,12 @@ def reply_message(ticket_id):
 
     return jsonify({'status': "success", 'message': message.serialize})
 
-
-
 @apiBluePrint.route('/ticket/<ticket_id>/messages')
 def get_ticket_messages(ticket_id):
     """"""
     ticket = Ticket.query.get(ticket_id)
     print(database.json_list(ticket.messages))
     return database.json_list(list(ticket.messages))
-
-
 
 # TODO: Deze verplaatsen naar user zodra die beschikbaar is
 @apiBluePrint.route('/student/ticket/<ticket_id>/reply', methods=['POST'])
@@ -86,7 +78,6 @@ def student_reply_message(ticket_id):
 
     return jsonify({'status': "success", 'message': message.serialize})
 
-
 @apiBluePrint.route('/ticket/submit', methods=['POST'])
 def create_ticket():
     """
@@ -94,16 +85,16 @@ def create_ticket():
     """
     name = escape(request.json["name"])
     studentid = escape(request.json["studentid"])
+    email = escape(request.json["email"])
+    subject = escape(request.json["subject"])
     message = escape(request.json["message"])
     courseid = escape(request.json["courseid"])
     labelid = escape(request.json["labelid"])
-    subject = escape(request.json["subject"])
-    email = "notimplemented@nothing.nope"
 
     # Validate and then create the ticket.
-    if ticketValidate(name, studentid, message, courseid, labelid, subject):
+    if ticketValidate(name, studentid, email, subject, message, courseid, labelid):
 
-        ticket_new = ticket_constructor(name, studentid, message, courseid, labelid, subject, email)
+        ticket_new = ticket_constructor(name, studentid, email, subject, message, courseid, labelid)
         try:
             database.addItemSafelyToDB(ticket_new)
             message = Message(text=message, ticket=ticket_new, user_id=ticket_new.user_id)
@@ -114,17 +105,17 @@ def create_ticket():
             #Need to handle this better somehow. It should never happen though.
 
 
-        return jsonify({'status': "success", 'ticketid' : str(ticket_new.id)});
+        return jsonify({'status': "success", 'ticketid' : str(ticket_new.id)})
     # Just return, form is invalid so a failure will occur clientside.
-    return;
+    return
 
-
-def ticketValidate(name, studentid, message, courseid, labelid, subject):
-
+def ticketValidate(name, studentid, email, subject, message, courseid, labelid):
     # Names can only contain letters, spaces, - or ' in some cases.
     for letter in name:
         if not letter.isalpha() and not letter in " '-":
             return False
+
+    #TODO implement check validation email (is it even possible?)        
 
     # A number should be within certain bounds and only numerical.
     try:
@@ -134,7 +125,6 @@ def ticketValidate(name, studentid, message, courseid, labelid, subject):
 
     except ValueError:
         return False
-
 
     if len(subject) > 50:
         return False
@@ -149,9 +139,7 @@ def ticketValidate(name, studentid, message, courseid, labelid, subject):
 
     return True
 
-
-
-def ticket_constructor(name, studentid, message, courseid, labelid, subject, email):
+def ticket_constructor(name, studentid, email, subject, message, courseid, labelid):
 
     # Create new ticket and add data.
     ticket_new = Ticket()

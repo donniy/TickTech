@@ -2,7 +2,7 @@
     <div>
     <h2>Tickets van Student {{ $route.params.user_id }}</h2>
     <div>
-        <b-btn variant="primary" v-b-toggle.collapseA>Course name {{ $route.params.course_id }}</b-btn>
+        <b-btn variant="primary" class="dropdown-button" v-b-toggle.collapseA>Arbitrary course name {{ $route.params.course_id }}</i></b-btn>
         <b-collapse id="collapseA" class="mt-2">
             <b-card>
                 <ticket
@@ -14,7 +14,7 @@
         </b-collapse>
     </div>
     <div>
-    <b-button href="/form" >New ticket</b-button>
+    <b-button class="create-button" href="/form" >New ticket</b-button>
         </div>
     </div>
 </template>
@@ -54,6 +54,7 @@ export default {
   },
   mounted: function () {
     this.created()
+    this.$emit('tab-activate', 'my-tickets')
   },
   components: {
     'ticket': Ticket,
