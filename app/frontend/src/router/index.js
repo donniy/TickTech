@@ -43,6 +43,11 @@ const routerOptions = [
     //     component: 'modal'
     // },
     {
+        path: '/login',
+        name: 'Login',
+        component: 'Login'
+    },
+    {
         path: '/ta/:ta_id/inbox',
         name: 'TAInbox',
         component: 'TA_Inbox'

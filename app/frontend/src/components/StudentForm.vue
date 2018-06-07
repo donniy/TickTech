@@ -23,14 +23,14 @@
                         </div>
 
                         <div class="form-group">
-                            <input id="subject" class="form-control-title" v-validate="'required|max:50'"name="subject" v-model="form.subject" type="text" placeholder="Title">
+                            <input id="subject" class="form-control-title" v-validate="'required|max:50'"name="subject" v-model="form.subject" type="text" placeholder="Subject">
                             <div v-show="errors.has('subject')" class="invalid-feedback">
                                 {{ errors.first('subject') }}
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <textarea id="message" class="form-control" name="message" v-validate="'required'" placeholder="Message" v-model="form.message"></textarea>
+                            <textarea-autosize id="message" class="form-control" name="message" v-validate="'required'" placeholder="Message" v-model="form.message"></textarea-autosize>
                             <div v-if="errors.has('message')" class="invalid-feedback">
                                 {{ errors.first('message') }}
                             </div>
@@ -40,8 +40,8 @@
                             <label for="course">Course</label>
                             <select id="course" v-validate="'required'" class="form-control custom-select" v-model="form.courseid">
                                 <option disabled value="">Nothing selected</option>
-                                <option v-for="option in categories.courses" v-bind:value="option.value">
-                                {{ option.text }}
+                                <option v-for="option in categories.courses" v-bind:value="option.id">
+                                {{ option.name }}
                                 </option>
                             </select>
 
@@ -89,35 +89,10 @@ export default {
                 courseid: "",
                 labelid: "",
                 subject: "",
-            },  categories: {
-                courses:[
-                    { value: "Prosoft", text: "Project software engineering"},
-                    { value: "ATF", text: "Automaten en formele talen"},
-                    { value: "OS", text: "Operating systems"}
-                ], labels: {
-                    Prosoft: [
-                        { value: "Ass1", text: "Assignment 1" },
-                        { value: "Ass2", text: "Assignment 2" },
-                        { value: "Ass3", text: "Assignment 3" },
-                        { value: "Deadlines", text: "Deadlines" },
-                        { value: "Absense", text: "Absense" },
-                        { value: "Course", text: "Course Guide" }
-                    ], ATF: [
-                        { value: "Ass1", text: "Klachten" },
-                        { value: "Ass2", text: "Meer klachten" },
-                        { value: "Ass3", text: "Klachten extra" },
-                        { value: "Deadlines", text: "Deadlines" },
-                        { value: "Absense", text: "Absense" },
-                        { value: "Course", text: "Course Guide" }
-                    ], OS: [
-                        { value: "Ass1", text: "Hackme1" },
-                        { value: "Ass2", text: "Schedulers" },
-                        { value: "Ass3", text: "Cijfer info" },
-                        { value: "Deadlines", text: "Deadlines" },
-                        { value: "Absense", text: "Absense" },
-                        { value: "Course", text: "Course Guide" }
-                    ]
-                }
+            },
+            categories: {
+                courses:[],
+                labels: {}
             }
         }
     }, computed: {
@@ -143,7 +118,32 @@ export default {
         mounted: function() {
             this.$emit('tab-activate', 'submit-ticket')
         }
-    }
+    },
+    mounted () {
+        const pathLabels = '/api/labels';
+        const pathCourses = '/api/courses';
+
+        axios_csrf.get(pathCourses)
+        .then(response => {
+            this.categories.courses = response.data;
+        }).catch(error => {
+            console.log(error);
+        });
+
+        axios_csrf.get(pathLabels)
+        .then(response => {
+            for(let i = 0; i < response.data.json_list.length; i++) {
+                let elem = response.data.json_list[i];
+                if (this.categories.labels[elem.course_id])
+                    this.categories.labels[elem.course_id].push({value: elem.name, text: elem.name});
+                else
+                    this.categories.labels[elem.course_id] = [{value: elem.name, text: elem.name}];
+            }
+        }).catch(error => {
+            console.log(error);
+        });
+    },
 }
+
 
 </script>

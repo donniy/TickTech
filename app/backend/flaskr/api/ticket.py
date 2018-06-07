@@ -8,13 +8,13 @@ import uuid, datetime
 
 
 #Make this post with a button.
-@apiBluePrint.route('/ticket/<ticket_id>/close')
+@apiBluePrint.route('/ticket/<ticket_id>/close', methods=['POST'])
 def close_ticket(ticket_id):
     """ Update this with a rights check."""
     ticket = Ticket.query.get(ticket_id)
     ticket.close
     db.session.commit()
-    return "ticket closed"
+    return jsonify({'status': "success", 'message': 'ticket closed'})
 
 
 @apiBluePrint.route('/ticket/<ticket_id>')
@@ -25,6 +25,7 @@ def retrieve_single_ticket(ticket_id):
     # TODO: Controlleer rechten
     ticketObj = Ticket.query.get(ticket_id)
     return jsonify(ticketObj.serialize)
+
 
 
 @apiBluePrint.route('/ticket/<ticket_id>/reply', methods=['POST'])
@@ -62,6 +63,8 @@ def get_ticket_messages(ticket_id):
     print(database.json_list(ticket.messages))
     return database.json_list(list(ticket.messages))
 
+
+
 # TODO: Deze verplaatsen naar user zodra die beschikbaar is
 @apiBluePrint.route('/student/ticket/<ticket_id>/reply', methods=['POST'])
 def student_reply_message(ticket_id):
@@ -83,6 +86,7 @@ def student_reply_message(ticket_id):
 
     return jsonify({'status': "success", 'message': message.serialize})
 
+
 @apiBluePrint.route('/ticket/submit', methods=['POST'])
 def create_ticket():
     """
@@ -92,7 +96,6 @@ def create_ticket():
     studentid = escape(request.json["studentid"])
     message = escape(request.json["message"])
     courseid = escape(request.json["courseid"])
-    print(courseid)
     labelid = escape(request.json["labelid"])
     subject = escape(request.json["subject"])
     email = "notimplemented@nothing.nope"
@@ -111,6 +114,7 @@ def create_ticket():
         return jsonify({'status': "success", 'ticketid' : str(ticket_new.id)});
     # Just return, form is invalid so a failure will occur clientside.
     return;
+
 
 def ticketValidate(name, studentid, message, courseid, labelid, subject):
 
@@ -142,6 +146,8 @@ def ticketValidate(name, studentid, message, courseid, labelid, subject):
 
     return True
 
+
+
 def ticket_constructor(name, studentid, message, courseid, labelid, subject, email):
 
     # Create new ticket and add data.
@@ -153,8 +159,8 @@ def ticket_constructor(name, studentid, message, courseid, labelid, subject, ema
     if len(subject) > 0:
         ticket_new.title = subject
 
-    # TODO: Decide on string (uuid.uuid4()) or int id (current).
-    ticket_new.id = uuid.uuid1().int % 9223372036854775807
+    #Probably witch to uuid.uuid4() and always check for primary key violation.
+    ticket_new.id = uuid.uuid1()
     ticket_new.email = email
     ticket_new.timestamp = datetime.datetime.now()
 
