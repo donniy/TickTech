@@ -113,7 +113,6 @@ class TicketLabel(db.Model):
     Label van een ticket, die in kan worden gesteld.
     """
     id = db.Column(db.Integer, primary_key=True)
-    ticket_id = db.Column(db.Integer, unique=False, nullable=True)
     course_id = db.Column(db.String(120), unique=False, nullable=False)
     name = db.Column(db.String(50), nullable=False)
 
@@ -121,7 +120,6 @@ class TicketLabel(db.Model):
     def serialize(self):
         return {
             'id': self.id,
-            'ticket_id':  self.ticket_id,
             'course_id': self.course_id,
             'name': self.name
         }
