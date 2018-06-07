@@ -74,16 +74,6 @@ export default {
             axios.get(path)
             .then(response => {
                 this.ticket = response.data
-
-                //get all notes
-                axios.get('/api/notes/'+this.$route.params.ticket_id)
-                .then(res => {
-                    this.notes = res.data
-                    console.log(res)
-                })
-                .catch(err => {
-                    console.log(err)
-                })
             })
             .catch(error => {
                 console.log(error)
@@ -97,6 +87,17 @@ export default {
             })
             .catch(error => {
                 console.log(error)
+            })
+        },
+        getNotes () {
+            //get all notes
+            axios.get('/api/notes/'+this.$route.params.ticket_id)
+            .then(res => {
+                this.notes = res.data.json_list
+                console.log(res)
+            })
+            .catch(err => {
+                console.log(err)
             })
         },
         sendReply () {
@@ -125,14 +126,15 @@ export default {
             const path = '/api/note/add'
             var noteData = {
                 "ticket_id":this.$route.params.ticket_id ,
-                "user_id":this.$route.params.user_id ,
-                "message":this.noteTextArea
+                "user_id":this.$route.params.user_id | 1 ,
+                "text":this.noteTextArea
             }
 
             axios_csrf.post(path, noteData)
             .then(response => {
                 this.noteTextArea = ""
                 this.$refs.popoverRef.$emit('close')
+                this.notes.push(response.data)
                 console.log("successfully sent note")
                 console.log(response)
             })
@@ -144,6 +146,7 @@ export default {
     mounted: function () {
         this.getTicket()
         this.getMessages()
+        this.getNotes()
         this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
     },
     sockets: {
