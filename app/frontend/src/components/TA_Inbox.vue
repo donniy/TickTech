@@ -3,14 +3,7 @@
         <h1>Welkom {{TA.name}}</h1>
 
 
-        <b-table striped hover :items="cases">
-            <template slot="id" slot-scope="data">
-                <a :href="`#${data.value}`">
-                {{data.value}}
-                </a>
-            </template>
-        </b-table>
-        
+        <b-table striped hover :items="cases"></b-table>
     </div>
 </template>
 
@@ -22,27 +15,8 @@ export default {
     data () {
         return {
             TA: {name: "Erik Kooistra"},
-            cases: [{
-                        id: 1, 
-                        name: "Tom van de Looij", 
-                        course: "Project Software Engineering", 
-                        status: "Pending",
-                        date: "06-06-2018"
-                     },
-                    {
-                        id: 2, 
-                        name: "Jarno Bakker", 
-                        course: "Project Software Engineering", 
-                        status: "Pending",
-                        date: "06-06-2018"
-                    },
-                    {
-                        id: 3, 
-                        name: "Damian Frölich", 
-                        course: "Project Software Engineering", 
-                        status: "Pending",
-                        date: "06-06-2018"
-                    }],
+            cases: [],
+
         }
     },
     methods: {
@@ -58,7 +32,7 @@ export default {
         },
 
         getAllCases () {
-            const path = '/api/ticket/all'
+            const path = '/api/ta'
             axios.get(path)
             .then(response => {
                 this.cases = response.data
@@ -67,21 +41,12 @@ export default {
                 console.log(error)
             })
         },
-
-        getTACases () {
-            const path = '/api/ticket/ta/' + this.$route.params.ta_id
-            axios.get(path)
-            .then(response => {
-                this.cases = response.data
-            })
-            .catch(error => {
-                console.log(error)
-            })
+        created () {
+            this.getAllCases()
         }
     },
     mounted: function () {
-        this.getTA()
-        this.getAllCases()
+        this.created()
     }
 }
 
