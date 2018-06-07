@@ -1,7 +1,8 @@
 <template>
     <div class="container">
       <h1>Courses</h1>
-      <div class="col-md-6">
+
+      <!-- <div class="col-md-6">
         <ul class="list-group">
           <li class="list-group-item" v-for="course in courses" v-bind:key="course.id">
             <a v-bind:href="'/course/'+course.id">
@@ -17,7 +18,13 @@
             </a>
           </li>
         </ul>
-      </div>
+      </div> -->
+
+      <course
+          v-for="course in courses"
+          v-bind:key="course.id"
+          v-bind:course="course"
+      ></course>
 
     </div>
 </template>
@@ -26,6 +33,7 @@
 
 //library for ajax requests
 import axios from 'axios'
+import Course from './Course.vue'
 
 export default {
   data () {
@@ -55,6 +63,9 @@ export default {
   },
   mounted: function () {
     this.created()
+  },
+  components: {
+    'course': Course,
   }
 }
 
