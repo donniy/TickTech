@@ -8,7 +8,7 @@
             Status: {{ticket.status.name}}
         </div>
 
-        <message v-bind:self="567" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
+        <message v-bind:self="123123123" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
 
         <form v-on:submit.prevent="sendReply" class="reply-area">
             <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>

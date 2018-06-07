@@ -105,7 +105,7 @@ export default {
             const path = '/api/ticket/submit'
             axios_csrf.post(path, this.form)
             .then(response => {
-                window.location = "/ticket/" + response.data.ticketid;
+                window.location = "/student/ticket/" + response.data.ticketid;
                 this.form = ''
             }).catch(error => {
                     console.log(error)

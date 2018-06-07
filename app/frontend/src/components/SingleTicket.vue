@@ -12,7 +12,7 @@
 
                 <message v-bind:self="12345678" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
 
-                <form v-on:submit.prevent="sendReply" class="reply-area container">
+                <form v-on:submit.prevent="sendReply" class="reply-area">
                     <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
                     <button class="reply-button btn btn-primary">
                         <i class="material-icons">
