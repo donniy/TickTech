@@ -23,6 +23,11 @@ const routerOptions = [
         component: 'SingleTicket',
     },
     {
+        path: '/user/:user_id',
+        name: 'UserTickets',
+        component: 'UserTickets',
+    },
+    {
         path:'/courses',
         name:'CourseOverview',
         component:'CourseOverview',
@@ -38,9 +43,14 @@ const routerOptions = [
         component: 'TA_Inbox'
     },
     {
-        path: '/login',
-        name: 'LoginScreen',
-        component: 'LoginScreen',
+        path: '/student/ticket/:ticket_id',
+        name: 'StudentViewTicket',
+        component: 'StudentTicket',
+    },
+    {
+        path: '/sort',
+        name: 'SortingTickets',
+        component: 'SortingTickets'
     },
     {
         path: '*',

@@ -15,11 +15,15 @@ def init_db():
     addTicket()
 
 
+def serialize_list(l):
+    return [i.serialize for i in l]
+
+
 def json_list(l):
     """
     Maak JSON van de lijst.
     """
-    return jsonify(json_list=[i.serialize for i in l])
+    return jsonify(json_list=serialize_list(l))
 
 
 # Use these functions if you want to add items to
