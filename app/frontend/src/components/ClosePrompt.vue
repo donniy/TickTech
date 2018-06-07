@@ -6,7 +6,7 @@
 
           <div class="modal-header">
             <slot name="header">
-              <h3>Are you sure you want to close this ticket?</h3>
+              <h3>{{warning}}</h3>
             </slot>
           </div>
 
@@ -28,6 +28,7 @@
 
 <script>
   export default {
+      props: ['warning'],
       data: function () {
           return {};
       },
