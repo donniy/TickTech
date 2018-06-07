@@ -80,7 +80,7 @@ h1 {
     border-color: darken($default-green, 5%);
 }
 
-.btn-submit:not(.disabled):active {
+.btn-submit:not(.disabled):not(:disabled):active {
     background-color: darken($default-green, 7%);
     border-color: darken($default-green, 7%);
 }
