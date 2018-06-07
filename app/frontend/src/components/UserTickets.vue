@@ -1,11 +1,21 @@
 <template>
     <div>
-        <h1>Tickets van Student {{ $route.params.user_id }}</h1>
-        <ticket
-            v-for="ticket in tickets"
-            v-bind:key="ticket.id"
-            v-bind:ticket="ticket"
-        ></ticket>
+    <h2>Tickets van Student {{ $route.params.user_id }}</h2>
+    <div>
+        <b-btn variant="primary" v-b-toggle.collapseA>Course name {{ $route.params.course_id }}</b-btn>
+        <b-collapse id="collapseA" class="mt-2">
+            <b-card>
+                <ticket
+                    v-for="ticket in tickets"
+                    v-bind:key="ticket.id"
+                    v-bind:ticket="ticket"
+                ></ticket>
+            </b-card>
+        </b-collapse>
+    </div>
+    <div>
+    <b-button href="/form" >New ticket</b-button>
+        </div>
     </div>
 </template>
 
