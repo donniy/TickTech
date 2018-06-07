@@ -1,17 +1,8 @@
 <template>
     <div>
-        <h1>Tickets in cursus {{ $route.params.course_id }}</h1>
-
-        Status:
-        <select v-model="status_filter">
-            <option> All </option>
-            <option> Needs help </option>
-            <option> Answered </option>
-        </select>
-
+        <h1>Tickets van Student {{ $route.params.user_id }}</h1>
         <ticket
             v-for="ticket in tickets"
-            v-if="status_filter == 'All' || ticket.status.name == status_filter"
             v-bind:key="ticket.id"
             v-bind:ticket="ticket"
         ></ticket>
@@ -27,15 +18,13 @@ export default {
   data () {
     return {
       tickets: [],
-      status: 'not set',
-
-      status_filter: 'All'
+      status: 'not set'
     }
   },
   methods: {
     getTickets () {
       this.status = 'getting tickets'
-      const path = '/api/course/' + this.$route.params.course_id
+      const path = '/api/user/' + this.$route.params.user_id
       axios.get(path)
       .then(response => {
         this.tickets = response.data.json_list

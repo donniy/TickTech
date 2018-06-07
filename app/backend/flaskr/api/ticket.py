@@ -7,6 +7,16 @@ from flaskr import socketio
 import uuid, datetime
 
 
+#Make this post with a button.
+@apiBluePrint.route('/ticket/<ticket_id>/close')
+def close_ticket(ticket_id):
+    """ Update this with a rights check."""
+    ticket = Ticket.query.get(ticket_id)
+    ticket.close
+    db.session.commit()
+    return "ticket closed"
+
+
 @apiBluePrint.route('/ticket/<ticket_id>')
 def retrieve_single_ticket(ticket_id):
     """
@@ -51,7 +61,8 @@ def get_ticket_messages(ticket_id):
     ticket = Ticket.query.get(ticket_id)
     print(database.json_list(ticket.messages))
     return database.json_list(list(ticket.messages))
-    
+
+
 # TODO: Deze verplaatsen naar user zodra die beschikbaar is
 @apiBluePrint.route('/student/ticket/<ticket_id>/reply', methods=['POST'])
 def student_reply_message(ticket_id):
@@ -72,6 +83,7 @@ def student_reply_message(ticket_id):
     socketio.emit('messageAdded', {'text': message.text, 'user_id': message.user_id}, room=room)
 
     return jsonify({'status': "success", 'message': message.serialize})
+
 
 @apiBluePrint.route('/ticket/submit', methods=['POST'])
 def create_ticket():
@@ -102,6 +114,7 @@ def create_ticket():
     # Just return, form is invalid so a failure will occur clientside.
     return;
 
+
 def ticketValidate(name, studentid, message, courseid, labelid, subject):
 
     # Names can only contain letters, spaces, - or ' in some cases.
@@ -131,6 +144,7 @@ def ticketValidate(name, studentid, message, courseid, labelid, subject):
         return False
 
     return True
+
 
 def ticket_constructor(name, studentid, message, courseid, labelid, subject, email):
 

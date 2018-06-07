@@ -23,6 +23,11 @@ const routerOptions = [
         component: 'SingleTicket',
     },
     {
+        path: '/user/:user_id',
+        name: 'UserTickets',
+        component: 'UserTickets',
+    },
+    {
         path:'/courses',
         name:'CourseOverview',
         component:'CourseOverview',
@@ -31,6 +36,11 @@ const routerOptions = [
         path: '/form/',
         name: 'AskAQuestion',
         component: 'StudentForm',
+    },
+    {
+        path: '/login',
+        name: 'Login',
+        component: 'Login'
     },
     {
         path: '/ta/:ta_id/inbox',
