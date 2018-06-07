@@ -115,7 +115,7 @@ class TicketLabel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ticket_id = db.Column(UUIDType(binary=False), unique=False, nullable=True)
     course_id = db.Column(db.String(120), unique=False, nullable=False)
-    name = db.Column(db.String(50), nullable=False)
+    name = db.Column(db.String(50), unique=True, nullable=False)
 
     @property
     def serialize(self):
