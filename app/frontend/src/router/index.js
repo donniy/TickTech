@@ -23,6 +23,11 @@ const routerOptions = [
         component: 'SingleTicket',
     },
     {
+        path: '/user/:user_id',
+        name: 'UserTickets',
+        component: 'UserTickets',
+    },
+    {
         path:'/courses',
         name:'CourseOverview',
         component:'CourseOverview',
