@@ -6,7 +6,7 @@ from flaskr import database
 from datetime import datetime
 from flask_wtf.csrf import CSRFProtect
 import os.path
-from flaskr.models import User, Message, ticket, Note
+from flaskr.models import Message, ticket, Note, Course, User
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
 from flask_login import LoginManager
 
