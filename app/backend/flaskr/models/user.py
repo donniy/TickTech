@@ -7,6 +7,7 @@ class User(db.Model):
     """
     Een user.
     """
+    __tablename__ = "user"
     id = db.Column(db.Integer, nullable=False, primary_key=True) # student ID
     name = db.Column(db.String(120), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=False, nullable=True)
