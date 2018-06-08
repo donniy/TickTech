@@ -54,10 +54,7 @@ export default {
                         this.$cookies.set('token', response.data.access_token);
                         this.form.username = '';
                         this.$ajax.get('/api/user/retrieve', response => {
-                            console.log(response)
-                            this.$user = response.data.user
-                            console.log("User:")
-                            console.log(this.$user)
+                            this.$cookies.set('user', response.data.user)
                             this.$router.replace('/')
                         })
                     })

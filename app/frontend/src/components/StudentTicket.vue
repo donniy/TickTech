@@ -25,6 +25,7 @@
 
 import axios from 'axios'
 import Message from './Message.vue'
+import VueCookies from 'vue-cookies'
 
 const axios_csrf = axios.create({
   headers: {'X-CSRFToken': csrf_token}
@@ -73,12 +74,9 @@ export default {
         }
     },
     mounted: function () {
-        console.log("user: " + this.$user)
-        if (this.$user == null) {
-            this.$ajax.get('/user/retrieve', response => {
-                this.$user = response.data.user
-            })
-        }
+        this.$user = this.$cookies.get('user')
+        console.log(this.$user)
+        console.log("id: " + this.$user.id)
         this.getTicket()
         this.getMessages()
         this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
