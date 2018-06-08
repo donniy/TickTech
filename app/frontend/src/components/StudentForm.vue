@@ -6,7 +6,7 @@
 
                 <section>
                     <!--Student name and number  -->
-                    <form v-on:submit.prevent="sendTicket;">
+                    <form v-on:submit.prevent="sendTicket">
                         <div class="form-group">
                             <label for="name">Full name</label>
                             <input id="name" class="form-control" name="name" v-model="form.name" v-validate="'required|min:1'" type="text" placeholder="Full name">
@@ -24,13 +24,13 @@
                         </div>
 
                         <div class="form-group">
-                                <label for="email">Email address</label>
-                                <input id="email" class="form-control" name="email" v-model="form.email" v-validate="'required|min:1'" type="text" placeholder="Email address">
-                                <div v-show="errors.has('email')" class="invalid-feedback">
-                                    {{ errors.first('email') }}
-                                </div>  
+                            <label for="email">Email address</label>
+                            <input id="email" class="form-control" name="email" v-model="form.email" v-validate="'required|min:1'" type="text" placeholder="Email address">
+                            <div v-show="errors.has('email')" class="invalid-feedback">
+                                {{ errors.first('email') }}
+                            </div>  
                         </div>
-                        
+
                         <div class="form-group">
                             <input id="subject" class="form-control-title" v-validate="'required|max:50'"name="subject" v-model="form.subject" type="text" placeholder="Subject">
                             <div v-show="errors.has('subject')" class="invalid-feedback">
@@ -64,12 +64,12 @@
 
                         </div>
 
-                        <button v-on:click="sendTicket" class="btn btn-primary" v-bind:disabled="errors.any()">
+                        <button type="submit" class="btn btn-primary" v-bind:disabled="errors.any()">
                             Submit
                         </button>
 
                         <p class="def-error-msg" v-show="errors.any()">
-                            Please fill out the form correctly
+                        Please fill out the form correctly
                         </p>
 
                     </form>
@@ -85,7 +85,7 @@ import axios from 'axios'
 import VeeValidate from 'vee-validate';
 
 const axios_csrf = axios.create({
-  headers: {'X-CSRFToken': csrf_token}
+    headers: {'X-CSRFToken': csrf_token}
 });
 
 export default {
@@ -115,18 +115,18 @@ export default {
             const path = '/api/ticket/submit'
             axios_csrf.post(path, this.form)
             .then(response => {
-                window.location = "/student/ticket/" + response.data.ticketid;
+                this.$router.push({name: 'StudentViewTicket', params: {ticket_id: response.data.ticketid}})
                 this.form = ''
             }).catch(error => {
-                    console.log(error)
+                console.log(error)
             })
-
-        }, onChange: function(e) {
-          console.log(event.srcElement.value);
-          this.categories = this.categories
+        },
+        onChange: function(e) {
+            console.log(event.srcElement.value);
+            this.categories = this.categories
         },
         mounted: function() {
-            this.$emit('tab-activate', 'submit-ticket')
+
         }
     },
     mounted () {
