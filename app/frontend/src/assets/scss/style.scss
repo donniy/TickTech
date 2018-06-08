@@ -80,7 +80,7 @@ h1 {
     border-color: darken($default-green, 5%);
 }
 
-.btn-submit:not(.disabled):active {
+.btn-submit:not(.disabled):not(:disabled):active {
     background-color: darken($default-green, 7%);
     border-color: darken($default-green, 7%);
 }
@@ -114,6 +114,17 @@ h1 {
 .btn-primary:disabled {
     background-color: darken($text-color-lighter, 7%);
     border-color: darken($text-color-lighter, 7%);
+}
+
+.btn-close-note {
+    float: right;
+    padding-right: 0px;
+    padding-top: 0px;
+    background-color: white;
+    opacity: 0.4;
+}
+.btn-close-note:hover {
+    opacity: 1;
 }
 
 

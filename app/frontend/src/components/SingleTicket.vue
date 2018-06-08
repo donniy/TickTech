@@ -1,10 +1,17 @@
 <template>
     <div>
-        <a v-bind:href="'/course/' + ticket.course_id" class="btn btn-primary back-button">&laquo; Terug naar cursus</a>
-        <button class="btn btn-primary close-button" @click="showModal = true">Close Ticket</button>
-        <modal  v-if="showModal" @yes="closeTicket()" @close="showModal = false">
-        </modal>
+        <a v-bind:href="'/course/' + ticket.course_id" class="btn btn-primary back-button">&laquo;
+            Terug naar cursus
+        </a>
+
+        <button class="btn btn-primary close-button" @click="showModal = true">
+            Close Ticket
+        </button>
+
+        <modal v-if="showModal" warning="Are you sure you want to close this ticket?"
+               @yes="closeTicket()" @close="showModal = false"></modal>
         <br /><br />
+
         <div class="row">
             <div class="col-md-8 col-sm-8 col-lg-8 col-xs-12">
                 <h2>Ticket Info</h2>
@@ -15,7 +22,7 @@
 
                 <message v-bind:self="12345678" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
 
-                <form v-on:submit.prevent="sendReply" class="reply-area container">
+                <form v-on:submit.prevent="sendReply" class="reply-area">
                     <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
                     <button class="reply-button btn btn-primary">
                         <i class="material-icons">
@@ -32,10 +39,10 @@
                     Notitie toevoegen
                 </b-btn>
 
-                <b-popover ref="popoverRef" target="popoverButton-sync" 
+                <b-popover ref="popoverRef" target="popoverButton-sync"
                            triggers="click blur"
                            placement='top'>
-                    <textarea v-model="noteTextArea" class="form-control" style="height:200px;width:250px;" 
+                    <textarea v-model="noteTextArea" class="form-control" style="height:200px;width:250px;"
                             placeholder="Voer uw opmerking in"></textarea>
                     <button @click="addNote" class="btn btn-primary" style="margin-top:10px">Verzenden</button>
                 </b-popover>

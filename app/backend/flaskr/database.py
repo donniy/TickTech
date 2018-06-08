@@ -80,6 +80,7 @@ def addTicket(user_id=1, email="test@email.com", course_id="1", status_id=1, tit
               timestamp=datetime.now()):
     from flaskr.models import ticket
     t = ticket.Ticket()
+    t.id = uuid.uuid1()
     addTicketLabel(t.id, course_id, title)
     t.user_id = user_id
     t.email = email

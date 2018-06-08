@@ -2,9 +2,9 @@
     <div>
         <h1>TickTech Home</h1>
         <h3>
-            <a href="/ta/123/inbox" > TA home (Erik)</a>
+            <router-link to="/ta/123" > TA home (Erik)</router-link>
         </br>
-            <a href="/user/123123123" > Student home (123123123)</a>
+            <router-link to="/user/123123123" > Student home (123123123)</router-link>
         </h3>
     </div>
 </template>

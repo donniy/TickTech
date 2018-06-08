@@ -9,6 +9,7 @@
                     v-for="ticket in tickets"
                     v-bind:key="ticket.id"
                     v-bind:ticket="ticket"
+                    v-bind:base_url="'/student/ticket/'"
                 ></ticket>
             </b-card>
         </b-collapse>
@@ -34,7 +35,7 @@ export default {
   methods: {
     getTickets () {
       this.status = 'getting tickets'
-      const path = '/api/user/' + this.$route.params.user_id
+      const path = '/api/user/active/' + this.$route.params.user_id
       axios.get(path)
       .then(response => {
         this.tickets = response.data.json_list
