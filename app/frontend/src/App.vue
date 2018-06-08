@@ -3,7 +3,7 @@
         <navbar v-bind:active="active"></navbar>
         <div class="navbar-spacing"></div>
         <div class="container">
-        <router-view v-on:tab-activate="active = arguments[0]"/>
+        <router-view />
         </div>
     </div>
 </template>

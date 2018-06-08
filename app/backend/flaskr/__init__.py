@@ -85,8 +85,23 @@ def create_app(test_config=None):
 
 
     @socketio.on('join-room')
-    def on_message(data):
+    def sock_join_room(data):
         #TODO: Check if allowed to join room
-        join_room(data['room'])
+        print(data)
+        print("Want to join {}".format(data['room']))
+        try:
+            join_room(data['room'])
+        except:
+            print("Failed to join room")
+
+    @socketio.on('leave-room')
+    def sock_leave_room(data):
+        #TODO: Need to check if in room?
+        print(data)
+        print("Want to leave {}".format(data['room']))
+        try:
+            leave_room(data['room'])
+        except:
+            print("Failed to leave toom")
 
     return app
