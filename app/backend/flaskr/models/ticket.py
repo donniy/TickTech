@@ -8,7 +8,8 @@ db = database.db
 labels_helper = db.Table(
     'labels',
     db.Column('label_id', db.Integer, db.ForeignKey('ticket_label.id'), primary_key=True),
-    db.Column('ticket_id', db.Integer, db.ForeignKey('ticket.id'), primary_key=True))
+    db.Column('ticket_id', db.Integer, db.ForeignKey('ticket.id'), primary_key=True)
+)
 
 
 class Ticket(db.Model):
@@ -28,7 +29,6 @@ class Ticket(db.Model):
     title = db.Column(db.String(255), unique=False, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-
     # Dit is hoe je een relatie maakt. ticket.status geeft een TicketStatus object met
     # de status van dit ticket. backref betekent: maak een veld 'tickets' op TicketStatus
     # wat een lijst met alle tickets met die status teruggeeft.
@@ -40,7 +40,6 @@ class Ticket(db.Model):
     labels = db.relationship(
         "TicketLabel", secondary=labels_helper, lazy='subquery',
         backref=db.backref('tickets', lazy=True))
-
 
     # Dit is een soort toString zoals in Java, voor het gebruiken van de database
     # in de commandline. Op die manier kan je data maken en weergeven zonder formulier.
@@ -91,10 +90,6 @@ class Ticket(db.Model):
         if closed_status is None:
             return
         self.status_id = closed_status.id
-
-
-
-
 
 class TicketStatus(db.Model):
     """
