@@ -1,6 +1,6 @@
 <template>
     <div>
-        <a href="/user/123123123" class="btn btn-primary back-button">&laquo; Terug naar overzicht</a>
+        <router-link to="/user/123123123" class="btn btn-primary back-button">&laquo; Terug naar overzicht</router-link>
         <br /><br />
         <h1>Mijn ticket</h1>
         <div class="material-card">
@@ -76,6 +76,10 @@ export default {
         this.getTicket()
         this.getMessages()
         this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
+    },
+    beforeRouteLeave: function (to, from, next) {
+        this.$socket.emit('leave-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
+        next();
     },
     components: {
         'message': Message,
