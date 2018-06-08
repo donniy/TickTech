@@ -68,7 +68,7 @@ def student_reply_message(ticket_id):
     ticket = Ticket.query.get(ticket_id)
     message = Message()
     message.ticket = ticket
-    message.user_id = 567 # TODO: de ingelogde ta's id gebruiken
+    message.user_id = 123123123 # TODO: de ingelogde ta's id gebruiken
     message.text = request.json.get("message") #TODO: check voor xss
     db.session.add(message)
     db.session.commit()
@@ -97,6 +97,9 @@ def create_ticket():
         ticket_new = ticket_constructor(name, studentid, email, subject, message, courseid, labelid)
         try:
             database.addItemSafelyToDB(ticket_new)
+            message = Message(text=message, ticket=ticket_new, user_id=ticket_new.user_id)
+            db.session.add(message)
+            db.session.commit()
         except database.DatabaseInsertException as DBerror:
             print(DBerror)
             #Need to handle this better somehow. It should never happen though.
@@ -112,7 +115,7 @@ def ticketValidate(name, studentid, email, subject, message, courseid, labelid):
         if not letter.isalpha() and not letter in " '-":
             return False
 
-    #TODO implement check validation email (is it even possible?)        
+    #TODO implement check validation email (is it even possible?)
 
     # A number should be within certain bounds and only numerical.
     try:

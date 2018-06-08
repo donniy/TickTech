@@ -30,8 +30,9 @@ class Ticket(db.Model):
     # Dit is hoe je een relatie maakt. ticket.status geeft een TicketStatus object met
     # de status van dit ticket. backref betekent: maak een veld 'tickets' op TicketStatus
     # wat een lijst met alle tickets met die status teruggeeft.
-    status = db.relationship(
-        'TicketStatus', backref=db.backref('tickets', lazy=True))
+
+    # status = db.relationship(
+    #     'TicketStatus', backref=db.backref('tickets', lazy=False))
 
     #Many to many relation
     labels = db.relationship(
@@ -57,7 +58,7 @@ class Ticket(db.Model):
             'email': self.email,
             'title': self.title,
             'timestamp': self.timestamp,
-            'status': self.status.serialize,
+            'status': self.ticket_status.serialize,
             'labels': database.serialize_list(self.labels)
         }
 
@@ -96,6 +97,9 @@ class TicketStatus(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, default="Pending")
 
+    tickets = db.relationship(
+        'Ticket', backref=db.backref('ticket_status', lazy=False))
+
     @property
     def serialize(self):
         return {
@@ -115,6 +119,7 @@ class TicketLabel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ticket_id = db.Column(UUIDType(binary=False), unique=False, nullable=True)
     course_id = db.Column(db.String(120), unique=False, nullable=False)
+    #name = db.Column(db.String(50), unique=True, nullable=False)
     name = db.Column(db.String(50), nullable=False)
 
     @property
