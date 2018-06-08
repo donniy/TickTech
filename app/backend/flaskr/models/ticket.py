@@ -37,7 +37,6 @@ class Ticket(db.Model):
         "TicketLabel", secondary=labels_helper, lazy='subquery',
         backref=db.backref('tickets', lazy=True))
 
-
     # Dit is een soort toString zoals in Java, voor het gebruiken van de database
     # in de commandline. Op die manier kan je data maken en weergeven zonder formulier.
     def __repr__(self):
@@ -83,10 +82,6 @@ class Ticket(db.Model):
         if closed_status is None:
             return
         self.status_id = closed_status.id
-
-
-
-
 
 class TicketStatus(db.Model):
     """
