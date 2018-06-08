@@ -3,6 +3,7 @@ from . import apiBluePrint
 from flask import jsonify, request, escape
 from flaskr import database
 from flaskr.models.Course import *
+from flaskr.models.user import *
 
 @apiBluePrint.route('/course/<course_id>')
 def retrieve_course_tickets(course_id):
@@ -39,3 +40,13 @@ def create_course():
         print(err)
 
     return jsonify({'status':'success'})
+
+# remember to add file in __init__
+@apiBluePrint.route('/courses/<user_id>')
+def retrieve_courses(user_id):
+    # TODO get courses from LTI api
+    # TODO put user id in data and not in link
+
+    user = User.query.get(user_id)
+    courses = user.ta_courses
+    return database.json_list(courses)

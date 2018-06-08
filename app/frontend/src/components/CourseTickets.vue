@@ -15,6 +15,7 @@
             v-bind:key="ticket.id"
             v-bind:ticket="ticket"
         ></ticket>
+    <b-button class="labelbutton:right" v-bind:href="'/course/'+ $route.params.course_id + '/labels'">Course labels</b-button>
     </div>
 </template>
 
