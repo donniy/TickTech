@@ -26,7 +26,6 @@ class Ticket(db.Model):
     title = db.Column(db.String(255), unique=False, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-
     # Dit is hoe je een relatie maakt. ticket.status geeft een TicketStatus object met
     # de status van dit ticket. backref betekent: maak een veld 'tickets' op TicketStatus
     # wat een lijst met alle tickets met die status teruggeeft.
