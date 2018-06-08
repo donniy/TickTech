@@ -1,6 +1,8 @@
 from flaskr.models.ticket import *
 from . import apiBluePrint
-
+from flask import jsonify, request, escape
+from flaskr import database
+from flaskr.models.Course import *
 
 @apiBluePrint.route('/course/<course_id>')
 def retrieve_course_tickets(course_id):

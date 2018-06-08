@@ -8,7 +8,8 @@ db = database.db
 labels_helper = db.Table(
     'labels',
     db.Column('label_id', db.Integer, db.ForeignKey('ticket_label.id'), primary_key=True),
-    db.Column('ticket_id', db.Integer, db.ForeignKey('ticket.id'), primary_key=True))
+    db.Column('ticket_id', db.Integer, db.ForeignKey('ticket.id'), primary_key=True)
+)
 
 
 class Ticket(db.Model):

@@ -3,9 +3,10 @@ from flaskr import jsonify
 
 
 # remember to add file in __init__
-@apiBluePrint.route('/courses')
-def retrieve_courses():
+@apiBluePrint.route('/courses/<user_id>')
+def retrieve_courses(user_id):
     # TODO get courses from LTI api
+    # TODO put user id in data and not in link
     courses = [{
         "id":1,
         "name":"Project Software Engineering",
