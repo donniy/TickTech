@@ -6,17 +6,16 @@ import uuid
 db = database.db
 
 ta_course_linker = db.Table(
-    'ta',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-    db.Column('ticket_id', db.Integer, db.ForeignKey('course.id'), primary_key=True)
-)
-
-student_course_linker = db.Table(
-    'student',
+    'ta_link_course',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
     db.Column('course_id', db.Integer, db.ForeignKey('course.id'), primary_key=True)
 )
 
+student_course_linker = db.Table(
+    'student_link_course',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('course_id', db.Integer, db.ForeignKey('course.id'), primary_key=True)
+)
 
 class Course(db.Model):
     """
@@ -27,6 +26,14 @@ class Course(db.Model):
     title = db.Column(db.String(255), unique=False, nullable=False)
     description = db.Column(db.Text, nullable=True)
 
+    # Many to many relation
+    student_courses = db.relationship( 
+        "User", secondary=student_course_linker, lazy='subquery',
+        backref=db.backref('student_courses', lazy=True))
+
+    ta_courses = db.relationship( 
+        "User", secondary=ta_course_linker, lazy='subquery',
+        backref=db.backref('ta_courses', lazy=True))
 
     # Dit is een soort toString zoals in Java, voor het gebruiken van de database
     # in de commandline. Op die manier kan je data maken en weergeven zonder formulier.
@@ -41,10 +48,10 @@ class Course(db.Model):
         """
         return {
             'id': self.id,
-            'course_id': self.course_id,
             'course_email': self.course_email,
             'title': self.title,
-            'description': self.description
+            'description': self.description,
+            'tas': [ta.serialize for ta in self.ta_courses]
         }
 
     @property

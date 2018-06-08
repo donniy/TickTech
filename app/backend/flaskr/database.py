@@ -44,8 +44,11 @@ def addItemSafelyToDB(item):
     except DatabaseException as DBerror:
         print("DEBUG: " + DBerror.debug_message)
         raise DBerror
-    db.session.add(item)
-    db.session.commit()
+    try:
+        db.session.add(item)
+        db.session.commit()
+    except:
+        db.session.rollback()
 
 
 #end functions for insertion for database.
@@ -55,7 +58,10 @@ def addTicketStatus(name="Needs help"):
     from flaskr.models import ticket
     ts = ticket.TicketStatus()
     ts.name = name
-    addItemSafelyToDB(ts)
+    try:
+        addItemSafelyToDB(ts)
+    except:
+        print("oeps")
 
 def addTicketLabel(ticked_id=1, course_id="1", name="test"):
     from flaskr.models import ticket
@@ -63,7 +69,10 @@ def addTicketLabel(ticked_id=1, course_id="1", name="test"):
     tl.ticked_id = ticked_id
     tl.course_id = course_id
     tl.name = name
-    addItemSafelyToDB(tl)
+    try:
+        addItemSafelyToDB(tl)
+    except:
+        print("oeps")
 
 #just for testing
 def addTicket(user_id=1, email="test@email.com", course_id="1", status_id=1, title="test",
