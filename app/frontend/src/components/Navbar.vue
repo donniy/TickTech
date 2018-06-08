@@ -33,6 +33,9 @@
       props: [],
       data: function () {
           return {};
+      },
+      mounted: function () {
+          console.log("navbar user: " + this.$user)
       }
   }
 

@@ -8,7 +8,7 @@
             Status: {{ticket.status.name}}
         </div>
 
-        <message v-bind:self="123123123" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
+        <message v-bind:user="$user" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
 
         <form v-on:submit.prevent="sendReply" class="reply-area">
             <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
@@ -73,6 +73,12 @@ export default {
         }
     },
     mounted: function () {
+        console.log("user: " + this.$user)
+        if (this.$user == null) {
+            this.$ajax.get('/user/retrieve', response => {
+                this.$user = response.data.user
+            })
+        }
         this.getTicket()
         this.getMessages()
         this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
@@ -93,7 +99,7 @@ export default {
             this.messages.push(data)
             document.body.scrollTop = document.body.scrollHeight;
         }
-    }
+    },
 }
 
 </script>

@@ -43,16 +43,11 @@ export default {
     getTickets () {
       this.status = 'getting tickets';
       const path = '/api/user/active';
-      axios_csrf.get(path)
-      .then(response => {
+      this.$ajax.get(path, response => {
         this.tickets = response.data.json_list
         this.status = 'Retrieved data'
         console.log(response.data.json_list)
         console.log(response)
-      })
-      .catch(error => {
-        console.log(error)
-        this.status = 'failed getting tickets'
       })
     },
     created () {
@@ -61,18 +56,6 @@ export default {
     }
   },
   mounted: function () {
-    let hdr = {};
-
-    let token = this.$cookies.get('token')
-    
-    if(token)
-      hdr['Authorization'] = 'JWT ' + token;
-
-    hdr['X-CSRFToken'] = csrf_token;
-    axios_csrf = axios.create({
-      headers: hdr
-    });
-
     this.created()    
   },
   components: {

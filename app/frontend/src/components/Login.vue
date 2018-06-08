@@ -31,12 +31,6 @@ import Router from 'vue-router';
 
 Vue.use(VueCookies);
 
-const axios_csrf = axios.create({
-    headers: {
-        'X-CSRFToken': csrf_token,
-    }
-});
-
 export default {
     data () {
         return {
@@ -54,24 +48,25 @@ export default {
         
                     //const msg = JSON.stringify(this.form);
                     // console.log(msg);
-                    axios_csrf.post(path, {username: this.form.username, password: "JWT is cool!!!"})
-                    .then(response => {
+                    this.$ajax.post(path, {username: this.form.username, password: "JWT is cool!!!"}, response => {
                         console.log(response);
                         // TODO: Implement authentication on back-end to work with Canvas.
                         this.$cookies.set('token', response.data.access_token);
                         this.form.username = '';
-                        this.$router.replace('/');
+                        this.$ajax.get('/api/user/retrieve', response => {
+                            console.log(response)
+                            this.$user = response.data.user
+                            console.log("User:")
+                            console.log(this.$user)
+                            this.$router.replace('/')
+                        })
                     })
-                    .catch(error => {
-                        console.log(error);
-                    });
                 }
             });
         }
     }
 }
 </script>
-
 
 <style lang="scss" scoped>
 
