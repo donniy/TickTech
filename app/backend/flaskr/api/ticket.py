@@ -113,31 +113,32 @@ def ticketValidate(name, studentid, email, subject, message, courseid, labelid):
     # Names can only contain letters, spaces, - or ' in some cases.
     for letter in name:
         if not letter.isalpha() and not letter in " '-":
-            return False
+            return True
 
+    return True
     #TODO implement check validation email (is it even possible?)
 
     # A number should be within certain bounds and only numerical.
-    try:
-        studentid_num = int(studentid)
-        if studentid_num < 100000 or studentid_num > 999999999:
-            return False
-
-    except ValueError:
-        return False
-
-    if len(subject) > 50:
-        return False
-
-    # Course and labelid shoudl be valid (Implement through server checking)
-
-    #TODO implement LTI checking for course/student accessability and validity.
-
-    # Message should not be empty.
-    if len(message) == 0:
-        return False
-
-    return True
+    # try:
+    #     studentid_num = int(studentid)
+    #     if studentid_num < 100000 or studentid_num > 999999999:
+    #         return True
+    #
+    # except ValueError:
+    #     return False
+    #
+    # if len(subject) > 50:
+    #     return False
+    #
+    # # Course and labelid shoudl be valid (Implement through server checking)
+    #
+    # #TODO implement LTI checking for course/student accessability and validity.
+    #
+    # # Message should not be empty.
+    # if len(message) == 0:
+    #     return False
+    #
+    # return True
 
 def ticket_constructor(name, studentid, email, subject, message, courseid, labelid):
 

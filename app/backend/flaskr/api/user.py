@@ -13,11 +13,13 @@ def retrieve_user_tickets():
     return database.json_list(tickets)
 
 
-@apiBluePrint.route('/user/active/<user_id>')
-def retrieve_active_user_tickets(user_id):
+@apiBluePrint.route('/user/active')
+@jwt_required()
+def retrieve_active_user_tickets():
     """
     Geeft alle ticktes van gegeven user.
     """
     # TODO: Controleer of degene die hierheen request permissies heeft.
+    user_id = current_identity.id
     tickets = Ticket.query.filter(Ticket.user_id == user_id, Ticket.ticket_status.has(TicketStatus.name!='closed')).all()
     return database.json_list(tickets)

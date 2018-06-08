@@ -8,7 +8,9 @@ import VueSocketio from 'vue-socket.io';
 import VueTextareaAutosize from 'vue-textarea-autosize'
 import router from './router'
 import VueGridLayout from 'vue-grid-layout'
+import VueCookie from 'vue-cookie';
 
+Vue.use(VueCookie);
 Vue.use(VeeValidate);
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)

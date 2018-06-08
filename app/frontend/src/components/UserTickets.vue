@@ -22,8 +22,15 @@
 
 <script>
 
+import Vue from 'vue';
 import axios from 'axios'
 import Ticket from './Ticket.vue'
+import VueCookies from 'vue-cookies';
+
+Vue.use(VueCookies);
+
+let axios_csrf = {};
+
 
 export default {
   data () {
@@ -34,9 +41,9 @@ export default {
   },
   methods: {
     getTickets () {
-      this.status = 'getting tickets'
-      const path = '/api/user/active/' + this.$route.params.user_id
-      axios.get(path)
+      this.status = 'getting tickets';
+      const path = '/api/user/active';
+      axios_csrf.get(path)
       .then(response => {
         this.tickets = response.data.json_list
         this.status = 'Retrieved data'
@@ -54,8 +61,19 @@ export default {
     }
   },
   mounted: function () {
-    this.created()
-    this.$emit('tab-activate', 'my-tickets')
+    let hdr = {};
+
+    let token = this.$cookies.get('token')
+    
+    if(token)
+      hdr['Authorization'] = 'JWT ' + token;
+
+    hdr['X-CSRFToken'] = csrf_token;
+    axios_csrf = axios.create({
+      headers: hdr
+    });
+
+    this.created()    
   },
   components: {
     'ticket': Ticket,
