@@ -10,3 +10,6 @@ def retrieve_user_tickets(user_id):
     # TODO: Controleer of degene die hierheen request permissies heeft.
     tickets = Ticket.query.filter_by(user_id=user_id).all()
     return database.json_list(tickets)
+
+def retrieve_user_courses(user_id):
+    pass
