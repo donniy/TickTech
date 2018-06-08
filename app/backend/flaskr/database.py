@@ -65,10 +65,11 @@ def populate_database_dummy_data():
     user1 = user.User(id=11111, name="Erik Kooijstra", email="Erik@kooijstra.nl")
     user2 = user.User(id=11112, name="Kire Kooijstra", email="Kire@kooijstra.nl")
 
-
+    course.ta_courses.append(user1)
+    course2.ta_courses.append(user2)
 
     items += [course, course2, user1, user2]
-    
+
 
     for item in items:
         try:
@@ -100,7 +101,7 @@ def addTicketLabel(ticked_id=1, course_id="1", name="test"):
         print("oeps")
 
 #just for testing
-def addTicket(user_id=1, email="test@email.com", course_id="1", status_id=1, title="test",
+def addTicket(user_id=1, email="test@email.com", course_id="1", status_id=2, title="test",
               timestamp=datetime.now()):
     from flaskr.models import ticket
     t = ticket.Ticket()
@@ -114,8 +115,7 @@ def addTicket(user_id=1, email="test@email.com", course_id="1", status_id=1, tit
     t.timestamp = timestamp
     t.label_id = 1
     try:
-        success = addItemSafelyToDB(t)
-        print(success)
+        addItemSafelyToDB(t)
     except DatabaseInsertException as exp:
         print(exp.response_message)
 

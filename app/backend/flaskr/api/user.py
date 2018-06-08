@@ -14,7 +14,6 @@ def retrieve_user_tickets(user_id):
 
 
 @apiBluePrint.route('/user/active/<user_id>')
-
 def retrieve_active_user_tickets(user_id):
     """
     Geeft alle ticktes van gegeven user.
