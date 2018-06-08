@@ -8,6 +8,8 @@ from flask_wtf.csrf import CSRFProtect
 import os.path
 from flaskr.models import Message, ticket, Note
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
+import threading
+from flaskr import mail_server
 
 db = database.db
 socketio = None
@@ -103,5 +105,14 @@ def create_app(test_config=None):
             leave_room(data['room'])
         except:
             print("Failed to leave toom")
+
+    # Start mail server
+    def default_mail():
+        print("Init - mailserver")
+        mail_server.run('pop.gmail.com', '995', 'uvapsetest@gmail.com', 'stephanandrea')
+        print("Stopped - mailserver")
+    t = threading.Thread(name='default_mail', target=default_mail)
+    t.start()
+
 
     return app
