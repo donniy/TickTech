@@ -5,21 +5,16 @@ import os.path
 from sqlalchemy_utils import UUIDType
 import uuid
 
-
 db = SQLAlchemy()
-
 
 class DatabaseException(Exception):
     def __init__(self, debug_message):
         self.debug_message = debug_message
 
-
 class DatabaseInsertException(DatabaseException):
     def __init__(self, debug_message):
         super().__init__(debug_message)
         self.response_message = response_message = ""
-
-
 
 def init_db():
     db.create_all()
@@ -27,10 +22,8 @@ def init_db():
     addTicketStatus("closed")
     addTicket()
 
-
 def serialize_list(l):
     return [i.serialize for i in l]
-
 
 def json_list(l):
     """
@@ -40,7 +33,6 @@ def json_list(l):
 
 
 # Use these functions if you want to add items to
-
 # to the database.
 def addItemSafelyToDB(item):
     """
@@ -65,7 +57,6 @@ def addTicketStatus(name="Needs help"):
     ts.name = name
     addItemSafelyToDB(ts)
 
-
 def addTicketLabel(ticked_id=1, course_id="1", name="test"):
     from flaskr.models import ticket
     tl = ticket.TicketLabel()
@@ -73,7 +64,6 @@ def addTicketLabel(ticked_id=1, course_id="1", name="test"):
     tl.course_id = course_id
     tl.name = name
     addItemSafelyToDB(tl)
-
 
 #just for testing
 def addTicket(user_id=1, email="test@email.com", course_id="1", status_id=1, title="test",
