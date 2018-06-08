@@ -1,4 +1,1 @@
-export FLASK_ENV=development
-export WTF_CSRF_CHECK_DEFAULT=False
-./.db_credentials
-FLASK_APP=app/backend/flaskr python3 -m flask run
+make run-flask
