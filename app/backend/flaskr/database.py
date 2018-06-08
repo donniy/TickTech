@@ -18,6 +18,7 @@ class DatabaseInsertException(DatabaseException):
 
 def init_db():
     db.create_all()
+    populate_database_dummy_data()
     addTicketStatus()
     addTicketStatus("closed")
     addTicket()
@@ -52,6 +53,30 @@ def addItemSafelyToDB(item):
 
 
 #end functions for insertion for database.
+
+#These are from the InitDB sql file. Can insert dummy data here.
+def populate_database_dummy_data():
+    from flaskr.models import Course, user
+    items = []
+    course = Course.Course(id=uuid.uuid4(), course_email="test@test.com",
+                           title="course 1", description="Test")
+    course2 = Course.Course(id=uuid.uuid4(), course_email="testie@test.com",
+                            title="course 2", description="Test")
+    user1 = user.User(id=11111, name="Erik Kooijstra", email="Erik@kooijstra.nl")
+    user2 = user.User(id=11112, name="Kire Kooijstra", email="Kire@kooijstra.nl")
+
+
+
+    items += [course, course2, user1, user2]
+    
+
+    for item in items:
+        try:
+            addItemSafelyToDB(item)
+        except DatabaseInsertException as DBIex:
+            print(DBIex.response_message)
+
+    print(course.ta_courses)
 
 #just for testing
 def addTicketStatus(name="Needs help"):
