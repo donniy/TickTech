@@ -20,7 +20,9 @@
                     Status: {{ticket.status.name}}
                 </div>
 
-                <message v-bind:self="12345678" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
+                <message v-bind:self="12345678" v-for="message in messages"
+                v-bind:key="message.id" v-bind:message="message"></message>
+
 
                 <form v-on:submit.prevent="sendReply" class="reply-area">
                     <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
@@ -80,9 +82,10 @@ export default {
             const path = '/api/ticket/' + this.$route.params.ticket_id
             axios.get(path)
             .then(response => {
-                this.ticket = response.data
+                this.ticket = response.data.json_data
             })
             .catch(error => {
+                console.log("NO TICKET")
                 console.log(error)
             })
         },
@@ -90,7 +93,7 @@ export default {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
             axios.get(path)
             .then(response => {
-                this.messages = response.data.json_list
+                this.messages = response.data.json_data
             })
             .catch(error => {
                 console.log(error)
@@ -99,21 +102,20 @@ export default {
         getNotes () {
             //get all notes
             axios.get('/api/notes/'+this.$route.params.ticket_id)
-            .then(res => {
-                this.notes = res.data.json_list
-                console.log(res)
+            .then(response => {
+                this.notes = response.data.json_data
+                console.log(response)
             })
             .catch(err => {
                 console.log(err)
             })
         },
         sendReply () {
-            const path = '/api/ticket/' + this.$route.params.ticket_id + '/reply'
-            axios_csrf.post(path, {message: this.reply})
+            const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
+            axios_csrf.post(path, {message: this.reply, user_id: 11037393})
             .then(response => {
-                if (response.data.status == "success") {
                     this.reply = ''
-                }
+                    this.getMessages()
             })
             .catch(error => {
                 console.log(error)
@@ -130,18 +132,19 @@ export default {
         },
         addNote(){
             console.log(this.noteTextArea)
-            const path = '/api/note/add'
+            const path = '/api/notes'
             var noteData = {
                 "ticket_id":this.$route.params.ticket_id ,
                 "user_id":this.$route.params.user_id | 1 ,
                 "text":this.noteTextArea
             }
-
+            console.log("Note")
+            console.log(this.noteTextArea)
             axios_csrf.post(path, noteData)
             .then(response => {
                 this.noteTextArea = ""
                 this.$refs.popoverRef.$emit('close')
-                this.notes.push(response.data)
+                this.notes.push(response.data.json_data)
                 console.log("successfully sent note")
                 console.log(response)
             })

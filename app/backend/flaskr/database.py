@@ -43,7 +43,7 @@ def addItemSafelyToDB(item):
     try:
         db.session.add(item)
         db.session.commit()
-    except Except as err:
+    except Exception as err:
         print("Logging database error: {0}".format(err))
         db.session.rollback()
         return False
@@ -70,10 +70,8 @@ def populate_database_dummy_data():
 
 
     for item in items:
-        try:
-            addItemSafelyToDB(item)
-        except DatabaseInsertException as DBIex:
-            print(DBIex.response_message)
+        addItemSafelyToDB(item)
+
 
     print(course.ta_courses)
 

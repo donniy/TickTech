@@ -1,7 +1,7 @@
 from flask import jsonify
 
 def create_response(body, status_code):
-    response = jsonify(body)
+    response = jsonify(json_data=body)
     response.status_code = status_code
     return response
 

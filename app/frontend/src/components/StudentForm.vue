@@ -47,10 +47,10 @@
 
                         <div class="form-group">
                             <label for="course">Course</label>
-                            <select id="course" v-validate="'optional'" class="form-control custom-select" v-model="form.courseid">
+                            <select id="course" v-validate="'required'" class="form-control custom-select" v-model="form.courseid">
                                 <option disabled value="">Nothing selected</option>
-                                <option v-for="option in categories.courses" v-bind:value="option.id">
-                                {{ option.name }}
+                                <option v-for="obj in categories.courses" v-bind:value="obj.id">
+                                        {{ obj.title }}
                                 </option>
                             </select>
 
@@ -111,19 +111,19 @@ export default {
         }
     }, methods: {
         sendTicket () {
-            console.log("SENDING")
             this.$validator.validateAll()
             const path = '/api/ticket/submit'
             axios_csrf.post(path, this.form)
             .then(response => {
-                this.$router.push({name: 'StudentViewTicket', params: {ticket_id: response.data.ticketid}})
-                this.form = ''
+                this.$router.push({name: 'StudentViewTicket',
+                                  params: {ticket_id: response.data.json_data.ticketid}})
+
+                console.log("Pushed")
             }).catch(error => {
                 console.log(error)
             })
         },
         onChange: function(e) {
-            console.log(event.srcElement.value);
             this.categories = this.categories
         },
         mounted: function() {
@@ -136,8 +136,10 @@ export default {
 
         axios_csrf.get(pathCourses)
         .then(response => {
-            this.categories.courses = response.data;
-            console.log(response.data)
+             for(let i = 0; i < response.data.json_list.length; i++) {
+                 let dataObj = response.data.json_list[i]
+                 this.categories.courses.push(dataObj)
+             }
         }).catch(error => {
             console.log(error);
         });
