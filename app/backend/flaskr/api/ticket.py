@@ -5,6 +5,9 @@ from . import apiBluePrint
 from flask import jsonify, request, escape
 from flaskr import socketio
 import uuid, datetime
+from flaskr.request_processing import ticket as rp_ticket
+from flaskr import Iresponse
+
 
 #Make this post with a button.
 @apiBluePrint.route('/ticket/<ticket_id>/close', methods=['POST'])
@@ -78,81 +81,13 @@ def student_reply_message(ticket_id):
 
     return jsonify({'status': "success", 'message': message.serialize})
 
+
 @apiBluePrint.route('/ticket/submit', methods=['POST'])
 def create_ticket():
     """
     Check ticket submission and add to database.
     """
-    name = escape(request.json["name"])
-    studentid = escape(request.json["studentid"])
-    email = escape(request.json["email"])
-    subject = escape(request.json["subject"])
-    message = escape(request.json["message"])
-    courseid = escape(request.json["courseid"])
-    labelid = escape(request.json["labelid"])
-
-    # Validate and then create the ticket.
-    if ticketValidate(name, studentid, email, subject, message, courseid, labelid):
-
-        ticket_new = ticket_constructor(name, studentid, email, subject, message, courseid, labelid)
-        try:
-            database.addItemSafelyToDB(ticket_new)
-            message = Message(text=message, ticket=ticket_new, user_id=ticket_new.user_id)
-            db.session.add(message)
-            db.session.commit()
-        except database.DatabaseInsertException as DBerror:
-            print(DBerror)
-            #Need to handle this better somehow. It should never happen though.
-
-
-        return jsonify({'status': "success", 'ticketid' : str(ticket_new.id)})
-    # Just return, form is invalid so a failure will occur clientside.
-    return
-
-def ticketValidate(name, studentid, email, subject, message, courseid, labelid):
-    # Names can only contain letters, spaces, - or ' in some cases.
-    for letter in name:
-        if not letter.isalpha() and not letter in " '-":
-            return False
-
-    #TODO implement check validation email (is it even possible?)
-
-    # A number should be within certain bounds and only numerical.
-    try:
-        studentid_num = int(studentid)
-        if studentid_num < 100000 or studentid_num > 999999999:
-            return False
-
-    except ValueError:
-        return False
-
-    if len(subject) > 50:
-        return False
-
-    # Course and labelid shoudl be valid (Implement through server checking)
-
-    #TODO implement LTI checking for course/student accessability and validity.
-
-    # Message should not be empty.
-    if len(message) == 0:
-        return False
-
-    return True
-
-def ticket_constructor(name, studentid, email, subject, message, courseid, labelid):
-
-    # Create new ticket and add data.
-    ticket_new = Ticket()
-    ticket_new.user_id = studentid
-    ticket_new.course_id = courseid #TODO get actual courseid in stead of course from form
-    ticket_new.status_id = 1
-    ticket_new.label_id = 1#labelid #TODO get actual label id from db instead of name.
-    if len(subject) > 0:
-        ticket_new.title = subject
-
-    #Probably witch to uuid.uuid4() and always check for primary key violation.
-    ticket_new.id = uuid.uuid1()
-    ticket_new.email = email
-    ticket_new.timestamp = datetime.datetime.now()
-
-    return ticket_new
+    jsonData = request.get_json()
+    if jsonData is None:
+        return Iresponse.empty_json_request()
+    return rp_ticket.create_request(jsonData)

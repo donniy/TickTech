@@ -28,7 +28,7 @@
                             <input id="email" class="form-control" name="email" v-model="form.email" v-validate="'required|min:1'" type="text" placeholder="Email address">
                             <div v-show="errors.has('email')" class="invalid-feedback">
                                 {{ errors.first('email') }}
-                            </div>  
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -47,7 +47,7 @@
 
                         <div class="form-group">
                             <label for="course">Course</label>
-                            <select id="course" v-validate="'required'" class="form-control custom-select" v-model="form.courseid">
+                            <select id="course" v-validate="'optional'" class="form-control custom-select" v-model="form.courseid">
                                 <option disabled value="">Nothing selected</option>
                                 <option v-for="option in categories.courses" v-bind:value="option.id">
                                 {{ option.name }}
@@ -57,7 +57,7 @@
                         </div>
                         <div class="form-group">
                             <label for="category">Category</label>
-                            <select id="category" v-validate="'required'" class="form-control custom-select" v-model="form.labelid">
+                            <select id="category" v-validate="'optional'" class="form-control custom-select" v-model="form.labelid">
                                 <option disabled value="">Nothing selected</option>
                                 <option v-for="option in categories.labels[form.courseid]" v-bind:value="option.value">{{ option.text }}</option>
                             </select>
@@ -111,6 +111,7 @@ export default {
         }
     }, methods: {
         sendTicket () {
+            console.log("SENDING")
             this.$validator.validateAll()
             const path = '/api/ticket/submit'
             axios_csrf.post(path, this.form)
@@ -136,6 +137,7 @@ export default {
         axios_csrf.get(pathCourses)
         .then(response => {
             this.categories.courses = response.data;
+            console.log(response.data)
         }).catch(error => {
             console.log(error);
         });

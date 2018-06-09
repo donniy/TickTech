@@ -58,7 +58,7 @@ const routerOptions = [
         component: 'TA_Inbox'
     },
     {
-        path: '/student/ticket/:ticket_id',
+        path: '/ticket/:ticket_id',
         name: 'StudentViewTicket',
         component: 'StudentTicket',
     },

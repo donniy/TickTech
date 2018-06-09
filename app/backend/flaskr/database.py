@@ -40,15 +40,13 @@ def addItemSafelyToDB(item):
     if the item is valid. The error can be logged.
     """
     try:
-        item.checkValid
-    except DatabaseException as DBerror:
-        print("DEBUG: " + DBerror.debug_message)
-        raise DBerror
-    try:
         db.session.add(item)
         db.session.commit()
-    except:
+    except Except as err:
+        print("Logging database error: {0}".format(err))
         db.session.rollback()
+        return False
+    return True
 
 
 #end functions for insertion for database.
@@ -93,4 +91,3 @@ def addTicket(user_id=1, email="test@email.com", course_id="1", status_id=1, tit
         print(success)
     except DatabaseInsertException as exp:
         print(exp.response_message)
-

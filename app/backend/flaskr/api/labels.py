@@ -5,7 +5,7 @@ from . import apiBluePrint
 from uuid import uuid4
 
 
-@apiBluePrint.route('/labels/<course_id>/retrieve')
+@apiBluePrint.route('/labels/<course_id>', methods=['GET'])
 def retrieve_labels(course_id):
     """
     Geeft alle ticktes over gegeven course.
@@ -15,7 +15,7 @@ def retrieve_labels(course_id):
     labels = Label.query.all()
     return database.json_list(labels)
 
-@apiBluePrint.route('/labels/<course_id>/create', methods=['POST'])
+@apiBluePrint.route('/labels/<course_id>/', methods=['POST'])
 def create_labels(course_id):
     """
     Add a lable to a course

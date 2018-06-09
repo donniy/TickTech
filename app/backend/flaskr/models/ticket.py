@@ -2,8 +2,11 @@ from datetime import datetime
 from flaskr import database
 from sqlalchemy_utils import UUIDType
 import uuid
+import re
+from flask import Response, jsonify, escape
 
 db = database.db
+
 
 labels_helper = db.Table(
     'labels',
@@ -44,6 +47,7 @@ class Ticket(db.Model):
     def __repr__(self):
         return '<Ticket {}>'.format(self.title)
 
+
     @property
     def serialize(self):
         """
@@ -62,28 +66,12 @@ class Ticket(db.Model):
         }
 
     @property
-    def checkValid(self):
-        """
-        Checks if an object is valid to insert into a database. So all
-        fields that should be set, are set. If a value is not set, throw
-        for now a ValueError().
-        """
-        status = TicketStatus.query.get(self.status_id)
-        if status is None:
-            debug_message = "No valid status found with " + \
-                            "status_id: {0}".format(self.status_id)
-
-            db_error = database.DatabaseInsertException(debug_message)
-            db_error.response_message = "TEST"
-            raise db_error
-
-
-    @property
     def close(self):
         closed_status = TicketStatus.query.filter_by(name='closed').first()
         if closed_status is None:
             return
         self.status_id = closed_status.id
+
 
 class TicketStatus(db.Model):
     """

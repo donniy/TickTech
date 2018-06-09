@@ -41,6 +41,10 @@ def create_course():
 
     return jsonify({'status':'success'})
 
+@apiBluePrint.route('/courses')
+def retrieve_all_courses():
+    return database.json_list(Course.query.all())
+
 # remember to add file in __init__
 @apiBluePrint.route('/courses/<user_id>')
 def retrieve_courses(user_id):
