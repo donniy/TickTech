@@ -63,7 +63,7 @@ def create_app(test_config=None):
 
     db.init_app(app)
     socketio.init_app(app)
-    if not os.path.isfile(db_uri):
+    if not os.path.isfile('/tmp/test.db'):
         app.app_context().push()
         database.init_db()
 

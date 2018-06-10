@@ -62,17 +62,21 @@ def populate_database_dummy_data():
                             title="course 2", description="Test")
     user1 = user.User(id=11111, name="Erik Kooijstra", email="Erik@kooijstra.nl")
     user2 = user.User(id=11112, name="Kire Kooijstra", email="Kire@kooijstra.nl")
-
-    course.ta_courses.append(user1)
-    course2.ta_courses.append(user2)
-
-    items += [course, course2, user1, user2]
-
-
+    user3 = user.User(id=123123123, name="Test mctestie", email="test@test.nl")
+    items = [user1, user2, user3, course, course2]
     for item in items:
         addItemSafelyToDB(item)
 
+    try:
+        course.student_courses.append(user3)
+        course2.student_courses.append(user3)
+        course.ta_courses.append(user1)
+        course2.ta_courses.append(user2)
+    except Exception as exp:
+        db.session.rollback()
+        print(exp)
 
+    print(course.student_courses)
     print(course.ta_courses)
 
 #just for testing

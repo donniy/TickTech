@@ -14,7 +14,7 @@ ta_course_linker = db.Table(
 student_course_linker = db.Table(
     'student_link_course',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-    db.Column('course_id', db.Integer, db.ForeignKey('course.id'), primary_key=True)
+    db.Column('course_id', UUIDType(binary=False), db.ForeignKey('course.id'), primary_key=True)
 )
 
 label_course_linker = db.Table(
