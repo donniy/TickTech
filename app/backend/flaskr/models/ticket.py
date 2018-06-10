@@ -7,6 +7,11 @@ from flask import Response, jsonify, escape
 
 db = database.db
 
+binded_tas_helper = db.Table(
+    'ta_tracker',
+    db.Column('ticket_id', UUIDType(binary=False), db.ForeignKey('ticket.id'), primary_key=True),
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+)
 
 labels_helper = db.Table(
     'labels',
@@ -36,6 +41,11 @@ class Ticket(db.Model):
 
     # status = db.relationship(
     #     'TicketStatus', backref=db.backref('tickets', lazy=False))
+
+    binded_tas = db.relationship(
+        "User", secondary=binded_tas_helper, lazy='subquery',
+        backref=db.backref('ta_tickets', lazy=True)
+    )
 
     #Many to many relation
     labels = db.relationship(

@@ -6,7 +6,7 @@ from flaskr.models.Course import *
 from flaskr.models.user import *
 from flaskr.request_processing import courses as rp_courses
 
-@apiBluePrint.route('/course/<course_id>')
+@apiBluePrint.route('/courses/<course_id>/tickets')
 def retrieve_course_tickets(course_id):
     """
     Geeft alle ticktes over gegeven course.
@@ -40,5 +40,8 @@ def retrieve_courses(user_id):
     # TODO put user id in data and not in link
 
     user = User.query.get(user_id)
+    if user is None:
+        return Iresponse.create_response("", 404)
     courses = user.ta_courses
+
     return database.json_list(courses)

@@ -62,7 +62,7 @@ def create_app(test_config=None):
         pass
 
     db.init_app(app)
-
+    socketio.init_app(app)
     if not os.path.isfile(db_uri):
         app.app_context().push()
         database.init_db()
@@ -82,6 +82,7 @@ def create_app(test_config=None):
             except:
                 return "Je gebruikt dev mode maar hebt je Vue development server niet draaien"
         return render_template("index.html")
+
 
 
     @socketio.on('join-room')

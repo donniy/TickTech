@@ -2,7 +2,7 @@ from flaskr import database, Iresponse
 from flask import jsonify, escape
 import uuid
 from flaskr.models.ticket import *
-
+from flaskr.models.Message import *
 
 def create_request(jsonData):
     name = escape(jsonData["name"])
@@ -40,6 +40,7 @@ def create_request(jsonData):
     if len(message) == 0:
         response_body['message'] = 'Empty'
 
+
     #status = TicketStatus.query.get(1)
     #if status is None:
         #response_body['status'] = 'Invalid status'
@@ -51,6 +52,11 @@ def create_request(jsonData):
                     status_id=1, title=subject, email=email, timestamp=datetime.now())
 
     if not database.addItemSafelyToDB(ticket):
+        return Iresponse.internal_server_error()
+
+    new_message = Message(ticket_id=ticket.id, user_id=studentid, text=message
+                          ,timestamp=datetime.now(), ticket=ticket)
+    if not database.addItemSafelyToDB(new_message):
         return Iresponse.internal_server_error()
 
     response_body['ticketid'] = ticket.id

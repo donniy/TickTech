@@ -47,7 +47,7 @@
 
                         <div class="form-group">
                             <label for="course">Course</label>
-                            <select id="course" v-validate="'required'" class="form-control custom-select" v-model="form.courseid">
+                            <select id="course" v-validate="''" class="form-control custom-select" v-model="form.courseid">
                                 <option disabled value="">Nothing selected</option>
                                 <option v-for="obj in categories.courses" v-bind:value="obj.id">
                                         {{ obj.title }}
@@ -57,9 +57,9 @@
                         </div>
                         <div class="form-group">
                             <label for="category">Category</label>
-                            <select id="category" v-validate="'optional'" class="form-control custom-select" v-model="form.labelid">
+                            <select id="category" v-validate="''" class="form-control custom-select" v-model="form.labelid">
                                 <option disabled value="">Nothing selected</option>
-                                <option v-for="option in categories.labels[form.courseid]" v-bind:value="option.value">{{ option.text }}</option>
+                                <option v-for="option in categories.labels[form.courseid]" v-bind:value="option.label_id">{{ option.label_name }}</option>
                             </select>
 
                         </div>
@@ -114,14 +114,15 @@ export default {
             this.$validator.validateAll()
             const path = '/api/ticket/submit'
             axios_csrf.post(path, this.form)
-            .then(response => {
-                this.$router.push({name: 'StudentViewTicket',
-                                  params: {ticket_id: response.data.json_data.ticketid}})
+                .then(response => {
+                    this.$router.push({name: 'StudentViewTicket',
+                                       params: {ticket_id: response.data.json_data.ticketid}})
 
-                console.log("Pushed")
-            }).catch(error => {
-                console.log(error)
-            })
+                    console.log("Pushed")
+                    this.form = ""
+                }).catch(error => {
+                    console.log(error)
+                })
         },
         onChange: function(e) {
             this.categories = this.categories
@@ -135,17 +136,34 @@ export default {
         const pathCourses = '/api/courses';
 
         axios_csrf.get(pathCourses)
-        .then(response => {
-             for(let i = 0; i < response.data.json_list.length; i++) {
-                 let dataObj = response.data.json_list[i]
-                 this.categories.courses.push(dataObj)
-             }
+            .then(response => {
+                for(let i = 0; i < response.data.json_data.length; i++) {
+                    let dataObj = response.data.json_data[i]
+                    this.categories.courses.push(dataObj)
+                }
+                for(let i = 0; i < this.categories.courses.length; i++) {
+                    let courseid = this.categories.courses[i].id
+                    let currLabelPath = pathLabels + '/' + courseid
+                    axios_csrf.get(currLabelPath)
+                        .then(response => {
+                            this.categories.labels[courseid] = response.data.json_list
+                            console.log(this.categories.labels[courseid])
+                        }).catch(error => {
+                            console.log(error)
+                        });
+                }
+
         }).catch(error => {
             console.log(error);
         });
-
+        for(let i = 0; i < this.categories.courses.length; i++) {
+            //axios_csrf.get(pathLabels + '/' + this.courses[i].course_id)
+            console.log("HELLO")
+            console.log(this.categories.courses[i].course_id)
+        }
         axios_csrf.get(pathLabels)
         .then(response => {
+            console.log
             for(let i = 0; i < response.data.json_list.length; i++) {
                 let elem = response.data.json_list[i];
                 if (this.categories.labels[elem.course_id])
