@@ -53,7 +53,7 @@ const routerOptions = [
         component: 'Labels'
     },
     {
-        path: '/ta/:ta_id',
+        path: '/ta/:ta_id/inbox',
         name: 'TAInbox',
         component: 'TA_Inbox'
     },

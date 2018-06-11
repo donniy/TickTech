@@ -2,37 +2,52 @@
     <div>
         <h1>Welkom {{ta.name}}</h1>
 
+        <div class="text-center btn_group">
+            <b-button-group size="lg">
+                <b-button @click="toggle()" variant="danger">Show All</b-button>
+                <b-button @click="toggle()" variant="danger">Show My</b-button>
+            </b-button-group>
+        </div>
 
-        <!-- <b-table striped hover :items="cases">
-            <template slot="id" slot-scope="data">
-                <a v-bind:href="'/ticket/'+data.value">
-                {{data.value}}
-                </a>
-            </template>
-        </b-table> -->
-        <course
-          v-for="course in courses"
-          v-bind:key="course.id"
-          v-bind:course="course"
-        ></course>
+        <cases v-if="showAll === true"
+            v-for="item in cases_all"
+            v-bind:key="item.id"
+            v-bind:cases="item"
+        ></cases>
+        <cases v-else-if="showTA === true"
+            v-for="item in cases_ta"
+            v-bind:key="item.id"
+            v-bind:cases="item"
+        ></cases>
     </div>
 </template>
 
 <script>
 
 import axios from 'axios'
-import Course from './Course.vue'
+import Cases from './Cases.vue'
 
 export default {
     data () {
         return {
-            ta: {},
-            cases: [],
-            courses: []
+            ta: {"name": "Erik Kooistra"},
+            cases_all: [],
+            cases_ta: [],
+            showAll: true,
+            showTA: false
 
         }
     },
     methods: {
+        toggle() {
+            if (this.showAll === true) {
+                this.showAll = false
+                this.showTA = true
+            } else {
+                this.showAll = true
+                this.showTA = false
+            }
+        },
         getTA () {
             const path = '/api/user/' + this.$route.params.ta_id
             axios.get(path)
@@ -46,36 +61,48 @@ export default {
         },
 
         getAllCases () {
-            const path = '/api/ta'
+            const path = '/api/ta/' + this.$route.params.ta_idinbox + '/inbox'
             axios.get(path)
             .then(response => {
-                this.cases = response.data
+                this.cases_all = response.data.json_data
+                console.log(response.data.json_data)
             })
             .catch(error => {
                 console.log(error)
             })
         },
-        getTaCourses () {
-            axios.get('/api/ta/'+ this.$route.params.ta_id + '/courses')
+
+        getTACases () {
+            const path = '/api/ta/' + this.$route.params.ta_idinbox + '/my_inbox'
+            axios.get(path)
             .then(response => {
-                this.courses = response.data.json_data
-                console.log(this.courses)
-            }).catch(error => {
+                this.cases_ta = response.data.json_data
+                console.log(response.data.json_data)
+            })
+            .catch(error => {
                 console.log(error)
             })
         },
+
         created () {
             this.getTA()
             this.getAllCases()
-            this.getTaCourses()
+            // this.getTaCourses()
         }
     },
     mounted: function () {
         this.created()
     },
     components: {
-        'course': Course,
+        'cases': Cases
     }
 }
 
 </script>
+
+<style lang="scss" scoped>
+
+.btn_group {
+    margin: 15px;
+}
+</style>
