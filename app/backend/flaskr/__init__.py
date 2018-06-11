@@ -105,14 +105,14 @@ def create_app(test_config=None):
             print("Failed to leave toom")
 
     # Start mail server
-    import threading
-    from mail import mail_server
-    def default_mail():
-        print("Init - mailserver")
-        mail_server.run('pop.gmail.com', '995', 'uvapsetest@gmail.com', 'stephanandrea')
-        print("Stopped - mailserver")
-    t = threading.Thread(name='default_mail', target=default_mail)
-    t.start()
+    # import threading
+    # from mail import mail_server
+    # def default_mail():
+    #     print("Init - mailserver")
+    #     mail_server.run('pop.gmail.com', '995', 'uvapsetest@gmail.com', 'stephanandrea')
+    #     print("Stopped - mailserver")
+    # t = threading.Thread(name='default_mail', target=default_mail)
+    # t.start()
 
 
     return app
