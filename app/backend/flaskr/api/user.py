@@ -27,7 +27,7 @@ def retrieve_active_user_tickets(user_id):
     return database.json_list(tickets)
 
 
-@apiBluePrint.route('/user/<user_id>')
+@apiBluePrint.route('/user/<int:user_id>')
 def get_user(user_id):
     user = User.query.get(user_id)
     if user is None:

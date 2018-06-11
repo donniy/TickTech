@@ -16,7 +16,7 @@ def login():
 
 @apiBluePrint.route('/user/retrieve', methods=['GET'])
 @jwt_required()
-def get_user():
+def retrieve_user():
     """
     Returns the user model of the current user.
     """
