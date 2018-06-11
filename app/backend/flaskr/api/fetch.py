@@ -1,16 +1,17 @@
-from flaskr.models.ticket import *
 from . import apiBluePrint
 from mail.fetch import MailThread
+from flask import escape, request, jsonify
 
-
-@apiBluePrint.route('/fetch', , methods=['POST'])
+@apiBluePrint.route('/fetch/submit', methods=['POST'])
 def submit():
+    print("Gott here")
     sleeptime = 10
     server = escape(request.json["pop"])
     port = escape(request.json["port"])
     email = escape(request.json["email"])
     password = escape(request.json["password"])
     create_new_email_thread(sleeptime, server, port, email, password)
+    return jsonify({'status': "success", 'message': "message.serialize"})
 
 def create_new_email_thread(sleeptime, server, port, email, password):
     """
@@ -18,8 +19,9 @@ def create_new_email_thread(sleeptime, server, port, email, password):
     """
     print("create new thread")
     new_thread = MailThread(sleeptime, server, port, email, password)
+    new_thread.setName("No thread id yet")
 
-    new_thread.run()
+    new_thread.start()
     return
 
 

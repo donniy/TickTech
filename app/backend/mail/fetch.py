@@ -1,6 +1,5 @@
 from threading import Thread
-from random import randint
-from mail_server import check_mail
+from mail.mail_server import check_mail
 from time import sleep
 
 
@@ -23,7 +22,7 @@ class MailThread(Thread):
 
     def run(self):
         while (self.running):
-            print("Checking", self.email)
+            print("Checking", self.email + ". On thread " + self.getName())
             check_mail(self.server, self.port, self.email, self.password)
             print("sleeping", self.sleep_time)
             sleep(self.sleep_time)

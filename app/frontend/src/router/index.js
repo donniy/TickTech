@@ -69,8 +69,8 @@ const routerOptions = [
     },
     {
         path: '/email_settings',
-        name: 'SetRecieveEmail',
-        component: 'SetRecieveEmail'
+        name: 'SetEmailServer',
+        component: 'SetEmailServer'
     },
     {
         path: '*',
