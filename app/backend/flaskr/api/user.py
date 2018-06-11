@@ -42,3 +42,8 @@ def get_courses_from_user(user_id):
     if len(courses) == 0:
         return Iresponse.create_response("", 404)
     return Iresponse.create_response(database.serialize_list(courses), 200)
+
+@apiBluePrint.route('/user/register')
+def register_user():
+    jsonData = request.get_json()
+    return

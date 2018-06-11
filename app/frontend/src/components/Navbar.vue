@@ -16,6 +16,9 @@
             <router-link active-class="active" tag="li" :to="{name: 'CourseOverview'}">
                 <a class="nav-link">Course overview</a>
             </router-link>
+            <router-link active-class="active" tag="li" :to="{name: 'Register'}">
+                <a class="nav-link">Register</a>
+            </router-link>
         </ul>
     </nav>
 </template>
