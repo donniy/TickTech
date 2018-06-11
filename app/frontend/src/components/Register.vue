@@ -5,7 +5,6 @@
                 <h1>Register account</h1>
 
                 <section>
-                    <!--Student name and number  -->
                     <form v-on:submit.prevent="sendTicket">
                         <div class="form-group">
                             <label for="name">Full name</label>
@@ -33,16 +32,41 @@
 
                         <div class="form-group">
                             <label for="password">Enter a password</label>
-                            <input id="password" class="form-control" v-validate="'required|max:50'"name="password" v-model="form.subject" type="password" placeholder="password">
-                            <div v-show="errors.has('password')" class="invalid-feedback">
-                                {{ errors.first('password') }}
-                            </div>
+                            <input
+                                id="password"
+                                class="form-control"
+                                v-validate="'required'"
+                                name="password"
+                                v-model="form.password"
+                                type="password"
+                                placeholder="Password">
+                            </br>
+
+                            <input
+                                id="password_confirmation"
+                                class="form-control"
+                                v-validate="'required|confirmed:password'"
+                                name="password_confirmation"
+                                v-model="form.password_confirmation"
+                                type="password"
+                                placeholder="Password again!">
                         </div>
 
-                        <div class="form-group">
-                            <input id="repassword" class="form-control" v-validate="'required|max:50'"name="repassword" v-model="form.subject" type="repassword" placeholder="repeat password">
-                            <div v-show="errors.has('repassword')" class="invalid-feedback">
-                                {{ errors.first('repassword') }}
+                        <div class="alert alert-danger" v-show="errors.any()">
+                            <div v-if="errors.has('name')">
+                                {{ errors.first('name') }}
+                            </div>
+                            <div v-if="errors.has('studentid')">
+                                {{ errors.first('studentid') }}
+                            </div>
+                            <div v-if="errors.has('email')">
+                                {{ errors.first('email') }}
+                            </div>
+                            <div v-if="errors.has('password')">
+                                {{ errors.first('password') }}
+                            </div>
+                            <div v-if="errors.has('password_confirmation')">
+                                {{ errors.first('password_confirmation') }}
                             </div>
                         </div>
 
@@ -51,7 +75,7 @@
                         </button>
 
                         <p class="def-error-msg" v-show="errors.any()">
-                        Please fill out the form correctly
+                            Please fill out the form correctly
                         </p>
 
                     </form>
@@ -78,14 +102,14 @@ export default {
                 studentid: "",
                 email: "",
                 password: "",
-                repassword: "",
+                password_confirmation: "",
             }
         }
     }, methods: {
         sendTicket () {
-            this.$validator.validateAll()
-            const path = '/api/user/register'
-            axios_csrf.post(path, this.form)
+            this.$validator.validateAll().then(function(response) {
+                const path = '/api/user/register'
+                axios_csrf.post(path, this.form)
                 .then(response => {
 
                     console.log("Registered")
@@ -93,6 +117,11 @@ export default {
                 }).catch(error => {
                     console.log(error)
                 })
+            })
+            .catch(function(e) {
+              // Catch errors
+              console.log("Found errors while validating")
+            })
         }
     }
 }
