@@ -1,14 +1,3 @@
-build site:
-  image: node:6
-  stage: build
-  script:
-    - npm install --prefix=app/frontend --progress=false
-    - npm run build --prefix=app/frontend
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - dist
-
 unit test:
   image: node:6
   stage: test
