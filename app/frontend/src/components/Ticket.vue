@@ -1,8 +1,8 @@
 <template>
-    <a v-bind:href="base_url + ticket.id" class="list-ticket">
+    <router-link :to="base_url + ticket.id" class="list-ticket">
         <h3>{{ticket.title}}</h3>
         Status: {{ticket.status.name}} - Gesteld door: {{ticket.user_id}}
-    </a>
+    </router-link>
 </template>
 
 <script>

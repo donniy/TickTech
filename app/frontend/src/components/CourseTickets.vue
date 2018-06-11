@@ -24,6 +24,7 @@
             v-if="status_filter == 'All' || ticket.status.name == status_filter"
             v-bind:key="ticket.id"
             v-bind:ticket="ticket"
+<<<<<<< HEAD
             ></ticket>
           </tbody>
         </table>
@@ -35,6 +36,10 @@
         v-if="ticket.id == 'ticketSum'"
         v-bind:key="ticketSum"
         v-bind:ticket="ticket"></modal>
+=======
+        ></ticket>
+    <b-button class="labelbutton:right" v-bind:href="'/course/'+ $route.params.course_id + '/labels'">Course labels</b-button>
+>>>>>>> master
     </div>
 </template>
 

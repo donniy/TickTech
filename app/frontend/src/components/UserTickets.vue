@@ -35,7 +35,7 @@ export default {
   methods: {
     getTickets () {
       this.status = 'getting tickets'
-      const path = '/api/user/' + this.$route.params.user_id
+      const path = '/api/user/active/' + this.$route.params.user_id
       axios.get(path)
       .then(response => {
         this.tickets = response.data.json_list
