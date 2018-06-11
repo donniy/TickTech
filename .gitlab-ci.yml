@@ -1,5 +1,5 @@
 unit test:
-  image: circle/node:6.12-browsers
+  image: testim/node-chrome
   stage: test
   script:
     - npm install --prefix=app/frontend --progress=false
