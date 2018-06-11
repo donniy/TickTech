@@ -6,7 +6,7 @@ from flaskr import database
 from datetime import datetime
 from flask_wtf.csrf import CSRFProtect
 import os.path
-from flaskr.models import Message, ticket, Note, Course, user
+from flaskr.models import Message, ticket, Note, Course, user, Label
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
 
 db = database.db
@@ -62,8 +62,8 @@ def create_app(test_config=None):
         pass
 
     db.init_app(app)
-
-    if not os.path.isfile(db_uri):
+    socketio.init_app(app)
+    if not os.path.isfile('/tmp/test.db'):
         app.app_context().push()
         database.init_db()
 
@@ -82,6 +82,7 @@ def create_app(test_config=None):
             except:
                 return "Je gebruikt dev mode maar hebt je Vue development server niet draaien"
         return render_template("index.html")
+
 
 
     @socketio.on('join-room')
