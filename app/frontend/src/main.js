@@ -16,7 +16,7 @@ Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 Vue.use(VueSocketio, 'http://' + document.domain + ':' + location.port)
 Vue.use(VueTextareaAutosize)
-Vue.use(VueGridLayout)
+Vue.user(VueGridLayout)
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -36,7 +36,7 @@ Vue.prototype.$ajax = {
     let hdr = {};
 
     let token = window.$cookies.get('token')
-    
+
     if(token)
       hdr['Authorization'] = 'JWT ' + token;
 
@@ -49,7 +49,7 @@ Vue.prototype.$ajax = {
     let hdr = {};
 
     let token = window.$cookies.get('token')
-    
+
     if(token)
       hdr['Authorization'] = 'JWT ' + token;
 
@@ -66,7 +66,7 @@ Vue.prototype.$user = {
     let user_json = window.$cookies.get('user');
 
     let user_obj = null;
-    
+
     try {
       user_obj = JSON.parse(user_json);
     } catch(e) {
@@ -87,7 +87,7 @@ Vue.prototype.$user = {
     } catch(e) {
       return false;
     }
-    
+
     return true;
   }
 }

@@ -4,13 +4,13 @@ from sqlalchemy_utils import UUIDType
 
 db = database.db
 
+
 class Label(db.Model):
     """
     Een Label.
     """
     label_id = db.Column(UUIDType(binary=False), default=0, nullable=False, primary_key=True)
     label_name = db.Column(db.Text, nullable=False, unique=False)
-    course_id = db.Column(db.String(120), unique=False, nullable=False)
 
     @property
     def serialize(self):
@@ -21,7 +21,6 @@ class Label(db.Model):
         return {
             'label_id': self.label_id,
             'label_name': self.label_name,
-            'course_id': self.course_id,
         }
 
     @property

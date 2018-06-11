@@ -6,7 +6,7 @@ from flaskr import database
 from datetime import datetime
 from flask_wtf.csrf import CSRFProtect
 import os.path
-from flaskr.models import Message, ticket, Note, Course, user
+from flaskr.models import Message, ticket, Note, Course, user, Label
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
 from flask_login import LoginManager
 from flask_jwt import JWT
@@ -72,8 +72,8 @@ def create_app(test_config=None):
         pass
 
     db.init_app(app)
-
-    if not os.path.isfile(db_uri):
+    socketio.init_app(app)
+    if not os.path.isfile('/tmp/test.db'):
         app.app_context().push()
         database.init_db()
 
@@ -119,6 +119,7 @@ def create_app(test_config=None):
         Executed whenever an api call is unauthorized.
         """
         return database.jsonify({'status': 'unauthorized'})
+
 
 
     @socketio.on('join-room')

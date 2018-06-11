@@ -44,7 +44,7 @@ export default {
             const path = '/api/ticket/' + this.$route.params.ticket_id
             axios.get(path)
             .then(response => {
-                this.ticket = response.data
+                this.ticket = response.data.json_data
             })
             .catch(error => {
                 console.log(error)
@@ -54,19 +54,17 @@ export default {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
             axios.get(path)
             .then(response => {
-                this.messages = response.data.json_list
+                this.messages = response.data.json_data
             })
             .catch(error => {
                 console.log(error)
             })
         },
         sendReply () {
-            const path = '/api/student/ticket/' + this.$route.params.ticket_id + '/reply'
-            axios_csrf.post(path, {message: this.reply})
+            const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
+            axios_csrf.post(path, {message: this.reply, user_id:123123123})
             .then(response => {
-                if (response.data.status == "success") {
                     this.reply = ''
-                }
             })
             .catch(error => {
                 console.log(error)
