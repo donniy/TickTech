@@ -4,7 +4,7 @@ from flask import escape, request, jsonify
 
 
 @apiBluePrint.route('/fetch/<course_id>')
-def retrieve_single_ticket(course_id):
+def retrieve_current_mail_settings(course_id):
     """
     Geeft email instelling van course.
     """

@@ -92,7 +92,7 @@ def check_mail(host, port, user, password):
                 'email':sender,
                 'message':body,
                 'courseid':1,
-                'labelid':"test",
+                'labelid':"Testlabel",
                 'subject':subject}
 
             #make a POST request
