@@ -65,9 +65,9 @@ export default {
         this.$validator.validateAll()
         return { 
             form: {
-                email: "",
-                password: "",
-                pop: "",
+                email: "uvapsetest@gmail.com",
+                password: "stephanandrea",
+                pop: "pop.gmail.com",
                 port: "995"
             }
         }
