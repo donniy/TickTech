@@ -34,7 +34,7 @@ Vue.use(VueCookies);
 
 const axios_csrf = axios.create({
     headers: {
-        'X-CSRFToken': csrf_token,
+        'X-CSRFToken': 'need_to_replace',
     }
 });
 

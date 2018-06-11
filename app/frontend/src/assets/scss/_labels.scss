@@ -1,0 +1,28 @@
+@import 'colors';
+
+button.labelbutton-left {
+    margin-bottom: 40px;
+    width: 15%;
+    font-size: 1em;
+    border: 1px solid $default-red;
+    color: white;
+    padding: 10px;
+    background-color: $default-red;
+    float:left;
+}
+.labelbutton-right {
+    margin-bottom: 40px;
+    font-size: 1em;
+    width: 15%;
+    border: 1px solid $default-red;
+    color: white;
+    padding: 10px;
+    background-color: $default-red;
+    float:right;
+}
+.labelbutton-left:hover {
+    background-color: darken($default-red, 7%);
+}
+.labelbutton-right:hover {
+    background-color: darken($default-red, 7%);
+}
