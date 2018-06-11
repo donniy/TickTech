@@ -1,6 +1,6 @@
 <template>
     <div>
-        <a v-bind:href="'/course/' + ticket.course_id" class="btn btn-primary back-button">&laquo; Terug naar cursus</a>
+        <router-link to="/user/123123123" class="btn btn-primary back-button">&laquo; Terug naar overzicht</router-link>
         <br /><br />
         <h1>Mijn ticket</h1>
         <div class="material-card">
@@ -8,7 +8,7 @@
             Status: {{ticket.status.name}}
         </div>
 
-        <message v-bind:self="567" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
+        <message v-bind:self="123123123" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
 
         <form v-on:submit.prevent="sendReply" class="reply-area">
             <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
@@ -43,7 +43,7 @@ export default {
             const path = '/api/ticket/' + this.$route.params.ticket_id
             axios.get(path)
             .then(response => {
-                this.ticket = response.data
+                this.ticket = response.data.json_data
             })
             .catch(error => {
                 console.log(error)
@@ -53,19 +53,17 @@ export default {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
             axios.get(path)
             .then(response => {
-                this.messages = response.data.json_list
+                this.messages = response.data.json_data
             })
             .catch(error => {
                 console.log(error)
             })
         },
         sendReply () {
-            const path = '/api/student/ticket/' + this.$route.params.ticket_id + '/reply'
-            axios_csrf.post(path, {message: this.reply})
+            const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
+            axios_csrf.post(path, {message: this.reply, user_id:123123123})
             .then(response => {
-                if (response.data.status == "success") {
                     this.reply = ''
-                }
             })
             .catch(error => {
                 console.log(error)
@@ -76,6 +74,10 @@ export default {
         this.getTicket()
         this.getMessages()
         this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
+    },
+    beforeRouteLeave: function (to, from, next) {
+        this.$socket.emit('leave-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
+        next();
     },
     components: {
         'message': Message,

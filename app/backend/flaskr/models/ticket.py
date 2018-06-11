@@ -1,19 +1,30 @@
 from datetime import datetime
 from flaskr import database
+from sqlalchemy_utils import UUIDType
+import uuid
+import re
+from flask import Response, jsonify, escape
 
 db = database.db
+
+binded_tas_helper = db.Table(
+    'ta_tracker',
+    db.Column('ticket_id', UUIDType(binary=False), db.ForeignKey('ticket.id'), primary_key=True),
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+)
 
 labels_helper = db.Table(
     'labels',
     db.Column('label_id', db.Integer, db.ForeignKey('ticket_label.id'), primary_key=True),
-    db.Column('ticket_id', db.Integer, db.ForeignKey('ticket.id'), primary_key=True))
+    db.Column('ticket_id', db.Integer, db.ForeignKey('ticket.id'), primary_key=True)
+)
 
 
 class Ticket(db.Model):
     """
     Een ticket.
     """
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(UUIDType(binary=False), primary_key=True)
     user_id = db.Column(db.Integer, nullable=False)
     course_id = db.Column(db.String(120), unique=False, nullable=False)
 
@@ -24,52 +35,45 @@ class Ticket(db.Model):
     title = db.Column(db.String(255), unique=False, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-
     # Dit is hoe je een relatie maakt. ticket.status geeft een TicketStatus object met
     # de status van dit ticket. backref betekent: maak een veld 'tickets' op TicketStatus
     # wat een lijst met alle tickets met die status teruggeeft.
-    status = db.relationship(
-        'TicketStatus', backref=db.backref('tickets', lazy=True))
+
+    # status = db.relationship(
+    #     'TicketStatus', backref=db.backref('tickets', lazy=False))
+
+    binded_tas = db.relationship(
+        "User", secondary=binded_tas_helper, lazy='subquery',
+        backref=db.backref('ta_tickets', lazy=True)
+    )
 
     #Many to many relation
     labels = db.relationship(
         "TicketLabel", secondary=labels_helper, lazy='subquery',
         backref=db.backref('tickets', lazy=True))
 
-
     # Dit is een soort toString zoals in Java, voor het gebruiken van de database
     # in de commandline. Op die manier kan je data maken en weergeven zonder formulier.
     def __repr__(self):
         return '<Ticket {}>'.format(self.title)
 
+
     @property
     def serialize(self):
         """
-        Zet dit ticket om in json. Dit is alles wat de front-end kan zien,
+        Zet dit ticket om in json. Dit is alles wat de frontend kan zien,
         dus zorg dat er geen gevoelige info in zit.
         """
         return {
             'id': self.id,
-            'timestamp': self.timestamp,
-            'title': self.title,
+            'user_id': self.user_id,
             'course_id': self.course_id,
-            'status': self.status.serialize,
-            'labels': database.serialize_list(self.labels),
-            'user_id': self.user_id
+            'email': self.email,
+            'title': self.title,
+            'timestamp': self.timestamp,
+            'status': self.ticket_status.serialize,
+            'labels': database.serialize_list(self.labels)
         }
-
-    @property
-    def checkValid(self):
-        """
-        Checks if an object is valid to insert into a database. So all
-        fields that should be set, are set. If a value is not set, throw
-        for now a ValueError().
-        """
-        status = TicketStatus.query.get(self.status_id)
-        if status is None:
-            raise ValueError("No valid status found with status_id: {0}"
-                             .format(self.status_id))
-
 
     @property
     def close(self):
@@ -79,15 +83,15 @@ class Ticket(db.Model):
         self.status_id = closed_status.id
 
 
-
-
-
 class TicketStatus(db.Model):
     """
     De status van een ticket die kan worden ingesteld.
     """
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
+    name = db.Column(db.String(50), nullable=False, default="Pending")
+
+    tickets = db.relationship(
+        'Ticket', backref=db.backref('ticket_status', lazy=False))
 
     @property
     def serialize(self):
@@ -106,15 +110,15 @@ class TicketLabel(db.Model):
     Label van een ticket, die in kan worden gesteld.
     """
     id = db.Column(db.Integer, primary_key=True)
-    ticket_id = db.Column(db.Integer, unique=False, nullable=True)
+    ticket_id = db.Column(UUIDType(binary=False), unique=False, nullable=True)
     course_id = db.Column(db.String(120), unique=False, nullable=False)
+    #name = db.Column(db.String(50), unique=True, nullable=False)
     name = db.Column(db.String(50), nullable=False)
 
     @property
     def serialize(self):
         return {
             'id': self.id,
-            'ticket_id':  self.ticket_id,
             'course_id': self.course_id,
             'name': self.name
         }

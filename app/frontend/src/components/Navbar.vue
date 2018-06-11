@@ -1,18 +1,21 @@
 <template>
     <nav class="navbar navbar-tiktech navbar-expand-lg">
-        <a class="navbar-brand" href="/">
+        <router-link :to="{name: 'Home'}" class="navbar-brand">
             <img src="../assets/logo.png" class="d-inline-block align-top" width="30" height="30" alt="TikTech"> Tickets
-        </a>
+        </router-link>
         <ul class="navbar-nav mr-auto">
-            <li :class="'nav-item ' + (active == 'my-tickets' ? 'active' : '')">
-                <a class="nav-link" href="/mytickets">My Tickets <span class="sr-only">(current)</span></a>
-            </li>
-            <li :class="'nav-item ' + (active == 'submit-ticket' ? 'active' : '')">
-                <a class="nav-link" href="/form">Submit a ticket</a>
-            </li>
-            <li :class="'nav-item ' + (active == 'archive' ? 'active' : '')">
-                <a class="nav-link" href="#">Archive</a>
-            </li>
+            <router-link active-class="active" tag="li" :to="{name: 'UserTickets', params: {user_id: 123123123}}">
+                <a class="nav-link" >My active Tickets <span class="sr-only">(current)</span></a>
+            </router-link>
+            <router-link active-class="active" tag="li" :to="{name: 'AskAQuestion'}">
+                <a class="nav-link">Submit a ticket</a>
+            </router-link>
+            <router-link active-class="active" tag="li" :to="'archive'">
+                <a class="nav-link">Archive</a>
+            </router-link>
+            <router-link active-class="active" tag="li" :to="{name: 'CourseOverview'}">
+                <a class="nav-link">Course overview</a>
+            </router-link>
         </ul>
     </nav>
 </template>
@@ -20,7 +23,7 @@
 <script>
 
   export default {
-      props: ['active'],
+      props: [],
       data: function () {
           return {};
       }
