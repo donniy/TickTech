@@ -63,6 +63,11 @@ const routerOptions = [
         component: 'SortingTickets'
     },
     {
+        path: '/email_settings',
+        name: 'SetRecieveEmail',
+        component: 'SetRecieveEmail'
+    },
+    {
         path: '*',
         component: 'NotFound'
     }

@@ -65,7 +65,6 @@ def parse_email(mail_box, i):
 
     return subject, body, sender
 
-
 def run(host, port, user, password):
     '''
     Start mail server
@@ -115,3 +114,6 @@ def run(host, port, user, password):
 
         print("Sleeping: ", SLEEPTIME)
         sleep(SLEEPTIME)
+
+if __name__ == 'main':
+    run('pop.gmail.com', '995', 'uvapsetest@gmail.com', 'stephanandrea')
