@@ -1,8 +1,6 @@
 unit test:
-  image: node:6
+  image: kenfehling/node-selenium-chrome
   stage: test
   script:
-    - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-    - dpkg -i google-chrome-stable_current_amd64.deb; apt -fy install
     - npm install --prefix=app/frontend --progress=false
     - npm run test --prefix=app/frontend
