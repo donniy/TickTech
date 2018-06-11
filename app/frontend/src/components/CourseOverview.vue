@@ -47,7 +47,7 @@ export default {
       this.status = 'getting courses'
       axios.get('/api/courses')
       .then(response => {
-        this.courses = response.data
+        this.courses = response.data.json_data
         this.status = 'Retrieved data'
         console.log(response)
       })
