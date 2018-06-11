@@ -26,7 +26,7 @@ class MailThread(Thread):
             check_mail(self.server, self.port, self.email, self.password)
             print("sleeping", self.sleep_time)
             sleep(self.sleep_time)
-            self.running = False
+            #self.running = False
         print("Stopped fetching mail on thread: " + self.getName() + " email: " + self.email)
 
     def stop(self):

@@ -98,7 +98,7 @@ def check_mail(host, port, user, password):
     # No new emails
     if (number_of_mails == 0):
         print("No emails")
-        # server.quit()
+        server.quit()
         return
 
     # TODO: Get course from server
@@ -153,5 +153,5 @@ def check_mail(host, port, user, password):
 
     # Somehow makes you up-to-date with server
     # disable this when debugging
-    # server.quit()
+    server.quit()
     return
