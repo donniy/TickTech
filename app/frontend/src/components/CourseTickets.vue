@@ -36,12 +36,12 @@ export default {
   methods: {
     getTickets () {
       this.status = 'getting tickets'
-      const path = '/api/course/' + this.$route.params.course_id
+      const path = '/api/courses/' + this.$route.params.course_id + '/tickets'
       axios.get(path)
       .then(response => {
-        this.tickets = response.data.json_list
+        this.tickets = response.data.json_data
         this.status = 'Retrieved data'
-        console.log(response.data.json_list)
+        console.log(response.data.json_data)
         console.log(response)
       })
       .catch(error => {

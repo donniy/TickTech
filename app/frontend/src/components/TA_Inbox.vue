@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>Welkom {{TA.name}}</h1>
+        <h1>Welkom {{ta.name}}</h1>
 
 
         <!-- <b-table striped hover :items="cases">
@@ -26,7 +26,7 @@ import Course from './Course.vue'
 export default {
     data () {
         return {
-            TA: {'name': "Erik Kooistra",'id':'12'},
+            ta: {},
             cases: [],
             courses: []
 
@@ -34,10 +34,11 @@ export default {
     },
     methods: {
         getTA () {
-            const path = '/api/ta/' + this.$route.params.ta_id
+            const path = '/api/user/' + this.$route.params.ta_id
             axios.get(path)
             .then(response => {
-                this.ta = response.data
+                this.ta = response.data.json_data
+                console.log(this.ta)
             })
             .catch(error => {
                 console.log(error)
@@ -55,15 +56,16 @@ export default {
             })
         },
         getTaCourses () {
-            axios.get('/api/courses/'+ this.TA.id)
+            axios.get('/api/ta/'+ this.$route.params.ta_id + '/courses')
             .then(response => {
-                this.courses = response.data.json_list
+                this.courses = response.data.json_data
                 console.log(this.courses)
             }).catch(error => {
                 console.log(error)
             })
         },
         created () {
+            this.getTA()
             this.getAllCases()
             this.getTaCourses()
         }

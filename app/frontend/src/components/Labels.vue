@@ -7,19 +7,21 @@
                 <b-button class="labelbutton-right">Save</b-button>
             </section>
         </div>
-        <label
-            v-for="label in labels"
-            v-bind:key="lable.label_name"
-            v-bind:lable="lable"
-        ></label>
-    </div>
+        <div>
+            <ticketlabel
+               v-for="label in labels"
+               v-bind:key="label.label_id"
+               v-bind:label="label">
+            </ticketlabel>
+        </div>
+   </div>
 </template>
 
 <script>
 
 import axios from 'axios'
 import Ticket from './Ticket.vue'
-import Label from './Label.vue'
+import Ticketlabel from './Ticketlabel.vue'
 
 const axios_csrf = axios.create({
   headers: {'X-CSRFToken': csrf_token}
@@ -36,7 +38,7 @@ export default {
     methods: {
         getLabels () {
             this.status = 'getting labels'
-            const path = '/api/labels/' + this.$route.params.course_id + '/retrieve'
+            const path = '/api/labels/' + this.$route.params.course_id
             axios.get(path)
             .then(response => {
                 this.labels = response.data.json_list
@@ -51,7 +53,7 @@ export default {
         },
         createLabel() {
             this.status = 'creating labels'
-            const path = '/api/labels/' + this.$route.params.course_id + '/create'
+            const path = '/api/labels/' + this.$route.params.course_id
             axios_csrf.post(path, this.label_name)
             .then(response => {
                 this.tickets = response.data.json_list
@@ -72,6 +74,9 @@ export default {
     },
         mounted: function () {
             this.created()
+    },
+    components: {
+         'ticketlabel': Ticketlabel
     }
 }
 
