@@ -101,6 +101,31 @@ def check_mail(host, port, user, password):
         # server.quit()
         return
 
+    # TODO: Get course from server
+    # Temporary get first course
+    course_id = None
+    res = requests.get('http://localhost:5000/api/courses')
+    if (res.status_code == 200):
+        courses = res.json()
+        course_id = courses["json_data"][0]["id"]
+    else:
+        print("Error retrieving course id from server")
+        return
+
+    # TODO: Get all labels
+    # Temporary get first label
+    label_id = None
+    res = requests.get('http://localhost:5000/api/labels/' + course_id)
+    if (res.status_code == 200):
+        labels = res.json()
+        label_id = labels["json_list"][0]['label_id']
+    else:
+        print("Error retrieving labels")
+        return
+
+
+
+
     for i in range(number_of_mails):
         # Get subject, body, sender from raw email
         subject, body, sender, address = parse_email(server, i)
@@ -110,6 +135,7 @@ def check_mail(host, port, user, password):
             print("Error parsing emails")
         else:
             print("Finished parsing mail. \nSubject: " + subject + "\nBody: '" + body + "'\nSender: "+ sender)
+            print("\n\nCOURSEID:", course_id, "\nLABELID:",label_id)
             # TODO: Find course id for labels?
             studentid, labelid = parse_body(body, 5)
             payload =  {
@@ -117,8 +143,8 @@ def check_mail(host, port, user, password):
                 'studentid': studentid, # parse student id, or find in database based on email address ?
                 'email': address,
                 'message': body,
-                'courseid': 1, # get course id from mail server (database)
-                'labelid': "test", # compare body to label possibilities
+                'courseid': course_id, # get course id from mail server (database)
+                'labelid': label_id, # compare body to label possibilities
                 'subject': subject}
 
             #make a POST request
