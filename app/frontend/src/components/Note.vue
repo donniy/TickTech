@@ -31,7 +31,7 @@
       },
       methods: {
           closeNote(){
-              const path = '/api/note/' + this.note.id + '/close'
+              const path = '/api/notes/' + this.note.id + '/close'
               axios_csrf.post(path)
               .then(response => {
                   this.showModal = false

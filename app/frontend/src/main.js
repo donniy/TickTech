@@ -7,14 +7,12 @@ import VeeValidate from 'vee-validate';
 import VueSocketio from 'vue-socket.io';
 import VueTextareaAutosize from 'vue-textarea-autosize'
 import router from './router'
-import VueGridLayout from 'vue-grid-layout'
 
 Vue.use(VeeValidate);
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 Vue.use(VueSocketio, 'http://' + document.domain + ':' + location.port)
 Vue.use(VueTextareaAutosize)
-Vue.use(VueGridLayout)
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'

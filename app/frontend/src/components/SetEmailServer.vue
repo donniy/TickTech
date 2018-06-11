@@ -63,7 +63,7 @@ const axios_csrf = axios.create({
 export default {
     data () {
         this.$validator.validateAll()
-        return { 
+        return {
             form: {
                 email: "uvapsetest@gmail.com",
                 password: "stephanandrea",
@@ -73,6 +73,21 @@ export default {
         }
     },
     methods: {
+        getCourseEmailSettings () {
+          this.status = 'getting info'
+          const path = '/api/fetch/' + this.$route.params.course_id + '/tickets'
+          axios.get(path)
+          .then(response => {
+            this.tickets = response.data.json_data
+            this.status = 'Retrieved data'
+            console.log(response.data.json_data)
+            console.log(response)
+          })
+          .catch(error => {
+            console.log(error)
+            this.status = 'failed getting tickets'
+          })
+        },
         handleSubmit () {
             this.$validator.validateAll()
             const path = '/api/fetch/submit'
