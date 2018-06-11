@@ -9,6 +9,7 @@ import VueTextareaAutosize from 'vue-textarea-autosize'
 import router from './router'
 import VueGridLayout from 'vue-grid-layout'
 import axios from 'axios'
+import VueCookies from 'vue-cookies'
 
 Vue.use(VeeValidate);
 Vue.config.productionTip = false
@@ -62,7 +63,7 @@ Vue.prototype.$ajax = {
 
 Vue.prototype.$user = {
   get: () => {
-    let user_json = this.$cookies.get('user');
+    let user_json = window.$cookies.get('user');
 
     let user_obj = null;
     
@@ -76,13 +77,13 @@ Vue.prototype.$user = {
   },
 
   set: (user) => {
-    if (!user)
+    if (typeof user === 'undefined')
       return false;
 
     let user_json = null;
     try {
       user_json = JSON.stringify(user);
-      this.$cookies.set('user', user_json);
+      window.$cookies.set('user', user_json);
     } catch(e) {
       return false;
     }
