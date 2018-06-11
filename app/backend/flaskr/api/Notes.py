@@ -39,3 +39,10 @@ def add_new_note():
     }
 
     return jsonify(ret)
+
+@apiBluePrint.route('/note/<note_id>/close', methods=['POST'])
+def remove_note(note_id):
+    note = Note.query.get(note_id)
+    db.session.delete(note)
+    db.session.commit()
+    return jsonify({'status': "success", 'message': 'note closed'})

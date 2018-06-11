@@ -6,7 +6,7 @@ from flaskr import database
 from datetime import datetime
 from flask_wtf.csrf import CSRFProtect
 import os.path
-from flaskr.models import Message, ticket, Note
+from flaskr.models import Message, ticket, Note, Course, user
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
 import threading
 from flaskr import mail_server
