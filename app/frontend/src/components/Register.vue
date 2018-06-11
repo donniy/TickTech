@@ -5,29 +5,20 @@
                 <h1>Register account</h1>
 
                 <section>
-                    <form v-on:submit.prevent="sendTicket">
+                    <form v-on:submit.prevent="Register">
                         <div class="form-group">
                             <label for="name">Full name</label>
                             <input id="name" class="form-control" name="name" v-model="form.name" v-validate="'required|min:1'" type="text" placeholder="Full name">
-                            <div v-show="errors.has('name')" class="invalid-feedback">
-                                {{ errors.first('name') }}
-                            </div>
                         </div>
 
                         <div class="form-group">
                             <label for="studentid">Student ID</label>
                             <input class="form-control" id="studentid" name="studentid" v-model="form.studentid" v-validate="'required|min:1|numeric'" type="text" placeholder="Student ID">
-                            <div v-show="errors.has('studentid')" class="invalid-feedback">
-                                {{ errors.first('studentid') }}
-                            </div>
                         </div>
 
                         <div class="form-group">
                             <label for="email">Email address</label>
                             <input id="email" class="form-control" name="email" v-model="form.email" v-validate="'required|min:1'" type="text" placeholder="Email address">
-                            <div v-show="errors.has('email')" class="invalid-feedback">
-                                {{ errors.first('email') }}
-                            </div>
                         </div>
 
                         <div class="form-group">
@@ -42,14 +33,14 @@
                                 placeholder="Password">
                             </br>
 
-                            <input
+                            <!-- <input
                                 id="password_confirmation"
                                 class="form-control"
                                 v-validate="'required|confirmed:password'"
                                 name="password_confirmation"
                                 v-model="form.password_confirmation"
                                 type="password"
-                                placeholder="Password again!">
+                                placeholder="Password again!"> -->
                         </div>
 
                         <div class="alert alert-danger" v-show="errors.any()">
@@ -65,9 +56,9 @@
                             <div v-if="errors.has('password')">
                                 {{ errors.first('password') }}
                             </div>
-                            <div v-if="errors.has('password_confirmation')">
+                            <!-- <div v-if="errors.has('password_confirmation')">
                                 {{ errors.first('password_confirmation') }}
-                            </div>
+                            </div> -->
                         </div>
 
                         <button type="submit" class="btn btn-primary" v-bind:disabled="errors.any()">
@@ -102,25 +93,20 @@ export default {
                 studentid: "",
                 email: "",
                 password: "",
-                password_confirmation: "",
+                // password_confirmation: "",
             }
         }
     }, methods: {
-        sendTicket () {
-            this.$validator.validateAll().then(function(response) {
-                const path = '/api/user/register'
-                axios_csrf.post(path, this.form)
-                .then(response => {
+        Register () {
+            this.$validator.validateAll()
+            const path = '/api/user/register'
+            axios_csrf.post(path, this.form)
+            .then(response => {
 
-                    console.log("Registered")
-                    this.form = ""
-                }).catch(error => {
-                    console.log(error)
-                })
-            })
-            .catch(function(e) {
-              // Catch errors
-              console.log("Found errors while validating")
+                console.log("Registered")
+                this.form = ""
+            }).catch(error => {
+                console.log(error)
             })
         }
     }
