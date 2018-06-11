@@ -10,12 +10,14 @@ from flaskr.models import Message, ticket, Note, Course, user, Label
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
 from flask_login import LoginManager
 from flask_jwt import JWT
+from . import login
 
 
 db = database.db
 socketio = None
 login_manager = None
-jwt = None
+# jwt = None
+app = None
 
 
 def create_app(test_config=None):
@@ -81,20 +83,7 @@ def create_app(test_config=None):
     from .api import apiBluePrint
     app.register_blueprint(apiBluePrint)
 
-
-    def authenticate(username, password):
-        """
-        Kijk of de login gegevens in POST correct zijn/communiceer met Canvas.
-        """
-        usr = user.User.query.filter_by(id = username).first()
-        return usr
-
-
-    def identity(payload):
-        usr = user.User.query.filter_by(id = payload['identity']).first()
-        return usr
-
-    jwt = JWT(app, authenticate, identity)
+    login.init_jwt(app)
 
     # Setup routing for vuejs.
     @app.route('/', defaults={'path': ''})
