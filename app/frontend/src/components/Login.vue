@@ -44,20 +44,18 @@ export default {
             this.$validator.validateAll().then((result) => {
                 if(result) {
                     const path = '/auth';
-                    // const path = '/api/login/';
-        
-                    //const msg = JSON.stringify(this.form);
-                    // console.log(msg);
                     this.$ajax.post(path, {username: this.form.username, password: "JWT is cool!!!"}, response => {
-                        console.log(response);
                         // TODO: Implement authentication on back-end to work with Canvas.
                         this.$cookies.set('token', response.data.access_token);
+                        console.log(response);
                         this.form.username = '';
                         this.$ajax.get('/api/user/retrieve', response => {
-                            this.$cookies.set('user', response.data.user)
-                            this.$router.replace('/')
-                        })
-                    })
+                            if(this.$user.set(response.data.user))
+                                this.$router.replace('/');
+                            else
+                                console.log("Can\'t set user.");
+                        });
+                    });
                 }
             });
         }

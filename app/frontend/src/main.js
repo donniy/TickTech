@@ -60,6 +60,37 @@ Vue.prototype.$ajax = {
   }
 }
 
+Vue.prototype.$user = {
+  get: () => {
+    let user_json = this.$cookies.get('user');
+
+    let user_obj = null;
+    
+    try {
+      user_obj = JSON.parse(user_json);
+    } catch(e) {
+      return null;
+    }
+
+    return user_obj;
+  },
+
+  set: (user) => {
+    if (!user)
+      return false;
+
+    let user_json = null;
+    try {
+      user_json = JSON.stringify(user);
+      this.$cookies.set('user', user_json);
+    } catch(e) {
+      return false;
+    }
+    
+    return true;
+  }
+}
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
