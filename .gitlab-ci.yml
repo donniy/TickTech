@@ -3,4 +3,4 @@ unit test:
   stage: test
   script:
     - npm install --prefix=app/frontend --progress=false
-    - npm run test
+    - npm run test --prefix=app/frontend
