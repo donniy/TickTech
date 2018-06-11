@@ -8,7 +8,6 @@ from flask_wtf.csrf import CSRFProtect
 import os.path
 from flaskr.models import Message, ticket, Note, Course, user, Label
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
-from flask_login import LoginManager
 from flask_jwt import JWT
 from . import login
 
@@ -16,7 +15,6 @@ from . import login
 db = database.db
 socketio = None
 login_manager = None
-# jwt = None
 app = None
 
 
@@ -44,10 +42,6 @@ def create_app(test_config=None):
 
     global socketio
     socketio = SocketIO(app)
-
-    global login_manager
-    login_manager = LoginManager()
-    login_manager.init_app(app)
 
     db_uri = os.environ.get('DATABASE_CONNECTION')
 
@@ -96,19 +90,6 @@ def create_app(test_config=None):
             except:
                 return "Je gebruikt dev mode maar hebt je Vue development server niet draaien"
         return render_template("index.html")
-
-    @login_manager.user_loader
-    def load_user(user_id):
-        return User.query.get(user_id)
-
-
-    @login_manager.unauthorized_handler
-    def unauthorized():
-        """
-        Executed whenever an api call is unauthorized.
-        """
-        return database.jsonify({'status': 'unauthorized'})
-
 
 
     @socketio.on('join-room')
