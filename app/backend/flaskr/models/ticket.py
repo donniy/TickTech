@@ -71,7 +71,7 @@ class Ticket(db.Model):
             'email': self.email,
             'title': self.title,
             'timestamp': self.timestamp,
-            'status': self.ticket_status.serialize,
+            # 'status': self.ticket_status.serialize,
             'labels': database.serialize_list(self.labels)
         }
 
