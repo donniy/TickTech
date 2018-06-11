@@ -1,45 +1,37 @@
 from flaskr.models.ticket import *
 from . import apiBluePrint
 from flask import jsonify, request, escape
-from flaskr import database
+from flaskr import database, Iresponse
 from flaskr.models.Course import *
 from flaskr.models.user import *
+from flaskr.request_processing import courses as rp_courses
 
-@apiBluePrint.route('/course/<course_id>')
+@apiBluePrint.route('/courses/<course_id>/tickets')
 def retrieve_course_tickets(course_id):
     """
     Geeft alle ticktes over gegeven course.
     """
     # TODO: Controleer of degene die hierheen request permissies heeft.
-    tickets = Ticket.query.filter_by(course_id=course_id).all()
-    return database.json_list(tickets)
+    return rp_courses.retrieve_course_tickets_request(course_id)
 
-@apiBluePrint.route('/course/new', methods=['POST'])
+
+@apiBluePrint.route('/courses', methods=['POST'])
 def create_course():
     """
     Check ticket submission and add to database.
     """
-    id = escape(request.json["id"])
-    mail = escape(request.json["mail"])
-    title = escape(request.json["title"])
-    description = escape(request.json["description"])
+    jsonData = request.get_json()
+    if jsonData is None:
+        return Iresponse.empty_json_request()
 
-    c = Course()
-    c.id = id
-    c.course_email = mail
-    c.title = title
-    c.description = description
+    return rp_courses.create_request(jsonData)
 
-    print(id)
-    print(mail)
 
-    try:
-        success = database.addItemSafelyToDB(c)
-        print(success)
-    except database.DatabaseInsertException as err:
-        print(err)
+@apiBluePrint.route('/courses')
+def retrieve_all_courses():
+    courses = Course.query.all()
+    return Iresponse.create_response(database.serialize_list(courses), 200)
 
-    return jsonify({'status':'success'})
 
 # remember to add file in __init__
 @apiBluePrint.route('/courses/<user_id>')
@@ -48,5 +40,8 @@ def retrieve_courses(user_id):
     # TODO put user id in data and not in link
 
     user = User.query.get(user_id)
+    if user is None:
+        return Iresponse.create_response("", 404)
     courses = user.ta_courses
+
     return database.json_list(courses)
