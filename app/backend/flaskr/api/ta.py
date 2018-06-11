@@ -7,21 +7,27 @@ from flaskr.models.user import *
 from flaskr import Iresponse
 
 
-@apiBluePrint.route('/ta/<ta_id>/inbox')
-def get_all_cases(ta_id):
-    tickets = Ticket.query.all()
+@apiBluePrint.route('/ta/<user_id>/tickets')
+def retrieve_tickets(user_id):
+    user = User.query.get(user_id)
+    if user is None:
+        return Iresponse.create_response("", 404)
 
+    tickets = user.ta_tickets
     if len(tickets) == 0:
         return Iresponse.create_response("", 404)
 
     return Iresponse.create_response(database.serialize_list(tickets), 200)
 
 
-@apiBluePrint.route('ta/<ta_id>/myinbox')
-def get_ta_cases(ta_id):
-    ticket = Ticket.query.get(ta_id)
 
-    if len(tickets) == 0:
+@apiBluePrint.route('/ta/<user_id>/courses')
+def get_all_courses_for_ta(user_id):
+    user = User.query.get(user_id)
+    if user is None:
         return Iresponse.create_response("", 404)
-    
-    return Iresponse.create_response(database.serialize_list(tickets), 200)
+    courses = user.ta_courses
+    if len(courses) == 0:
+        return Iresponse.create_response("", 404)
+
+    return Iresponse.create_response(database.serialize_list(courses), 200)
