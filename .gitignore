@@ -9,6 +9,8 @@ __pycache__/
 .vscode
 .vscode/*
 
+app/frontend/test/unit/coverage/lcov-report/*
+
 # Distribution / packaging
 .Python
 #build/
@@ -151,3 +153,5 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+.db_credentials

@@ -8,7 +8,7 @@
             Status: {{ticket.status.name}}
         </div>
 
-        <message v-bind:self="123123123" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
+        <message v-bind:user="user" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
 
         <form v-on:submit.prevent="sendReply" class="reply-area">
             <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
@@ -25,10 +25,7 @@
 
 import axios from 'axios'
 import Message from './Message.vue'
-
-const axios_csrf = axios.create({
-  headers: {'X-CSRFToken': csrf_token}
-});
+import VueCookies from 'vue-cookies'
 
 export default {
     data () {
@@ -36,14 +33,15 @@ export default {
             ticket: {title: '', status: {name: ''}, course_id: ''},
             reply: '',
             messages: [],
+            user: {}
         }
     },
     methods: {
         getTicket () {
             const path = '/api/ticket/' + this.$route.params.ticket_id
-            axios.get(path)
+            this.$ajax.get(path)
             .then(response => {
-                this.ticket = response.data
+                this.ticket = response.data.json_data
             })
             .catch(error => {
                 console.log(error)
@@ -51,21 +49,19 @@ export default {
         },
         getMessages () {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
-            axios.get(path)
+            this.$ajax.get(path)
             .then(response => {
-                this.messages = response.data.json_list
+                this.messages = response.data.json_data
             })
             .catch(error => {
                 console.log(error)
             })
         },
         sendReply () {
-            const path = '/api/student/ticket/' + this.$route.params.ticket_id + '/reply'
-            axios_csrf.post(path, {message: this.reply})
+            const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
+            this.$ajax.post(path, {message: this.reply, user_id:123123123})
             .then(response => {
-                if (response.data.status == "success") {
                     this.reply = ''
-                }
             })
             .catch(error => {
                 console.log(error)
@@ -73,6 +69,9 @@ export default {
         }
     },
     mounted: function () {
+        this.user = this.$user.get()
+        console.log(this.user)
+        console.log("id: " + this.user.id)
         this.getTicket()
         this.getMessages()
         this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
@@ -93,7 +92,7 @@ export default {
             this.messages.push(data)
             document.body.scrollTop = document.body.scrollHeight;
         }
-    }
+    },
 }
 
 </script>

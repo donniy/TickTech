@@ -28,7 +28,7 @@
                             <input id="email" class="form-control" name="email" v-model="form.email" v-validate="'required|min:1'" type="text" placeholder="Email address">
                             <div v-show="errors.has('email')" class="invalid-feedback">
                                 {{ errors.first('email') }}
-                            </div>  
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -47,19 +47,19 @@
 
                         <div class="form-group">
                             <label for="course">Course</label>
-                            <select id="course" v-validate="'required'" class="form-control custom-select" v-model="form.courseid">
+                            <select id="course" v-validate="''" class="form-control custom-select" v-model="form.courseid">
                                 <option disabled value="">Nothing selected</option>
-                                <option v-for="option in categories.courses" v-bind:value="option.id">
-                                {{ option.name }}
+                                <option v-for="obj in categories.courses" v-bind:value="obj.id">
+                                        {{ obj.title }}
                                 </option>
                             </select>
 
                         </div>
                         <div class="form-group">
                             <label for="category">Category</label>
-                            <select id="category" v-validate="'required'" class="form-control custom-select" v-model="form.labelid">
+                            <select id="category" v-validate="''" class="form-control custom-select" v-model="form.labelid">
                                 <option disabled value="">Nothing selected</option>
-                                <option v-for="option in categories.labels[form.courseid]" v-bind:value="option.value">{{ option.text }}</option>
+                                <option v-for="option in categories.labels[form.courseid]" v-bind:value="option.label_id">{{ option.label_name }}</option>
                             </select>
 
                         </div>
@@ -85,7 +85,7 @@ import axios from 'axios'
 import VeeValidate from 'vee-validate';
 
 const axios_csrf = axios.create({
-    headers: {'X-CSRFToken': csrf_token}
+    headers: {'X-CSRFToken': 'need_to_replace'}
 });
 
 export default {
@@ -113,16 +113,18 @@ export default {
         sendTicket () {
             this.$validator.validateAll()
             const path = '/api/ticket/submit'
-            axios_csrf.post(path, this.form)
-            .then(response => {
-                this.$router.push({name: 'StudentViewTicket', params: {ticket_id: response.data.ticketid}})
-                this.form = ''
-            }).catch(error => {
-                console.log(error)
-            })
+            this.$ajax.post(path, this.form)
+                .then(response => {
+                    this.$router.push({name: 'StudentViewTicket',
+                                       params: {ticket_id: response.data.json_data.ticketid}})
+
+                    console.log("Pushed")
+                    this.form = ""
+                }).catch(error => {
+                    console.log(error)
+                })
         },
         onChange: function(e) {
-            console.log(event.srcElement.value);
             this.categories = this.categories
         },
         mounted: function() {
@@ -133,15 +135,35 @@ export default {
         const pathLabels = '/api/labels';
         const pathCourses = '/api/courses';
 
-        axios_csrf.get(pathCourses)
-        .then(response => {
-            this.categories.courses = response.data;
+        this.$ajax.get(pathCourses)
+            .then(response => {
+                for(let i = 0; i < response.data.json_data.length; i++) {
+                    let dataObj = response.data.json_data[i]
+                    this.categories.courses.push(dataObj)
+                }
+                for(let i = 0; i < this.categories.courses.length; i++) {
+                    let courseid = this.categories.courses[i].id
+                    let currLabelPath = pathLabels + '/' + courseid
+                    axios_csrf.get(currLabelPath)
+                        .then(response => {
+                            this.categories.labels[courseid] = response.data.json_list
+                            console.log(this.categories.labels[courseid])
+                        }).catch(error => {
+                            console.log(error)
+                        });
+                }
+
         }).catch(error => {
             console.log(error);
         });
-
-        axios_csrf.get(pathLabels)
+        for(let i = 0; i < this.categories.courses.length; i++) {
+            //axios_csrf.get(pathLabels + '/' + this.courses[i].course_id)
+            console.log("HELLO")
+            console.log(this.categories.courses[i].course_id)
+        }
+        this.$ajax.get(pathLabels)
         .then(response => {
+            console.log
             for(let i = 0; i < response.data.json_list.length; i++) {
                 let elem = response.data.json_list[i];
                 if (this.categories.labels[elem.course_id])

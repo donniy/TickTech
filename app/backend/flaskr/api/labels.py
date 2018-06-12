@@ -1,41 +1,66 @@
-from flaskr import database
+from flaskr import database, Iresponse, request
 from flaskr.models.ticket import TicketLabel
 from flaskr.models.Label import Label
+from flaskr.models.Course import Course
 from . import apiBluePrint
-from uuid import uuid4
+import uuid
+
+@apiBluePrint.route('/labels/<label_id>/close', methods=['POST'])
+def remove_label(label_id):
+    label = Label.query.get(label_id)
+    print(label)
+    if label is None:
+        return Iresponse.create_response("", 404)
+    try:
+        database.db.session.delete(label)
+        database.db.session.commit()
+    except Exception:
+        print("LOG: Deleting error")
+        return Iresponse.internal_server_error()
+
+    return Iresponse.create_response("", 202)
 
 
-@apiBluePrint.route('/labels/<course_id>/retrieve')
+@apiBluePrint.route('/labels/<course_id>', methods=['GET'])
 def retrieve_labels(course_id):
     """
-    Geeft alle ticktes over gegeven course.
+    Returns all labels of given course.
     """
-    print("Getting ticket")
+    print("Getting label. ")
     # TODO: Controleer of degene die hierheen request permissies heeft.
-    labels = Label.query.all()
-    return database.json_list(labels)
+    course = Course.query.get(course_id)
+    if course is None:
+        return Iresponse.create_response("", 404)
+    return database.json_list(course.labels)
 
-@apiBluePrint.route('/labels/<course_id>/create', methods=['POST'])
+
+@apiBluePrint.route('/labels/<course_id>', methods=['POST'])
 def create_labels(course_id):
     """
-    Add a lable to a course
+    Adds a label to a course.
     """
-    print("Creating ticket")
-    # TODO: Controleer of degene die hierheen request permissies heeft.
-    # name = escape(request.json["name"])
-    name = "Testlabel"
-    # courseid = escape(request.json["courseid"])
-    courseid = 1;
+
+    data = request.get_json()
+    if data is None:
+        return Iresponse.create_response("", 404)
+    name = data["name"]
     labelid = uuid.uuid4()
+    exist_label = Label.query.filter_by(label_name=name).all()
+
+    if exist_label:
+        return Iresponse.create_response("", 200)
+
+    course = Course.query.get(course_id)
+    if course is None:
+        return Iresponse.create_response("", 404)
 
     new_label = Label()
-    label.name = name
-    label.courseid = courseid
-    label.labelid = labelid
+    new_label.label_name = name
+    new_label.label_id = labelid
 
-    try:
-        database.addItemSafelyToDB(new_label)
-    except database.DatabaseInsertException as DBerror:
-        print(DBerror)
+    if not database.addItemSafelyToDB(new_label):
+        return Iresponse.internal_server_error()
 
-    return jsonify({'status': "success"})
+    course.labels.append(new_label)
+    database.db.session.commit()
+    return Iresponse.create_response("", 200)

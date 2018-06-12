@@ -19,7 +19,7 @@
   import Modal from './ClosePrompt.vue'
 
   const axios_csrf = axios.create({
-    headers: {'X-CSRFToken': csrf_token}
+    headers: {'X-CSRFToken': 'need_to_replace'}
   });
 
   export default {
@@ -31,7 +31,7 @@
       },
       methods: {
           closeNote(){
-              const path = '/api/note/' + this.note.id + '/close'
+              const path = '/api/notes/' + this.note.id + '/close'
               axios_csrf.post(path)
               .then(response => {
                   this.showModal = false
