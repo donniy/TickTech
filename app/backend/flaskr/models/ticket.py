@@ -63,12 +63,11 @@ class Ticket(db.Model):
     @property
     def serialize(self):
         """
-        Zet dit ticket om in json. Dit is alles wat de frontend kan zien,
-        dus zorg dat er geen gevoelige info in zit.
+        Ticket can be unassigned, so ta_id can be None.
         """
-
         if self.ta_id is None:
             self.ta_id = "None"
+
         return {
             'id': self.id,
             'user_id': self.user_id,

@@ -60,7 +60,6 @@
 
 <script>
 
-import axios from 'axios'
 import Message from './Message.vue'
 
 import Modal from './ClosePrompt.vue'
@@ -68,16 +67,12 @@ import Note from './Note.vue'
 
 import Tribute from "tributejs";
 
-const axios_csrf = axios.create({
-    headers: {'X-CSRFToken': csrf_token}
-});
-
 
 /* Build the tribute and config for matching.
  * DOCS: https://github.com/zurb/tribute
  * Maybe create a vuejs wrapper
  */
-var tribute = new Tribute({
+const tribute = new Tribute({
     values: [
     ],
     selectTemplate: function (item) {
@@ -86,8 +81,6 @@ var tribute = new Tribute({
     lookup: function (ta) {
         return ta.name + ' ' + ta.id;
     }
-
-
 })
 
 export default {
