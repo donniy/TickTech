@@ -29,18 +29,6 @@ def test_incorrect_course_post(client):
     rv = client.post('/api/courses')
     assert rv.status == '400 BAD REQUEST'
 
-#def test_course_post(client):
-#    """
-#    Try inserting a new course.
-#    """
-#    rv = client.post('/api/courses', json={
-#        'title': 'Test course',
-#        'mail': 'test.testerson@student.uva.nl',
-#        'description': 'test description'
-#    })
-#    assert rv.status == 'asdf'
-
-
 def test_insert_ticket(client):
     """
     Insert a new ticket.
