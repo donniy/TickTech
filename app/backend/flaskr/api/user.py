@@ -30,6 +30,8 @@ def retrieve_active_user_tickets(user_id):
 @apiBluePrint.route('/user/register', methods=["POST"])
 def register_user():
     jsonData = request.get_json()
+    if jsonData is None:
+        return Iresponse.internal_server_error()
     email = escape(jsonData["email"])
     name = escape(jsonData["name"])
     studentid = escape(jsonData["studentid"])
