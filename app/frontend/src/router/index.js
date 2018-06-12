@@ -48,6 +48,11 @@ const routerOptions = [
         component: 'Login'
     },
     {
+        path: '/register',
+        name: 'Register',
+        component: 'Register'
+    },
+    {
         path: '/course/:course_id/labels',
         name: 'Labels',
         component: 'Labels'
