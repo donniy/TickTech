@@ -78,12 +78,7 @@
 
 <script>
 
-import axios from 'axios'
 import VeeValidate from 'vee-validate';
-
-const axios_csrf = axios.create({
-    headers: {'X-CSRFToken': csrf_token}
-});
 
 export default {
     data () {
@@ -98,16 +93,17 @@ export default {
         }
     }, methods: {
         Register () {
-            this.$validator.validateAll()
-            const path = '/api/user/register'
-            axios_csrf.post(path, this.form)
-            .then(response => {
+            this.$validator.validateAll().then((result) => {
+                if(result) {
+                    const path = '/api/user/register';
+                    this.$ajax.post(path, this.form, response => {
+                        console.log(response);
+                        this.$router.push({name: 'Login',
+                                           params: {studentid: form.studentid}})
 
-                console.log("Registered")
-                this.form = ""
-            }).catch(error => {
-                console.log(error)
-            })
+                    });
+                }
+            });
         }
     }
 }
