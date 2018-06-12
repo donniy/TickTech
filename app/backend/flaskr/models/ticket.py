@@ -26,7 +26,7 @@ class Ticket(db.Model):
     """
     id = db.Column(UUIDType(binary=False), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    course_id = db.Column(db.String(120), unique=False, nullable=False)
+    course_id = db.Column(UUIDType(binary=False), unique=False, nullable=False)
 
     status_id = db.Column(db.Integer, db.ForeignKey(
         'ticket_status.id'), default=0, nullable=False)
