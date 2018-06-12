@@ -112,7 +112,7 @@ export default {
         },
         sendReply () {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
-            axios_csrf.post(path, {message: this.reply, user_id: 11037393})
+            axios_csrf.post(path, {message: this.reply, user_id: 4321})
             .then(response => {
                     this.reply = ''
                     this.getMessages()
