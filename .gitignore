@@ -155,3 +155,4 @@ testem.log
 Thumbs.db
 
 .db_credentials
+.db-credentials
