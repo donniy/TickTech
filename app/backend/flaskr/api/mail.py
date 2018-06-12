@@ -91,5 +91,5 @@ def update_thread(thread, sleeptime, server, port, email, password):
     """
     # One example
     print("Updating thread..")
-    thread.update(sleep_time = 20, server = server, port = port, email = email, password = password)
+    thread.update(sleep_time, server = server, port = port, email = email, password = password)
     return
