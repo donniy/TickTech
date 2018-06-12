@@ -37,6 +37,9 @@ def create_app(test_config=None):
         # production mode as well.
         app.config['WTF_CSRF_CHECK_DEFAULT'] = False
 
+    
+    app.config['WTF_CSRF_CHECK_DEFAULT'] = False
+
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     csrf = CSRFProtect(app)

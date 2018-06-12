@@ -29,13 +29,52 @@ def test_incorrect_course_post(client):
     rv = client.post('/api/courses')
     assert rv.status == '400 BAD REQUEST'
 
-def test_course_post(client):
+#def test_course_post(client):
+#    """
+#    Try inserting a new course.
+#    """
+#    rv = client.post('/api/courses', json={
+#        'title': 'Test course',
+#        'mail': 'test.testerson@student.uva.nl',
+#        'description': 'test description'
+#    })
+#    assert rv.status == 'asdf'
+
+
+def test_insert_ticket(client):
     """
-    Try inserting a new course.
+    Insert a new ticket.
     """
-    rv = client.post('/api/courses', json={
-        'title': 'Test course',
-        'mail': 'test.testerson@student.uva.nl',
-        'description': 'test description'
+    rv = client.get('/api/courses')
+    cid = rv.get_json()['json_data'][0]['id']
+    rv = client.post('/api/ticket/submit', json={
+        'studentid': '111111',
+        'name': 'Piet Pietersen',
+        'email': 'piet.pietersen@student.uva.nl',
+        'subject': 'test ticket',
+        'message': 'Test bericht',
+        'courseid': cid,
+        'labelid': ''
     })
-    assert rv.status == 'asdf'
+    assert rv.status == '201 CREATED'
+
+def test_get_ticket(client):
+    rv = client.get('/api/courses')
+    cid = rv.get_json()['json_data'][0]['id']
+    rv = client.post('/api/ticket/submit', json={
+        'studentid': '111111',
+        'name': 'Piet Pietersen',
+        'email': 'piet.pietersen@student.uva.nl',
+        'subject': 'test ticket',
+        'message': 'Test bericht',
+        'courseid': cid,
+        'labelid': ''
+    })
+    rv = client.get('/api/courses')
+    cid = rv.get_json()['json_data'][0]['id']
+    tickets = client.get('/api/courses/{}/tickets'.format(cid))
+    print(tickets.get_json())
+    assert len(tickets.get_json()['json_data']) == 1
+    ticketid = tickets.get_json()['json_data'][0]['id']
+    assert ticketid is not None
+

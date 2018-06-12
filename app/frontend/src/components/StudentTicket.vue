@@ -8,7 +8,7 @@
             Status: {{ticket.status.name}}
         </div>
 
-        <message v-bind:user="{id: 123123123}" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
+        <message v-bind:user="user" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
 
         <form v-on:submit.prevent="sendReply" class="reply-area">
             <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
@@ -37,6 +37,7 @@ export default {
             ticket: {title: '', status: {name: ''}, course_id: ''},
             reply: '',
             messages: [],
+            user: {}
         }
     },
     methods: {
@@ -62,7 +63,7 @@ export default {
         },
         sendReply () {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
-            axios_csrf.post(path, {message: this.reply, user_id:123123123})
+            axios_csrf.post(path, {message: this.reply, user_id:this.user.id})
             .then(response => {
                     this.reply = ''
             })
@@ -72,8 +73,9 @@ export default {
         }
     },
     mounted: function () {
-        console.log(this.$user)
-        console.log("id: " + this.$user.id)
+        console.log(this.$user.get())
+        console.log("id: " + this.$user.get().id)
+        this.user = this.$user.get()
         this.getTicket()
         this.getMessages()
         this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
