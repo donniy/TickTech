@@ -10,7 +10,7 @@ def app():
     print("db_path: {}".format(db_path))
     app = create_app({
         'TESTING': True,
-        'SQLALCHEMY_DATABASE_URI': 'sqlite:///' + db_path,
+        'SQLALCHEMY_DATABASE_URI': 'sqlite:///' + db_path + '.db',
     })
 
     # Create database and load test data
