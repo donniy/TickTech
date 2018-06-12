@@ -25,7 +25,7 @@ class Ticket(db.Model):
     Een ticket.
     """
     id = db.Column(UUIDType(binary=False), primary_key=True)
-    user_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     course_id = db.Column(db.String(120), unique=False, nullable=False)
 
     ta_id = db.Column(db.Integer, nullable=True)
