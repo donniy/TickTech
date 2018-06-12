@@ -56,9 +56,8 @@ export default {
                                 url = params.prev_url;
                             if(this.$user.set(response.data.json_data.user))
                                 this.$router.replace(url);
-                            else 
+                            else
                                 console.log("Can\'t set user.");
-                            }
                         });
                     });
                 }
