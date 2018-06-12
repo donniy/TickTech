@@ -47,13 +47,17 @@ export default {
                     this.$ajax.post(path, {username: this.form.username, password: "JWT is cool!!!"}, response => {
                         // TODO: Implement authentication on back-end to work with Canvas.
                         this.$cookies.set('token', response.data.access_token);
-                        console.log(response);
                         this.form.username = '';
                         this.$ajax.get('/api/user/retrieve', response => {
-                            if(this.$user.set(response.data.user))
-                                this.$router.replace('/');
-                            else
+                            let params = this.$route.params;
+                            let url = '/';
+                            if(typeof params !== 'undefined' && typeof params.prev_url !== 'undefined')
+                                url = params.prev_url;
+                            if(this.$user.set(params)) {
+                                this.$router.replace(url);
+                            } else {
                                 console.log("Can\'t set user.");
+                            }
                         });
                     });
                 }
