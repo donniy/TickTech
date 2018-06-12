@@ -25,8 +25,11 @@
 
 <script>
 
+import Vue from 'vue';
 import axios from 'axios'
 import Ticket from './Ticket.vue'
+import VueCookies from 'vue-cookies';
+
 
 export default {
     data () {

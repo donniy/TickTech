@@ -27,7 +27,7 @@ def create_course():
     return rp_courses.create_request(jsonData)
 
 
-@apiBluePrint.route('/courses')
+@apiBluePrint.route('/courses', methods=['GET'])
 def retrieve_all_courses():
     courses = Course.query.all()
     return Iresponse.create_response(database.serialize_list(courses), 200)
