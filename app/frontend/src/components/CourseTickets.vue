@@ -2,13 +2,14 @@
     <div>
         <h1>Tickets in cursus {{ $route.params.course_id }}</h1>
         Status:
-        <select v-model="status_filter">
+        <select class="form-control custom-select" v-model="status_filter">
             <option> All </option>
             <option> Needs help </option>
             <option> Answered </option>
         </select>
+        <b-button class="labelbutton:right" v-bind:href="'/course/'+ $route.params.course_id + '/labels'">Course labels</b-button>
+        <button v-on:click="emailSettings" class="btn btn-primary">Email settings</button>
 
-        <button v-on:click="emailSettings" class="labelbutton-left">Email settings</button>
         <modal v-if="showModal" warning="Setup a fetcher to your mailinglist."
                @yes="updateEmail()" @close="showModal = false"></modal>
         <br /><br />
@@ -19,7 +20,6 @@
             v-bind:key="ticket.id"
             v-bind:ticket="ticket"
         ></ticket>
-    <b-button class="labelbutton:right" v-bind:href="'/course/'+ $route.params.course_id + '/labels'">Course labels</b-button>
     </div>
 </template>
 
