@@ -95,6 +95,12 @@ Vue.prototype.$user = {
     }
 
     return true;
+  },
+
+  logged_in: () => {
+    if(this.get())
+      return true;
+    return false;
   }
 }
 
