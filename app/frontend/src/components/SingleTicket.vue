@@ -48,8 +48,8 @@
                   <textarea v-model="noteTextArea"
                             class="form-control" style="height:200px;width:250px;"
                             id="textAreaForNotes"
-                            @input="getMentions($event)"
-                            placeholder="Voer uw opmerking in"></textarea>
+                            placeholder="Voer uw opmerking in">
+                  </textarea>
 
                   <button @click="addNote" class="btn btn-primary" style="margin-top:10px">Verzenden</button>
                 </b-popover>
@@ -72,14 +72,16 @@ const axios_csrf = axios.create({
     headers: {'X-CSRFToken': csrf_token}
 });
 
+
 /* Build the tribute and config for matching.
  * DOCS: https://github.com/zurb/tribute
+ * Maybe create a vuejs wrapper
  */
 var tribute = new Tribute({
     values: [
     ],
     selectTemplate: function (item) {
-        return '@' + item.original.id
+        return '@' + item.original.id;
     },
     lookup: function (ta) {
         return ta.name + ' ' + ta.id;
@@ -104,7 +106,7 @@ export default {
     methods: {
         getTicket () {
             const path = '/api/ticket/' + this.$route.params.ticket_id
-            axios.get(path)
+            this.$ajax.get(path)
                 .then(response => {
                     this.ticket = response.data.json_data
                     this.getCourseTas()
@@ -114,7 +116,7 @@ export default {
         },
         getMessages () {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
-            axios.get(path)
+            this.$ajax.get(path)
                 .then(response => {
                     this.messages = response.data.json_data
                 })
@@ -124,7 +126,7 @@ export default {
         },
         getNotes () {
             //get all notes
-            axios.get('/api/notes/'+this.$route.params.ticket_id)
+            this.$ajax.get('/api/notes/'+this.$route.params.ticket_id)
                 .then(response => {
                     this.notes = response.data.json_data
                     console.log(response)
@@ -135,7 +137,7 @@ export default {
         },
         sendReply () {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
-            axios_csrf.post(path, {message: this.reply, user_id: 11037393})
+            this.$ajax.post(path, {message: this.reply, user_id: 11037393})
                 .then(response => {
                     this.reply = ''
                     this.getMessages()
@@ -147,7 +149,7 @@ export default {
         closeTicket () {
             this.showModal = false
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/close'
-            axios_csrf.post(path)
+            this.$ajax.post(path)
                 .then(response => {
                     // TODO: Iets van een notificatie ofzo? '234 closed this ticket'? iig niet meer hardcoden "closed"
                     this.ticket.status.name = "closed"
@@ -203,6 +205,17 @@ export default {
                 }
             }
         },
+
+        /* This is needed because vue does not update the model when a match is found,
+         * because it does not trigger the right event. So we update the model oursels,
+         * because the input of the textarea is actually changed.
+         * Only gets executed when a match is found.
+         */
+        matchFound(e) {
+            let text_including_full_match = document.getElementById('textAreaForNotes').value
+            this.noteTextArea = text_including_full_match
+            console.log(this.noteTextArea)
+        }
     },
     mounted: function () {
         this.getTicket()
@@ -210,6 +223,8 @@ export default {
         this.getNotes()
         this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
         tribute.attach(document.getElementById('textAreaForNotes')) // For the mentioning system.
+        document.getElementById('textAreaForNotes').
+            addEventListener('tribute-replaced', this.matchFound)
     },
     sockets: {
         connect: function () {
