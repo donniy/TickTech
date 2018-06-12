@@ -12,12 +12,30 @@
 
           <div class="modal-body">
             <slot name="body">
-              <button class="btn btn-primary" @click="$emit('yes')">
-                Yes
-              </button>
-              <button class="btn btn-primary close-button" @click="$emit('close')">
-                No
-              </button>
+            <section>
+                <!--Student name and number  -->
+                <form @submit.prevent="handleSubmit">
+                    <div class="form-group">
+                        <label for="email">Email address</label>
+                        <input id="email" class="form-control" name="email" v-model="form.email" v-validate="'required|min:1'" type="text" placeholder="uvapsetest@gmail.com">
+
+                        <label for="category">Password</label>
+                        <input id="password" class="form-control" name="password" v-model="form.password" v-validate="'required|min:1'" type="text" placeholder="stephanandrea">
+
+                        <label for="pop">Pop3 settings</label>
+                        <input class="form-control" id="pop" name="pop" v-model="form.pop" v-validate="'required|min:1'" type="text" placeholder="pop.gmail.com">
+
+                        <label for="port">Port</label>
+                        <input id="port" class="form-control" name="port" v-model="form.port" v-validate="'required|min:1'" type="text" placeholder="995">
+                    </div>
+                </form>
+                <button type="submit" class="btn btn-primary" v-on:click="changeClose">
+                    Submit
+                </button>
+                <button class="btn btn-primary close-button" @click="$emit('close')">
+                    Cancel
+                </button>
+            </section>
             </slot>
           </div>
         </div>
@@ -30,11 +48,19 @@
   export default {
       props: ['warning'],
       data: function () {
-          return {};
+          return {
+              form: {
+                  email: "uvapsetest@gmail.com",
+                  password: "stephanandrea",
+                  pop: "pop.gmail.com",
+                  port: "995"
+              }
+          };
       },
-      method: {
-        changeClose () {
-            this.$emit("closeT", "true");
+      methods: {
+        changeClose() {
+            console.log("Model changeclose")
+            this.$parent.updateEmail(this.form);
         }
       }
     }
@@ -60,9 +86,9 @@
 }
 
 .modal-container {
-  width: 300px;
-  margin: 0px auto;
-  padding: 20px 30px;
+  width: 600px;
+  margin: auto auto;
+  padding: 30px 30px;
   background-color: #fff;
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);

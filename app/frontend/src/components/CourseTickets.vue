@@ -9,8 +9,8 @@
         </select>
 
         <button v-on:click="emailSettings" class="labelbutton-left">Email settings</button>
-        <modal v-if="showModal" warning="Are you sure you want to close this ticket?"
-               @yes="closeTicket()" @close="showModal = false"></modal>
+        <modal v-if="showModal" warning="Setup a fetcher to your mailinglist."
+               @yes="updateEmail()" @close="showModal = false"></modal>
         <br /><br />
 
         <ticket
@@ -25,9 +25,7 @@
 
 <script>
 
-import axios from 'axios'
 import Ticket from './Ticket.vue'
-
 import Modal from './EmailSettingsModel.vue'
 
 export default {
@@ -72,6 +70,21 @@ export default {
             console.log(error)
             this.status = 'failed getting course info'
         })
+    },
+    updateEmail(form) {
+        this.showModal = false
+        console.log("here")
+        console.log(form)
+        const path = '/api/email'
+        axios_csrf.post(path, this.form)
+        .then(response => {
+        //     this.$router.push({name: 'StudentViewTicket', params: {ticket_id: response.data.ticketid}})
+            this.form = ''
+            console.log(data)
+        }).catch(error => {
+            console.log(error)
+        })
+
     },
     created () {
       this.status = 'created'
