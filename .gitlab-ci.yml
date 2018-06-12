@@ -1,0 +1,8 @@
+unit test:
+  image: testim/node-chrome
+  stage: test
+  script:
+    - ./INSTALL
+    - make install
+    - make build
+    - make test
