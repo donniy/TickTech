@@ -2,6 +2,7 @@ from flaskr.models.ticket import *
 from . import apiBluePrint
 from flask_jwt import jwt_required, current_identity
 from flaskr import Iresponse
+from flask import request
 from flaskr.models.user import *
 
 @apiBluePrint.route('/user/<user_id>/tickets')
@@ -48,6 +49,37 @@ def register_user():
 
     response = Iresponse.create_response(response_body, 201)
     return response
+
+@apiBluePrint.route('/user/exists', methods=["POST"])
+def user_exists():
+
+    jsonData = request.get_json()
+    if jsonData is None:
+        return Iresponse.internal_server_error()
+
+    email = jsonData["email"]
+    print(email)
+    user = User.query.filter_by(email=email).first()
+
+    if user is None:
+        return Iresponse.create_response({"status":False}, 200)
+    return Iresponse.create_response({"status":True}, 200)
+
+@apiBluePrint.route('/user/idexists', methods=["POST"])
+def userid_exists():
+
+    jsonData = request.get_json()
+    print(jsonData)
+    if jsonData is None:
+        return Iresponse.internal_server_error()
+
+    studentid = jsonData["studentid"]
+    print(studentid)
+    user = User.query.filter_by(id=studentid).first()
+
+    if user is None:
+        return Iresponse.create_response({"status":False}, 200)
+    return Iresponse.create_response({"status":True}, 200)
 
 @apiBluePrint.route('/user/<int:user_id>')
 def get_user(user_id):
