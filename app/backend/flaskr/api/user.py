@@ -3,7 +3,6 @@ from . import apiBluePrint
 from flask_jwt import jwt_required, current_identity
 from flaskr import Iresponse
 from flaskr.models.user import *
-from flask import request, escape
 
 @apiBluePrint.route('/user/<user_id>/tickets')
 @jwt_required()
