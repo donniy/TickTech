@@ -52,10 +52,15 @@ def create_app(test_config=None):
     if db_uri in [None, '']:
         db_uri = 'sqlite:////tmp/test.db'
 
+    if test_config:
+        db_uri = test_config["SQLALCHEMY_DATABASE_URI"]
+
     app.config.from_mapping(
         SECRET_KEY='dev',
         SQLALCHEMY_DATABASE_URI=db_uri
     )
+
+    print("app: db uri: {}".format(app.config["SQLALCHEMY_DATABASE_URI"]))
 
 
     if test_config is None:
