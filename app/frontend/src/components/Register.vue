@@ -93,9 +93,8 @@
 <script>
 
 import VeeValidate from 'vee-validate';
-import VueCookies from 'vue-cookies';
 import Router from 'vue-router';
-import Vue from 'vue';
+
 
 export default {
     data () {
@@ -130,9 +129,9 @@ export default {
                                 console.log(response);
                                 this.$ajax.get('/api/user/retrieve', response => {
                                     if(this.$user.set(response.data.user))
-                                    this.$router.replace('/');
+                                        this.$router.replace('/');
                                     else
-                                    console.log("Can\'t set user.");
+                                        console.log("Can\'t set user.");
                                 });
                             });
                         }
