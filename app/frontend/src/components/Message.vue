@@ -1,5 +1,5 @@
 <template>
-    <div :class="'message' + (self.id == message.user_id ? ' text-right' : '')">
+    <div :class="'message' + (user.id == message.user_id ? ' text-right' : '')">
         <h4 class="message-sender">{{username}}</h4>
         <div class="material-card">
             <p class="message-text">

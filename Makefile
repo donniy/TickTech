@@ -14,3 +14,13 @@ run-flask:
 
 run-vue:
 	npm run dev --prefix app/frontend
+
+test-frontend:
+	. venv/bin/activate; \
+	cd app/backend/flaskr; \
+	python3 -m pytest
+
+test-backend:
+	npm run test --prefix app/frontend
+
+test: 	test-frontend test-backend

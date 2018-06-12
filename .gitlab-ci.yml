@@ -2,5 +2,6 @@ unit test:
   image: testim/node-chrome
   stage: test
   script:
-    - npm install --prefix=app/frontend --progress=false
-    - npm run test --prefix=app/frontend
+    - make install
+    - make build
+    - make test

@@ -19,7 +19,7 @@ describe('Message.vue', () => {
                 text: 'Hello World',
                 user_id: 123123123
             },
-            self: {
+            user: {
                 id: 234234234
             }
         })
@@ -33,7 +33,7 @@ describe('Message.vue', () => {
                 text: 'Hello World',
                 user_id: 123123123
             },
-            self: {
+            user: {
                 id: 234234234
             }
         })
@@ -47,7 +47,7 @@ describe('Message.vue', () => {
                 text: 'Hello World',
                 user_id: 123123123
             },
-            self: {
+            user: {
                 id: 123123123
             }
         })
