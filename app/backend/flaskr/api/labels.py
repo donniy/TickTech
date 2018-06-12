@@ -24,9 +24,9 @@ def remove_label(label_id):
 @apiBluePrint.route('/labels/<course_id>', methods=['GET'])
 def retrieve_labels(course_id):
     """
-    Geeft alle ticktes over gegeven course.
+    Returns all labels of given course.
     """
-    print("Getting ticket")
+    print("Getting label. ")
     # TODO: Controleer of degene die hierheen request permissies heeft.
     course = Course.query.get(course_id)
     if course is None:
@@ -37,7 +37,7 @@ def retrieve_labels(course_id):
 @apiBluePrint.route('/labels/<course_id>', methods=['POST'])
 def create_labels(course_id):
     """
-    Add a lable to a course
+    Adds a label to a course.
     """
 
     data = request.get_json()
