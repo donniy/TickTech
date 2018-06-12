@@ -27,6 +27,7 @@
 
 import Ticket from './Ticket.vue'
 import Modal from './EmailSettingsModel.vue'
+import axios from 'axios'
 
 export default {
   data () {
@@ -56,33 +57,14 @@ export default {
     },
     emailSettings() {
         this.showModal = true
-        this.status = 'email settings'
-        const path = '/api/email/' + this.$route.params.course_id + '/settings'
-        console.log(path)
-        axios.get(path, '')
-        .then(response => {
-            this.tickets = response.data.json_list
-            this.status = 'Retrieved data'
-            console.log(response.data.json_list)
-            console.log(response)
-        })
-        .catch(error => {
-            console.log(error)
-            this.status = 'failed getting course info'
-        })
     },
     updateEmail(form) {
         this.showModal = false
-        console.log("here")
         console.log(form)
         const path = '/api/email'
-        axios_csrf.post(path, this.form)
-        .then(response => {
-        //     this.$router.push({name: 'StudentViewTicket', params: {ticket_id: response.data.ticketid}})
-            this.form = ''
-            console.log(data)
-        }).catch(error => {
-            console.log(error)
+        this.$ajax.post(path, form, response => {
+            // TODO: Implement authentication on back-end to work with Canvas.
+            console.log(response)
         })
 
     },

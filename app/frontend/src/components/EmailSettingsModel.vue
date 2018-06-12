@@ -62,6 +62,20 @@
             console.log("Model changeclose")
             this.$parent.updateEmail(this.form);
         }
+      },
+      beforeCreate: function () {
+          const path = '/api/email/' + this.$route.params.course_id + '/settings'
+          this.$ajax.get(path, response => {
+              // TODO: Implement authentication on back-end to work with Canvas.
+              console.log(response)
+              if (response.status == 200){
+                  console.log("got here")
+                  console.log(response.data.json_data)
+                  console.log(response.data.json_data.email)
+                  this.form.email = response.data.json_data.email
+              }
+
+          });
       }
     }
 
