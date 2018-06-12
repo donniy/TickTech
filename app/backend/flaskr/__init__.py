@@ -52,11 +52,14 @@ def create_app(test_config=None):
     if db_uri in [None, '']:
         db_uri = 'sqlite:////tmp/test.db'
 
+
     app.config.from_mapping(
         SECRET_KEY='dev',
         SQLALCHEMY_DATABASE_URI=db_uri
     )
 
+    if test_config:
+        app.config.update(test_config)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -73,7 +76,7 @@ def create_app(test_config=None):
 
     db.init_app(app)
     socketio.init_app(app)
-    if not os.path.isfile('/tmp/test.db'):
+    if not os.path.isfile('/tmp/test.db') and not test_config:
         app.app_context().push()
         database.init_db()
 

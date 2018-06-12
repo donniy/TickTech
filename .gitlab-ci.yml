@@ -1,8 +1,12 @@
+cache:
+    paths:
+        - app/frontend/node_modules
+        - venv
 unit test:
-  image: testim/node-chrome
-  stage: test
-  script:
-    - ./INSTALL
-    - make install
-    - make build
-    - make test
+    image: testim/node-chrome
+    stage: test
+    script:
+        - ./INSTALL
+        - make install
+        - make build
+        - make test
