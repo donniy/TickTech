@@ -31,13 +31,13 @@ def create_app(test_config=None):
                 static_folder = "../../dist/static",
                 template_folder = "../../dist")
 
-
     if os.environ.get('FLASK_ENV') == 'development':
         # When in development mode, we proxy the local Vue server. This means
         # CSRF Protection is not available. Make sure to test application in
         # production mode as well.
         app.config['WTF_CSRF_CHECK_DEFAULT'] = False
 
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     csrf = CSRFProtect(app)
 

@@ -20,6 +20,7 @@ def create_course():
     """
     Check ticket submission and add to database.
     """
+    print("Posted to /courses")
     jsonData = request.get_json()
     if jsonData is None:
         return Iresponse.empty_json_request()
