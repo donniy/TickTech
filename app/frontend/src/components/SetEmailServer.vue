@@ -75,7 +75,7 @@ export default {
     methods: {
         handleSubmit () {
             this.$validator.validateAll()
-            const path = '/api/fetch/submit'
+            const path = '/api/email'
             axios_csrf.post(path, this.form)
             .then(response => {
             //     this.$router.push({name: 'StudentViewTicket', params: {ticket_id: response.data.ticketid}})

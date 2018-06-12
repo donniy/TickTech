@@ -1,7 +1,7 @@
 from email.header import decode_header
 from time import sleep
 import poplib
-import email
+from email import message_from_bytes
 import requests
 
 def connect(host, port, user, password):
@@ -30,7 +30,7 @@ def parse_email(mail_box, i):
     '''
     # Parse email
     raw_email  = b"\n".join(mail_box.retr(i+1)[1])
-    parsed_email = email.message_from_bytes(raw_email)
+    parsed_email = message_from_bytes(raw_email)
 
     ##print(parsed_email.keys()) #temp info
 
@@ -153,5 +153,5 @@ def check_mail(host, port, user, password):
 
     # Somehow makes you up-to-date with server
     # disable this when debugging
-    server.quit()
+    #server.quit()
     return

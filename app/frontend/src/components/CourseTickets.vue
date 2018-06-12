@@ -1,13 +1,17 @@
 <template>
     <div>
         <h1>Tickets in cursus {{ $route.params.course_id }}</h1>
-
         Status:
         <select v-model="status_filter">
             <option> All </option>
             <option> Needs help </option>
             <option> Answered </option>
         </select>
+
+        <button v-on:click="emailSettings" class="labelbutton-left">Email settings</button>
+        <modal v-if="showModal" warning="Are you sure you want to close this ticket?"
+               @yes="closeTicket()" @close="showModal = false"></modal>
+        <br /><br />
 
         <ticket
             v-for="ticket in tickets"
@@ -24,10 +28,13 @@
 import axios from 'axios'
 import Ticket from './Ticket.vue'
 
+import Modal from './EmailSettingsModel.vue'
+
 export default {
   data () {
     return {
       tickets: [],
+      showModal: false,
       status: 'not set',
 
       status_filter: 'All'
@@ -49,6 +56,23 @@ export default {
         this.status = 'failed getting tickets'
       })
     },
+    emailSettings() {
+        this.showModal = true
+        this.status = 'email settings'
+        const path = '/api/email/' + this.$route.params.course_id + '/settings'
+        console.log(path)
+        axios.get(path, '')
+        .then(response => {
+            this.tickets = response.data.json_list
+            this.status = 'Retrieved data'
+            console.log(response.data.json_list)
+            console.log(response)
+        })
+        .catch(error => {
+            console.log(error)
+            this.status = 'failed getting course info'
+        })
+    },
     created () {
       this.status = 'created'
       this.getTickets()
@@ -59,6 +83,7 @@ export default {
   },
   components: {
     'ticket': Ticket,
+    'modal': Modal
   }
 }
 

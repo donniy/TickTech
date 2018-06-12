@@ -1,13 +1,27 @@
 from . import apiBluePrint
 from mail.fetch import MailThread
+from flaskr.models.Course import Course
+from flaskr import database, Iresponse
 from flask import escape, request, jsonify
 
 
-@apiBluePrint.route('/fetch/<course_id>')
+@apiBluePrint.route('/email', methods=['POST'])
+def submit():
+    sleeptime = 10
+    server = escape(request.json["pop"])
+    port = escape(request.json["port"])
+    email = escape(request.json["email"])
+    password = escape(request.json["password"])
+    create_new_email_thread(sleeptime, server, port, email, password)
+    #TODO: Url van ticket in repsonse
+    return Iresponse.create_response("", 201)
+
+@apiBluePrint.route('/email/<course_id>/settings', methods=['GET'])
 def retrieve_current_mail_settings(course_id):
     """
     Geeft email instelling van course.
     """
+    print("GOT HERE\n\n\n\n")
     # TODO: Controlleer rechten
     ticketObj = Course.query.get(course_id)
     if ticketObj is None:
@@ -17,16 +31,6 @@ def retrieve_current_mail_settings(course_id):
     print("Found email")
     return Iresponse.create_response(ticketObj.serialize, 200)
 
-@apiBluePrint.route('/fetch/submit', methods=['POST'])
-def submit():
-    print("Gott here")
-    sleeptime = 10
-    server = escape(request.json["pop"])
-    port = escape(request.json["port"])
-    email = escape(request.json["email"])
-    password = escape(request.json["password"])
-    create_new_email_thread(sleeptime, server, port, email, password)
-    return jsonify({'status': "success", 'message': "message.serialize"})
 
 def create_new_email_thread(sleeptime, server, port, email, password):
     """
