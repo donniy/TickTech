@@ -8,7 +8,7 @@
             Status: {{ticket.status.name}}
         </div>
 
-        <message v-bind:user="$user" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
+        <message v-bind:user="user" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
 
         <form v-on:submit.prevent="sendReply" class="reply-area">
             <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
@@ -27,16 +27,13 @@ import axios from 'axios'
 import Message from './Message.vue'
 import VueCookies from 'vue-cookies'
 
-const axios_csrf = axios.create({
-  headers: {'X-CSRFToken': csrf_token}
-});
-
 export default {
     data () {
         return {
             ticket: {title: '', status: {name: ''}, course_id: ''},
             reply: '',
             messages: [],
+            user: {}
         }
     },
     methods: {
