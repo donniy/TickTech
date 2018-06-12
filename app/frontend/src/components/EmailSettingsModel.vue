@@ -16,14 +16,16 @@
                 <!--Student name and number  -->
                 <form @submit.prevent="handleSubmit">
                     <div class="form-group">
+                        <input type="hidden" name="course_id" v-model="form.course_id" />
+
                         <label for="email">Email address</label>
-                        <input id="email" class="form-control" name="email" v-model="form.email" v-validate="'required|min:1'" type="text" placeholder="uvapsetest@gmail.com">
+                        <input id="email" class="form-control" name="email" v-model="form.email" v-validate="'required|min:1'" type="text" placeholder="email@example.com">
 
                         <label for="category">Password</label>
-                        <input id="password" class="form-control" name="password" v-model="form.password" v-validate="'required|min:1'" type="text" placeholder="stephanandrea">
+                        <input id="password" class="form-control" name="password" v-model="form.password" v-validate="'required|min:1'" type="password">
 
                         <label for="pop">Pop3 settings</label>
-                        <input class="form-control" id="pop" name="pop" v-model="form.pop" v-validate="'required|min:1'" type="text" placeholder="pop.gmail.com">
+                        <input class="form-control" id="pop" name="pop" v-model="form.pop" v-validate="'required|min:1'" type="text" placeholder="pop.example.com">
 
                         <label for="port">Port</label>
                         <input id="port" class="form-control" name="port" v-model="form.port" v-validate="'required|min:1'" type="text" placeholder="995">
@@ -50,10 +52,11 @@
       data: function () {
           return {
               form: {
-                  email: "uvapsetest@gmail.com",
-                  password: "stephanandrea",
-                  pop: "pop.gmail.com",
-                  port: "995"
+                  email: "",
+                  password: "",
+                  pop: "",
+                  port: "995",
+                  course_id: this.$route.params.course_id
               }
           };
       },
@@ -64,17 +67,24 @@
         }
       },
       beforeCreate: function () {
+          // Get the current email settings from server
           const path = '/api/email/' + this.$route.params.course_id + '/settings'
           this.$ajax.get(path, response => {
               // TODO: Implement authentication on back-end to work with Canvas.
-              console.log(response)
               if (response.status == 200){
-                  console.log("got here")
-                  console.log(response.data.json_data)
-                  console.log(response.data.json_data.email)
-                  this.form.email = response.data.json_data.email
+                  if (response.data.json_data.email != null){
+                      this.form.email = response.data.json_data.email
+                  }
+                  if (response.data.json_data.password != null){
+                      this.form.password = response.data.json_data.password
+                  }
+                  if (response.data.json_data.pop != null){
+                      this.form.pop = response.data.json_data.pop
+                  }
+                  if (response.data.json_data.port != null){
+                      this.form.port = response.data.json_data.port
+                  }
               }
-
           });
       }
     }

@@ -90,7 +90,7 @@ def parse_body(body, courseid):
         #
     return studentid, 1
 
-def check_mail(host, port, user, password):
+def check_mail(host, port, user, password, course_id):
     '''
     Start mail server
     '''
@@ -103,17 +103,6 @@ def check_mail(host, port, user, password):
     if (number_of_mails == 0):
         print("No emails")
         server.quit()
-        return
-
-    # TODO: Get course from server
-    # Temporary get first course
-    course_id = None
-    res = requests.get('http://localhost:5000/api/courses')
-    if (res.status_code == 200):
-        courses = res.json()
-        course_id = courses["json_data"][0]["id"]
-    else:
-        print("Error retrieving course id from server")
         return
 
     # TODO: Get all labels

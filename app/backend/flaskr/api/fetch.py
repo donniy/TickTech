@@ -6,13 +6,26 @@ from flask import escape, request, jsonify
 
 
 @apiBluePrint.route('/email', methods=['POST'])
-def submit():
+def update_email_settings():
+    '''
+    Recieve email settings from website. Update it in database and send to mail
+    server.
+    '''
     sleeptime = 10
     server = escape(request.json["pop"])
     port = escape(request.json["port"])
     email = escape(request.json["email"])
     password = escape(request.json["password"])
-    create_new_email_thread(sleeptime, server, port, email, password)
+    course_id = escape(request.json["course_id"])
+
+    course = Course.query.get(course_id)
+    course.course_email = email
+    course.mail_password = password
+    course.mail_port = port
+    course.mail_server_url = server
+    database.addItemSafelyToDB(course)
+
+    create_new_email_thread(sleeptime, server, port, email, password, course_id)
     #TODO: Url van ticket in repsonse
     return Iresponse.create_response("", 201)
 
@@ -30,12 +43,12 @@ def retrieve_current_mail_settings(course_id):
     return Iresponse.create_response(object, 200)
 
 
-def create_new_email_thread(sleeptime, server, port, email, password):
+def create_new_email_thread(sleeptime, server, port, email, password, course_id):
     """
     Create a new email thread
     """
     print("create new thread")
-    new_thread = MailThread(sleeptime, server, port, email, password)
+    new_thread = MailThread(sleeptime, server, port, email, password, course_id)
     new_thread.setName("No thread id yet")
 
     new_thread.start()
