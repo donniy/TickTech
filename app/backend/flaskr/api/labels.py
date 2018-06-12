@@ -9,10 +9,11 @@ import uuid
 @apiBluePrint.route('/labels/<course_id>', methods=['GET'])
 def retrieve_labels(course_id):
     """
-    Geeft alle ticktes over gegeven course.
+    Returns all labels of given course.
     """
-    print("Getting ticket")
+    print("Getting label. ")
     # TODO: Controleer of degene die hierheen request permissies heeft.
+
     labels = Label.query.all()
     print(labels)
     return database.json_list(labels)
@@ -21,14 +22,15 @@ def retrieve_labels(course_id):
 @apiBluePrint.route('/labels/<course_id>', methods=['POST'])
 def create_labels(course_id):
     """
-    Add a lable to a course
+    Adds a label to a course.
     """
     print("Creating label")
-    name = "Testlabel"
 
+    name = "Testlabel"
     courseid = course_id
     labelid = uuid.uuid4()
     exist_label = Label.query.filter_by(label_name=name).all()
+    
     print(exist_label)
 
     course = Course.query.get(courseid)

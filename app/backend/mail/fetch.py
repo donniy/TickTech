@@ -52,7 +52,6 @@ class MailThread(Thread):
             self.email = email
         if (password != None):
             self.password = password
-        print("working?")
 
     def print_threads():
         print(threads)
@@ -64,23 +63,3 @@ class MailThread(Thread):
             if (thread.getName() == course_id):
                 return thread
         return None
-
-
-
-# Run following code when the program starts
-# if __name__ == '__main__':
-#     '''
-#     Example of how you start a thread and then remove it
-#     '''
-#     # Declare objects of MyThread class
-#     myThreadOb1 = MailThread(10, 'pop.gmail.com', '995', 'uvapsetest@gmail.com', 'stephanandrea')
-#     myThreadOb1.setName('Thread 1')
-#
-#     # Start running the threads!
-#     myThreadOb1.start()
-#
-#     sleep(60)
-#     # Stop the thread
-#     myThreadOb1.stop()
-#
-#     print('Main Terminating...')
