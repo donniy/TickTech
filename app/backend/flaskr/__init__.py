@@ -61,9 +61,6 @@ def create_app(test_config=None):
     if test_config:
         app.config.update(test_config)
 
-    print("app: db uri: {}".format(app.config["SQLALCHEMY_DATABASE_URI"]))
-
-
     if test_config is None:
         # load the instance config, if it exists, when not testing
         app.config.from_pyfile('config.py', silent=True)
@@ -77,7 +74,6 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    print("Init database for app")
     db.init_app(app)
     socketio.init_app(app)
     if not os.path.isfile('/tmp/test.db') and not test_config:
