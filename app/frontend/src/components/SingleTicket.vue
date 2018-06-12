@@ -20,7 +20,8 @@
                     Status: {{ticket.status.name}}
                 </div>
 
-                <message v-bind:user="12345678" v-for="message in messages"
+
+                <message v-bind:user="{id: 12345678}" v-for="message in messages"
                 v-bind:key="message.id" v-bind:message="message"></message>
 
 
@@ -64,6 +65,7 @@ import Message from './Message.vue'
 
 import Modal from './ClosePrompt.vue'
 import Note from './Note.vue'
+
 
 import Tribute from "tributejs";
 

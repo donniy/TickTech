@@ -8,7 +8,7 @@
             Status: {{ticket.status.name}}
         </div>
 
-        <message v-bind:user="$user" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
+        <message v-bind:user="user" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
 
         <form v-on:submit.prevent="sendReply" class="reply-area">
             <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
@@ -27,22 +27,19 @@ import axios from 'axios'
 import Message from './Message.vue'
 import VueCookies from 'vue-cookies'
 
-const axios_csrf = axios.create({
-  headers: {'X-CSRFToken': csrf_token}
-});
-
 export default {
     data () {
         return {
             ticket: {title: '', status: {name: ''}, course_id: ''},
             reply: '',
             messages: [],
+            user: {}
         }
     },
     methods: {
         getTicket () {
             const path = '/api/ticket/' + this.$route.params.ticket_id
-            axios.get(path)
+            this.$ajax.get(path)
             .then(response => {
                 this.ticket = response.data.json_data
             })
@@ -52,7 +49,7 @@ export default {
         },
         getMessages () {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
-            axios.get(path)
+            this.$ajax.get(path)
             .then(response => {
                 this.messages = response.data.json_data
             })
@@ -62,7 +59,7 @@ export default {
         },
         sendReply () {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
-            axios_csrf.post(path, {message: this.reply, user_id:123123123})
+            this.$ajax.post(path, {message: this.reply, user_id:123123123})
             .then(response => {
                     this.reply = ''
             })
@@ -72,9 +69,9 @@ export default {
         }
     },
     mounted: function () {
-        this.$user = this.$cookies.get('user')
-        console.log(this.$user)
-        console.log("id: " + this.$user.id)
+        this.user = this.$user.get()
+        console.log(this.user)
+        console.log("id: " + this.user.id)
         this.getTicket()
         this.getMessages()
         this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})

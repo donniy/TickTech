@@ -1,5 +1,5 @@
 @import '_colors';
-@import 'labels';
+@import '_labels';
 
 body {
     background-color: darken(#FFF, 2%);
@@ -16,7 +16,7 @@ p.def-error-msg {
 }
 
 h1 {
-    margin-left: 1em;
+    // margin-left: 1em;
     text-align: center;
     font-size: 2.5em;
     opacity: 0.7;

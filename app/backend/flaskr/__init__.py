@@ -3,6 +3,7 @@ import requests
 from flask import Flask, render_template, jsonify, request
 from flask import Flask
 from flaskr import database
+from . import models
 from datetime import datetime
 from flask_wtf.csrf import CSRFProtect
 import os.path
@@ -30,13 +31,16 @@ def create_app(test_config=None):
                 static_folder = "../../dist/static",
                 template_folder = "../../dist")
 
-
-    if os.environ['FLASK_ENV'] == 'development':
+    if os.environ.get('FLASK_ENV') == 'development':
         # When in development mode, we proxy the local Vue server. This means
         # CSRF Protection is not available. Make sure to test application in
         # production mode as well.
         app.config['WTF_CSRF_CHECK_DEFAULT'] = False
 
+    
+    app.config['WTF_CSRF_CHECK_DEFAULT'] = False
+
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     csrf = CSRFProtect(app)
 
@@ -48,11 +52,14 @@ def create_app(test_config=None):
     if db_uri in [None, '']:
         db_uri = 'sqlite:////tmp/test.db'
 
+
     app.config.from_mapping(
         SECRET_KEY='dev',
         SQLALCHEMY_DATABASE_URI=db_uri
     )
 
+    if test_config:
+        app.config.update(test_config)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -69,7 +76,7 @@ def create_app(test_config=None):
 
     db.init_app(app)
     socketio.init_app(app)
-    if not os.path.isfile('/tmp/test.db'):
+    if not os.path.isfile('/tmp/test.db') and not test_config:
         app.app_context().push()
         database.init_db()
 

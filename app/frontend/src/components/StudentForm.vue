@@ -85,7 +85,7 @@ import axios from 'axios'
 import VeeValidate from 'vee-validate';
 
 const axios_csrf = axios.create({
-    headers: {'X-CSRFToken': csrf_token}
+    headers: {'X-CSRFToken': 'need_to_replace'}
 });
 
 export default {
@@ -113,7 +113,7 @@ export default {
         sendTicket () {
             this.$validator.validateAll()
             const path = '/api/ticket/submit'
-            axios_csrf.post(path, this.form)
+            this.$ajax.post(path, this.form)
                 .then(response => {
                     this.$router.push({name: 'StudentViewTicket',
                                        params: {ticket_id: response.data.json_data.ticketid}})
@@ -135,7 +135,7 @@ export default {
         const pathLabels = '/api/labels';
         const pathCourses = '/api/courses';
 
-        axios_csrf.get(pathCourses)
+        this.$ajax.get(pathCourses)
             .then(response => {
                 for(let i = 0; i < response.data.json_data.length; i++) {
                     let dataObj = response.data.json_data[i]
@@ -161,7 +161,7 @@ export default {
             console.log("HELLO")
             console.log(this.categories.courses[i].course_id)
         }
-        axios_csrf.get(pathLabels)
+        this.$ajax.get(pathLabels)
         .then(response => {
             console.log
             for(let i = 0; i < response.data.json_list.length; i++) {
