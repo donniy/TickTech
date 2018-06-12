@@ -50,7 +50,7 @@ export default {
                         console.log(response);
                         this.form.username = '';
                         this.$ajax.get('/api/user/retrieve', response => {
-                            if(this.$user.set(response.data.user))
+                            if(this.$user.set(response.data.json_data.user))
                                 this.$router.replace('/');
                             else
                                 console.log("Can\'t set user.");
