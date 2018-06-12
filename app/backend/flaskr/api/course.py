@@ -46,8 +46,8 @@ def retrieve_courses(user_id):
 
     return database.json_list(courses)
 
-#TEST
-@apiBluePrint.route('/courses/<course_id>/tas')
+
+@apiBluePrint.route('/courses/<course_id>/tas', methods=['GET'])
 def get_course_tas(course_id):
     course = Course.query.get(course_id)
     tas = course.ta_courses

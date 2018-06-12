@@ -20,7 +20,7 @@
                     Status: {{ticket.status.name}}
                 </div>
 
-                <message v-bind:self="12345678" v-for="message in messages"
+                <message v-bind:user="12345678" v-for="message in messages"
                 v-bind:key="message.id" v-bind:message="message"></message>
 
 
@@ -60,7 +60,6 @@
 
 <script>
 
-import Tribute from "tributejs";
 import axios from 'axios'
 import Message from './Message.vue'
 
@@ -85,6 +84,7 @@ export default {
             show: false,
             noteTextArea: "",
             mentioned: false,
+            matching_table: {},
         }
     },
     methods: {
@@ -94,9 +94,7 @@ export default {
                 .then(response => {
                     this.ticket = response.data.json_data
                     this.getCourseTas()
-                })
-                .catch(error => {
-                    console.log("NO TICKET")
+                }).catch(error => {
                     console.log(error)
                 })
         },
@@ -151,7 +149,7 @@ export default {
             }
             console.log("Note")
             console.log(this.noteTextArea)
-            axios_csrf.post(path, noteData)
+            this.$ajax.post(path, noteData)
                 .then(response => {
                     this.noteTextArea = ""
                     this.$refs.popoverRef.$emit('close')
@@ -165,15 +163,31 @@ export default {
         },
         getCourseTas() {
             console.log(this.ticket.course_id)
-            axios.csrf.get('/api/courses/' + this.ticket.course_id + '/tas')
+            const path = '/api/courses/' + this.ticket.course_id + '/tas'
+            this.$ajax.get(path)
                 .then(response => {
-                    console.log(response.data.json_data)
+                    this.course_tas = response.data.json_data
+                    build_ta_matching_table(this)
+                    console.log(this.matching_table)
                 }).catch(error => {
                     console.log(error)
                 })
+
+            function build_ta_matching_table(obj) {
+                for (var i = 0; i < obj.course_tas.length; i++) {
+                    let ta = obj.course_tas[i]
+                    console.log(ta)
+                    obj.matching_table[ta.name] = ta.id
+                    obj.matching_table[ta.id] = ta.id
+                }
+            }
         },
 
         getMentions(e) {
+            /* The matching of key-values should probably be changed to use a
+             * suffix tree, instead of looping over the dict. Can be added if this
+             * is too slow.
+             */
             console.log(this.course_tas)
             let start_index = e.target.selectionStart
             if (start_index === 0) {
@@ -188,8 +202,15 @@ export default {
                     return;
                 }
                 if (c === '@') {
-                    this.mentioned = true
-                    console.log(this.noteTextArea.substring(i, start_index))
+                    let mentioned = this.noteTextArea.substring(i, start_index).replace('@', '')
+                    let lookup_table = this.matching_table
+                    console.log(this.matching_table)
+                    Object.keys(this.matching_table).forEach(function(key) {
+                        if (key.includes(mentioned)) {
+                            console.log(lookup_table[key])
+                        }
+                    })
+                    return;
                 }
             }
         }
@@ -199,7 +220,6 @@ export default {
         this.getMessages()
         this.getNotes()
         this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
-        tribute.attach(document.getElementById('mentioningArea'))
     },
     sockets: {
         connect: function () {
