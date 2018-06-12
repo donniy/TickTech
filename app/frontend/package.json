@@ -103,7 +103,7 @@
     "vue-loader": "^13.3.0",
     "vue-router": "^3.0.1",
     "vue-socket.io": "^2.1.1-b",
-    "vue-textarea-autosize": "^1.0.4"
+    "vue-textarea-autosize": "^1.0.4",
     "vue-style-loader": "^3.0.1",
     "vue-template-compiler": "^2.5.2",
     "vue-textarea-autosize": "^1.0.4",
