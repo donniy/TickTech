@@ -27,10 +27,6 @@ import axios from 'axios'
 import Message from './Message.vue'
 import VueCookies from 'vue-cookies'
 
-const axios_csrf = axios.create({
-  headers: {'X-CSRFToken': 'need_to_replace'}
-});
-
 export default {
     data () {
         return {
@@ -43,7 +39,7 @@ export default {
     methods: {
         getTicket () {
             const path = '/api/ticket/' + this.$route.params.ticket_id
-            axios.get(path)
+            this.$ajax.get(path)
             .then(response => {
                 this.ticket = response.data.json_data
             })
@@ -53,7 +49,7 @@ export default {
         },
         getMessages () {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
-            axios.get(path)
+            this.$ajax.get(path)
             .then(response => {
                 this.messages = response.data.json_data
             })
@@ -63,7 +59,7 @@ export default {
         },
         sendReply () {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
-            axios_csrf.post(path, {message: this.reply, user_id:this.user.id})
+            this.$ajax.post(path, {message: this.reply, user_id:123123123})
             .then(response => {
                     this.reply = ''
             })
@@ -73,9 +69,9 @@ export default {
         }
     },
     mounted: function () {
-        console.log(this.$user.get())
-        console.log("id: " + this.$user.get().id)
         this.user = this.$user.get()
+        console.log(this.user)
+        console.log("id: " + this.user.id)
         this.getTicket()
         this.getMessages()
         this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})

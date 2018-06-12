@@ -19,10 +19,16 @@ Vue.use(VueSocketio, 'http://' + document.domain + ':' + location.port)
 Vue.use(VueTextareaAutosize)
 
 function handle_ajax_error(error) {
-  console.warn(error)
-  if (error.response.status == 401) {
-    console.warn("Not authorized!")
-    router.push({name: 'Login'})
+  console.warn(error);
+  if (error.response.status === 401) {
+    console.warn("Not authorized!");
+    let prev = '/';
+    console.log(router.currentRoute.fullPath);
+    if(router.currentRoute.fullPath !== '/login')
+      prev = router.currentRoute.fullPath;
+    else if (typeof router.params !== 'undefined' && typeof router.params.prev_url !== 'undefined')
+      prev = router.params.prev_url;
+    router.push({name: 'Login', params: {prev_url: prev}});
   }
 }
 
@@ -85,6 +91,12 @@ Vue.prototype.$user = {
     }
 
     return true;
+  },
+
+  logged_in: () => {
+    if(window.$cookies.get('user'))
+      return true;
+    return false;
   }
 }
 
