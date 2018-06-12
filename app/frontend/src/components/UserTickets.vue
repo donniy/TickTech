@@ -43,7 +43,7 @@ export default {
         getTickets () {
             this.status = 'getting tickets'
             const path = '/api/user/' + this.$route.params.user_id + '/tickets'
-            axios.get(path).then(response => {
+            this.$ajax.get(path).then(response => {
                 this.tickets = response.data.json_list
                 this.status = 'Retrieved data'
                 console.log(response.data.json_list)
@@ -56,7 +56,7 @@ export default {
 
         getCourses () {
             const path = '/api/user/' + this.$route.params.user_id + '/courses'
-            axios.get(path).then(response => {
+            this.$ajax.get(path).then(response => {
                 this.courses = response.data.json_data
                 console.log(response.data)
                 console.log("Courses")
