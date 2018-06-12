@@ -24,7 +24,7 @@ def create_request(jsonData):
     # A number should be within certain bounds and only numerical.
     try:
         studentid_num = int(studentid)
-        if studentid_num < 100000 or studentid_num > 999999999:
+        if studentid_num < 10000 or studentid_num > 999999999:
             response_body['student_id'] = 'Invalid'
     except ValueError:
         response_body['student_id'] = 'Invalid'
