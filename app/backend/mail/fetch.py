@@ -46,9 +46,6 @@ class MailThread(Thread):
             self.email = email
         if (password != None):
             self.password = password
-        print("working?")
-
-
 
 # Run following code when the program starts
 if __name__ == '__main__':
@@ -61,8 +58,8 @@ if __name__ == '__main__':
 
     # Start running the threads!
     myThreadOb1.start()
-
     sleep(60)
+
     # Stop the thread
     myThreadOb1.stop()
 
