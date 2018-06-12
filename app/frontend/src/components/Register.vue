@@ -93,6 +93,9 @@
 <script>
 
 import VeeValidate from 'vee-validate';
+import VueCookies from 'vue-cookies';
+import Router from 'vue-router';
+import Vue from 'vue';
 
 export default {
     data () {
@@ -116,19 +119,23 @@ export default {
                     const path = '/api/user/register';
                     this.$ajax.post(path, this.form, response => {
                         console.log(response);
-                        this.$ajax.post(path, {username: this.form.studentid, password: "JWT is cool!!!"}, response => {
-                            // TODO: Implement authentication on back-end to work with Canvas.
-                            this.$cookies.set('token', response.data.access_token);
-                            console.log(response);
-                            this.form = '';
-                            this.$ajax.get('/api/user/retrieve', response => {
-                                if(this.$user.set(response.data.user))
+                        if (response.data.json_data["status"] == false) {
+                            window.alert("Student id or email already taken!")
+                            return
+                        } else {
+                            const path = '/auth';
+                            this.$ajax.post(path, {username: this.form.studentid, password: "JWT is cool!!!"}, response => {
+                                // TODO: Implement authentication on back-end to work with Canvas.
+                                this.$cookies.set('token', response.data.access_token);
+                                console.log(response);
+                                this.$ajax.get('/api/user/retrieve', response => {
+                                    if(this.$user.set(response.data.user))
                                     this.$router.replace('/');
-                                else
+                                    else
                                     console.log("Can\'t set user.");
+                                });
                             });
-                        });
-
+                        }
                     });
                 }
             });
@@ -151,7 +158,7 @@ export default {
         },
     }, computed: {
         checkErrors() {
-            return this.errors.any() || this.idstatus || this.emailstaus || !this.pswstatus
+            return false //this.errors.any() || this.idstatus || this.emailstaus || !this.pswstatus
         }
     }
 }

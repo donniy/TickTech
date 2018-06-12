@@ -29,13 +29,26 @@ def retrieve_active_user_tickets(user_id):
 
 @apiBluePrint.route('/user/register', methods=["POST"])
 def register_user():
+    
     jsonData = request.get_json()
+
     if jsonData is None:
         return Iresponse.internal_server_error()
+
     email = escape(jsonData["email"])
     name = escape(jsonData["name"])
     studentid = escape(jsonData["studentid"])
     password = escape(jsonData["password"])
+
+    user = User.query.filter_by(email=email).first()
+    if user:
+        return Iresponse.create_response({"status":False}, 200)
+
+    studentid = jsonData["studentid"]
+    user = User.query.filter_by(id=studentid).first()
+
+    if user:
+        return Iresponse.create_response({"status":False}, 200)
 
     response_body = {}
 
@@ -58,7 +71,6 @@ def user_exists():
         return Iresponse.internal_server_error()
 
     email = jsonData["email"]
-    print(email)
     user = User.query.filter_by(email=email).first()
 
     if user is None:
@@ -74,7 +86,6 @@ def userid_exists():
         return Iresponse.internal_server_error()
 
     studentid = jsonData["studentid"]
-    print(studentid)
     user = User.query.filter_by(id=studentid).first()
 
     if user is None:
