@@ -84,7 +84,7 @@ def parse_body(string, courseid):
         # print('Found matching label ID: ' + labelid)
     return studentid, 1
 
-def check_mail(host, port, user, password):
+def check_mail(host, port, user, password, course_id):
     '''
     Start a mail server.
     '''

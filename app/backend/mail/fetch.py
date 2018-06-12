@@ -10,7 +10,7 @@ class MailThread(Thread):
 
     TODO: change email while running
     '''
-    def __init__(self, sleep_time, server, port, email, password):
+    def __init__(self, sleep_time, server, port, email, password, course_id):
         ''' Constructor. '''
         Thread.__init__(self)
         self.running = True
@@ -19,11 +19,12 @@ class MailThread(Thread):
         self.port = port
         self.email = email
         self.password = password
+        self.course_id = course_id
 
     def run(self):
         while (self.running):
             print("Checking", self.email + ". On thread " + self.getName())
-            check_mail(self.server, self.port, self.email, self.password)
+            check_mail(self.server, self.port, self.email, self.password, self.course_id)
             print("sleeping", self.sleep_time)
             sleep(self.sleep_time)
             #self.running = False
