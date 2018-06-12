@@ -4,6 +4,10 @@ import email
 import poplib
 import requests
 
+'''
+Rabbitmqueue: Message mpass system between flask en mail server
+'''
+
 def connect(host, port, user, password):
     '''
     Connects to and authenticates with a POP3 mail server. 

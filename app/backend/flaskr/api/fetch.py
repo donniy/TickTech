@@ -21,15 +21,13 @@ def retrieve_current_mail_settings(course_id):
     """
     Geeft email instelling van course.
     """
-    print("GOT HERE\n\n\n\n")
     # TODO: Controlleer rechten
-    ticketObj = Course.query.get(course_id)
-    if ticketObj is None:
-        print("No email")
+    course = Course.query.get(course_id)
+    if course is None:
+        print("No course")
         return Iresponse.create_response("", 404)
-
-    print("Found email")
-    return Iresponse.create_response(ticketObj.serialize, 200)
+    object = {'email':course.course_email, 'password':course.mail_password, 'port':course.mail_port, 'pop':course.mail_server_url}
+    return Iresponse.create_response(object, 200)
 
 
 def create_new_email_thread(sleeptime, server, port, email, password):
