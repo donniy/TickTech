@@ -7,22 +7,59 @@ button.labelbutton-left {
     border: 1px solid $default-red;
     color: white;
     padding: 10px;
-    background-color: $default-red;
-    float:left;
 }
-.labelbutton-right {
-    margin-bottom: 40px;
+.addLabelWrapper {
+    margin-top: 50px;
+    height: 42px;
+    width: 60%;
+    margin-left: 20%;
+    margin-right: 20%;
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+.addLabelInput {
+    height: 100%;
+    width: calc(100% - 120px);
+    float: left;
+    background: transparent;
+    border: 1px solid grey;
+    border-right: 0;
+}
+.labelbutton {
+    width: 120px;
+    height: 100%;
     font-size: 1em;
-    width: 15%;
     border: 1px solid $default-red;
     color: white;
-    padding: 10px;
     background-color: $default-red;
-    float:right;
+    float: right;
 }
-.labelbutton-left:hover {
+.labelbutton:hover {
     background-color: darken($default-red, 7%);
 }
-.labelbutton-right:hover {
-    background-color: darken($default-red, 7%);
+.labelContainer {
+    width: 60%;
+    margin-left: 20%;
+    margin-right: 20%;
+}
+.label {
+    background: #FFF;
+    display: block;
+    box-shadow: 0 2px 4px 0 rgba(50,50,93,.1);
+    margin-bottom: 10px;
+    color: rgba(#000, 0.8);
+    transition: transform 0.1s ease-in-out;
+}
+.labelText {
+    padding: 18px 24px;
+    width: 90%;
+    word-break: break-all;
+}
+.removeLabel {
+    float: right;
+    background-color: white;
+    opacity: 0.4;
+}
+.removeLabel:hover {
+    opacity: 1;
 }
