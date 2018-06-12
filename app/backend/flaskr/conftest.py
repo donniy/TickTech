@@ -29,8 +29,3 @@ def app():
 @pytest.fixture
 def client(app):
     return app.test_client()
-
-def test_test(client):
-    """test test, just check if the homepage is working"""
-    rv = client.get('/')
-    assert b'TikTech' in rv.data
