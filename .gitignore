@@ -9,6 +9,8 @@ __pycache__/
 .vscode
 .vscode/*
 
+app/frontend/test/unit/coverage/lcov-report/*
+
 # Distribution / packaging
 .Python
 #build/
