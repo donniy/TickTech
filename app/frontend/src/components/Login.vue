@@ -49,13 +49,14 @@ export default {
                         this.$cookies.set('token', response.data.access_token);
                         this.form.username = '';
                         this.$ajax.get('/api/user/retrieve', response => {
+
                             let params = this.$route.params;
                             let url = '/';
                             if(typeof params !== 'undefined' && typeof params.prev_url !== 'undefined')
                                 url = params.prev_url;
-                            if(this.$user.set(params)) {
+                            if(this.$user.set(response.data.json_data.user))
                                 this.$router.replace(url);
-                            } else {
+                            else 
                                 console.log("Can\'t set user.");
                             }
                         });
