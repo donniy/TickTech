@@ -17,6 +17,7 @@ def retrieve_all_request(ticket_id):
 
     return Iresponse.create_response(database.serialize_list(notes), 200)
 
+
 # Catch datbase session commit exceptions.
 # Maybe make a different call in the database file.
 def parse_note(message, ticket):

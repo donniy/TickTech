@@ -47,9 +47,9 @@
                            placement='top'>
                   <textarea v-model="noteTextArea"
                             class="form-control" style="height:200px;width:250px;"
+                            id="textAreaForNotes"
                             @input="getMentions($event)"
                             placeholder="Voer uw opmerking in"></textarea>
-
 
                   <button @click="addNote" class="btn btn-primary" style="margin-top:10px">Verzenden</button>
                 </b-popover>
@@ -66,11 +66,27 @@ import Message from './Message.vue'
 import Modal from './ClosePrompt.vue'
 import Note from './Note.vue'
 
+import Tribute from "tributejs";
+
 const axios_csrf = axios.create({
     headers: {'X-CSRFToken': csrf_token}
 });
 
-const whiteSpaceRe = /\s/g;
+/* Build the tribute and config for matching.
+ * DOCS: https://github.com/zurb/tribute
+ */
+var tribute = new Tribute({
+    values: [
+    ],
+    selectTemplate: function (item) {
+        return '@' + item.original.id
+    },
+    lookup: function (ta) {
+        return ta.name + ' ' + ta.id;
+    }
+
+
+})
 
 export default {
     data () {
@@ -83,8 +99,6 @@ export default {
             course_tas: [],
             show: false,
             noteTextArea: "",
-            mentioned: false,
-            matching_table: {},
         }
     },
     methods: {
@@ -161,65 +175,41 @@ export default {
                     console.log(error)
                 })
         },
+
+        /* Get the ta's in this course. Will add all the ta's to the
+         * course_tas array.
+         * NOTE: This can maybe stay local and course_tas can be removed from data.
+         */
         getCourseTas() {
-            console.log(this.ticket.course_id)
             const path = '/api/courses/' + this.ticket.course_id + '/tas'
             this.$ajax.get(path)
                 .then(response => {
                     this.course_tas = response.data.json_data
                     build_ta_matching_table(this)
-                    console.log(this.matching_table)
                 }).catch(error => {
                     console.log(error)
                 })
 
+            /* Function to build the matching table for mentioning.
+             * It grabs all ta's for this course and appends them to the
+             * table.
+             */
             function build_ta_matching_table(obj) {
-                for (var i = 0; i < obj.course_tas.length; i++) {
+                for (let i = 0; i < obj.course_tas.length; i++) {
                     let ta = obj.course_tas[i]
-                    console.log(ta)
-                    obj.matching_table[ta.name] = ta.id
-                    obj.matching_table[ta.id] = ta.id
+                    tribute.append(0,[
+                        {name: String(ta.name), id: String(ta.id)}
+                    ])
                 }
             }
         },
-
-        getMentions(e) {
-            /* The matching of key-values should probably be changed to use a
-             * suffix tree, instead of looping over the dict. Can be added if this
-             * is too slow.
-             */
-            console.log(this.course_tas)
-            let start_index = e.target.selectionStart
-            if (start_index === 0) {
-                this.mentioned = false
-                return //Add stop of mentioning.
-            }
-            for (var i = start_index - 1; i >= 0; i--) {
-                const c = this.noteTextArea[i]
-                if (whiteSpaceRe.exec(c) != null) {
-                    if (this.mentioned)
-                        this.mentioned = false
-                    return;
-                }
-                if (c === '@') {
-                    let mentioned = this.noteTextArea.substring(i, start_index).replace('@', '')
-                    let lookup_table = this.matching_table
-                    console.log(this.matching_table)
-                    Object.keys(this.matching_table).forEach(function(key) {
-                        if (key.includes(mentioned)) {
-                            console.log(lookup_table[key])
-                        }
-                    })
-                    return;
-                }
-            }
-        }
     },
     mounted: function () {
         this.getTicket()
         this.getMessages()
         this.getNotes()
         this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
+        tribute.attach(document.getElementById('textAreaForNotes')) // For the mentioning system.
     },
     sockets: {
         connect: function () {
@@ -232,7 +222,7 @@ export default {
     components: {
         'message': Message,
         'modal' : Modal,
-        'note': Note
+        'note': Note,
     },
     watch :{
 
