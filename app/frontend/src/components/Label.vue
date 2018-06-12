@@ -32,10 +32,12 @@
       methods: {
           closeLabel(){
               const path = '/api/labels/' + this.label.label_id + '/close'
+
               axios_csrf.post(path)
               .then(response => {
                   this.showModal = false
               })
+
               this.$parent.getLabels()
           }
       },

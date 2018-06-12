@@ -29,6 +29,8 @@ def retrieve_labels(course_id):
     print("Getting ticket")
     # TODO: Controleer of degene die hierheen request permissies heeft.
     course = Course.query.get(course_id)
+    if course is None:
+        return Iresponse.create_response("", 404)
     return database.json_list(course.labels)
 
 
@@ -38,7 +40,10 @@ def create_labels(course_id):
     Add a lable to a course
     """
 
-    name = request.get_json()["name"]
+    data = request.get_json()
+    if data is None:
+        return Iresponse.create_response("", 404)
+    name = data["name"]
     labelid = uuid.uuid4()
     exist_label = Label.query.filter_by(label_name=name).all()
 
