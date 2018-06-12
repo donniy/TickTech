@@ -8,7 +8,7 @@
             Status: {{ticket.status.name}}
         </div>
 
-        <message v-bind:self="123123123" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
+        <message v-bind:user="$user" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
 
         <form v-on:submit.prevent="sendReply" class="reply-area">
             <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
@@ -25,6 +25,7 @@
 
 import axios from 'axios'
 import Message from './Message.vue'
+import VueCookies from 'vue-cookies'
 
 const axios_csrf = axios.create({
   headers: {'X-CSRFToken': 'need_to_replace'}
@@ -71,6 +72,9 @@ export default {
         }
     },
     mounted: function () {
+        this.$user = this.$cookies.get('user')
+        console.log(this.$user)
+        console.log("id: " + this.$user.id)
         this.getTicket()
         this.getMessages()
         this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
@@ -91,7 +95,7 @@ export default {
             this.messages.push(data)
             document.body.scrollTop = document.body.scrollHeight;
         }
-    }
+    },
 }
 
 </script>

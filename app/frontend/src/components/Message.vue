@@ -12,15 +12,15 @@
 <script>
 
 export default {
-    props: ['message', 'self'],
+    props: ['message', 'user'],
     computed: {
         username: function () {
-            return this.self.id == this.message.user_id ? 'You' : this.message.user_id
+            return this.user.id == this.message.user_id ? 'You' : this.message.user_id
         },
     },
     data: function () {
         return {};
-    }
+    },
 }
 
 </script>

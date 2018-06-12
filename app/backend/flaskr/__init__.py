@@ -9,9 +9,15 @@ from flask_wtf.csrf import CSRFProtect
 import os.path
 from flaskr.models import Message, ticket, Note, Course, user, Label
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
+from flask_jwt import JWT
+from . import login
+
 
 db = database.db
 socketio = None
+login_manager = None
+app = None
+
 
 def create_app(test_config=None):
     """
@@ -72,6 +78,8 @@ def create_app(test_config=None):
     from .api import apiBluePrint
     app.register_blueprint(apiBluePrint)
 
+    login.init_jwt(app)
+
     # Setup routing for vuejs.
     @app.route('/', defaults={'path': ''})
     @app.route('/<path:path>')
@@ -83,7 +91,6 @@ def create_app(test_config=None):
             except:
                 return "Je gebruikt dev mode maar hebt je Vue development server niet draaien"
         return render_template("index.html")
-
 
 
     @socketio.on('join-room')
@@ -105,5 +112,6 @@ def create_app(test_config=None):
             leave_room(data['room'])
         except:
             print("Failed to leave toom")
+
 
     return app
