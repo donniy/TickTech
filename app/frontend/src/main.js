@@ -98,7 +98,7 @@ Vue.prototype.$user = {
   },
 
   logged_in: () => {
-    if(this.get())
+    if(window.$cookies.get('user'))
       return true;
     return false;
   }
