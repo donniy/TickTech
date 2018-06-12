@@ -3,16 +3,36 @@ from flask import jsonify, escape
 import uuid
 from flaskr.models.Note import *
 from flaskr.models.ticket import Ticket
+from flaskr.models.Course import *
 from datetime import datetime
-
+import re
 
 def retrieve_all_request(ticket_id):
     """
     Process the request to receive all notes of a certain ticket.
     """
     notes = Note.query.filter_by(ticket_id=ticket_id).all()
-    print(notes)
+    if len(notes) == 0:
+        return Iresponse.create_response("", 404)
+
     return Iresponse.create_response(database.serialize_list(notes), 200)
+
+# Catch datbase session commit exceptions.
+# Maybe make a different call in the database file.
+def parse_note(message, ticket):
+    print(ticket.binded_tas)
+    mentions = re.finditer('@[0-9]+', message)
+    course = Course.query.get(ticket.course_id)
+    ta_in_course = course.ta_courses
+    for mention in mentions:
+        user_id = mention.group(0).split('@')[1]
+        print(user_id)
+        for ta in ta_in_course:
+            if str(ta.id) == user_id:
+                ticket.binded_tas.append(ta)
+                database.db.session.commit()
+    print(ticket.binded_tas)
+
 
 
 def create_request(jsonData):
@@ -38,8 +58,10 @@ def create_request(jsonData):
     if not database.addItemSafelyToDB(note):
         return Iresponse.internal_server_error()
 
+    parse_note(message, ticket)
     #add header location.
     return Iresponse.create_response(note.serialize, 201)
+
 
 
 def delete_request(note_id):

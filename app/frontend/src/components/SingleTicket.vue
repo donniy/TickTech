@@ -37,16 +37,21 @@
                 <h2>Notities</h2>
                 <note v-for="note in notes" v-bind:key="note.id" v-bind:note="note"></note>
 
-                <b-btn id="popoverButton-sync" variant="primary" class="note-add-button btn btn-primary">
+                <b-btn id="popoverButton-sync" variant="primary"
+                       class="note-add-button btn btn-primary">
                     Notitie toevoegen
                 </b-btn>
 
                 <b-popover ref="popoverRef" target="popoverButton-sync"
                            triggers="click blur"
                            placement='top'>
-                    <textarea v-model="noteTextArea" class="form-control" style="height:200px;width:250px;"
+                  <textarea v-model="noteTextArea"
+                            class="form-control" style="height:200px;width:250px;"
+                            @input="getMentions($event)"
                             placeholder="Voer uw opmerking in"></textarea>
-                    <button @click="addNote" class="btn btn-primary" style="margin-top:10px">Verzenden</button>
+
+
+                  <button @click="addNote" class="btn btn-primary" style="margin-top:10px">Verzenden</button>
                 </b-popover>
             </div>
         </div>
@@ -55,6 +60,7 @@
 
 <script>
 
+import Tribute from "tributejs";
 import axios from 'axios'
 import Message from './Message.vue'
 
@@ -62,8 +68,10 @@ import Modal from './ClosePrompt.vue'
 import Note from './Note.vue'
 
 const axios_csrf = axios.create({
-  headers: {'X-CSRFToken': csrf_token}
+    headers: {'X-CSRFToken': csrf_token}
 });
+
+const whiteSpaceRe = /\s/g;
 
 export default {
     data () {
@@ -73,62 +81,65 @@ export default {
             reply: '',
             messages: [],
             notes: [],
+            course_tas: [],
             show: false,
-            noteTextArea: ""
+            noteTextArea: "",
+            mentioned: false,
         }
     },
     methods: {
         getTicket () {
             const path = '/api/ticket/' + this.$route.params.ticket_id
             axios.get(path)
-            .then(response => {
-                this.ticket = response.data.json_data
-            })
-            .catch(error => {
-                console.log("NO TICKET")
-                console.log(error)
-            })
+                .then(response => {
+                    this.ticket = response.data.json_data
+                    this.getCourseTas()
+                })
+                .catch(error => {
+                    console.log("NO TICKET")
+                    console.log(error)
+                })
         },
         getMessages () {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
             axios.get(path)
-            .then(response => {
-                this.messages = response.data.json_data
-            })
-            .catch(error => {
-                console.log(error)
-            })
+                .then(response => {
+                    this.messages = response.data.json_data
+                })
+                .catch(error => {
+                    console.log(error)
+                })
         },
         getNotes () {
             //get all notes
             axios.get('/api/notes/'+this.$route.params.ticket_id)
-            .then(response => {
-                this.notes = response.data.json_data
-                console.log(response)
-            })
-            .catch(err => {
-                console.log(err)
-            })
+                .then(response => {
+                    this.notes = response.data.json_data
+                    console.log(response)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
         },
         sendReply () {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
             axios_csrf.post(path, {message: this.reply, user_id: 11037393})
-            .then(response => {
+                .then(response => {
                     this.reply = ''
                     this.getMessages()
-            })
-            .catch(error => {
-                console.log(error)
-            })
+                })
+                .catch(error => {
+                    console.log(error)
+                })
         },
         closeTicket () {
             this.showModal = false
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/close'
             axios_csrf.post(path)
-            .then(response => {
-                // TODO: Iets van een notificatie ofzo? '234 closed this ticket'? iig niet meer hardcoden "closed"
-                this.ticket.status.name = "closed"
-            })
+                .then(response => {
+                    // TODO: Iets van een notificatie ofzo? '234 closed this ticket'? iig niet meer hardcoden "closed"
+                    this.ticket.status.name = "closed"
+                })
         },
         addNote(){
             console.log(this.noteTextArea)
@@ -141,16 +152,46 @@ export default {
             console.log("Note")
             console.log(this.noteTextArea)
             axios_csrf.post(path, noteData)
-            .then(response => {
-                this.noteTextArea = ""
-                this.$refs.popoverRef.$emit('close')
-                this.notes.push(response.data.json_data)
-                console.log("successfully sent note")
-                console.log(response)
-            })
-            .catch(error => {
-                console.log(error)
-            })
+                .then(response => {
+                    this.noteTextArea = ""
+                    this.$refs.popoverRef.$emit('close')
+                    this.notes.push(response.data.json_data)
+                    console.log("successfully sent note")
+                    console.log(response)
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        },
+        getCourseTas() {
+            console.log(this.ticket.course_id)
+            axios.csrf.get('/api/courses/' + this.ticket.course_id + '/tas')
+                .then(response => {
+                    console.log(response.data.json_data)
+                }).catch(error => {
+                    console.log(error)
+                })
+        },
+
+        getMentions(e) {
+            console.log(this.course_tas)
+            let start_index = e.target.selectionStart
+            if (start_index === 0) {
+                this.mentioned = false
+                return //Add stop of mentioning.
+            }
+            for (var i = start_index - 1; i >= 0; i--) {
+                const c = this.noteTextArea[i]
+                if (whiteSpaceRe.exec(c) != null) {
+                    if (this.mentioned)
+                        this.mentioned = false
+                    return;
+                }
+                if (c === '@') {
+                    this.mentioned = true
+                    console.log(this.noteTextArea.substring(i, start_index))
+                }
+            }
         }
     },
     mounted: function () {
@@ -158,6 +199,7 @@ export default {
         this.getMessages()
         this.getNotes()
         this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
+        tribute.attach(document.getElementById('mentioningArea'))
     },
     sockets: {
         connect: function () {
@@ -171,6 +213,9 @@ export default {
         'message': Message,
         'modal' : Modal,
         'note': Note
+    },
+    watch :{
+
     }
 }
 
