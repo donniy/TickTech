@@ -68,6 +68,15 @@ export default {
         })
 
     },
+    stopEmail(form) {
+        this.showModal = false
+        console.log(form)
+        const path = '/api/email/stop'
+        this.$ajax.post(path, form, response => {
+            // TODO: Implement authentication on back-end to work with Canvas.
+            console.log(response)
+        })
+    },
     created () {
       this.status = 'created'
       this.getTickets()

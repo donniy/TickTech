@@ -34,6 +34,9 @@
                 <button type="submit" class="btn btn-primary" v-on:click="changeClose">
                     Submit
                 </button>
+                <button class="btn btn-primary stop-button" v-on:click="stopThread">
+                    Stop
+                </button>
                 <button class="btn btn-primary close-button" @click="$emit('close')">
                     Cancel
                 </button>
@@ -64,6 +67,9 @@
         changeClose() {
             console.log("Model changeclose")
             this.$parent.updateEmail(this.form);
+        },
+        stopThread() {
+            this.$parent.stopEmail(this.form);
         }
       },
       beforeCreate: function () {

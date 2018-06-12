@@ -10,6 +10,9 @@ class MailThread(Thread):
 
     TODO: change email while running
     '''
+    global threads
+    threads = []
+
     def __init__(self, sleep_time, server, port, email, password, course_id):
         ''' Constructor. '''
         Thread.__init__(self)
@@ -20,6 +23,7 @@ class MailThread(Thread):
         self.email = email
         self.password = password
         self.course_id = course_id
+        threads.append(self)
 
     def run(self):
         while (self.running):
@@ -27,7 +31,6 @@ class MailThread(Thread):
             check_mail(self.server, self.port, self.email, self.password, self.course_id)
             print("sleeping", self.sleep_time)
             sleep(self.sleep_time)
-            #self.running = False
         print("Stopped fetching mail on thread: " + self.getName() + " email: " + self.email)
 
     def stop(self):
@@ -35,6 +38,8 @@ class MailThread(Thread):
         Stop Thread
         '''
         self.running = False
+        threads.remove(self)
+        print("Stopping thead:", self.getName())
 
     def update(self, sleep_time=None, server=None, port=None, email=None, password=None):
         if (sleep_time != None):
@@ -48,6 +53,17 @@ class MailThread(Thread):
         if (password != None):
             self.password = password
         print("working?")
+
+    def print_threads():
+        print(threads)
+        for t in threads:
+            print(t.getName())
+
+    def exist_thread_courseid(course_id):
+        for thread in threads:
+            if (thread.getName() == course_id):
+                return thread
+        return None
 
 
 

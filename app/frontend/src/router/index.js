@@ -68,11 +68,6 @@ const routerOptions = [
         component: 'SortingTickets'
     },
     {
-        path: '/email_settings',
-        name: 'SetEmailServer',
-        component: 'SetEmailServer'
-    },
-    {
         path: '*',
         component: 'NotFound'
     }
