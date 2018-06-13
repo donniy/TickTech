@@ -91,11 +91,15 @@
             })
         },
         stopThread() {
-            this.$parent.showModal = false
             const path = '/api/email/stop'
             this.$ajax.post(path, this.form, response => {
-                // TODO: Implement authentication on back-end to work with Canvas.
-                console.log(response)
+                if (response.status == 201){
+                    this.$parent.showModal = false
+                }
+                if (response.status == 200){
+                    this.error.show = true
+                    this.error.text = response.data.json_data
+                }
             })
         }
       },
@@ -104,7 +108,7 @@
           const path = '/api/email/' + this.$route.params.course_id + '/settings'
           this.$ajax.get(path, response => {
               // TODO: Implement authentication on back-end to work with Canvas.
-              if (response.status == 200){
+              if (response.status == 201){
                   if (response.data.json_data.email != null){
                       this.form.email = response.data.json_data.email
                   }
@@ -123,6 +127,11 @@
                       this.isRunning = true
 
                   }
+              }
+
+              if (response.status == 200){
+                  this.error.show = true
+                  this.error.text = response.data.json_data
               }
           });
       }

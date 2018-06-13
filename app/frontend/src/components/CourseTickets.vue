@@ -10,8 +10,7 @@
         <b-button class="labelbutton:right" v-bind:href="'/course/'+ $route.params.course_id + '/labels'">Course labels</b-button>
         <button v-on:click="emailSettings" class="btn btn-primary">Email settings</button>
 
-        <modal v-if="showModal" warning="Setup a fetcher to your mailinglist."
-               @yes="updateEmail()" @close="showModal = false"></modal>
+        <modal v-if="showModal" warning="Setup a fetcher to your mailinglist." @close="showModal = false"></modal>
         <br /><br />
 
         <ticket
@@ -26,7 +25,7 @@
 <script>
 
 import Ticket from './Ticket.vue'
-import Modal from './EmailSettingsModel.vue'
+import Modal from './EmailSettingsModal.vue'
 import axios from 'axios'
 
 export default {
@@ -35,7 +34,6 @@ export default {
       tickets: [],
       showModal: false,
       status: 'not set',
-
       status_filter: 'All'
     }
   },

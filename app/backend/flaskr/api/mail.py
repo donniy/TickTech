@@ -12,10 +12,9 @@ def create_new_email_thread_post():
     Recieve email settings from website. Update it in database and send to
     mail server.
     '''
+    # Time between fetching emails
     sleeptime = 60
-
     # Try to make a connection
-    print("HERE")
     try:
         server = escape(request.json["pop"])
         port = escape(request.json["port"])
@@ -43,8 +42,7 @@ def create_new_email_thread_post():
 
     create_new_email_thread(sleeptime, server, port, email,
                             password, course_id)
-    # TODO: Url van ticket in repsonse?
-    return Iresponse.create_response("", 201)
+    return Iresponse.create_response("Succes", 201)
 
 
 @apiBluePrint.route('/email/<course_id>/settings', methods=['GET'])
@@ -55,8 +53,7 @@ def retrieve_current_mail_settings(course_id):
     # TODO: Controlleer rechten
     course = Course.query.get(course_id)
     if course is None:
-        print("No course")
-        return Iresponse.create_response("", 404)
+        return Iresponse.create_response("This course does no longer exists", 200)
 
     thread = MailThread.exist_thread_courseid(course_id)
     running = False
@@ -67,7 +64,7 @@ def retrieve_current_mail_settings(course_id):
               'port': course.mail_port, 'pop': course.mail_server_url,
               'running': running}
 
-    return Iresponse.create_response(object, 200)
+    return Iresponse.create_response(object, 201)
 
 
 @apiBluePrint.route('/email/stop', methods=['POST'])
@@ -75,16 +72,12 @@ def stop_email_fetching():
     """
     Stop email fetching.
     """
-    print("TRYUING TO STOP")
-    # TODO: Controlleer rechten
     course_id = escape(request.json["course_id"])
     thread = MailThread.exist_thread_courseid(course_id)
     if (thread is None):
-        print("No thread to stop")
-        return Iresponse.create_response("No threads running", 404)
-
+        return Iresponse.create_response("No email thread running", 200)
     thread.stop()
-    return Iresponse.create_response("Succes", 200)
+    return Iresponse.create_response("Succes", 201)
 
 
 def create_new_email_thread(sleeptime, server, port, email, password,
