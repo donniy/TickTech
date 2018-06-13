@@ -7,6 +7,8 @@ from flaskr import Iresponse
 # remember to add file in __init__
 
 # Add rights check.
+
+
 @apiBluePrint.route('/notes/<ticket_id>')
 def retrieve_notes(ticket_id):
     return rp_notes.retrieve_all_request(ticket_id)

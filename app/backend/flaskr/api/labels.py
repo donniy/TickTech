@@ -5,6 +5,7 @@ from flaskr.models.Course import Course
 from . import apiBluePrint
 import uuid
 
+
 @apiBluePrint.route('/labels/<label_id>/close', methods=['POST'])
 def remove_label(label_id):
     label = Label.query.get(label_id)
