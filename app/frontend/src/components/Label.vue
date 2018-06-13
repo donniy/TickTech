@@ -5,7 +5,7 @@
                 <i class="material-icons"> close </i>
             </button>
 
-            <button class="labelText" data-toggle="tooltip"
+            <button class="label-name" data-toggle="tooltip"
                     title="Select to receive tickets from this label ">
                 <h3>{{label.label_name}}</h3>
             </button>

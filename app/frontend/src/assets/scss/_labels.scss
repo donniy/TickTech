@@ -47,7 +47,7 @@ button.labelbutton-left {
     box-shadow: 0 2px 4px 0 rgba(50,50,93,.1);
     margin-bottom: 10px;
 }
-.labelText {
+.label-name {
     cursor: pointer;
     width: calc(100% - 45px);
     word-break: break-all;
@@ -57,7 +57,7 @@ button.labelbutton-left {
     padding: 14px 28px;
     opacity: 0.4;
 }
-.labelText:hover {
+.label-name:hover {
     opacity: 1;
 }
 .removeLabel {
