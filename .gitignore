@@ -30,6 +30,7 @@ wheels/
 *.egg
 MANIFEST
 package-lock.json
+app/frontend/package-lock.json
 
 app/dist
 
