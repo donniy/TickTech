@@ -17,7 +17,6 @@
 </template>
 
 <script>
-
   import Modal from './ClosePrompt.vue'
 
   export default {
