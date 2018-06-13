@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+
 import TicketTA from './TicketTA.vue'
 import SumModal from './TicketSummary.vue'
 import EmailModal from './EmailSettingsModel.vue'
@@ -78,7 +78,7 @@ export default {
         getTickets () {
             this.status = 'getting tickets'
             const path = '/api/courses/' + this.$route.params.course_id + '/tickets'
-            axios.get(path)
+            this.$ajax.get(path)
             .then(response => {
                 this.tickets = response.data.json_data
                 this.status = 'Retrieved data'
