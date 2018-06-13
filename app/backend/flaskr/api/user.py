@@ -27,8 +27,7 @@ def retrieve_active_user_tickets(user_id):
     # TODO: Controleer of degene die hierheen request permissies heeft.
     user_id = current_identity.id
     tickets = Ticket.query.filter(Ticket.user_id == user_id,
-                                  Ticket.ticket_status.has(
-                                      TicketStatus.name != 'closed')).all()
+                                  Ticket.status_id != 2).all()
     return database.json_list(tickets)
 
 
