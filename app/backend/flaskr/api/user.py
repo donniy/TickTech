@@ -4,6 +4,7 @@ from flask_jwt import jwt_required, current_identity
 from flaskr import Iresponse
 from flask import request
 from flaskr.models.user import *
+from flaskr.utils.json_assertion import *
 
 @apiBluePrint.route('/user/<user_id>/tickets')
 @jwt_required()
@@ -29,17 +30,22 @@ def retrieve_active_user_tickets(user_id):
 
 @apiBluePrint.route('/user/register', methods=["POST"])
 def register_user():
-    
-    jsonData = request.get_json()
+    ''' Expects a request with email, name, id and password and enters
+        new user into database.
+    '''
 
-    if jsonData is None:
-        return Iresponse.internal_server_error()
+    json_data = request.get_json()
+
+    if not assert_json(json_data,["email", "name", "studentid", "password"]):
+        return Iresponse.empty_json_request()
+
 
     email = escape(jsonData["email"])
     name = escape(jsonData["name"])
     studentid = escape(jsonData["studentid"])
     password = escape(jsonData["password"])
 
+    # Backend check if email/studentid already exists
     user = User.query.filter_by(email=email).first()
     if user:
         return Iresponse.create_response({"status":False}, 200)
@@ -50,8 +56,6 @@ def register_user():
     if user:
         return Iresponse.create_response({"status":False}, 200)
 
-    response_body = {}
-
     new_user = User()
     new_user.id = studentid
     new_user.name = name
@@ -60,8 +64,7 @@ def register_user():
     if not database.addItemSafelyToDB(new_user):
         return Iresponse.internal_server_error()
 
-    response = Iresponse.create_response(response_body, 201)
-    return response
+    return Iresponse.create_response("", 201)
 
 @apiBluePrint.route('/user/exists', methods=["POST"])
 def user_exists():
