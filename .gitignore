@@ -29,9 +29,7 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
-package-lock.json
 app/frontend/package-lock.json
-
 app/dist
 
 # PyInstaller
