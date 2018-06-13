@@ -59,22 +59,36 @@ def addItemSafelyToDB(item):
     return True
 
 
-#end functions for insertion for database.
+# End functions for insertion for database.
 
-#These are from the InitDB sql file. Can insert dummy data here.
+# These are from the InitDB sql file. Can insert dummy data here.
 def populate_database_dummy_data():
     from flaskr.models import Course, user
     items = []
-    course = Course.Course(id=uuid.uuid4(), course_email="test@test.com",
-                           title="course 1", description="Test")
-    course2 = Course.Course(id=uuid.uuid4(), course_email="testie@test.com",
-                            title="course 2", description="Test")
-    user1 = user.User(id=11111, name="Erik Kooijstra",
+    course = Course.Course(id=uuid.uuid4(),
+                           course_email="test@test.com",
+                           title="course 1",
+                           description="Test")
+
+    course2 = Course.Course(id=uuid.uuid4(),
+                            course_email="testie@test.com",
+                            title="course 2",
+                            description="Test")
+
+    user1 = user.User(id=11111,
+                      name="Erik Kooijstra",
                       email="Erik@kooijstra.nl")
-    user2 = user.User(id=11112, name="Kire Kooijstra",
+
+    user2 = user.User(id=11112,
+                      name="Kire Kooijstra",
                       email="Kire@kooijstra.nl")
-    user3 = user.User(id=123123123, name="Test mctestie", email="test@test.nl")
+
+    user3 = user.User(id=123123123,
+                      name="Test mctestie",
+                      email="test@test.nl")
+
     items = [user1, user2, user3, course, course2]
+
     for item in items:
         addItemSafelyToDB(item)
 
@@ -90,16 +104,15 @@ def populate_database_dummy_data():
     print(course.student_courses)
     print(course.ta_courses)
 
-#just for testing
 
-
+# Just for testing
 def addTicketStatus(name="Needs help"):
     from flaskr.models import ticket
     ts = ticket.TicketStatus()
     ts.name = name
     try:
         addItemSafelyToDB(ts)
-    except:
+    except Exception as e:
         print("oeps")
 
 
@@ -111,7 +124,7 @@ def addTicketLabel(ticked_id=uuid.uuid4(), course_id=uuid.uuid4(), name="test"):
     tl.name = name
     try:
         addItemSafelyToDB(tl)
-    except:
+    except Exception as e:
         print("oeps")
 
 #just for testing

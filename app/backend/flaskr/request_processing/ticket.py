@@ -17,10 +17,10 @@ def create_request(jsonData):
     response_body = {}
 
     for letter in name:
-        if not letter.isalpha() and not letter in " '-":
+        if not letter.isalpha() and letter not in " '-":
             response_body['name'] = 'Invalid name'
 
-    #TODO implement check validation email (is it even possible?)
+    # TODO implement check validation email (is it even possible?)
 
     # A number should be within certain bounds and only numerical.
     try:
@@ -35,15 +35,15 @@ def create_request(jsonData):
 
     # Course and labelid shoudl be valid (Implement through server checking)
 
-    #TODO implement LTI checking for course/student accessability and validity.
+    # TODO implement LTI checking for course/student accessability and validity
 
     # Message should not be empty.
     if len(message) == 0:
         response_body['message'] = 'Empty'
 
-    #status = TicketStatus.query.get(1)
-    #if status is None:
-        #response_body['status'] = 'Invalid status'
+    # status = TicketStatus.query.get(1)
+    # if status is None:
+        # response_body['status'] = 'Invalid status'
 
     if len(response_body) != 0:
         return Iresponse.create_response(response_body, 400)
