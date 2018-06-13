@@ -38,9 +38,9 @@ const routerOptions = [
         component: 'StudentForm',
     },
     {
-        path: '/home2/',
-        name: 'Home_Secondary',
-        component: 'Home_Secondary',
+        path: '/team/',
+        name: 'Team',
+        component: 'Team',
     },
     // {
     //     path: '/ticket/:ticket_id/closeticket',
