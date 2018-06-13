@@ -24,6 +24,7 @@ h1 {
 }
 
 .navbar-tiktech {
+    background-color: #FFF;
     box-shadow: 0 15px 35px rgba(50,50,93,.1),0 5px 15px rgba(0,0,0,.07);
     border: none;
 }
@@ -127,28 +128,6 @@ h1 {
     justify-content: center;
 }
 
-.first-background-image {
-    background-image: url("../low-poly-texture.png");
-}
-
-.message-struct-section {
-    background-image: url("../low-poly-texture2.png");
-    background-size: 100%;
-    padding-bottom: 250px;
-}
-
-.service-section {
-    background-image: url("../low-poly-texture.png");
-    padding-bottom: 300px;
-}
-
-.masthead {
-    padding-bottom: 55px;
-}
-
-.container-fluid {
-    padding: 0px;
-}
 
 .form-control {
     border-radius: 0;
