@@ -20,12 +20,12 @@ def retrieve_all_request(ticket_id):
 
 # Catch datbase session commit exceptions.
 # Maybe make a different call in the database file.
+#TODO: Add error handling when a TA is not found.
 def parse_note(message, ticket):
     """
     Function that parses a note for mentioned users.
     If a user is mentioned we append them to the
     linked tas in the ticket.
-    #TODO: Add error handling when a TA is not found.
     """
     mentions = re.finditer('@[0-9]+', message)
     course = Course.query.get(ticket.course_id)
@@ -42,11 +42,10 @@ def parse_note(message, ticket):
     print(ticket.binded_tas)
 
 
-
+#TODO: Add checking to getting data from json.
 def create_request(jsonData):
     """
     Process the request to create a node.
-    #TODO: Add checking to getting data from json.
     """
     response_body = {}
     ticket_id = escape(jsonData["ticket_id"])

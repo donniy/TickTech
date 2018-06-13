@@ -66,7 +66,7 @@ class Ticket(db.Model):
         Ticket can be unassigned, so ta_id can be None.
         """
         if self.ta_id is None:
-            self.ta_id = "None"
+            self.ta_id = "null"
 
         return {
             'id': self.id,
