@@ -38,7 +38,7 @@ def create_request(jsonData):
     if not database.addItemSafelyToDB(note):
         return Iresponse.internal_server_error()
 
-    #add header location.
+    # add header location.
     return Iresponse.create_response(note.serialize, 201)
 
 
