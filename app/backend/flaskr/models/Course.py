@@ -7,23 +7,31 @@ db = database.db
 
 ta_course_linker = db.Table(
     'ta_link_course',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-    db.Column('course_id', UUIDType(binary=False), db.ForeignKey('course.id'), primary_key=True)
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'),
+              primary_key=True),
+    db.Column('course_id', UUIDType(binary=False), db.ForeignKey('course.id'),
+              primary_key=True)
 )
 
 student_course_linker = db.Table(
     'student_link_course',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-    db.Column('course_id', UUIDType(binary=False), db.ForeignKey('course.id'), primary_key=True)
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'),
+              primary_key=True),
+    db.Column('course_id', UUIDType(binary=False), db.ForeignKey('course.id'),
+              primary_key=True)
 )
 
 label_course_linker = db.Table(
     "label_link_course",
-    db.Column('course_id', UUIDType(binary=False), db.ForeignKey('course.id'), primary_key=True),
-    db.Column('label_id', UUIDType(binary=False), db.ForeignKey('label.label_id'), primary_key=True)
+    db.Column('course_id', UUIDType(binary=False), db.ForeignKey('course.id'),
+              primary_key=True),
+    db.Column('label_id', UUIDType(binary=False),
+              db.ForeignKey('label.label_id'), primary_key=True)
 )
 
+
 class Course(db.Model):
+
     """
     Een course.
     """
@@ -50,9 +58,9 @@ class Course(db.Model):
         "Label", secondary=label_course_linker, lazy='subquery',
         backref=db.backref('labels', lazy=True))
 
-
-    # Dit is een soort toString zoals in Java, voor het gebruiken van de database
-    # in de commandline. Op die manier kan je data maken en weergeven zonder formulier.
+    # Dit is een soort toString zoals in Java, voor het gebruiken van de
+    # database in de commandline. Op die manier kan je data maken en weergeven
+    # zonder formulier.
     def __repr__(self):
         return '<Course {}>'.format(self.title)
 
