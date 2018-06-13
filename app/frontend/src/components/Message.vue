@@ -1,7 +1,7 @@
 <template>
     <div :class="'message' + (user.id == message.user_id ? ' text-right' : '')">
         <h4 class="message-sender">{{username}}</h4>
-        <div class="material-card">
+        <div class="material-card sum">
             <p class="message-text">
             {{message.text}}
             </p>

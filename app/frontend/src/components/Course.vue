@@ -1,5 +1,6 @@
 <template>
-    <a v-bind:href="'/course/'+course.id" class="list-ticket">
+    <a v-on:click="pushCourse"
+       class="list-ticket">
         <h3>{{course.title}}</h3>
         {{course.description}}
     </a>
@@ -7,11 +8,21 @@
 
 <script>
 
-  export default {
-      props: ['course'],
-      data: function () {
-          return {};
-      }
-  }
-
+export default {
+    props: {
+        course: Object,
+            base_url: {
+            type: String,
+                default: "/ticket/"
+            }
+    },
+    data: function () {
+        return {};
+    },
+    methods: {
+        pushCourse () {
+            this.$router.push("/course/" + this.course.id);
+        }
+    }
+}
 </script>

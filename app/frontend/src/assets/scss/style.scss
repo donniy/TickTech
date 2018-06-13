@@ -244,3 +244,87 @@ a.list-ticket:hover, a.list-ticket:focus {
         font-size: 1.5em;
     }
 }
+
+.summary-container {
+  margin: 0px auto;
+  position: fixed;
+  width: 80%;
+  height: 50%;
+  left: 0;
+  bottom: 0%;
+  z-index: 1;
+  -webkit-transition: opacity 0.4s ease-in-out;
+  left: 50%;
+  margin-left: -40%;
+}
+.summary-header{
+  float: left;
+  width: 100%;
+  margin-top: 0;
+  background-color: #bc0031;
+  color: white;
+  z-index: 0;
+  padding-bottom: 2%;
+  padding: 2%;
+  z-index: 1;
+}
+
+.summary-header h3 {
+  color: white;
+}
+.summary-wrapper {
+  background-color: lightgrey;
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
+  transition: all .3s ease-out;
+  font-family: Helvetica, Arial, sans-serif;
+  height: 100%;
+}
+.summary-tab {
+    position: relative;
+    height: 100%;
+}
+.modal-body {
+  margin: 20px 0;
+}
+
+.modal-default-button {
+  float: right;
+}
+
+.modal-enter {
+  opacity: 0;
+}
+
+.modal-leave-active {
+  opacity: 0;
+}
+
+.modal-enter .modal-container,
+.modal-leave-active .modal-container {
+  -webkit-transform: scale(1.1);
+  transform: scale(1.1);
+}
+
+.summary-tab{
+  width: 33.333333%;
+  float: left;
+}
+
+.summary-content {
+  width: 100%;
+  overflow: auto;
+  height: 85%;
+  padding-bottom: 10%;
+}
+
+.middle {
+  border-left: 1px solid #bc0031;
+  border-right: 1px solid #bc0031;
+}
+.close-sum {
+  z-index: 100000;
+  right: 1%;
+  position: absolute;
+  float: right;
+}

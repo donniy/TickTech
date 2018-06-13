@@ -1,124 +1,103 @@
 <template>
-  <transition name="modal">
-    <div class="summary-container">
-       <button class="btn btn-primary close-button" @click="$emit('close')">
-       x</button>
-      <div class="summary-tab">
-      <h3>Beschrijving</h3>
-      </div>
-      <div class="summary-tab">
-      <h3>Chat</h3>
-      </div>
-      <div class="summary-tab">
-      <h3>Notities</h3>
-      </div>
-    </div>
-  </transition>
+    <transition name="modal">
+        <div class="summary-container">
+            <button class="btn btn-primary close-sum" @click="$emit('close')">
+                x
+            </button>
+            <div class="summary-wrapper">
+
+                <div class="summary-tab">
+                    <div class="summary-header">
+                        <h3>Beschrijving</h3>
+                    </div>
+                    <div class="summary-content">
+                        <message
+                            v-bind:self="12345678"
+                            v-for="message in messages.slice(0,1)"
+                            v-bind:key="message.id"
+                            v-bind:message="message">
+                        </message>
+                    </div>
+                </div>
+
+                <div class="summary-tab middle">
+                    <div class="summary-header">
+                        <h3>Chat</h3>
+                    </div>
+                    <div class="summary-content">
+                        <message
+                            v-bind:self="12345678"
+                            v-for="message in messages"
+                            v-bind:key="message.id"
+                            v-bind:message="message">
+                        </message>
+                    </div>
+                </div>
+
+                <div class="summary-tab">
+                    <div class="summary-header">
+                        <h3>Notities</h3>
+                    </div>
+                    <div class="summary-content">
+                        <note
+                            v-for="note in notes"
+                            v-bind:key="note.id"
+                            v-bind:note="note">
+                        </note>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </transition>
 </template>
 
 <script>
-  import Message from './Message.vue'
 
-const axios_csrf = axios.create({
-  headers: {'X-CSRFToken': csrf_token}
-});
 
-  export default {
-      data: function () {
-          return {};
-      },
-      method: {
+import axios from 'axios'
+import Message from './MessageSum.vue'
+import Note from './NoteSum.vue'
+
+export default {
+    props: {
+        ticket: Object,
+    },
+    data () {
+        return {
+            messages: [],
+            notes: [],
+        }
+    },
+    methods: {
         getMessages () {
-            const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
+            const path = '/api/ticket/' + this.ticket.id + '/messages'
             axios.get(path)
             .then(response => {
-                this.messages = response.data.json_list
+                this.messages = response.data.json_data
             })
             .catch(error => {
                 console.log(error)
             })
         },
-        mounted: function () {
-          this.getMessages()
-          this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
+        getNotes () {
+            axios.get('/api/notes/'+ this.ticket.id)
+            .then(res => {
+                this.notes = res.data.json_data
+                console.log(res)
+            })
+            .catch(err => {
+                console.log(err)
+            })
         }
-      }
+    },
+    mounted: function () {
+        this.getMessages()
+        this.getNotes()
+    },
+    components: {
+        'message': Message,
+        'note': Note
     }
-
+}
 </script>
-
-<style>
-.modal-mask {
-  position: fixed;
-  z-index: 9998;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, .5);
-  display: table;
-  transition: opacity .3s ease;
-}
-
-.modal-wrapper {
-  display: table-cell;
-  vertical-align: middle;
-}
-
-.modal-container {
-  width: 300px;
-  margin: 0px auto;
-  padding: 20px 30px;
-  background-color: #fff;
-  border-radius: 2px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
-  transition: all .3s ease;
-  font-family: Helvetica, Arial, sans-serif;
-}
-
-.modal-header h3 {
-  margin-top: 0;
-  color: #42b983;
-}
-
-.modal-body {
-  margin: 20px 0;
-}
-
-.modal-default-button {
-  float: right;
-}
-
-/*
- * The following styles are auto-applied to elements with
- * transition="modal" when their visibility is toggled
- * by Vue.js.
- *
- * You can easily play with the modal transition by editing
- * these styles.
- */
-
-.modal-enter {
-  opacity: 0;
-}
-
-.modal-leave-active {
-  opacity: 0;
-}
-
-.modal-enter .modal-container,
-.modal-leave-active .modal-container {
-  -webkit-transform: scale(1.1);
-  transform: scale(1.1);
-}
-
-.summary-container {
-  background-color: grey;
-  overflow: hidden;
-}
-
-.summary-tab{
-  width: 30%;
-  float: left;
-}
-</style>
