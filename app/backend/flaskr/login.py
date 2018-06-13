@@ -4,6 +4,7 @@ from flaskr import Iresponse
 
 jwt = None
 
+
 def authenticate(username, password):
     """
     Kijk of de login gegevens in POST correct zijn/communiceer met Canvas.

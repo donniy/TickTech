@@ -19,7 +19,9 @@ def login():
     if not user:
         return Iresponse.create_response("Invalid user", 403)
 
-    return Iresponse.create_response({'status': 'success', 'user': user.serialize}, 200)
+    return Iresponse.create_response({'status': 'success', 'user':
+                                      user.serialize}, 200)
+
 
 @apiBluePrint.route('/user/retrieve', methods=['GET'])
 @jwt_required()

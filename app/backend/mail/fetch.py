@@ -29,12 +29,12 @@ class MailThread(Thread):
     def run(self):
         while (self.running):
             print("Checking", self.email + ". On thread " + self.getName())
-            check_mail(self.server, self.port,
-                       self.email, self.password, self.course_id)
+            check_mail(self.server, self.port, self.email, self.password,
+                       self.course_id)
             print("sleeping", self.sleep_time)
             sleep(self.sleep_time)
-        print("Stopped fetching mail on thread: " +
-              self.getName() + " email: " + self.email)
+        print("Stopped fetching mail on thread: " + self.getName() +
+              " email: " + self.email)
 
     def stop(self):
         '''
