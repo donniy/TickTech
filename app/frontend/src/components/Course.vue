@@ -22,6 +22,7 @@ export default {
     methods: {
         pushCourse () {
             this.$router.push("/course/" + this.course.id);
+            this.$emit('title', this.course.title)
         }
     }
 }

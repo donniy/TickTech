@@ -1,11 +1,8 @@
 <template>
     <div>
-        <a v-bind:href="'/course/' + ticket.course_id" class="btn btn-primary back-button">&laquo;
+        <button class="btn btn-primary back-button"
+            v-on:click="goCourse('/course/' + ticket.course_id)">
             Terug naar cursus
-        </a>
-
-        <button class="btn btn-primary close-button" @click="showModal = true">
-            Close Ticket
         </button>
 
         <modal v-if="showModal" warning="Are you sure you want to close this ticket?"
@@ -88,6 +85,9 @@ export default {
                 console.log("NO TICKET")
                 console.log(error)
             })
+        },
+        goCourse (here) {
+            this.$router.push(here);
         },
         getMessages () {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
