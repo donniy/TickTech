@@ -10,6 +10,8 @@ from flaskr import Iresponse
 
 
 # Add rights check.
+
+
 @apiBluePrint.route('/notes/<ticket_id>')
 def retrieve_notes(ticket_id):
     """

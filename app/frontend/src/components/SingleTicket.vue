@@ -1,66 +1,50 @@
 <template>
     <div>
-        <a v-bind:href="'/course/' + ticket.course_id" class="btn btn-primary back-button">&laquo;
-            Terug naar cursus
+    	<a v-bind:href="'/course/' + ticket.course_id" class="btn btn-primary back-button">&laquo;
+                Terug naar cursus
         </a>
 
-        <button class="btn btn-primary close-button" @click="showModal = true">
-            Close Ticket
-        </button>
+    	<button class="btn btn-primary close-button" @click="showModal = true">
+                Close Ticket
+            </button>
 
-        <modal v-if="showModal" warning="Are you sure you want to close this ticket?"
-               @yes="closeTicket()" @close="showModal = false"></modal>
-        <br /><br />
+    	<modal v-if="showModal" warning="Are you sure you want to close this ticket?" @yes="closeTicket()" @close="showModal = false"></modal>
+    	<br /><br />
 
-        <div class="row">
-            <div class="col-md-8 col-sm-8 col-lg-8 col-xs-12">
-                <h2>Ticket Info</h2>
-                <div class="material-card">
-                    <h2>{{ticket.title}}</h2>
-                    Status: {{ticket.status.name}}
-                </div>
+    	<div class="row">
+    		<div class="col-md-8 col-sm-8 col-lg-8 col-xs-12">
+    			<h2>Ticket Info</h2>
+    			<div class="material-card">
+    				<h2>{{ticket.title}}</h2> Status: {{ticket.status.name}}
+    			</div>
+          <message v-bind:user="{id: 12345678}" v-for="message in messages"
+                   v-bind:key="message.id" v-bind:message="message"></message>
+    			<form v-on:submit.prevent="sendReply" class="reply-area">
+    				<textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
+    				<button class="reply-button btn btn-primary">
+                            <i class="material-icons">
+                                send
+                            </i>
+                        </button>
+    			</form>
+    		</div>
+    		<div class="col-md-4 col-sm-4 col-lg-4 col-xs-12">
+    			<h2>Notities</h2>
+    			<note v-for="note in notes" v-bind:key="note.id" v-bind:note="note"></note>
 
-
-                <message v-bind:user="{id: 12345678}" v-for="message in messages"
-                v-bind:key="message.id" v-bind:message="message"></message>
-
-
-                <form v-on:submit.prevent="sendReply" class="reply-area">
-                    <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
-                    <button class="reply-button btn btn-primary">
-                        <i class="material-icons">
-                            send
-                        </i>
-                    </button>
-                </form>
-            </div>
-            <div class="col-md-4 col-sm-4 col-lg-4 col-xs-12">
-                <h2>Notities</h2>
-                <note v-for="note in notes" v-bind:key="note.id" v-bind:note="note"></note>
-
-                <b-btn id="popoverButton-sync" variant="primary"
-                       class="note-add-button btn btn-primary">
-                    Notitie toevoegen
-                </b-btn>
-
-                <b-popover ref="popoverRef" target="popoverButton-sync"
-                           triggers="click blur"
-                           placement='top'>
-                  <textarea v-model="noteTextArea"
-                            class="form-control" style="height:200px;width:250px;"
-                            id="textAreaForNotes"
-                            placeholder="Voer uw opmerking in">
-                  </textarea>
-
-                  <button @click="addNote" class="btn btn-primary" style="margin-top:10px">Verzenden</button>
-                </b-popover>
-            </div>
-        </div>
+    			<b-btn id="popoverButton-sync" variant="primary" class="note-add-button btn btn-primary">
+    				Notitie toevoegen
+    			</b-btn>
+    			<b-popover ref="popoverRef" target="popoverButton-sync" triggers="click blur" placement='top'>
+    				<textarea v-model="noteTextArea" class="form-control" style="height:200px;width:250px;" placeholder="Voer uw opmerking in"></textarea>
+    				<button @click="addNote" class="btn btn-primary" style="margin-top:10px">Verzenden</button>
+    			</b-popover>
+    		</div>
+    	</div>
     </div>
 </template>
 
 <script>
-
 import Message from './Message.vue'
 
 import Modal from './ClosePrompt.vue'
@@ -238,5 +222,4 @@ export default {
 
     }
 }
-
 </script>
