@@ -63,7 +63,6 @@ import Note from './Note.vue'
  */
 let defaultMention = {
     values: [
-        {name: "test", id: "10303"},
     ],
 
     selectTemplate: function (item) {
