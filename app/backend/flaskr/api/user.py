@@ -16,13 +16,13 @@ def retrieve_user_tickets(user_id):
     """
     # TODO: Controleer of degene die hierheen request permissies heeft.
     tickets = Ticket.query.filter_by(user_id=user_id).all()
-    print(tickets)
     return database.json_list(tickets)
 
 # maybe add query parameter instead of full api route
 
 
 @apiBluePrint.route('/user/<user_id>/tickets/active')
+@jwt_required()
 def retrieve_active_user_tickets(user_id):
     """
     Geeft alle ticktes van gegeven user.
@@ -30,8 +30,7 @@ def retrieve_active_user_tickets(user_id):
     # TODO: Controleer of degene die hierheen request permissies heeft.
     user_id = current_identity.id
     tickets = Ticket.query.filter(Ticket.user_id == user_id,
-                                  Ticket.ticket_status
-                                  .has(TicketStatus.name != 'closed')).all()
+                                  Ticket.status_id != 2).all()
     return database.json_list(tickets)
 
 
@@ -118,7 +117,7 @@ def get_user(user_id):
 
 
 @apiBluePrint.route('/user/<user_id>/courses')
-def get_courses_from_user(user_id):
+def get_courses_from_student(user_id):
     user = User.query.get(user_id)
     if user is None:
         return Iresponse.create_response("", 404)

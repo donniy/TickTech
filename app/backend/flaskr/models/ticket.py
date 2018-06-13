@@ -31,7 +31,7 @@ class Ticket(db.Model):
     """
     id = db.Column(UUIDType(binary=False), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    course_id = db.Column(db.String(120), unique=False, nullable=False)
+    course_id = db.Column(UUIDType(binary=False), unique=False, nullable=False)
 
     status_id = db.Column(db.Integer, db.ForeignKey(
         'ticket_status.id'), default=0, nullable=False)
@@ -93,6 +93,15 @@ class TicketStatus(db.Model):
 
     """
     De status van een ticket die kan worden ingesteld.
+
+    Pre-defined statuses:
+    1.  Unassigned
+    2.  Closed
+    3.  Assigned but waiting for reply
+    4.  Receiving help
+
+    Use numbers for comparison instead of text comparison
+
     """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, default="Pending")
@@ -119,8 +128,7 @@ class TicketLabel(db.Model):
     """
     id = db.Column(db.Integer, primary_key=True)
     ticket_id = db.Column(UUIDType(binary=False), unique=False, nullable=True)
-    course_id = db.Column(db.String(120), unique=False, nullable=False)
-    # name = db.Column(db.String(50), unique=True, nullable=False)
+    course_id = db.Column(UUIDType(binary=False), unique=False, nullable=False)
     name = db.Column(db.String(50), nullable=False)
 
     @property
