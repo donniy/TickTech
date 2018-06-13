@@ -36,7 +36,13 @@
     				Notitie toevoegen
     			</b-btn>
     			<b-popover ref="popoverRef" target="popoverButton-sync" triggers="click blur" placement='top'>
-    				<textarea v-model="noteTextArea" class="form-control" style="height:200px;width:250px;" placeholder="Voer uw opmerking in"></textarea>
+            <mentions :matchingData="mentionTable">
+    				  <textarea v-model="noteTextArea" class="form-control"
+                        id="textAreaForNotes"
+                        style="height:200px;width:250px;" placeholder="Voer uw opmerking in">
+
+              </textarea>
+            </mentions>
     				<button @click="addNote" class="btn btn-primary" style="margin-top:10px">Verzenden</button>
     			</b-popover>
     		</div>
@@ -46,28 +52,10 @@
 
 <script>
 import Message from './Message.vue'
-
+import mentions from './Mentions.vue'
 import Modal from './ClosePrompt.vue'
 import Note from './Note.vue'
 
-
-import Tribute from "tributejs";
-
-
-/* Build the tribute and config for matching.
- * DOCS: https://github.com/zurb/tribute
- * Maybe create a vuejs wrapper
- */
-const tribute = new Tribute({
-    values: [
-    ],
-    selectTemplate: function (item) {
-        return '@' + item.original.id;
-    },
-    lookup: function (ta) {
-        return ta.name + ' ' + ta.id;
-    }
-})
 
 export default {
     data () {
@@ -80,6 +68,7 @@ export default {
             course_tas: [],
             show: false,
             noteTextArea: "",
+            mentionTable: [{name: "test", id: "Test"}],
         }
     },
     methods: {
@@ -176,34 +165,21 @@ export default {
              * table.
              */
             function build_ta_matching_table(obj) {
+                console.log(mentions.data())
                 for (let i = 0; i < obj.course_tas.length; i++) {
                     let ta = obj.course_tas[i]
-                    tribute.append(0,[
-                        {name: String(ta.name), id: String(ta.id)}
-                    ])
+                    console.log(ta)
+                    obj.mentionTable.push(
+                        {name: String(ta.name), id: String(ta.id)})
                 }
             }
         },
-
-        /* This is needed because vue does not update the model when a match is found,
-         * because it does not trigger the right event. So we update the model oursels,
-         * because the input of the textarea is actually changed.
-         * Only gets executed when a match is found.
-         */
-        matchFound(e) {
-            let text_including_full_match = document.getElementById('textAreaForNotes').value
-            this.noteTextArea = text_including_full_match
-            console.log(this.noteTextArea)
-        }
     },
     mounted: function () {
         this.getTicket()
         this.getMessages()
         this.getNotes()
         this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
-        tribute.attach(document.getElementById('textAreaForNotes')) // For the mentioning system.
-        document.getElementById('textAreaForNotes').
-            addEventListener('tribute-replaced', this.matchFound)
     },
     sockets: {
         connect: function () {
@@ -217,6 +193,7 @@ export default {
         'message': Message,
         'modal' : Modal,
         'note': Note,
+        mentions,
     },
     watch :{
 
