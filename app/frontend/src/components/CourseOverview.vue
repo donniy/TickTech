@@ -26,8 +26,7 @@
 </template>
 
 <script>
-    //library for ajax requests
-    import axios from 'axios'
+
     import Course from './Course.vue'
 
     export default {
@@ -40,7 +39,7 @@
       methods: {
         getCourses() {
           this.status = 'getting courses'
-          axios.get('/api/courses')
+          this.$ajax.get('/api/courses')
             .then(response => {
               this.courses = response.data.json_data
               this.status = 'Retrieved data'
