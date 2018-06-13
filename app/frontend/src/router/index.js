@@ -37,6 +37,11 @@ const routerOptions = [
         name: 'AskAQuestion',
         component: 'StudentForm',
     },
+    {
+        path: '/home2/',
+        name: 'Home_Secondary',
+        component: 'Home_Secondary',
+    },
     // {
     //     path: '/ticket/:ticket_id/closeticket',
     //     name: 'closeticket',
@@ -46,6 +51,11 @@ const routerOptions = [
         path: '/login',
         name: 'Login',
         component: 'Login'
+    },
+    {
+        path: '/register',
+        name: 'Register',
+        component: 'Register'
     },
     {
         path: '/course/:course_id/labels',

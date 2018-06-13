@@ -3,6 +3,7 @@ from . import apiBluePrint
 from flaskr.models import user
 from flask_jwt import jwt_required, current_identity
 from flaskr import Iresponse
+from flaskr.models.user import *
 
 
 @apiBluePrint.route('/login', methods=['POST'])
@@ -19,7 +20,9 @@ def login():
     if not user:
         return Iresponse.create_response("Invalid user", 403)
 
-    return Iresponse.create_response({'status': 'success', 'user': user.serialize}, 200)
+    return Iresponse.create_response({'status': 'success', 'user':
+                                      user.serialize}, 200)
+
 
 @apiBluePrint.route('/user/retrieve', methods=['GET'])
 @jwt_required()

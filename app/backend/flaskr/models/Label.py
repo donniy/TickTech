@@ -6,10 +6,12 @@ db = database.db
 
 
 class Label(db.Model):
+
     """
     Een Label.
     """
-    label_id = db.Column(UUIDType(binary=False), default=0, nullable=False, primary_key=True)
+    label_id = db.Column(UUIDType(binary=False), default=0, nullable=False,
+                         primary_key=True)
     label_name = db.Column(db.Text, nullable=False, unique=False)
 
     @property
