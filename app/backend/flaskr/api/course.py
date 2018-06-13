@@ -6,10 +6,12 @@ from flaskr.models.Course import *
 from flaskr.models.user import *
 from flaskr.request_processing import courses as rp_courses
 
+
 @apiBluePrint.route('/courses/<course_id>', methods=['GET'])
 def retreive_course(course_id):
     course = Course.query.get(course_id)
     return Iresponse.create_response(course.serialize, 200)
+
 
 @apiBluePrint.route('/courses/<course_id>/tickets', methods=['GET'])
 def retrieve_course_tickets(course_id):
