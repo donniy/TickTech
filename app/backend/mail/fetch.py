@@ -4,6 +4,7 @@ from time import sleep
 
 
 class MailThread(Thread):
+
     '''
     Create a thread that fetches email on pop3 settings. It will keep running
     until you stop the thread by calling <threadname>.stop().
@@ -28,10 +29,12 @@ class MailThread(Thread):
     def run(self):
         while (self.running):
             print("Checking", self.email + ". On thread " + self.getName())
-            check_mail(self.server, self.port, self.email, self.password, self.course_id)
+            check_mail(self.server, self.port,
+                       self.email, self.password, self.course_id)
             print("sleeping", self.sleep_time)
             sleep(self.sleep_time)
-        print("Stopped fetching mail on thread: " + self.getName() + " email: " + self.email)
+        print("Stopped fetching mail on thread: " +
+              self.getName() + " email: " + self.email)
 
     def stop(self):
         '''
@@ -41,16 +44,17 @@ class MailThread(Thread):
         threads.remove(self)
         print("Stopping thead:", self.getName())
 
-    def update(self, sleep_time=None, server=None, port=None, email=None, password=None):
-        if (sleep_time != None):
+    def update(self, sleep_time=None, server=None,
+               port=None, email=None, password=None):
+        if sleep_time is not None:
             self.sleep_time = sleep_time
-        if (server != None):
+        if server is not None:
             self.server = server
-        if (port != None):
+        if port is not None:
             self.port = port
-        if (email != None):
+        if email is not None:
             self.email = email
-        if (password != None):
+        if password is not None:
             self.password = password
 
     def print_threads():
