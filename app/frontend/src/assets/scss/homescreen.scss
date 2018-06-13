@@ -103,15 +103,6 @@ section h3.section-subheading {
   box-shadow: 0 0 0 0.2rem rgba(254, 209, 55, 0.5) !important;
 }
 
-::-moz-selection {
-  background: $default-red-hover;
-  text-shadow: none;
-}
-
-::selection {
-  background: #fed136;
-  text-shadow: none;
-}
 
 img::selection {
   background: transparent;
@@ -120,9 +111,14 @@ img::selection {
 img::-moz-selection {
   background: transparent;
 }
+img.logo-main{
+    width: 80%;
+    height: auto;
+}
 
 header.masthead {
   text-align: center;
+  min-height: 100vh;
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-position: center center;
