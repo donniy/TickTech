@@ -4,7 +4,7 @@ from flask_jwt import jwt_required, current_identity
 from flaskr import Iresponse
 from flask import request
 from flaskr.models.user import *
-from flaskr.utils.json_assertion import *
+from flaskr.utils.json_validation import *
 from flaskr.request_processing.user import *
 
 @apiBluePrint.route('/user/<user_id>/tickets')
@@ -39,7 +39,7 @@ def register_user():
 
     json_data = request.get_json()
 
-    if not assert_json(json_data,["email", "name", "studentid", "password","password_confirmation"]):
+    if not validate_json(json_data,["email", "name", "studentid", "password","password_confirmation"]):
         return Iresponse.empty_json_request()
 
     email = escape(json_data["email"])
@@ -76,7 +76,7 @@ def register_user():
 def user_exists():
 
     json_data = request.get_json()
-    if not assert_json(json_data, ["email"]):
+    if not validate_json(json_data, ["email"]):
         return Iresponse.empty_json_request()
 
     email = json_data["email"]
@@ -90,7 +90,7 @@ def user_exists():
 def userid_exists():
 
     json_data = request.get_json()
-    if not assert_json(json_data, ["studentid"]):
+    if not validate_json(json_data, ["studentid"]):
         return Iresponse.empty_json_request()
 
     studentid = json_data["studentid"]

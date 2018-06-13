@@ -1,4 +1,4 @@
-def assert_json(json_data, tags):
+def validate_json(json_data, tags):
     ''' Requires a jsondata object and an array of strings (keys)
         it should contain, returns true if complete.
     '''
