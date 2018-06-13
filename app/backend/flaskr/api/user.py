@@ -19,6 +19,7 @@ def retrieve_user_tickets(user_id):
 
 
 @apiBluePrint.route('/user/<user_id>/tickets/active')
+@jwt_required()
 def retrieve_active_user_tickets(user_id):
     """
     Geeft alle ticktes van gegeven user.
@@ -64,7 +65,7 @@ def get_user(user_id):
 
 
 @apiBluePrint.route('/user/<user_id>/courses')
-def get_courses_from_user(user_id):
+def get_courses_from_student(user_id):
     user = User.query.get(user_id)
     if user is None:
         return Iresponse.create_response("", 404)
