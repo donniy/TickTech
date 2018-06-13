@@ -4,8 +4,16 @@
         <br /><br />
         <h1>Mijn ticket</h1>
         <div class="material-card">
-            <h2>{{ticket.title}}</h2>
-            Status: {{ticket.status.name}}
+            <div>
+                <h2>{{ticket.title}}</h2>
+                Status: {{ticket.status.name}}
+            </div>
+            <div>
+                Ta's:
+                <b v-for="user in ticket.tas" v-bind:key="user.id" v-bind:user="user">
+                    {{ user.name}} 
+                </b>
+            </div>
         </div>
 
         <message v-bind:user="$user" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
@@ -34,7 +42,7 @@ const axios_csrf = axios.create({
 export default {
     data () {
         return {
-            ticket: {title: '', status: {name: ''}, course_id: ''},
+            ticket: {title: '', status: {name: ''}, course_id: '', tas:[]},
             reply: '',
             messages: [],
         }
@@ -44,6 +52,7 @@ export default {
             const path = '/api/ticket/' + this.$route.params.ticket_id
             axios.get(path)
             .then(response => {
+                console.log(response)
                 this.ticket = response.data.json_data
             })
             .catch(error => {
@@ -62,7 +71,7 @@ export default {
         },
         sendReply () {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
-            axios_csrf.post(path, {message: this.reply, user_id:123123123})
+            axios_csrf.post(path, {message: this.reply, user_id:4321})
             .then(response => {
                     this.reply = ''
             })

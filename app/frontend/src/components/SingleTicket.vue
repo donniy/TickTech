@@ -16,8 +16,16 @@
             <div class="col-md-8 col-sm-8 col-lg-8 col-xs-12">
                 <h2>Ticket Info</h2>
                 <div class="material-card">
-                    <h2>{{ticket.title}}</h2>
-                    Status: {{ticket.status.name}}
+                    <div>
+                        <h2>{{ticket.title}}</h2>
+                        Status: {{ticket.status.name}}
+                    </div>
+                    <div>
+                        Ta's:
+                        <b v-for="user in ticket.tas" v-bind:key="user.id" v-bind:user="user">
+                            {{ user.name}} 
+                        </b>
+                    </div>
                 </div>
 
                 <message v-bind:self="12345678" v-for="message in messages"
@@ -69,12 +77,12 @@ export default {
     data () {
         return {
             showModal: false,
-            ticket: {title: '', status: {name: ''}, course_id: ''},
+            ticket: {title: '', status: {name: ''}, course_id: '',tas:[]},
             reply: '',
             messages: [],
             notes: [],
             show: false,
-            noteTextArea: ""
+            noteTextArea: "",
         }
     },
     methods: {
@@ -82,6 +90,8 @@ export default {
             const path = '/api/ticket/' + this.$route.params.ticket_id
             axios.get(path)
             .then(response => {
+                console.log("test")
+                console.log(response.data.json_data)
                 this.ticket = response.data.json_data
             })
             .catch(error => {
@@ -116,6 +126,7 @@ export default {
             .then(response => {
                     this.reply = ''
                     this.getMessages()
+                    this.ticket.status.name = "Receiving help"
             })
             .catch(error => {
                 console.log(error)
