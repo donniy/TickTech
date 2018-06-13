@@ -18,12 +18,7 @@
 
 <script>
 
-    import axios from 'axios'
-    import Modal from './ClosePrompt.vue'
-
-    const axios_csrf = axios.create({
-      headers: {'X-CSRFToken': csrf_token}
-    });
+  import Modal from './ClosePrompt.vue'
 
   export default {
       props: ['label'],
