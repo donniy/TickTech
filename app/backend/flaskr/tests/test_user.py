@@ -68,6 +68,7 @@ def test_get_active_student_tickets(app, client):
     assert len(all_tickets) - len(active_tickets) == 1
     assert len(all_tickets) != len(active_tickets)
 
+
 def test_get_student_courses(app, client):
     user = create_user(app, 1234)
     courseId = uuid.uuid4()
@@ -103,7 +104,6 @@ def test_user_auth(app, client):
     assert rv3.status == "401 UNAUTHORIZED"
 
 
-
 # helper functions
 def create_user(app, id):
     new_user = User()
@@ -132,7 +132,7 @@ def create_ticket(app, ticketId, userId, courseId, status=1):
     return t
 
 
-def create_course(app, courseId, tas=[],students=[]):
+def create_course(app, courseId, tas=[], students=[]):
     course = Course()
     course.id = courseId
     course.course_email = "mail@mail.com"
