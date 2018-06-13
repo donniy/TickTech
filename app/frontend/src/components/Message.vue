@@ -1,11 +1,11 @@
 <template>
     <div :class="'message' + (user.id == message.user_id ? ' text-right' : '')">
-    	<h4 class="message-sender">{{username}}</h4>
-    	<div class="material-card">
-    		<p class="message-text">
-    			{{message.text}}
-    		</p>
-    	</div>
+        <h4 class="message-sender">{{username}}</h4>
+        <div class="material-card">
+            <p class="message-text" v-html="message.text">
+            {{message.text}}
+            </p>
+        </div>
     </div>
 </template>
 
