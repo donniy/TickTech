@@ -1,9 +1,12 @@
 <template>
     <div id="app">
         <navbar v-bind:active="active"></navbar>
-        <div class="navbar-spacing"></div>
-        <div class="container">
-        <router-view />
+        <!-- <div class="navbar-spacing"></div> -->
+        <div v-if="isHome" class="container-fluid first-background-image">
+            <router-view />
+        </div>
+        <div v-else="isHome" class="container-fluid">
+            <router-view />
         </div>
     </div>
 </template>
@@ -16,8 +19,18 @@ export default {
     name: 'App',
     data () {
       return {
-        active: 'home'
+        active: 'home',
+        isHome: false
       }
+    },
+    watch:{
+        $route (to, from) {
+            if(to.name === 'Home_Secondary') {
+                this.isHome = true
+            } else {
+                this.isHome = false
+            }
+        }
     },
     components: {
         'navbar': Navbar,
@@ -56,4 +69,3 @@ nav {
     height: 100%;
 }
 </style>
-
