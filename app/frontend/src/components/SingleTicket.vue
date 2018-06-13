@@ -28,7 +28,7 @@
                     </div>
                 </div>
 
-                <message v-bind:self="12345678" v-for="message in messages"
+                <message v-bind:user="{id: 12345678}" v-for="message in messages"
                 v-bind:key="message.id" v-bind:message="message"></message>
 
 
@@ -70,7 +70,7 @@ import Modal from './ClosePrompt.vue'
 import Note from './Note.vue'
 
 const axios_csrf = axios.create({
-  headers: {'X-CSRFToken': csrf_token}
+  headers: {'X-CSRFToken': 'need_to_replace'}
 });
 
 export default {

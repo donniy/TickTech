@@ -1,0 +1,40 @@
+<template>
+    <a class="label">
+        <button class="btn removeLabel" @click="showModal = true">
+            <i class="material-icons"> close </i>
+        </button>
+
+        <div class=labelText>
+            <h3>{{label.label_name}}</h3>
+        </div>
+
+        <modal v-if="showModal" warning="Are you sure you want to remove this label?"
+               @yes="closeLabel()" @close="showModal = false"></modal>
+    </a>
+</template>
+
+<script>
+
+    import axios from 'axios'
+    import Modal from './ClosePrompt.vue'
+
+  export default {
+      props: ['label'],
+      data: function () {
+          return {
+              showModal: false
+          };
+      },
+      methods: {
+          closeLabel(){
+              const path = '/api/labels/' + this.label.label_id + '/close'
+              this.$ajax.post(path, response => {this.showModal = false})
+              this.$parent.getLabels()
+          }
+      },
+      components: {
+          'modal' : Modal
+      }
+  }
+
+</script>

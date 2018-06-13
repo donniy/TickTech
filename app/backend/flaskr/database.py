@@ -23,6 +23,9 @@ def init_db():
     addTicketStatus("closed")
     addTicket()
 
+def get_db():
+    return db
+
 def serialize_list(l):
     return [i.serialize for i in l]
 
