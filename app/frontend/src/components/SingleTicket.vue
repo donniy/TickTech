@@ -36,13 +36,13 @@
     				Notitie toevoegen
     			</b-btn>
     			<b-popover ref="popoverRef" target="popoverButton-sync" triggers="click blur" placement='top'>
-            <mentions :matchingData="mentionTable">
+            <vue-tribute :options="mentionOptions" v-on:tribute-replaced="matchFound">
     				  <textarea v-model="noteTextArea" class="form-control"
                         id="textAreaForNotes"
                         style="height:200px;width:250px;" placeholder="Voer uw opmerking in">
 
               </textarea>
-            </mentions>
+            </vue-tribute>
     				<button @click="addNote" class="btn btn-primary" style="margin-top:10px">Verzenden</button>
     			</b-popover>
     		</div>
@@ -52,9 +52,25 @@
 
 <script>
 import Message from './Message.vue'
-import mentions from './Mentions.vue'
+import VueTribute from 'vue-tribute'
 import Modal from './ClosePrompt.vue'
 import Note from './Note.vue'
+
+/* Build the tribute and config for matching.
+ * DOCS: https://github.com/zurb/tribute
+ * Maybe create a vuejs wrapper
+ */
+let defaultMention = {
+    values: [
+    ],
+
+    selectTemplate: function (item) {
+        return '@' + item.original.id;
+    },
+    lookup: function (ta) {
+        return ta.name + ' ' + ta.id;
+    }
+}
 
 
 export default {
@@ -68,7 +84,7 @@ export default {
             course_tas: [],
             show: false,
             noteTextArea: "",
-            mentionTable: [{name: "test", id: "Test"}],
+            mentionOptions: defaultMention,
         }
     },
     methods: {
@@ -165,14 +181,24 @@ export default {
              * table.
              */
             function build_ta_matching_table(obj) {
-                console.log(mentions.data())
+                console.log(obj.mentionOptions)
                 for (let i = 0; i < obj.course_tas.length; i++) {
                     let ta = obj.course_tas[i]
                     console.log(ta)
-                    obj.mentionTable.push(
+                    obj.mentionOptions.values.push(
                         {name: String(ta.name), id: String(ta.id)})
                 }
             }
+        },
+
+        /* This replaced the noteTextArea when a match if found. Otherwise
+           The user has to append a space after matching to include the whole match.
+           So this makes it possible to click on a match and then immediately post
+           The note.
+         */
+        matchFound(e) {
+            let matchedValue = document.getElementById(e.target.id).value
+            this.noteTextArea = matchedValue
         },
     },
     mounted: function () {
@@ -193,7 +219,7 @@ export default {
         'message': Message,
         'modal' : Modal,
         'note': Note,
-        mentions,
+       VueTribute,
     },
     watch :{
 
