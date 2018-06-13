@@ -4,21 +4,26 @@ from sqlalchemy_utils import UUIDType
 
 db = database.db
 
+
 class Message(db.Model):
+
     """
     Een message.
     """
     message_id = db.Column(db.Integer, primary_key=True)
-    ticket_id = db.Column(UUIDType(binary=False), db.ForeignKey('ticket.id'), default=0, nullable=False)
+    ticket_id = db.Column(UUIDType(binary=False), db.ForeignKey('ticket.id'),
+                          default=0, nullable=False)
     user_id = db.Column(db.Integer, nullable=False)
     text = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     reply_id = db.Column(db.Integer, nullable=True)
 
-    ticket = db.relationship('Ticket', backref=db.backref('messages', lazy=True))
+    ticket = db.relationship('Ticket',
+                             backref=db.backref('messages', lazy=True))
 
-    # Dit is een soort toString zoals in Java, voor het gebruiken van de database
-    # in de commandline. Op die manier kan je data maken en weergeven zonder formulier.
+    # Dit is een soort toString zoals in Java, voor het gebruiken van de
+    # database in de commandline. Op die manier kan je data maken en weergeven
+    # zonder formulier.
     def __repr__(self):
         return '<Message {}>'.format(self.message_id)
 
