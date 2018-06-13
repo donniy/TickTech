@@ -2,6 +2,7 @@ import pytest
 import json
 from flaskr.database import get_db
 
+
 def test_get_courses(client):
     """
     Test database contains courses so at leas one should be returned.
@@ -10,6 +11,7 @@ def test_get_courses(client):
     json_data = rv.get_json()
     assert rv.status == '200 OK'
     assert len(json_data['json_data']) > 0
+
 
 def test_get_tickets(client):
     """
@@ -22,12 +24,14 @@ def test_get_tickets(client):
     print(tickets.get_json())
     assert len(tickets.get_json()['json_data']) == 0
 
+
 def test_incorrect_course_post(client):
     """
     Not sending any json should return 400.
     """
     rv = client.post('/api/courses')
     assert rv.status == '400 BAD REQUEST'
+
 
 def test_insert_ticket(client):
     """
@@ -45,6 +49,7 @@ def test_insert_ticket(client):
         'labelid': ''
     })
     assert rv.status == '201 CREATED'
+
 
 def test_get_ticket(client):
     rv = client.get('/api/courses')
@@ -65,4 +70,3 @@ def test_get_ticket(client):
     assert len(tickets.get_json()['json_data']) == 1
     ticketid = tickets.get_json()['json_data'][0]['id']
     assert ticketid is not None
-
