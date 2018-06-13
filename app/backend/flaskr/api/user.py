@@ -8,7 +8,6 @@ from flaskr.utils.json_validation import *
 from flaskr.request_processing.user import *
 
 
-
 @apiBluePrint.route('/user/<user_id>/tickets')
 @jwt_required()
 def retrieve_user_tickets(user_id):
@@ -107,7 +106,6 @@ def userid_exists():
     if user is None:
         return Iresponse.create_response({"status": False}, 200)
     return Iresponse.create_response({"status": True}, 200)
-
 
 
 @apiBluePrint.route('/user/<int:user_id>')

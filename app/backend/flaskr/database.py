@@ -116,7 +116,8 @@ def addTicketStatus(name="Needs help"):
         print("oeps")
 
 
-def addTicketLabel(ticked_id=uuid.uuid4(), course_id=uuid.uuid4(), name="test"):
+def addTicketLabel(ticked_id=uuid.uuid4(), course_id=uuid.uuid4(),
+                   name="test"):
     from flaskr.models import ticket
     tl = ticket.TicketLabel()
     tl.ticked_id = ticked_id
@@ -126,8 +127,6 @@ def addTicketLabel(ticked_id=uuid.uuid4(), course_id=uuid.uuid4(), name="test"):
         addItemSafelyToDB(tl)
     except Exception as e:
         print("oeps")
-
-#just for testing
 
 
 def addTicket(user_id=1, email="test@email.com", course_id=uuid.uuid4(),
