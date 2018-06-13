@@ -31,7 +31,7 @@ def retrieve_active_user_tickets(user_id):
     user_id = current_identity.id
     tickets = Ticket.query.filter(Ticket.user_id == user_id,
                                   Ticket.ticket_status
-                                  .has(TicketStatus.name!='closed')).all()
+                                  .has(TicketStatus.name != 'closed')).all()
     return database.json_list(tickets)
 
 
@@ -43,7 +43,9 @@ def register_user():
 
     json_data = request.get_json()
 
-    if not validate_json(json_data,["email", "name", "studentid", "password","password_confirmation"]):
+    if not validate_json(json_data,["email", "name",
+                                    "studentid", "password",
+                                    "password_confirmation"]):
         return Iresponse.empty_json_request()
 
     email = escape(json_data["email"])
