@@ -101,18 +101,6 @@ class TicketStatus(db.Model):
             'name': self.name
         }
 
-    def lookup(self):
-        if self.id == 1:
-            return 'Unassigned'
-        elif self.id == 2:
-            return 'Closed'
-        elif self.id == 3:
-            return 'Assigned - needs assistance'
-        elif self.id == 4:
-            return 'Receiving help'
-        else:
-            return 'Status not found'
-
     @property
     def checkValid(self):
         pass
