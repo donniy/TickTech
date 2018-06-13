@@ -3,19 +3,19 @@
     	<h2>Tickets van Student {{ $route.params.user_id }}</h2>
     	<div>
     		<template v-for="course in courses">
-            <b-btn variant="primary" class="dropdown-button" v-b-toggle="'course-' + course.id">
-              {{course.title}} </b-btn>
-            <b-collapse :id="'course-' + course.id" class="mt-2">
-                <b-card>
-                  <ticket
-                        v-for="ticket in tickets"
-                        v-bind:key="ticket.id"
-                        v-bind:ticket="ticket"
-                        v-bind:base_url="'/student/ticket/'"
-                    ></ticket>
-                </b-card>
-            </b-collapse>
-          </template>
+                <b-btn variant="primary" class="dropdown-button" v-b-toggle="'course-' + course.id">
+                  {{course.title}} </b-btn>
+                <b-collapse :id="'course-' + course.id" class="mt-2">
+                    <b-card>
+                      <ticket
+                            v-for="ticket in tickets"
+                            v-bind:key="ticket.id"
+                            v-bind:ticket="ticket"
+                            v-bind:base_url="'/student/ticket/'"
+                        ></ticket>
+                    </b-card>
+                </b-collapse>
+              </template>
     	</div>
     	<div>
     		<b-button class="create-button" href="/form">New ticket</b-button>
