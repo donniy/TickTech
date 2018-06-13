@@ -7,14 +7,17 @@ import uuid
 
 db = SQLAlchemy()
 
+
 class DatabaseException(Exception):
     def __init__(self, debug_message):
         self.debug_message = debug_message
+
 
 class DatabaseInsertException(DatabaseException):
     def __init__(self, debug_message):
         super().__init__(debug_message)
         self.response_message = response_message = ""
+
 
 def init_db():
     db.create_all()
@@ -23,11 +26,14 @@ def init_db():
     addTicketStatus("closed")
     addTicket()
 
+
 def get_db():
     return db
 
+
 def serialize_list(l):
     return [i.serialize for i in l]
+
 
 def json_list(l):
     """
@@ -63,8 +69,10 @@ def populate_database_dummy_data():
                            title="course 1", description="Test")
     course2 = Course.Course(id=uuid.uuid4(), course_email="testie@test.com",
                             title="course 2", description="Test")
-    user1 = user.User(id=11111, name="Erik Kooijstra", email="Erik@kooijstra.nl")
-    user2 = user.User(id=11112, name="Kire Kooijstra", email="Kire@kooijstra.nl")
+    user1 = user.User(id=11111, name="Erik Kooijstra",
+                      email="Erik@kooijstra.nl")
+    user2 = user.User(id=11112, name="Kire Kooijstra",
+                      email="Kire@kooijstra.nl")
     user3 = user.User(id=123123123, name="Test mctestie", email="test@test.nl")
     items = [user1, user2, user3, course, course2]
     for item in items:
@@ -83,6 +91,8 @@ def populate_database_dummy_data():
     print(course.ta_courses)
 
 #just for testing
+
+
 def addTicketStatus(name="Needs help"):
     from flaskr.models import ticket
     ts = ticket.TicketStatus()
@@ -92,7 +102,8 @@ def addTicketStatus(name="Needs help"):
     except:
         print("oeps")
 
-def addTicketLabel(ticked_id=1, course_id="1", name="test"):
+
+def addTicketLabel(ticked_id=uuid.uuid4(), course_id=uuid.uuid4(), name="test"):
     from flaskr.models import ticket
     tl = ticket.TicketLabel()
     tl.ticked_id = ticked_id
@@ -104,7 +115,10 @@ def addTicketLabel(ticked_id=1, course_id="1", name="test"):
         print("oeps")
 
 #just for testing
-def addTicket(user_id=1, email="test@email.com", course_id="1", status_id=2, title="test",
+
+
+def addTicket(user_id=1, email="test@email.com", course_id=uuid.uuid4(),
+              status_id=2, title="test",
               timestamp=datetime.now()):
     from flaskr.models import ticket
     t = ticket.Ticket()
