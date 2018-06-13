@@ -54,12 +54,10 @@
             v-bind:key="ticketSum"
             v-bind:ticket="ticket">
         </summodal>
-
     </div>
 </template>
 
 <script>
-
 import axios from 'axios'
 import TicketTA from './TicketTA.vue'
 import SumModal from './TicketSummary.vue'

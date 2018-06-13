@@ -28,8 +28,8 @@ def create_app(test_config=None):
 
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True,
-                static_folder = "../../dist/static",
-                template_folder = "../../dist")
+                static_folder="../../dist/static",
+                template_folder="../../dist")
 
     if os.environ.get('FLASK_ENV') == 'development':
         # When in development mode, we proxy the local Vue server. This means
@@ -37,7 +37,6 @@ def create_app(test_config=None):
         # production mode as well.
         app.config['WTF_CSRF_CHECK_DEFAULT'] = False
 
-    
     app.config['WTF_CSRF_CHECK_DEFAULT'] = False
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -51,7 +50,6 @@ def create_app(test_config=None):
 
     if db_uri in [None, '']:
         db_uri = 'sqlite:////tmp/test.db'
-
 
     app.config.from_mapping(
         SECRET_KEY='dev',
@@ -92,32 +90,33 @@ def create_app(test_config=None):
     def render_vue(path):
         if app.debug:
             try:
-                res = requests.get('http://localhost:8080/{}'.format(path)).text
+                res = requests.get(
+                        'http://localhost:8080/{}'.format(path)
+                        ).text
                 return res
-            except:
-                return "Je gebruikt dev mode maar hebt je Vue development server niet draaien"
+            except Exception as e:
+                return "Je gebruikt dev mode maar hebt je Vue" \
+                       + "development server niet draaien"
         return render_template("index.html")
-
 
     @socketio.on('join-room')
     def sock_join_room(data):
-        #TODO: Check if allowed to join room
+        # TODO: Check if allowed to join room
         print(data)
         print("Want to join {}".format(data['room']))
         try:
             join_room(data['room'])
-        except:
+        except Exception as e:
             print("Failed to join room")
 
     @socketio.on('leave-room')
     def sock_leave_room(data):
-        #TODO: Need to check if in room?
+        # TODO: Need to check if in room?
         print(data)
         print("Want to leave {}".format(data['room']))
         try:
             leave_room(data['room'])
-        except:
+        except Exception as e:
             print("Failed to leave toom")
-
 
     return app

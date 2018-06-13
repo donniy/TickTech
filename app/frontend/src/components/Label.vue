@@ -14,27 +14,27 @@
 </template>
 
 <script>
-
     import axios from 'axios'
     import Modal from './ClosePrompt.vue'
 
-  export default {
-      props: ['label'],
-      data: function () {
-          return {
-              showModal: false
-          };
-      },
-      methods: {
-          closeLabel(){
-              const path = '/api/labels/' + this.label.label_id + '/close'
-              this.$ajax.post(path, response => {this.showModal = false})
-              this.$parent.getLabels()
-          }
-      },
-      components: {
-          'modal' : Modal
-      }
-  }
-
+    export default {
+    	props: ['label'],
+    	data: function() {
+    		return {
+    			showModal: false
+    		};
+    	},
+    	methods: {
+    		closeLabel() {
+    			const path = '/api/labels/' + this.label.label_id + '/close'
+    			this.$ajax.post(path, response => {
+    				this.showModal = false
+    			})
+    			this.$parent.getLabels()
+    		}
+    	},
+    	components: {
+    		'modal': Modal
+    	}
+    }
 </script>

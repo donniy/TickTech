@@ -12,7 +12,7 @@
                     </div>
                     <div class="summary-content">
                         <message
-                            v-bind:self="12345678"
+                            v-bind:user="{id: user_id}"
                             v-for="message in messages.slice(0,1)"
                             v-bind:key="message.id"
                             v-bind:message="message">
@@ -26,7 +26,7 @@
                     </div>
                     <div class="summary-content">
                         <message
-                            v-bind:self="12345678"
+                            v-bind:user="{id: user_id}"
                             v-for="message in messages"
                             v-bind:key="message.id"
                             v-bind:message="message">
@@ -66,6 +66,7 @@ export default {
     data () {
         return {
             messages: [],
+            user_id: 0,
             notes: [],
         }
     },
@@ -90,6 +91,9 @@ export default {
                 console.log(err)
             })
         }
+    },
+    beforeMount: function() {
+        this.user_id = this.$user.get().id
     },
     mounted: function () {
         this.getMessages()
