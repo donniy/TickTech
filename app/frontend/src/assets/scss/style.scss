@@ -129,16 +129,19 @@ h1 {
 
 .first-background-image {
     background-image: url("../low-poly-texture.png");
+    min-height: 100vh;
 }
 
 .message-struct-section {
     background-image: url("../low-poly-texture2.png");
+    min-height: 100vh;
     background-size: 100%;
     padding-bottom: 250px;
 }
 
 .service-section {
     background-image: url("../low-poly-texture.png");
+    min-height: 100vh;
     padding-bottom: 300px;
 }
 
