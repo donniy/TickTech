@@ -5,7 +5,7 @@
         </button>
 
         <div class=labelText>
-            <h3>{{label.label_name}}</h3>
+            <h3 class="label-name">{{label.label_name}}</h3>
         </div>
 
         <modal v-if="showModal" warning="Are you sure you want to remove this label?"
