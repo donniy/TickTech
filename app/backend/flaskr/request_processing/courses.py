@@ -4,6 +4,7 @@ import uuid
 from flaskr.models.Course import *
 from flaskr.models.ticket import *
 
+
 def create_request(jsonData):
     mail = escape(jsonData['mail'])
     title = escape(jsonData['title'])
