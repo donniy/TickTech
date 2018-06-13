@@ -29,12 +29,14 @@
 
                         <label for="port">Port</label>
                         <input id="port" class="form-control" name="port" v-model="form.port" v-validate="'required|min:1'" type="text" placeholder="995">
+
+                        <p for="error" class="def-error-msg" v-show="error.show">{{error.text}}</p>
                     </div>
                 </form>
                 <button type="submit" class="btn btn-primary" v-on:click="changeClose">
-                    Submit
+                    {{ button.text }}
                 </button>
-                <button class="btn btn-primary stop-button" v-on:click="stopThread">
+                <button v-show="isRunning" class="btn btn-primary stop-button" v-on:click="stopThread">
                     Stop
                 </button>
                 <button class="btn btn-primary close-button" @click="$emit('close')">
@@ -60,16 +62,41 @@
                   pop: "",
                   port: "995",
                   course_id: this.$route.params.course_id
+              },
+              button: {
+                  text: "start"
+              },
+              isRunning: false,
+              error: {
+                  show: false,
+                  text: ""
               }
+
           };
       },
       methods: {
         changeClose() {
-            console.log("Model changeclose")
-            this.$parent.updateEmail(this.form);
+            this.error.show = false
+            const path = '/api/email'
+            this.$ajax.post(path, this.form).then(response => {
+                if (response.status == 201){
+                    this.$parent.showModal = false
+                }
+                if (response.status == 200){
+                    this.error.show = true
+                    this.error.text = response.data.json_data
+                }
+            }).catch(error => {
+                console.log(error)
+            })
         },
         stopThread() {
-            this.$parent.stopEmail(this.form);
+            this.$parent.showModal = false
+            const path = '/api/email/stop'
+            this.$ajax.post(path, this.form, response => {
+                // TODO: Implement authentication on back-end to work with Canvas.
+                console.log(response)
+            })
         }
       },
       beforeCreate: function () {
@@ -89,6 +116,12 @@
                   }
                   if (response.data.json_data.port != null){
                       this.form.port = response.data.json_data.port
+                  }
+
+                  if (response.data.json_data.running){
+                      this.button.text = "update"
+                      this.isRunning = true
+
                   }
               }
           });

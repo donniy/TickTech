@@ -58,25 +58,6 @@ export default {
     emailSettings() {
         this.showModal = true
     },
-    updateEmail(form) {
-        this.showModal = false
-        console.log(form)
-        const path = '/api/email'
-        this.$ajax.post(path, form, response => {
-            // TODO: Implement authentication on back-end to work with Canvas.
-            console.log(response)
-        })
-
-    },
-    stopEmail(form) {
-        this.showModal = false
-        console.log(form)
-        const path = '/api/email/stop'
-        this.$ajax.post(path, form, response => {
-            // TODO: Implement authentication on back-end to work with Canvas.
-            console.log(response)
-        })
-    },
     created () {
       this.status = 'created'
       this.getTickets()

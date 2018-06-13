@@ -29,8 +29,12 @@ class MailThread(Thread):
     def run(self):
         while (self.running):
             print("Checking", self.email + ". On thread " + self.getName())
-            check_mail(self.server, self.port, self.email, self.password,
-                       self.course_id)
+            result = check_mail(self.server, self.port, self.email,
+                                self.password, self.course_id)
+            if (result == 1):
+                # Something went wrong
+                self.stop()
+                print("Something went wrong, stop thread" + self.getName())
             print("sleeping", self.sleep_time)
             sleep(self.sleep_time)
         print("Stopped fetching mail on thread: " + self.getName() +

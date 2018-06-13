@@ -21,7 +21,8 @@ def connect(host, port, user, password):
         server.user(user)
         server.pass_(password)
     except (poplib.error_proto) as msg:
-        raise 'Connection error: ' + msg
+        print(msg)
+        return None
 
     return server
 
@@ -90,28 +91,32 @@ def parse_body(string, courseid):
     return studentid, 1
 
 
-def check_mail(host, port, user, password, course_id):
+def check_mail(host, port, user, password, courseid):
     '''
     Start a mail server.
     '''
     server = connect(host, port, user, password)
-    mailcount = server.stat()[0]
 
+    if server is None:
+        # Cannot connect. Try again later
+        return
+
+    mailcount = server.stat()[0]
     if (mailcount == 0):
         print("No emails found.")
         server.quit()
         return
 
-    # TEMP GET COURSE: STEPHHIE IS FIXING THIS :)
-    courseid = None
-    result = requests.get('http://localhost:5000/api/courses')
-    if (result.status_code == 200):
-        courses = result.json()
-        courseid = courses["json_data"][0]["id"]
-    else:
-        print("Error retrieving course id from server.")
-        return
-    # TEMP GET COURSE: STEPHHIE IS FIXING THIS :)
+    # # TEMP GET COURSE: STEPHHIE IS FIXING THIS :)
+    # courseid = None
+    # result = requests.get('http://localhost:5000/api/courses')
+    # if (result.status_code == 200):
+    #     courses = result.json()
+    #     courseid = courses["json_data"][0]["id"]
+    # else:
+    #     print("Error retrieving course id from server.")
+    #     return
+    # # TEMP GET COURSE: STEPHHIE IS FIXING THIS :)
 
     for i in range(mailcount):
         subject, body, sender, address = parse_email(server, i)
