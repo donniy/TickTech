@@ -48,7 +48,7 @@
 </template>
 
 <script>
-    import axios from 'axios'
+
     import Message from './Message.vue'
     import Modal from './ClosePrompt.vue'
     import Note from './Note.vue'
@@ -75,7 +75,7 @@ export default {
     methods: {
         getTicket() {
             const path = '/api/ticket/' + this.$route.params.ticket_id
-            axios.get(path)
+            this.$ajax.get(path)
                 .then(response => {
                     this.ticket = response.data.json_data
                 })
@@ -86,7 +86,7 @@ export default {
         },
         getMessages() {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
-            axios.get(path)
+            this.$ajax.get(path)
                 .then(response => {
                     this.messages = response.data.json_data
                 })
@@ -96,7 +96,7 @@ export default {
         },
         getNotes() {
             //get all notes
-            axios.get('/api/notes/' + this.$route.params.ticket_id)
+            this.$ajax.get('/api/notes/' + this.$route.params.ticket_id)
                 .then(response => {
                     this.notes = response.data.json_data
                     console.log(response)
@@ -125,7 +125,7 @@ export default {
         closeTicket() {
             this.showModal = false
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/close'
-            axios.post(path)
+            this.$ajax.post(path)
                 .then(response => {
                     // TODO: Iets van een notificatie ofzo? '234 closed this ticket'? iig niet meer hardcoden "closed"
                     this.ticket.status.name = "closed"
@@ -141,7 +141,7 @@ export default {
             }
             console.log("Note")
             console.log(this.noteTextArea)
-            axios.post(path, noteData)
+            this.$ajax.post(path, noteData)
                 .then(response => {
                     this.noteTextArea = ""
                     this.$refs.popoverRef.$emit('close')

@@ -54,8 +54,6 @@
 
 <script>
 
-
-import axios from 'axios'
 import Message from './MessageSum.vue'
 import Note from './NoteSum.vue'
 
@@ -73,7 +71,7 @@ export default {
     methods: {
         getMessages () {
             const path = '/api/ticket/' + this.ticket.id + '/messages'
-            axios.get(path)
+            this.$ajax.get(path)
             .then(response => {
                 this.messages = response.data.json_data
             })
@@ -82,7 +80,7 @@ export default {
             })
         },
         getNotes () {
-            axios.get('/api/notes/'+ this.ticket.id)
+            this.$ajax.get('/api/notes/'+ this.ticket.id)
             .then(res => {
                 this.notes = res.data.json_data
                 console.log(res)

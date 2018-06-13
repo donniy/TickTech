@@ -21,7 +21,6 @@
 </template>
 
 <script>
-    import ajax from 'axios'
     import Message from './Message.vue'
     import VueCookies from 'vue-cookies'
 
