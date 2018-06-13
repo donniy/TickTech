@@ -36,8 +36,13 @@ function handle_ajax_error(error) {
 
 //Vue.prototype.$user = null
 Vue.prototype.$ajax = {
-  get: function (url, f) {
+  get: function (url, data, f) {
     let hdr = {};
+
+    if (typeof data == 'function') {
+        f = data
+        data = {}
+    }
 
     let token = window.$cookies.get('token')
 
@@ -47,7 +52,7 @@ Vue.prototype.$ajax = {
     let axios_auth = axios.create({
       headers: hdr
     });
-    return axios_auth.get(url).then(f).catch(handle_ajax_error)
+    return axios_auth.get(url, data).then(f).catch(handle_ajax_error)
   },
   post: function (url, data={}, f) {
     let hdr = {};
@@ -62,7 +67,49 @@ Vue.prototype.$ajax = {
       headers: hdr
     });
     return axios_csrf.post(url, data).then(f).catch(handle_ajax_error)
-  }
+  },
+  delete: function (url, data={}, f) {
+    let hdr = {};
+
+    let token = window.$cookies.get('token')
+
+    if(token)
+      hdr['Authorization'] = 'JWT ' + token;
+
+    hdr['X-CSRFToken'] = csrf_token;
+    let axios_csrf = axios.create({
+      headers: hdr
+    });
+    return axios_csrf.delete(url, data).then(f).catch(handle_ajax_error)
+  },
+  put: function (url, data={}, f) {
+    let hdr = {};
+
+    let token = window.$cookies.get('token')
+
+    if(token)
+      hdr['Authorization'] = 'JWT ' + token;
+
+    hdr['X-CSRFToken'] = csrf_token;
+    let axios_csrf = axios.create({
+      headers: hdr
+    });
+    return axios_csrf.put(url, data).then(f).catch(handle_ajax_error)
+  },
+  patch: function (url, data={}, f) {
+    let hdr = {};
+
+    let token = window.$cookies.get('token')
+
+    if(token)
+      hdr['Authorization'] = 'JWT ' + token;
+
+    hdr['X-CSRFToken'] = csrf_token;
+    let axios_csrf = axios.create({
+      headers: hdr
+    });
+    return axios_csrf.put(url, data).then(f).catch(handle_ajax_error)
+  },
 }
 
 Vue.prototype.$user = {
