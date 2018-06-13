@@ -9,24 +9,24 @@
              <!-- if-else for student, supervisor (or both) and not logged in. -->
              <div v-if="rights() == 0" class="div-inline mt-2 mt-md-0">
                  <div>
-                     <router-link to="/asdf">Login</router-link>
-                     <router-link to="/asdf" :class="'home-right'">Register</router-link>
+                     <router-link to="/login">Login</router-link>
+                     <router-link to="/register" :class="'home-right'">Register</router-link>
                  </div>
              </div>
              <!-- Student and Supervisor -->
              <div v-else-if="rights() == 1" class="div-inline mt-2 mt-md-0">
                  <div v-if="environment() == 0">
-                     <router-link to="/asdf">Switch Supervisor</router-link>
-                     <router-link to="/asdf" :class="'home-right'">Logout</router-link>
+                     <router-link to="/login">Switch Supervisor</router-link>
+                     <router-link to="/" :class="'home-right'">Logout</router-link>
                  </div>
                  <div v-else>
-                     <router-link to="/asdf">Switch Student</router-link>
-                     <router-link to="/asdf":class="'home-right'">Logout</router-link>
+                     <router-link to="/">Switch Student</router-link>
+                     <router-link to="/":class="'home-right'">Logout</router-link>
                  </div>
              </div>
              <!-- Student or Supervisor -->
              <div v-else-if="rights() > 1" class="div-inline mt-2 mt-md-0">
-                 <router-link to="/asdf":class="'home-right'">Logout</router-link>
+                 <router-link to="/":class="'home-right'">Logout</router-link>
              </div>
          </ul>
     </nav>

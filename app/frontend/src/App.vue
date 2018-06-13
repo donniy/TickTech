@@ -5,7 +5,7 @@
         <div v-if="isHome" class="container-fluid first-background-image">
             <router-view />
         </div>
-        <div v-else="isHome" class="container-fluid">
+        <div v-else="isHome" class="container">
             <router-view />
         </div>
     </div>
@@ -25,7 +25,8 @@ export default {
     },
     watch:{
         $route (to, from) {
-            if(to.name === 'Home_Secondary') {
+            console.log(to.name)
+            if(to.name === 'Home') {
                 this.isHome = true
             } else {
                 this.isHome = false

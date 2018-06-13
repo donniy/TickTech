@@ -24,35 +24,43 @@
     </header>
 
     <!-- The Messaging Structure -->
-    <section id="messaging-structure">
-      <div class="container">
+    <section id="messaging-structure" class="message-struct-section">
+      <div class="container" style="color: black!important;">
         <div class="row">
           <div class="col-lg-12 text-center">
             <h2 class="section-heading text-uppercase">The Messaging Structure</h2>
             <div class="subheading-middle">
-                <h3 class="section-subheading text-muted" style="left: 50%; width: 50%;">TIKTECH has everything you need for a smooth academic career!
+                <h3 class="section-subheading text-muted" style="left: 50%; width: 50%; color: black!important;">TIKTECH has everything you need for a smooth academic career!
                 With our completely free to use ticket service, the problems of communication between students and teaching assistants are ancient history.</h3>
             </div>
           </div>
         </div>
         <div class="row text-center">
           <div class="col-md-6">
+            <span class="fa-stack fa-4x">
+              <i class="fa fa-circle fa-stack-2x text-primary"></i>
+              <i class="fa fa-shopping-cart fa-stack-1x fa-inverse"></i>
+            </span>
             <h4 class="service-heading">The Student</h4>
-            <p class="text-muted">As enrolled student, you can see all your e-mails and questions on those incomprehensible assignments neatly ordered. You will never have to wait long on a reply again!</p>
+            <p class="text-muted" style="color: black!important;">As enrolled student, you can see all your e-mails and questions on those incomprehensible assignments neatly ordered. You will never have to wait long on a reply again!</p>
           </div>
           <div class="col-md-6">
+            <span class="fa-stack fa-4x">
+              <i class="fa fa-circle fa-stack-2x text-primary"></i>
+              <i class="fa fa-laptop fa-stack-1x fa-inverse"></i>
+            </span>
             <h4 class="service-heading">The Supervisor</h4>
-            <p class="text-muted">As Supervisor, you can see all unanswered tickets per course in one place! Unanswered questions can be sorted and divided between you and your colleagues accordingly.</p>
+            <p class="text-muted" style="color: black!important;">As Supervisor, you can see all unanswered tickets per course in one place! Unanswered questions can be sorted and divided between you and your colleagues accordingly.</p>
           </div>
         </div>
         <div class="middle-display">
             <a href="#" v-scroll-to="'#services'" class="text-uppercase scroll-button btn-arrow" >
                 <span>Our Services!
                     <svg width="40" height="20" viewBox="-2.5 -5 75 60" preserveAspectRatio="none">
-                        <path d="M0,0 l35,50 l35,-50" fill="none" stroke="white" stroke-linecap="round" stroke-width="5" />
+                        <path d="M0,0 l35,50 l35,-50" fill="none" stroke="black" stroke-linecap="round" stroke-width="5" />
                     </svg>
                     <svg width="40" height="20" viewBox="-2.5 -5 75 60" preserveAspectRatio="none">
-                        <path d="M0,-20 l35,50 l35,-50" fill="none" stroke="white" stroke-linecap="round" stroke-width="5" />
+                        <path d="M0,-20 l35,50 l35,-50" fill="none" stroke="black" stroke-linecap="round" stroke-width="5" />
                     </svg>
                 </span>
             </a>
@@ -61,7 +69,7 @@
     </section>
 
     <!-- Services -->
-    <section id="services">
+    <section id="services" class="service-section">
       <div class="container">
         <div class="row">
           <div class="col-lg-12 text-center">
@@ -71,14 +79,26 @@
         </div>
         <div class="row text-center">
           <div class="col-md-4">
+            <span class="fa-stack fa-4x">
+              <i class="fa fa-circle fa-stack-2x text-primary"></i>
+              <i class="fa fa-shopping-cart fa-stack-1x fa-inverse"></i>
+            </span>
             <h4 class="service-heading">Ticketing system</h4>
             <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
           </div>
           <div class="col-md-4">
+            <span class="fa-stack fa-4x">
+              <i class="fa fa-circle fa-stack-2x text-primary"></i>
+              <i class="fa fa-laptop fa-stack-1x fa-inverse"></i>
+            </span>
             <h4 class="service-heading">Labeling conversations</h4>
             <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
           </div>
           <div class="col-md-4">
+            <span class="fa-stack fa-4x">
+              <i class="fa fa-circle fa-stack-2x text-primary"></i>
+              <i class="fa fa-lock fa-stack-1x fa-inverse"></i>
+            </span>
             <h4 class="service-heading">Intergration and security</h4>
             <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
           </div>
