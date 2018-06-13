@@ -43,9 +43,9 @@ def register_user():
 
     json_data = request.get_json()
 
-    if not validate_json(json_data,["email", "name",
-                                    "studentid", "password",
-                                    "password_confirmation"]):
+    if not validate_json(json_data, ["email", "name",
+                                     "studentid", "password",
+                                     "password_confirmation"]):
         return Iresponse.empty_json_request()
 
     email = escape(json_data["email"])
@@ -60,13 +60,13 @@ def register_user():
     # Backend check if email/studentid already exists
     user = User.query.filter_by(email=email).first()
     if user:
-        return Iresponse.create_response({"status":False}, 200)
+        return Iresponse.create_response({"status": False}, 200)
 
     studentid = json_data["studentid"]
     user = User.query.filter_by(id=studentid).first()
 
     if user:
-        return Iresponse.create_response({"status":False}, 200)
+        return Iresponse.create_response({"status": False}, 200)
 
     new_user = User()
     new_user.id = studentid
@@ -77,6 +77,7 @@ def register_user():
         return Iresponse.internal_server_error()
 
     return Iresponse.create_response("", 201)
+
 
 @apiBluePrint.route('/user/exists', methods=["POST"])
 def user_exists():
@@ -89,8 +90,9 @@ def user_exists():
     user = User.query.filter_by(email=email).first()
 
     if user is None:
-        return Iresponse.create_response({"status":False}, 200)
-    return Iresponse.create_response({"status":True}, 200)
+        return Iresponse.create_response({"status": False}, 200)
+    return Iresponse.create_response({"status": True}, 200)
+
 
 @apiBluePrint.route('/user/idexists', methods=["POST"])
 def userid_exists():
@@ -103,8 +105,8 @@ def userid_exists():
     user = User.query.filter_by(id=studentid).first()
 
     if user is None:
-        return Iresponse.create_response({"status":False}, 200)
-    return Iresponse.create_response({"status":True}, 200)
+        return Iresponse.create_response({"status": False}, 200)
+    return Iresponse.create_response({"status": True}, 200)
 
 
 @apiBluePrint.route('/user/<int:user_id>')

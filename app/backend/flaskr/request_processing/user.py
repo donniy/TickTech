@@ -6,6 +6,7 @@ from flaskr.models.Message import *
 from flaskr.models.user import *
 import re
 
+
 def validate_userdata(email, name, studentid, password, repassword):
     # Check email.
     regex = re.compile(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$")
