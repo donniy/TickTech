@@ -1,3 +1,2 @@
-from flask import Blueprint
-apiBluePrint = Blueprint("api", __name__, url_prefix="/api")
+from .__apiBlueprint__ import *
 from . import course, ticket, user, login, notes, ta, labels, mail
