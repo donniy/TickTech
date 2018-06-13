@@ -37,18 +37,10 @@
         </div>
         <div class="row text-center">
           <div class="col-md-6">
-            <span class="fa-stack fa-4x">
-              <i class="fa fa-circle fa-stack-2x text-primary"></i>
-              <i class="fa fa-shopping-cart fa-stack-1x fa-inverse"></i>
-            </span>
             <h4 class="service-heading">The Student</h4>
             <p class="text-muted">As enrolled student, you can see all your e-mails and questions on those incomprehensible assignments neatly ordered. You will never have to wait long on a reply again!</p>
           </div>
           <div class="col-md-6">
-            <span class="fa-stack fa-4x">
-              <i class="fa fa-circle fa-stack-2x text-primary"></i>
-              <i class="fa fa-laptop fa-stack-1x fa-inverse"></i>
-            </span>
             <h4 class="service-heading">The Supervisor</h4>
             <p class="text-muted">As Supervisor, you can see all unanswered tickets per course in one place! Unanswered questions can be sorted and divided between you and your colleagues accordingly.</p>
           </div>
@@ -79,28 +71,26 @@
         </div>
         <div class="row text-center">
           <div class="col-md-4">
-            <span class="fa-stack fa-4x">
-              <i class="fa fa-circle fa-stack-2x text-primary"></i>
-              <i class="fa fa-shopping-cart fa-stack-1x fa-inverse"></i>
-            </span>
             <h4 class="service-heading">Ticketing system</h4>
             <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
           </div>
           <div class="col-md-4">
-            <span class="fa-stack fa-4x">
-              <i class="fa fa-circle fa-stack-2x text-primary"></i>
-              <i class="fa fa-laptop fa-stack-1x fa-inverse"></i>
-            </span>
             <h4 class="service-heading">Labeling conversations</h4>
             <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
           </div>
           <div class="col-md-4">
-            <span class="fa-stack fa-4x">
-              <i class="fa fa-circle fa-stack-2x text-primary"></i>
-              <i class="fa fa-lock fa-stack-1x fa-inverse"></i>
-            </span>
             <h4 class="service-heading">Intergration and security</h4>
             <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
+          </div>
+          <!-- Empty slot to make everything line up nicely. -->
+          <div class="col-md-4">
+          </div>
+          <div class="col-md-4">
+              <h7 class="sevice-subheading" >Check out the people who made this possible:</h7>
+          </br>
+          </br>
+              <router-link to="/team" class="team-button">Meet the team!
+              </router-link>
           </div>
         </div>
         <div class="middle-display">

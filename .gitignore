@@ -159,3 +159,6 @@ Thumbs.db
 .db-credentials
 
 app/frontend/test/unit/coverage/lcov.info
+
+# Deletion residue files
+.fuse_hidden*

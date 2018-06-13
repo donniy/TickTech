@@ -1,14 +1,12 @@
 <template>
-  <div id="page-top">
+  <div>
 
     <!-- Services -->
-    <section id="services">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12 text-center">
+    <section id="team" style="padding:0px !important;">
+        <div class="col-12 text-center">
             <h2 class="section-heading text-uppercase">Team</h2>
             <h3 class="section-subheading text-muted">The TIKTECH team that made this product possible!</h3>
-          </div>
+
         </div>
         <div class="row text-center">
           <div class="col-md-4">
@@ -114,8 +112,24 @@
             <p class="text-muted">Front/Backend development</p>
           </div>
         </div>
-      </div>
+        <div class="middle-display">
+            <router-link to="/" :class="'text-uppercase scroll-button btn-arrow'">
+                <span>Back to home
+                    <svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 36.1 25.8"
+                    enable-background="new 0 0 36.1 25.8" xml:space="preserve">
+                        <g>
+                            <line fill="none" stroke="#FFFFFF" stroke-width="3" stroke-miterlimit="10" x1="0"
+                                y1="12.9" x2="34" y2="12.9">
+                            </line>
+                            <polyline fill="none" stroke="#FFFFFF" stroke-width="3" stroke-miterlimit="10" points="22.2,1.1 34,12.9 22.2,24.7">
+                            </polyline>
+                        </g>
+                    </svg>
+                </span>
+            </router-link>
+        </div>
     </section>
+
 
 </div>
 </template>

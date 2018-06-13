@@ -238,6 +238,7 @@ a.list-ticket:hover, a.list-ticket:focus {
     color: rgba(#000, 0.8);
 }
 
+
 .reply-area {
     width: 100%;
     bottom: 1em;
@@ -274,7 +275,7 @@ a.list-ticket:hover, a.list-ticket:focus {
     }
 
     & p {
-        overflow-wrap: break-word; 
+        overflow-wrap: break-word;
     }
 }
 
