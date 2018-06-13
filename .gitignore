@@ -157,3 +157,5 @@ Thumbs.db
 
 .db_credentials
 .db-credentials
+
+app/frontend/test/unit/coverage/lcov.info

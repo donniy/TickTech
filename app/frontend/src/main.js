@@ -11,8 +11,10 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import './assets/scss/style.scss'
 import axios from 'axios'
 import VueCookies from 'vue-cookies'
+import VueScrollTo from 'vue-scrollto'
 
 Vue.use(VeeValidate);
+Vue.use(VueScrollTo);
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 Vue.use(VueSocketio, 'http://' + document.domain + ':' + location.port)
