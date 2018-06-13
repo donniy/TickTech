@@ -19,6 +19,7 @@ test-backend:
 	. venv/bin/activate; \
 	cd app/backend/flaskr; \
 	python3 -m pytest
+	pep8 app/backend
 
 test-frontend:
 	npm run test --prefix app/frontend
