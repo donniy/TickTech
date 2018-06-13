@@ -17,7 +17,6 @@ def app():
     # Create database and load test data
     with app.app_context():
         init_db()
-        #get_db().executescript(_data_sql)
     yield app
 
     os.close(db_fd)
