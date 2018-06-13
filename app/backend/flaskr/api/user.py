@@ -5,6 +5,7 @@ from flaskr import Iresponse
 from flask import request
 from flaskr.models.user import *
 from flaskr.utils.json_assertion import *
+from flaskr.request_processing.user import *
 
 @apiBluePrint.route('/user/<user_id>/tickets')
 @jwt_required()
@@ -25,32 +26,37 @@ def retrieve_active_user_tickets(user_id):
     """
     # TODO: Controleer of degene die hierheen request permissies heeft.
     user_id = current_identity.id
-    tickets = Ticket.query.filter(Ticket.user_id == user_id, Ticket.ticket_status.has(TicketStatus.name!='closed')).all()
+    tickets = Ticket.query.filter(Ticket.user_id == user_id,
+                                  Ticket.ticket_status
+                                  .has(TicketStatus.name!='closed')).all()
     return database.json_list(tickets)
 
 @apiBluePrint.route('/user/register', methods=["POST"])
 def register_user():
-    ''' Expects a request with email, name, id and password and enters
-        new user into database.
+    ''' Expects a request with email, name, id and password (and confirmed)
+        and enters new user into database.
     '''
 
     json_data = request.get_json()
 
-    if not assert_json(json_data,["email", "name", "studentid", "password"]):
+    if not assert_json(json_data,["email", "name", "studentid", "password","password_confirmation"]):
         return Iresponse.empty_json_request()
 
+    email = escape(json_data["email"])
+    name = escape(json_data["name"])
+    studentid = escape(json_data["studentid"])
+    password = escape(json_data["password"])
+    repassword = escape(json_data["password_confirmation"])
 
-    email = escape(jsonData["email"])
-    name = escape(jsonData["name"])
-    studentid = escape(jsonData["studentid"])
-    password = escape(jsonData["password"])
+    if not validate_userdata(email, name, studentid, password, repassword):
+        return Iresponse.empty_json_request()
 
     # Backend check if email/studentid already exists
     user = User.query.filter_by(email=email).first()
     if user:
         return Iresponse.create_response({"status":False}, 200)
 
-    studentid = jsonData["studentid"]
+    studentid = json_data["studentid"]
     user = User.query.filter_by(id=studentid).first()
 
     if user:
@@ -69,11 +75,11 @@ def register_user():
 @apiBluePrint.route('/user/exists', methods=["POST"])
 def user_exists():
 
-    jsonData = request.get_json()
-    if jsonData is None:
-        return Iresponse.internal_server_error()
+    json_data = request.get_json()
+    if not assert_json(json_data, ["email"]):
+        return Iresponse.empty_json_request()
 
-    email = jsonData["email"]
+    email = json_data["email"]
     user = User.query.filter_by(email=email).first()
 
     if user is None:
@@ -83,12 +89,11 @@ def user_exists():
 @apiBluePrint.route('/user/idexists', methods=["POST"])
 def userid_exists():
 
-    jsonData = request.get_json()
-    print(jsonData)
-    if jsonData is None:
-        return Iresponse.internal_server_error()
+    json_data = request.get_json()
+    if not assert_json(json_data, ["studentid"]):
+        return Iresponse.empty_json_request()
 
-    studentid = jsonData["studentid"]
+    studentid = json_data["studentid"]
     user = User.query.filter_by(id=studentid).first()
 
     if user is None:
