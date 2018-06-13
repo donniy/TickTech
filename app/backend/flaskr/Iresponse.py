@@ -1,9 +1,11 @@
 from flask import jsonify
 
+
 def create_response(body, status_code):
     response = jsonify(json_data=body)
     response.status_code = status_code
     return response
+
 
 def empty_json_request():
     return create_response("", 400)

@@ -122,18 +122,7 @@ export default {
                             window.alert("Student id or email already taken!")
                             return
                         } else {
-                            const path = '/auth';
-                            this.$ajax.post(path, {username: this.form.studentid, password: "JWT is cool!!!"}, response => {
-                                // TODO: Implement authentication on back-end to work with Canvas.
-                                this.$cookies.set('token', response.data.access_token);
-                                console.log(response);
-                                this.$ajax.get('/api/user/retrieve', response => {
-                                    if(this.$user.set(response.data.user))
-                                        this.$router.replace('/');
-                                    else
-                                        console.log("Can\'t set user.");
-                                });
-                            });
+                            logUserIn()
                         }
                     });
                 }
@@ -154,10 +143,24 @@ export default {
             });
         }, checkPswConfirmation() {
             this.pswstatus = (this.form.password === this.form.password_confirmation) || this.form.password === ""
-        },
+        }, logUserIn () {
+            const path = '/auth';
+            this.$ajax.post(path, {username: this.form.studentid,
+                                   password: "JWT is cool!!!"}, response => {
+                // TODO: Implement authentication on backend work with Canvas.
+                this.$cookies.set('token', response.data.access_token);
+                console.log(response);
+                this.$ajax.get('/api/user/retrieve', response => {
+                    if(this.$user.set(response.data.user))
+                        this.$router.replace('/');
+                    else
+                        console.log("Can\'t set user.");
+                });
+            });
+        }
     }, computed: {
         checkErrors() {
-            return false //this.errors.any() || this.idstatus || this.emailstaus || !this.pswstatus
+            return this.errors.any() || this.idstatus || this.emailstaus || !this.pswstatus
         }
     }
 }

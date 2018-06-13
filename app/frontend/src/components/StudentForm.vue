@@ -85,7 +85,7 @@ import axios from 'axios'
 import VeeValidate from 'vee-validate';
 
 const axios_csrf = axios.create({
-    headers: {'X-CSRFToken': csrf_token}
+    headers: {'X-CSRFToken': 'need_to_replace'}
 });
 
 export default {
