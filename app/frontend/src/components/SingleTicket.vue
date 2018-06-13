@@ -22,8 +22,8 @@
                     </div>
                     <div>
                         Ta's:
-                        <b v-for="user in ticket.tas" v-bind:key="user.id" v-bind:user="user">
-                            {{ user.name}} 
+                        <b v-for="ta in ticket.tas" v-bind:key="ta.id" v-bind:ta="ta">
+                            {{ ta.name}} 
                         </b>
                     </div>
                 </div>
