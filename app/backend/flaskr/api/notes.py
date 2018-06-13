@@ -10,8 +10,6 @@ from flaskr import Iresponse
 
 
 # Add rights check.
-
-
 @apiBluePrint.route('/notes/<ticket_id>')
 def retrieve_notes(ticket_id):
     """
@@ -21,6 +19,7 @@ def retrieve_notes(ticket_id):
     all the notes.
     """
     return rp_notes.retrieve_all_request(ticket_id)
+
 
 # Add right check
 @apiBluePrint.route('/notes', methods=['POST'])

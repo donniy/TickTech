@@ -78,7 +78,7 @@ class Ticket(db.Model):
             'id': self.id,
             'user_id': self.user_id,
             'course_id': self.course_id,
-            'ta_id' : self.ta_id,
+            'ta_id': self.ta_id,
             'email': self.email,
             'title': self.title,
             'timestamp': self.timestamp,
