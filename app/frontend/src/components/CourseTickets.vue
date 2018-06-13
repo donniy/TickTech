@@ -1,13 +1,18 @@
 <template>
     <div>
         <h1>Tickets in cursus {{ $route.params.course_id }}</h1>
-
         Status:
-        <select v-model="status_filter">
+        <select class="form-control custom-select" v-model="status_filter">
             <option> All </option>
             <option> Needs help </option>
             <option> Answered </option>
         </select>
+        <b-button class="labelbutton:right" v-bind:href="'/course/'+ $route.params.course_id + '/labels'">Course labels</b-button>
+        <button v-on:click="emailSettings" class="btn btn-primary">Email settings</button>
+
+        <modal v-if="showModal" warning="Setup a fetcher to your mailinglist."
+               @yes="updateEmail()" @close="showModal = false"></modal>
+        <br /><br />
 
         <ticket
             v-for="ticket in tickets"
@@ -15,19 +20,20 @@
             v-bind:key="ticket.id"
             v-bind:ticket="ticket"
         ></ticket>
-    <b-button class="labelbutton:right" v-bind:href="'/course/'+ $route.params.course_id + '/labels'">Course labels</b-button>
     </div>
 </template>
 
 <script>
 
-import axios from 'axios'
 import Ticket from './Ticket.vue'
+import Modal from './EmailSettingsModel.vue'
+import axios from 'axios'
 
 export default {
   data () {
     return {
       tickets: [],
+      showModal: false,
       status: 'not set',
 
       status_filter: 'All'
@@ -49,6 +55,28 @@ export default {
         this.status = 'failed getting tickets'
       })
     },
+    emailSettings() {
+        this.showModal = true
+    },
+    updateEmail(form) {
+        this.showModal = false
+        console.log(form)
+        const path = '/api/email'
+        this.$ajax.post(path, form, response => {
+            // TODO: Implement authentication on back-end to work with Canvas.
+            console.log(response)
+        })
+
+    },
+    stopEmail(form) {
+        this.showModal = false
+        console.log(form)
+        const path = '/api/email/stop'
+        this.$ajax.post(path, form, response => {
+            // TODO: Implement authentication on back-end to work with Canvas.
+            console.log(response)
+        })
+    },
     created () {
       this.status = 'created'
       this.getTickets()
@@ -59,6 +87,7 @@ export default {
   },
   components: {
     'ticket': Ticket,
+    'modal': Modal
   }
 }
 

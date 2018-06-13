@@ -58,8 +58,9 @@ export default {
                                 this.$router.replace(url);
                             else
                                 console.log("Can\'t set user.");
-                        });
-                    });
+                            })
+                        }
+                    );
                 }
             });
         }
