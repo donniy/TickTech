@@ -56,12 +56,14 @@ import VueTribute from 'vue-tribute'
 import Modal from './ClosePrompt.vue'
 import Note from './Note.vue'
 
-/* Build the tribute and config for matching.
+
+/* This is an addition to the default config
+ * for tributejs.
  * DOCS: https://github.com/zurb/tribute
- * Maybe create a vuejs wrapper
  */
 let defaultMention = {
     values: [
+        {name: "test", id: "10303"},
     ],
 
     selectTemplate: function (item) {
@@ -197,7 +199,7 @@ export default {
            The note.
          */
         matchFound(e) {
-            let matchedValue = document.getElementById(e.target.id).value
+            let matchedValue = document.getElementById("textAreaForNotes").value
             this.noteTextArea = matchedValue
         },
     },

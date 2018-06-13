@@ -1,5 +1,6 @@
 @import '_colors';
 @import '_labels';
+@import '_mentioning';
 
 body {
     background-color: darken(#FFF, 2%);
@@ -190,7 +191,7 @@ a.list-ticket:hover, a.list-ticket:focus {
     }
 
     & p {
-        overflow-wrap: break-word; 
+        overflow-wrap: break-word;
     }
 }
 
@@ -237,46 +238,4 @@ a.list-ticket:hover, a.list-ticket:focus {
         line-height: 4rem;
         font-size: 1.5em;
     }
-}
-/* SOURCE: https://github.com/zurb/tribute/blob/master/scss/tribute.scss */
-.tribute-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: auto;
-    max-height: 300px;
-    max-width: 500px;
-    overflow: auto;
-    display: block;
-    z-index: 999999;
-
-    ul {
-        margin: 0;
-        margin-top: 2px;
-        padding: 0;
-        list-style: none;
-        background: #efefef;
-    }
-
-    li {
-        padding: 5px 5px;
-        cursor: pointer;
-
-        &.highlight, &:hover {
-            background: #ddd;
-        }
-
-        span {
-            font-weight: bold;
-        }
-
-        &.no-match {
-            cursor: default;
-        }
-    }
-
-    .menu-highlighted {
-        font-weight: bold;
-    }
-
 }
