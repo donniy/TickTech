@@ -9,16 +9,16 @@ db = database.db
 
 binded_tas_helper = db.Table(
     'ta_tracker',
-    db.Column('ticket_id', UUIDType(binary=False), db.ForeignKey('ticket.id'),
-              primary_key=True),
+    db.Column('ticket_id', UUIDType(binary=False),
+              db.ForeignKey('ticket.id'), primary_key=True),
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'),
               primary_key=True)
 )
 
 labels_helper = db.Table(
     'labels',
-    db.Column('label_id', db.Integer, db.ForeignKey('ticket_label.id'),
-              primary_key=True),
+    db.Column('label_id', db.Integer,
+              db.ForeignKey('ticket_label.id'), primary_key=True),
     db.Column('ticket_id', db.Integer, db.ForeignKey('ticket.id'),
               primary_key=True)
 )
@@ -79,7 +79,7 @@ class Ticket(db.Model):
             'timestamp': self.timestamp,
             'status': self.ticket_status.serialize,
             'labels': database.serialize_list(self.labels),
-            'tas':database.serialize_list(self.binded_tas)
+            'tas': database.serialize_list(self.binded_tas)
         }
 
     @property
