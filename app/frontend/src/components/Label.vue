@@ -1,16 +1,19 @@
 <template>
-    <a class="label">
-        <button class="btn removeLabel" @click="showModal = true">
-            <i class="material-icons"> close </i>
-        </button>
+    <div>
+        <div class="label">
+            <button class="btn removeLabel" @click="showModal = true">
+                <i class="material-icons"> close </i>
+            </button>
 
-        <div class=labelText>
-            <h3>{{label.label_name}}</h3>
+            <button class="labelText" data-toggle="tooltip"
+                    title="Select to receive tickets from this label ">
+                <h3>{{label.label_name}}</h3>
+            </button>
         </div>
 
         <modal v-if="showModal" warning="Are you sure you want to remove this label?"
                @yes="closeLabel()" @close="showModal = false"></modal>
-    </a>
+    </div>
 </template>
 
 <script>
@@ -30,14 +33,9 @@
           };
       },
       methods: {
-          closeLabel(){
+          closeLabel() {
               const path = '/api/labels/' + this.label.label_id + '/close'
-
-              axios_csrf.post(path)
-              .then(response => {
-                  this.showModal = false
-              })
-
+              this.$ajax.post(path, response => {this.showModal = false})
               this.$parent.getLabels()
           }
       },

@@ -35,18 +35,24 @@
 }
 .label {
     background: #FFF;
-    display: block;
     box-shadow: 0 2px 4px 0 rgba(50,50,93,.1);
     margin-bottom: 10px;
-    color: rgba(#000, 0.8);
-    transition: transform 0.1s ease-in-out;
 }
 .labelText {
-    padding: 18px 24px;
-    width: 90%;
+    cursor: pointer;
+    width: calc(100% - 45px);
     word-break: break-all;
+    text-align: left;
+    border: none;
+    background-color: inherit;
+    padding: 14px 28px;
+    opacity: 0.4;
+}
+.labelText:hover {
+    opacity: 1;
 }
 .removeLabel {
+    width: 45px;
     float: right;
     background-color: white;
     opacity: 0.4;
