@@ -183,15 +183,18 @@ a.list-ticket:hover, a.list-ticket:focus {
 
 .note {
     margin-top: 1em;
-}
 
-.note {
-    h4 {
+    & h4 {
         color:$default-red;
         font-size: 1rem;
         font-weight: bold;
     }
+
+    & p {
+        overflow-wrap: break-word; 
+    }
 }
+
 .note-add-button {
     margin: 15px 10px;
 }
