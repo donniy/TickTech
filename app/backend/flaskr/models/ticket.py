@@ -86,6 +86,15 @@ class Ticket(db.Model):
 class TicketStatus(db.Model):
     """
     De status van een ticket die kan worden ingesteld.
+
+    Pre-defined statuses:
+    1.  Unassigned
+    2.  Closed
+    3.  Assigned but waiting for reply
+    4.  Receiving help
+
+    Use numbers for comparison instead of text comparison
+
     """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, default="Pending")
