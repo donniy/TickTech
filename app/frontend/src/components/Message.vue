@@ -4,8 +4,6 @@
         <div class="material-card sum">
             <p class="message-text">
             {{message.text}}
-            {{user.id}}
-            {{message.user_id}}
             </p>
         </div>
     </div>
