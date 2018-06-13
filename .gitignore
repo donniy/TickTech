@@ -30,6 +30,7 @@ wheels/
 *.egg
 MANIFEST
 package-lock.json
+app/frontend/package-lock.json
 
 app/dist
 
@@ -156,3 +157,5 @@ Thumbs.db
 
 .db_credentials
 .db-credentials
+
+app/frontend/test/unit/coverage/lcov.info
