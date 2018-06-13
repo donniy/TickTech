@@ -4,13 +4,14 @@ from flaskr import database
 from . import apiBluePrint
 from flask import jsonify, request, escape
 from flaskr import socketio
-import uuid, datetime
+import uuid
+import datetime
 from flaskr.request_processing import ticket as rp_ticket
 from flaskr.request_processing import message as rp_message
 from flaskr import Iresponse
 
 
-#Make this post with a button.
+# Make this post with a button.
 @apiBluePrint.route('/ticket/<ticket_id>/close', methods=['POST'])
 def close_ticket(ticket_id):
     """ Update this with a rights check."""
