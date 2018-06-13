@@ -45,10 +45,10 @@ def create_message(ticket_id):
 
     userId = escape(jsonData["user_id"])
     msg = rp_message.create_request(jsonData, ticket_id)
-    
+
     ticket = Ticket.query.get(ticket_id)
     user = User.query.get(userId)
-    
+
     if ticket is not None and user is not None:
         # unassigned
         if ticket.ticket_status.id == 1:
