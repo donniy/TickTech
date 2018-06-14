@@ -110,8 +110,7 @@ def create_user(app, id):
     new_user.id = id
     new_user.name = "test"
     new_user.email = "test@mail.com"
-    with app.app_context():
-        database.addItemSafelyToDB(new_user)
+    database.addItemSafelyToDB(new_user)
     return new_user
 
 

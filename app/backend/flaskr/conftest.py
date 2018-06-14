@@ -14,11 +14,16 @@ def app():
         'SQLALCHEMY_DATABASE_URI': 'sqlite:///' + db_path + '.db',
     })
 
+    db = get_db()
     # Create database and load test data
+    # Create a new session for every test.
     with app.app_context():
         init_db()
-    yield app
+        yield app
+        db.session.remove()
+        db.drop_all()
 
+    # Close the db data.
     os.close(db_fd)
     os.unlink(db_path)
 
