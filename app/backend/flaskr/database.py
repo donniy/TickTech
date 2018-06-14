@@ -116,7 +116,8 @@ def addTicketStatus(name="Needs help"):
         print("oeps")
 
 
-def addTicketLabel(ticked_id=1, course_id="1", name="test"):
+def addTicketLabel(ticked_id=uuid.uuid4(), course_id=uuid.uuid4(),
+                   name="test"):
     from flaskr.models import ticket
     tl = ticket.TicketLabel()
     tl.ticked_id = ticked_id
@@ -128,9 +129,9 @@ def addTicketLabel(ticked_id=1, course_id="1", name="test"):
         print("oeps")
 
 
-# Just for testing
-def addTicket(user_id=1, email="test@email.com", course_id="1", status_id=2,
-              title="test", timestamp=datetime.now()):
+def addTicket(user_id=1, email="test@email.com", course_id=uuid.uuid4(),
+              status_id=2, title="test",
+              timestamp=datetime.now()):
     from flaskr.models import ticket
     t = ticket.Ticket()
     t.id = uuid.uuid1()

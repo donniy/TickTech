@@ -31,7 +31,9 @@ class Ticket(db.Model):
     """
     id = db.Column(UUIDType(binary=False), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    course_id = db.Column(db.String(120), unique=False, nullable=False)
+    course_id = db.Column(UUIDType(binary=False), unique=False, nullable=False)
+
+    ta_id = db.Column(db.Integer, nullable=True)
 
     status_id = db.Column(db.Integer, db.ForeignKey(
         'ticket_status.id'), default=0, nullable=False)
@@ -67,13 +69,16 @@ class Ticket(db.Model):
     @property
     def serialize(self):
         """
-        Zet dit ticket om in json. Dit is alles wat de frontend kan zien,
-        dus zorg dat er geen gevoelige info in zit.
+        Ticket can be unassigned, so ta_id can be None.
         """
+        if self.ta_id is None:
+            self.ta_id = "null"
+
         return {
             'id': self.id,
             'user_id': self.user_id,
             'course_id': self.course_id,
+            'ta_id': self.ta_id,
             'email': self.email,
             'title': self.title,
             'timestamp': self.timestamp,
@@ -93,6 +98,15 @@ class TicketStatus(db.Model):
 
     """
     De status van een ticket die kan worden ingesteld.
+
+    Pre-defined statuses:
+    1.  Unassigned
+    2.  Closed
+    3.  Assigned but waiting for reply
+    4.  Receiving help
+
+    Use numbers for comparison instead of text comparison
+
     """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, default="Pending")
@@ -119,8 +133,7 @@ class TicketLabel(db.Model):
     """
     id = db.Column(db.Integer, primary_key=True)
     ticket_id = db.Column(UUIDType(binary=False), unique=False, nullable=True)
-    course_id = db.Column(db.String(120), unique=False, nullable=False)
-    # name = db.Column(db.String(50), unique=True, nullable=False)
+    course_id = db.Column(UUIDType(binary=False), unique=False, nullable=False)
     name = db.Column(db.String(50), nullable=False)
 
     @property
