@@ -11,6 +11,7 @@
         <button v-on:click="emailSettings" class="btn btn-primary">Email settings</button>
 
         <modal v-if="showModal" warning="Setup a fetcher to your mailinglist." @close="showModal = false"></modal>
+        <p v-if="email_running">EMAIL IS RUNNING</p>
         <br /><br />
 
         <ticket
@@ -34,7 +35,8 @@ export default {
       tickets: [],
       showModal: false,
       status: 'not set',
-      status_filter: 'All'
+      status_filter: 'All',
+      email_running: false
     }
   },
   methods: {
@@ -56,6 +58,22 @@ export default {
     emailSettings() {
         this.showModal = true
     },
+    emailRunning: function () {
+        // Get the current email settings from server
+        // console.log("Check if email is running")
+        const path = '/api/email/' + this.$route.params.course_id + '/online'
+        this.$ajax.get(path, response => {
+            // TODO: Implement authentication on back-end to work with Canvas.
+            // console.log("repsone email running")
+            // console.log(response)
+            if (response.status == 201){
+                // console.log("Here")
+                // console.log(response.data.json_data.running)
+                // console.log(response)
+                this.email_running = response.data.json_data.running
+            }
+        });
+    },
     created () {
       this.status = 'created'
       this.getTickets()
@@ -67,7 +85,16 @@ export default {
   components: {
     'ticket': Ticket,
     'modal': Modal
-  }
+  },
+  created: function () {
+      this.emailRunning()
+  },
+  watch: {
+    // whenever showMadel changes, this function will run
+    showModal: function () {
+        this.emailRunning()
+    }
+  },
 }
 
 </script>

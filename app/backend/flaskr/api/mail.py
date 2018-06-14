@@ -53,7 +53,8 @@ def retrieve_current_mail_settings(course_id):
     # TODO: Controlleer rechten
     course = Course.query.get(course_id)
     if course is None:
-        return Iresponse.create_response("This course does no longer exists", 200)
+        return Iresponse.create_response("This course does no longer exists",
+                                         200)
 
     thread = MailThread.exist_thread_courseid(course_id)
     running = False
@@ -64,6 +65,20 @@ def retrieve_current_mail_settings(course_id):
               'port': course.mail_port, 'pop': course.mail_server_url,
               'running': running}
 
+    return Iresponse.create_response(object, 201)
+
+
+@apiBluePrint.route('/email/<course_id>/online', methods=['GET'])
+def is_email_running(course_id):
+    """
+    return if email is already running
+    """
+    print("GOT THIS REQUEST\n\n\n")
+    thread = MailThread.exist_thread_courseid(course_id)
+    running = False
+    if (thread is not None):
+        running = True
+    object = {'running': running}
     return Iresponse.create_response(object, 201)
 
 
