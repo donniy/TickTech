@@ -5,19 +5,14 @@ import uuid
 
 db = database.db
 
-
 class Note(db.Model):
-
     """
     Een notitie.
     """
     id = db.Column(UUIDType(binary=False), primary_key=True)
 
-    ticket_id = db.Column(
-        UUIDType(binary=False), db.ForeignKey('ticket.id'), unique=False,
-        nullable=True)
-    # message_id = db.Column(db.Integer, db.ForeignKey('message.message_id'),
-    # default=0,nullable=True)
+    ticket_id = db.Column(UUIDType(binary=False),db.ForeignKey('ticket.id'), unique=False, nullable=True)
+    # message_id = db.Column(db.Integer, db.ForeignKey('message.message_id'), default=0,nullable=True)
 
     user_id = db.Column(db.Integer, nullable=False)
 
@@ -25,8 +20,7 @@ class Note(db.Model):
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     ticket = db.relationship('Ticket', backref=db.backref('notes', lazy=False))
-    # message = db.relationship('Message',
-    #                           backref=db.backref('notes',lazy=True))
+    # message = db.relationship('Message', backref=db.backref('notes',lazy=True))
 
     def __repr__(self):
         return '<Note {}>'.format(self.id)
@@ -41,6 +35,7 @@ class Note(db.Model):
             'text': self.text,
             'timestamp': self.timestamp
         }
+
 
     @property
     def checkValid(self):

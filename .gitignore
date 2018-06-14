@@ -9,8 +9,6 @@ __pycache__/
 .vscode
 .vscode/*
 
-app/frontend/test/unit/coverage/lcov-report/*
-
 # Distribution / packaging
 .Python
 #build/
@@ -29,7 +27,8 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
-app/frontend/package-lock.json
+package-lock.json
+
 app/dist
 
 # PyInstaller
@@ -152,11 +151,3 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
-
-.db_credentials
-.db-credentials
-
-app/frontend/test/unit/coverage/lcov.info
-
-#Fuse files.
-.fuse_*

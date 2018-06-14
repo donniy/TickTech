@@ -7,17 +7,14 @@ import uuid
 
 db = SQLAlchemy()
 
-
 class DatabaseException(Exception):
     def __init__(self, debug_message):
         self.debug_message = debug_message
-
 
 class DatabaseInsertException(DatabaseException):
     def __init__(self, debug_message):
         super().__init__(debug_message)
         self.response_message = response_message = ""
-
 
 def init_db():
     db.create_all()
@@ -26,14 +23,8 @@ def init_db():
     addTicketStatus("closed")
     addTicket()
 
-
-def get_db():
-    return db
-
-
 def serialize_list(l):
     return [i.serialize for i in l]
-
 
 def json_list(l):
     """
@@ -59,36 +50,20 @@ def addItemSafelyToDB(item):
     return True
 
 
-# End functions for insertion for database.
+#end functions for insertion for database.
 
-# These are from the InitDB sql file. Can insert dummy data here.
+#These are from the InitDB sql file. Can insert dummy data here.
 def populate_database_dummy_data():
     from flaskr.models import Course, user
     items = []
-    course = Course.Course(id=uuid.uuid4(),
-                           course_email="test@test.com",
-                           title="course 1",
-                           description="Test")
-
-    course2 = Course.Course(id=uuid.uuid4(),
-                            course_email="testie@test.com",
-                            title="course 2",
-                            description="Test")
-
-    user1 = user.User(id=11111,
-                      name="Erik Kooijstra",
-                      email="Erik@kooijstra.nl")
-
-    user2 = user.User(id=11112,
-                      name="Kire Kooijstra",
-                      email="Kire@kooijstra.nl")
-
-    user3 = user.User(id=123123123,
-                      name="Test mctestie",
-                      email="test@test.nl")
-
+    course = Course.Course(id=uuid.uuid4(), course_email="test@test.com",
+                           title="course 1", description="Test")
+    course2 = Course.Course(id=uuid.uuid4(), course_email="testie@test.com",
+                            title="course 2", description="Test")
+    user1 = user.User(id=11111, name="Erik Kooijstra", email="Erik@kooijstra.nl")
+    user2 = user.User(id=11112, name="Kire Kooijstra", email="Kire@kooijstra.nl")
+    user3 = user.User(id=123123123, name="Test mctestie", email="test@test.nl")
     items = [user1, user2, user3, course, course2]
-
     for item in items:
         addItemSafelyToDB(item)
 
@@ -104,20 +79,17 @@ def populate_database_dummy_data():
     print(course.student_courses)
     print(course.ta_courses)
 
-
-# Just for testing
+#just for testing
 def addTicketStatus(name="Needs help"):
     from flaskr.models import ticket
     ts = ticket.TicketStatus()
     ts.name = name
     try:
         addItemSafelyToDB(ts)
-    except Exception as e:
+    except:
         print("oeps")
 
-
-def addTicketLabel(ticked_id=uuid.uuid4(), course_id=uuid.uuid4(),
-                   name="test"):
+def addTicketLabel(ticked_id=1, course_id="1", name="test"):
     from flaskr.models import ticket
     tl = ticket.TicketLabel()
     tl.ticked_id = ticked_id
@@ -125,12 +97,11 @@ def addTicketLabel(ticked_id=uuid.uuid4(), course_id=uuid.uuid4(),
     tl.name = name
     try:
         addItemSafelyToDB(tl)
-    except Exception as e:
+    except:
         print("oeps")
 
-
-def addTicket(user_id=1, email="test@email.com", course_id=uuid.uuid4(),
-              status_id=2, title="test",
+#just for testing
+def addTicket(user_id=1, email="test@email.com", course_id="1", status_id=2, title="test",
               timestamp=datetime.now()):
     from flaskr.models import ticket
     t = ticket.Ticket()

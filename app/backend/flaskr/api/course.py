@@ -6,14 +6,7 @@ from flaskr.models.Course import *
 from flaskr.models.user import *
 from flaskr.request_processing import courses as rp_courses
 
-
-@apiBluePrint.route('/courses/<course_id>', methods=['GET'])
-def retreive_course(course_id):
-    course = Course.query.get(course_id)
-    return Iresponse.create_response(course.serialize, 200)
-
-
-@apiBluePrint.route('/courses/<course_id>/tickets', methods=['GET'])
+@apiBluePrint.route('/courses/<course_id>/tickets')
 def retrieve_course_tickets(course_id):
     """
     Geeft alle ticktes over gegeven course.
@@ -27,7 +20,6 @@ def create_course():
     """
     Check ticket submission and add to database.
     """
-    print("Posted to /courses")
     jsonData = request.get_json()
     if jsonData is None:
         return Iresponse.empty_json_request()
@@ -35,14 +27,14 @@ def create_course():
     return rp_courses.create_request(jsonData)
 
 
-@apiBluePrint.route('/courses', methods=['GET'])
+@apiBluePrint.route('/courses')
 def retrieve_all_courses():
     courses = Course.query.all()
     return Iresponse.create_response(database.serialize_list(courses), 200)
 
 
 # remember to add file in __init__
-@apiBluePrint.route('/courses/<user_id>', methods=['GET'])
+@apiBluePrint.route('/courses/<user_id>')
 def retrieve_courses(user_id):
     # TODO get courses from LTI api
     # TODO put user id in data and not in link
@@ -53,10 +45,3 @@ def retrieve_courses(user_id):
     courses = user.ta_courses
 
     return database.json_list(courses)
-
-
-@apiBluePrint.route('/courses/<course_id>/tas', methods=['GET'])
-def get_course_tas(course_id):
-    course = Course.query.get(course_id)
-    tas = course.ta_courses
-    return Iresponse.create_response(database.serialize_list(tas), 200)

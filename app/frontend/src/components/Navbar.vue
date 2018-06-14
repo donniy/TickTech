@@ -1,34 +1,22 @@
 <template>
-    <nav class="navbar navbar-tiktech navbar-expand-md">
-         <ul class="navbar-nav mr-auto">
-             <div>
-                <router-link class="navbar-brand home-left" to="/">Home</router-link>
-             </div>
-         </ul>
-         <ul class="navbar-nav">
-             <!-- if-else for student, supervisor (or both) and not logged in. -->
-             <div v-if="rights() == 0" class="div-inline mt-2 mt-md-0">
-                 <div>
-                     <router-link to="/login">Login</router-link>
-                     <router-link to="/register" :class="'home-right'">Register</router-link>
-                 </div>
-             </div>
-             <!-- Student and Supervisor -->
-             <div v-else-if="rights() == 1" class="div-inline mt-2 mt-md-0">
-                 <div v-if="environment() == 0">
-                     <router-link to="/login">Switch Supervisor</router-link>
-                     <router-link to="/" :class="'home-right'">Logout</router-link>
-                 </div>
-                 <div v-else>
-                     <router-link to="/">Switch Student</router-link>
-                     <router-link to="/":class="'home-right'">Logout</router-link>
-                 </div>
-             </div>
-             <!-- Student or Supervisor -->
-             <div v-else-if="rights() > 1" class="div-inline mt-2 mt-md-0">
-                 <router-link to="/":class="'home-right'">Logout</router-link>
-             </div>
-         </ul>
+    <nav class="navbar navbar-tiktech navbar-expand-lg">
+        <router-link :to="{name: 'Home'}" class="navbar-brand">
+            <img src="../assets/logo.png" class="d-inline-block align-top" width="30" height="30" alt="TikTech"> Tickets
+        </router-link>
+        <ul class="navbar-nav mr-auto">
+            <router-link active-class="active" tag="li" :to="{name: 'UserTickets', params: {user_id: 123123123}}">
+                <a class="nav-link" >My active Tickets <span class="sr-only">(current)</span></a>
+            </router-link>
+            <router-link active-class="active" tag="li" :to="{name: 'AskAQuestion'}">
+                <a class="nav-link">Submit a ticket</a>
+            </router-link>
+            <router-link active-class="active" tag="li" :to="'archive'">
+                <a class="nav-link">Archive</a>
+            </router-link>
+            <router-link active-class="active" tag="li" :to="{name: 'CourseOverview'}">
+                <a class="nav-link">Course overview</a>
+            </router-link>
+        </ul>
     </nav>
 </template>
 
@@ -38,41 +26,7 @@
       props: [],
       data: function () {
           return {};
-      },
-      mounted: function () {
-          console.log("navbar user: " + this.$user)
-      },
-      methods: {
-         // Checks if a user is student, supervisor or both.
-         rights: function () {
-             return 1
-             // Not logged in (0), Student & Supervisor (1), Student (2), Supervisor (3).
-             if ($user.loggedIn() == false) {
-                 return 0
-             } else {
-                 if ($user.isStudent() == true) {
-                     if ($user.isSupervisor() == true) {
-                         return 1
-                     } else {
-                         return 2
-                     }
-                 } else {
-                     return 3
-                 }
-             }
-             return 0
-         },
-         // Returns in which environment an user is (student: 0) (supervisor: 1)
-         environment: function() {
-             return 0
-             if ($user.studentEnvironment() == true) {
-                 return 0
-             } else {
-                 return 1
-             }
-         }
-     }
-
+      }
   }
 
 </script>

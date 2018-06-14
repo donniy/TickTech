@@ -31,9 +31,7 @@ def create_request(jsonData, ticket_id):
         return Iresponse.internal_server_error()
 
     room = "ticket-messages-{}".format(ticket_id)
-    socketio.emit('messageAdded',
-                  {'text': message.text, 'user_id': message.user_id},
-                  room=room)
+    socketio.emit('messageAdded', {'text': message.text, 'user_id': message.user_id}, room=room)
 
     return Iresponse.create_response("", 201)
 

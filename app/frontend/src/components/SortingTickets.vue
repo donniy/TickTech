@@ -5,11 +5,11 @@
 
         <!-- DROPDOWN MENU -->
         <select v-model="sorting_criteria">
-                <option> title </option>
-                <option> status </option>
-                <option> course </option>
-                <option> date </option>
-            </select>
+            <option> title </option>
+            <option> status </option>
+            <option> course </option>
+            <option> date </option>
+        </select>
 
         <!-- TICKET TABLE -->
         <table>
@@ -30,51 +30,35 @@
                 </tr>
             </tbody>
         </table>
+
     </div>
 </template>
 
 
 <script>
-    import axios from 'axios'
 
-    export default {
-        data() {
-            return {
-                sorting_criteria: "date",
+import axios from 'axios'
 
-                // DUMMY DATA
-                tickets: [{
-                        title: 'Question assignment 1',
-                        status: 'Answered',
-                        course: 'Programming 1',
-                        date: '06/08/18'
-                    },
-                    {
-                        title: 'Question assignment 2',
-                        status: 'Pending',
-                        course: 'Programming 1',
-                        date: '06/09/18'
-                    },
-                    {
-                        title: 'Question assignment 1',
-                        status: 'Assigned',
-                        course: 'Programming 1',
-                        date: '03/08/18'
-                    },
-                    {
-                        title: 'Question assignment 1',
-                        status: 'Unassigned',
-                        course: 'Programming 2',
-                        date: '04/05/18'
-                    }
-                ]
-            }
-        },
+export default {
+    data () {
+        return {
+            sorting_criteria: "date",
 
-        computed: {
-            sorted_tickets: function() {
-                return this.tickets.sort((a, b) => a[this.sorting_criteria] > b[this.sorting_criteria])
-            }
+            // DUMMY DATA
+            tickets: [
+                {title: 'Question assignment 1', status: 'Answered', course: 'Programming 1', date: '06/08/18'},
+                {title: 'Question assignment 2', status: 'Pending', course: 'Programming 1', date: '06/09/18'},
+                {title: 'Question assignment 1', status: 'Assigned', course: 'Programming 1', date: '03/08/18'},
+                {title: 'Question assignment 1', status: 'Unassigned', course: 'Programming 2', date: '04/05/18'}
+            ]
+        }
+    },
+
+    computed: {
+        sorted_tickets: function () {
+            return this.tickets.sort((a, b) => a[this.sorting_criteria] > b[this.sorting_criteria])
         }
     }
+}
+
 </script>

@@ -2,63 +2,82 @@
     <div>
         <div>
             <section>
-                <h1>{{course.title}} labels</h1>
-
-                <div class="addLabelWrapper">
-                    <input v-model="new_label_name" class="addLabelInput"></input>
-                    <button v-on:click="createLabel" class="labelbutton btn">Add label</button>
-                </div>
-
+                <h1>Create and assign labels</h1>
+                <button v-on:click="createLabel" class="labelbutton-left">Create new</button>
+                <b-button class="labelbutton-right">Save</b-button>
             </section>
         </div>
-
-        <div class="labelContainer">
-            <myLabel v-for="label in labels" v-bind:key="label.label_id" v-bind:label="label"></myLabel>
+        <div>
+            <ticketlabel
+               v-for="label in labels"
+               v-bind:key="label.label_id"
+               v-bind:label="label">
+            </ticketlabel>
         </div>
-    </div>
+   </div>
 </template>
 
 <script>
+
+import axios from 'axios'
 import Ticket from './Ticket.vue'
-import Label from './Label.vue'
+import Ticketlabel from './Ticketlabel.vue'
+
+const axios_csrf = axios.create({
+  headers: {'X-CSRFToken': csrf_token}
+});
 
 export default {
-    data() {
+    data () {
         return {
-            course: {title: "loading"},
-            labels: [],
-            new_label_name: ''
+            status: 'not set',
+            labels : [],
+            label_name: 'Nope'
         }
     },
     methods: {
-        getCourse() {
-            const path = '/api/courses/' + this.$route.params.course_id
-            this.$ajax.get(path, response => {
-                this.course = response.data.json_data
-            })
-        },
-        getLabels() {
+        getLabels () {
+            this.status = 'getting labels'
             const path = '/api/labels/' + this.$route.params.course_id
-            this.$ajax.get(path, response => {
+            axios.get(path)
+            .then(response => {
                 this.labels = response.data.json_list
+                this.status = 'Retrieved data'
+                console.log(response.data.json_list)
+                console.log(response)
+            })
+            .catch(error => {
+                console.log(error)
+                this.status = 'failed getting tickets'
             })
         },
         createLabel() {
+            this.status = 'creating labels'
             const path = '/api/labels/' + this.$route.params.course_id
-            this.$ajax.post(path, {
-                name: this.new_label_name
-            }, response => {
+            axios_csrf.post(path, this.label_name)
+            .then(response => {
                 this.tickets = response.data.json_list
+                this.status = 'Retrieved data'
+                console.log(response.data.json_list)
+                console.log(response)
                 this.getLabels()
             })
+            .catch(error => {
+                console.log(error)
+                this.status = 'failed getting tickets'
+            })
+        },
+         created () {
+            this.status = 'created'
+            this.getLabels()
         }
     },
-    mounted: function() {
-        this.getCourse()
-        this.getLabels()
+        mounted: function () {
+            this.created()
     },
     components: {
-        'myLabel': Label
+         'ticketlabel': Ticketlabel
     }
 }
+
 </script>

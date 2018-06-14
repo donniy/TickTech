@@ -3,21 +3,14 @@ import requests
 from flask import Flask, render_template, jsonify, request
 from flask import Flask
 from flaskr import database
-from . import models
 from datetime import datetime
 from flask_wtf.csrf import CSRFProtect
 import os.path
 from flaskr.models import Message, ticket, Note, Course, user, Label
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
-from flask_jwt import JWT
-from . import login
-
 
 db = database.db
 socketio = None
-login_manager = None
-app = None
-
 
 def create_app(test_config=None):
     """
@@ -28,18 +21,16 @@ def create_app(test_config=None):
 
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True,
-                static_folder="../../dist/static",
-                template_folder="../../dist")
+                static_folder = "../../dist/static",
+                template_folder = "../../dist")
 
-    if os.environ.get('FLASK_ENV') == 'development':
+
+    if os.environ['FLASK_ENV'] == 'development':
         # When in development mode, we proxy the local Vue server. This means
         # CSRF Protection is not available. Make sure to test application in
         # production mode as well.
         app.config['WTF_CSRF_CHECK_DEFAULT'] = False
 
-    app.config['WTF_CSRF_CHECK_DEFAULT'] = False
-
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     csrf = CSRFProtect(app)
 
@@ -56,8 +47,6 @@ def create_app(test_config=None):
         SQLALCHEMY_DATABASE_URI=db_uri
     )
 
-    if test_config:
-        app.config.update(test_config)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -74,7 +63,7 @@ def create_app(test_config=None):
 
     db.init_app(app)
     socketio.init_app(app)
-    if not os.path.isfile('/tmp/test.db') and not test_config:
+    if not os.path.isfile('/tmp/test.db'):
         app.app_context().push()
         database.init_db()
 
@@ -82,41 +71,38 @@ def create_app(test_config=None):
     from .api import apiBluePrint
     app.register_blueprint(apiBluePrint)
 
-    login.init_jwt(app)
-
     # Setup routing for vuejs.
     @app.route('/', defaults={'path': ''})
     @app.route('/<path:path>')
     def render_vue(path):
         if app.debug:
             try:
-                res = requests.get(
-                        'http://localhost:8080/{}'.format(path)
-                        ).text
+                res = requests.get('http://localhost:8080/{}'.format(path)).text
                 return res
-            except Exception as e:
-                return "Je gebruikt dev mode maar hebt je Vue" \
-                       + "development server niet draaien"
+            except:
+                return "Je gebruikt dev mode maar hebt je Vue development server niet draaien"
         return render_template("index.html")
+
+
 
     @socketio.on('join-room')
     def sock_join_room(data):
-        # TODO: Check if allowed to join room
+        #TODO: Check if allowed to join room
         print(data)
         print("Want to join {}".format(data['room']))
         try:
             join_room(data['room'])
-        except Exception as e:
+        except:
             print("Failed to join room")
 
     @socketio.on('leave-room')
     def sock_leave_room(data):
-        # TODO: Need to check if in room?
+        #TODO: Need to check if in room?
         print(data)
         print("Want to leave {}".format(data['room']))
         try:
             leave_room(data['room'])
-        except Exception as e:
+        except:
             print("Failed to leave toom")
 
     return app

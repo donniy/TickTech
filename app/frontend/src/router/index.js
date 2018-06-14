@@ -4,7 +4,7 @@ import Router from 'vue-router'
 const routerOptions = [
     {
         path: '/',
-        name: 'home',
+        name: 'Home',
         component: 'Home',
     },
     {
@@ -37,11 +37,6 @@ const routerOptions = [
         name: 'AskAQuestion',
         component: 'StudentForm',
     },
-    {
-        path: '/team/',
-        name: 'Team',
-        component: 'Team',
-    },
     // {
     //     path: '/ticket/:ticket_id/closeticket',
     //     name: 'closeticket',
@@ -51,11 +46,6 @@ const routerOptions = [
         path: '/login',
         name: 'Login',
         component: 'Login'
-    },
-    {
-        path: '/register',
-        name: 'Register',
-        component: 'Register'
     },
     {
         path: '/course/:course_id/labels',
@@ -95,4 +85,5 @@ Vue.use(Router)
 export default new Router({
     routes,
     mode: 'history'
+
 })

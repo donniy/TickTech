@@ -3,20 +3,17 @@ from flaskr.models.Course import *
 
 db = database.db
 
-
 class User(db.Model):
-
     """
     Een user.
     """
-    __tablename__ = "user"
-    id = db.Column(db.Integer, nullable=False, primary_key=True)  # student ID
+    id = db.Column(db.Integer, nullable=False, primary_key=True) # student ID
     name = db.Column(db.String(120), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=False, nullable=True)
 
-    # Dit is een soort toString zoals in Java, voor het gebruiken van de
-    # database in de commandline. Op die manier kan je data maken en weergeven
-    # zonder formulier.
+
+    # Dit is een soort toString zoals in Java, voor het gebruiken van de database
+    # in de commandline. Op die manier kan je data maken en weergeven zonder formulier.
     def __repr__(self):
         return '<User {}>'.format(self.name)
 
