@@ -11,7 +11,7 @@ def app():
     print("db_path: {}".format(db_path))
     app = create_app({
         'TESTING': True,
-        'SQLALCHEMY_DATABASE_URI': 'sqlite:///' + db_path + '.db',
+        'SQLALCHEMY_DATABASE_URI': 'sqlite:///' + db_path,
     })
 
     db = get_db()
