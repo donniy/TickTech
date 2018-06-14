@@ -2,7 +2,7 @@
     <nav class="navbar navbar-tiktech navbar-expand-md">
          <ul class="navbar-nav mr-auto">
              <div>
-                 <a class="navbar-brand home-left" href="home">Home</a>
+                <router-link class="navbar-brand home-left" to="/">Home</router-link>
              </div>
          </ul>
          <ul class="navbar-nav">

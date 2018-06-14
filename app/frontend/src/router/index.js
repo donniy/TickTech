@@ -8,11 +8,6 @@ const routerOptions = [
         component: 'Home',
     },
     {
-        path: '/home',
-        name: 'home',
-        component: 'Home',
-    },
-    {
         path: '/course/:course_id',
         name: 'CourseTickets',
         component: 'CourseTickets',
