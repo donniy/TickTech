@@ -2,6 +2,7 @@ cache:
     paths:
         - app/frontend/node_modules
         - venv
+        - app/frontend/package-lock.json
 unit test:
     image: testim/node-chrome
     stage: test
