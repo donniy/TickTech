@@ -126,8 +126,7 @@ def create_ticket(app, ticketId, userId, courseId, status=1):
     t.email = "mail@mail.com"
     t.title = "title"
     t.timestamp = datetime.now()
-    with app.app_context():
-        database.addItemSafelyToDB(t)
+    database.addItemSafelyToDB(t)
     return t
 
 
@@ -139,8 +138,7 @@ def create_course(app, courseId, tas=[], students=[]):
     course.description = "desc"
     course.ta_courses = tas
     course.student_courses = students
-    with app.app_context():
-        database.addItemSafelyToDB(course)
+    database.addItemSafelyToDB(course)
     return course
 
 
