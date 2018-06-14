@@ -22,10 +22,12 @@
                 <message v-bind:user="{id: user_id}" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
 
                 <form v-on:submit.prevent="sendReply" class="reply-area">
-                    <h4>Respond</h4>
-                    <hr />
                     <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
-                    <button class="btn btn-primary">Submit</button>
+                    <button class="reply-button btn btn-primary">
+                            <i class="material-icons">
+                                send
+                            </i>
+                        </button>
                 </form>
             </div>
             <div class="col-md-4 col-sm-4 col-lg-4 col-xs-12">
