@@ -95,12 +95,40 @@ Vue.prototype.$user = {
     return true;
   },
 
+  logout: () => {
+    $cookies.remove('user');
+    router.go('/');
+  },
+
   logged_in: () => {
-    if(window.$cookies.get('user'))
-      return true;
-    return false;
-  }
+    return window.$cookies.isKey('user');
+    if(window.$cookies.get('user') !== null)
+      return 1;
+    return 0;
+  },
+
+  isStudent: () => {
+    if(window.$cookies.isKey('user')) {
+      let usr = window.$cookies.get('user');
+
+      return (typeof usr.student !== 'undefined') ? 1 : 0;
+    } else {
+      return 0;
+    }
+  },
+
+  isSupervisor: () => {
+    if(window.$cookies.isKey('user')) {
+      let usr = JSON.parse(window.$cookies.get('user'));
+
+      return (typeof usr.ta !== 'undefined') ? 1 : 0;
+    } else {
+      return 0;
+    }
+  },
 }
+
+window.$user = Vue.prototype.$user;
 
 /* eslint-disable no-new */
 new Vue({
