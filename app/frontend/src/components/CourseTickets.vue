@@ -46,7 +46,7 @@
                 </tbody>
             </table>
         </div>
-        
+
         <summodal
             @close="showSum = false, ticketSum = 0"
             v-for="ticket in tickets"

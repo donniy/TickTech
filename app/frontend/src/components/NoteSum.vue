@@ -1,7 +1,9 @@
 <template>
-    <div class="material-card note">
-        <h4> {{note.user_id}}: </h4>
-        <p> {{note.text}} </p>
+    <div :class="'message' + (this.$user.get().id == note.user_id ? ' text-right' : '')">
+        <h4 class="message-sender">{{note.user_id}}:</h4>
+        <div class="material-card sum">
+            {{note.text}}
+        </div>
     </div>
 </template>
 

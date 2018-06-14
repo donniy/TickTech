@@ -1,42 +1,43 @@
 <template>
     <transition name="modal">
         <div class="summary-container">
-            <button class="btn btn-primary close-sum" @click="$emit('close')">
-                x
+            <button type="button" aria-label="Close"class="btn btn-primary close-sum" @click="$emit('close')">
+                 <span aria-hidden="true">&times;</span>
             </button>
             <div class="summary-wrapper">
 
-                <div class="summary-tab">
+                <div class="summary-tab-original">
                     <div class="summary-header">
-                        <h3>Beschrijving</h3>
+                        <h3>Original message</h3>
                     </div>
-                    <div class="summary-content">
-                        <message
+                    <div class="original-summary-content">
+                        <message-original
                             v-bind:user="{id: user_id}"
                             v-for="message in messages.slice(0,1)"
                             v-bind:key="message.id"
                             v-bind:message="message">
-                        </message>
+                        </message-original>
                     </div>
                 </div>
 
                 <div class="summary-tab middle">
                     <div class="summary-header">
-                        <h3>Chat</h3>
+                        <h3>Conversation</h3>
                     </div>
                     <div class="summary-content">
+                        <p class="noreply-text" v-if="this.messages.length <= 1">No messages yet</p>
                         <message
                             v-bind:user="{id: user_id}"
-                            v-for="message in messages"
+                            v-for="message in messages.slice(1)"
                             v-bind:key="message.id"
                             v-bind:message="message">
                         </message>
                     </div>
                 </div>
 
-                <div class="summary-tab">
+                <div class="summary-tab-notes">
                     <div class="summary-header">
-                        <h3>Notities</h3>
+                        <h3>Notes</h3>
                     </div>
                     <div class="summary-content">
                         <note
@@ -56,6 +57,7 @@
 
 import Message from './MessageSum.vue'
 import Note from './NoteSum.vue'
+import MessageOriginal from './MessageOriginalSum.vue'
 
 export default {
     props: {
@@ -99,7 +101,8 @@ export default {
     },
     components: {
         'message': Message,
-        'note': Note
+        'note': Note,
+        'message-original': MessageOriginal
     }
 }
 </script>
