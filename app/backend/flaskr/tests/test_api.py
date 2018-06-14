@@ -1,7 +1,9 @@
 import pytest
 import json
 from flaskr.database import get_db
-from test_user import create_user, login
+from flaskr.models.user import *
+from flaskr.models.ticket import *
+from flaskr.tests.utils import *
 
 
 def test_get_courses(client):
