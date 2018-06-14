@@ -77,4 +77,3 @@ def test_get_ticket(app, client):
     assert len(tickets.get_json()['json_data']) == 1
     ticketid = tickets.get_json()['json_data'][0]['id']
     assert ticketid is not None
-

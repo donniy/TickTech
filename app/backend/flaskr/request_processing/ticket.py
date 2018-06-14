@@ -18,7 +18,8 @@ def create_request(jsonData):
 
     for letter in name:
         if not letter.isalpha() and letter not in " '-":
-            response_body['name'] = 'Invalid name `{}`'.format(response_body['name'])
+            response_body['name'] = 'Invalid name `{}`'\
+                    .format(response_body['name'])
 
     # TODO implement check validation email (is it even possible?)
 
