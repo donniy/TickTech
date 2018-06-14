@@ -9,24 +9,29 @@ db = database.db
 
 binded_tas_helper = db.Table(
     'ta_tracker',
-    db.Column('ticket_id', UUIDType(binary=False), db.ForeignKey('ticket.id'), primary_key=True),
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    db.Column('ticket_id', UUIDType(binary=False), db.ForeignKey('ticket.id'),
+              primary_key=True),
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'),
+              primary_key=True)
 )
 
 labels_helper = db.Table(
     'labels',
-    db.Column('label_id', db.Integer, db.ForeignKey('ticket_label.id'), primary_key=True),
-    db.Column('ticket_id', db.Integer, db.ForeignKey('ticket.id'), primary_key=True)
+    db.Column('label_id', db.Integer, db.ForeignKey('ticket_label.id'),
+              primary_key=True),
+    db.Column('ticket_id', db.Integer, db.ForeignKey('ticket.id'),
+              primary_key=True)
 )
 
 
 class Ticket(db.Model):
+
     """
     Een ticket.
     """
     id = db.Column(UUIDType(binary=False), primary_key=True)
-    user_id = db.Column(db.Integer, nullable=False)
-    course_id = db.Column(db.String(120), unique=False, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    course_id = db.Column(UUIDType(binary=False), unique=False, nullable=False)
 
     status_id = db.Column(db.Integer, db.ForeignKey(
         'ticket_status.id'), default=0, nullable=False)
@@ -35,9 +40,10 @@ class Ticket(db.Model):
     title = db.Column(db.String(255), unique=False, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-    # Dit is hoe je een relatie maakt. ticket.status geeft een TicketStatus object met
-    # de status van dit ticket. backref betekent: maak een veld 'tickets' op TicketStatus
-    # wat een lijst met alle tickets met die status teruggeeft.
+    # Dit is hoe je een relatie maakt. ticket.status geeft een TicketStatus
+    # object met de status van dit ticket. backref betekent: maak een veld
+    # 'tickets' op TicketStatus wat een lijst met alle tickets met die status
+    # teruggeeft.
 
     # status = db.relationship(
     #     'TicketStatus', backref=db.backref('tickets', lazy=False))
@@ -47,16 +53,16 @@ class Ticket(db.Model):
         backref=db.backref('ta_tickets', lazy=True)
     )
 
-    #Many to many relation
+    # Many to many relation
     labels = db.relationship(
         "TicketLabel", secondary=labels_helper, lazy='subquery',
         backref=db.backref('tickets', lazy=True))
 
-    # Dit is een soort toString zoals in Java, voor het gebruiken van de database
-    # in de commandline. Op die manier kan je data maken en weergeven zonder formulier.
+    # Dit is een soort toString zoals in Java, voor het gebruiken van de
+    # database in de commandline. Op die manier kan je data maken en weergeven
+    # zonder formulier.
     def __repr__(self):
         return '<Ticket {}>'.format(self.title)
-
 
     @property
     def serialize(self):
@@ -84,8 +90,18 @@ class Ticket(db.Model):
 
 
 class TicketStatus(db.Model):
+
     """
     De status van een ticket die kan worden ingesteld.
+
+    Pre-defined statuses:
+    1.  Unassigned
+    2.  Closed
+    3.  Assigned but waiting for reply
+    4.  Receiving help
+
+    Use numbers for comparison instead of text comparison
+
     """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, default="Pending")
@@ -106,13 +122,13 @@ class TicketStatus(db.Model):
 
 
 class TicketLabel(db.Model):
+
     """
     Label van een ticket, die in kan worden gesteld.
     """
     id = db.Column(db.Integer, primary_key=True)
     ticket_id = db.Column(UUIDType(binary=False), unique=False, nullable=True)
-    course_id = db.Column(db.String(120), unique=False, nullable=False)
-    #name = db.Column(db.String(50), unique=True, nullable=False)
+    course_id = db.Column(UUIDType(binary=False), unique=False, nullable=False)
     name = db.Column(db.String(50), nullable=False)
 
     @property
