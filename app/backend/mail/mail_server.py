@@ -3,6 +3,7 @@ from time import sleep
 import email
 import poplib
 import requests
+import socket
 
 '''
 Rabbitmqueue: Message mpass system between flask en mail server
@@ -21,7 +22,14 @@ def connect(host, port, user, password):
         server.user(user)
         server.pass_(password)
     except (poplib.error_proto) as msg:
-        raise 'Connection error: ' + msg
+        print(msg)
+        return None
+    except socket.gaierror as msg:
+        print(msg)
+        return None
+    except OSError as msg:
+        print(msg)
+        return None
 
     return server
 
@@ -36,7 +44,7 @@ def parse_email(inbox, i):
 
     # Get subject.
     subject_parsed = decode_header(parsed_email['Subject'])
-    if subject_parsed[0][1] is not none:
+    if subject_parsed[0][1] is not None:
         subject = subject_parsed[0][0].decode(subject_parsed[0][1])
     else:
         subject = subject_parsed[0][0]
@@ -53,7 +61,7 @@ def parse_email(inbox, i):
 
     # Get sender.
     sender_parsed = decode_header(parsed_email['From'])
-    if sender_parsed[0][1] is not none:
+    if sender_parsed[0][1] is not None:
         sender = sender_parsed[0][0].decode(sender_parsed[0][1])
     else:
         sender = sender_parsed[0][0]
@@ -67,8 +75,8 @@ def parse_email(inbox, i):
 
 def parse_body(string, courseid):
     '''
-    Parses a given body in string format. Returns the student id, name and
-    label, if possible.
+    Parses a given body in string format. Returns the student id,
+    name and label, if possible.
     '''
     # TODO: get the right labels from database with the courseid
     # Perhaps query keywords of labels of all courses ?
@@ -90,28 +98,32 @@ def parse_body(string, courseid):
     return studentid, 1
 
 
-def check_mail(host, port, user, password, course_id):
+def check_mail(host, port, user, password, courseid):
     '''
     Start a mail server.
     '''
     server = connect(host, port, user, password)
-    mailcount = server.stat()[0]
 
+    if server is None:
+        # Cannot connect. Try again later
+        return 1
+
+    mailcount = server.stat()[0]
     if (mailcount == 0):
         print("No emails found.")
         server.quit()
-        return
+        return 0
 
-    # TEMP GET COURSE: STEPHHIE IS FIXING THIS :)
-    courseid = None
-    result = requests.get('http://localhost:5000/api/courses')
-    if (result.status_code == 200):
-        courses = result.json()
-        courseid = courses["json_data"][0]["id"]
-    else:
-        print("Error retrieving course id from server.")
-        return
-    # TEMP GET COURSE: STEPHHIE IS FIXING THIS :)
+    # # TEMP GET COURSE: STEPHHIE IS FIXING THIS :)
+    # courseid = None
+    # result = requests.get('http://localhost:5000/api/courses')
+    # if (result.status_code == 200):
+    #     courses = result.json()
+    #     courseid = courses["json_data"][0]["id"]
+    # else:
+    #     print("Error retrieving course id from server.")
+    #     return
+    # # TEMP GET COURSE: STEPHHIE IS FIXING THIS :)
 
     for i in range(mailcount):
         subject, body, sender, address = parse_email(server, i)
@@ -144,10 +156,10 @@ def check_mail(host, port, user, password, course_id):
                                    json=newticket)
 
             if (result.status_code != 201):
-                print("Something went wrong creating a new ticket from"
-                      "an email.")
+                print("Something went wrong creating a"
+                      "new ticket from an email.")
 
     # Somehow makes you up-to-date with server
     # disable this when debugging
     # server.quit()
-    return
+    return 0
