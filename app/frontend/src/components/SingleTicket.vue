@@ -1,36 +1,38 @@
 <template>
     <div>
-    	<a v-bind:href="'/course/' + ticket.course_id" class="btn btn-primary back-button">&laquo;
-                Terug naar cursus
-        </a>
+        <button class="btn btn-primary back-button"
+            v-on:click="goCourse('/course/' + ticket.course_id)">
+            Terug naar cursus
+        </button>
 
-    	<button class="btn btn-primary close-button" @click="showModal = true">
+        <button class="btn btn-primary close-button" @click="showModal = true">
                 Close Ticket
-            </button>
+        </button>
 
-    	<modal v-if="showModal" warning="Are you sure you want to close this ticket?" @yes="closeTicket()" @close="showModal = false"></modal>
-    	<br /><br />
+        <modal v-if="showModal" warning="Are you sure you want to close this ticket?" @yes="closeTicket()" @close="showModal = false"></modal>
+        <br /><br />
 
-    	<div class="row">
-    		<div class="col-md-8 col-sm-8 col-lg-8 col-xs-12">
-    			<h2>Ticket Info</h2>
-    			<div class="material-card">
-    				<h2>{{ticket.title}}</h2> Status: {{ticket.status.name}}
-    			</div>
-          <message v-bind:user="{id: 12345678}" v-for="message in messages"
-                   v-bind:key="message.id" v-bind:message="message"></message>
-    			<form v-on:submit.prevent="sendReply" class="reply-area">
-    				<textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
-    				<button class="reply-button btn btn-primary">
+        <div class="row">
+            <div class="col-md-8 col-sm-8 col-lg-8 col-xs-12">
+                <h2>Ticket Info</h2>
+                <div class="material-card">
+                    <h2>{{ticket.title}}</h2> Status: {{ticket.status.name}}
+                </div>
+
+                <message v-bind:user="{id: user_id}" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
+
+                <form v-on:submit.prevent="sendReply" class="reply-area">
+                    <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
+                    <button class="reply-button btn btn-primary">
                             <i class="material-icons">
                                 send
                             </i>
                         </button>
-    			</form>
-    		</div>
-    		<div class="col-md-4 col-sm-4 col-lg-4 col-xs-12">
-    			<h2>Notities</h2>
-    			<note v-for="note in notes" v-bind:key="note.id" v-bind:note="note"></note>
+                </form>
+            </div>
+            <div class="col-md-4 col-sm-4 col-lg-4 col-xs-12">
+                <h2>Notities</h2>
+                <note v-for="note in notes" v-bind:key="note.id" v-bind:note="note"></note>
 
     			<b-btn id="popoverButton-sync" variant="primary" class="note-add-button btn btn-primary">
     				Notitie toevoegen
@@ -51,6 +53,7 @@
 </template>
 
 <script>
+
 import Message from './Message.vue'
 import VueTribute from 'vue-tribute'
 import Modal from './ClosePrompt.vue'
@@ -78,13 +81,20 @@ export default {
     data () {
         return {
             showModal: false,
-            ticket: {title: '', status: {name: ''}, course_id: ''},
+            user_id: 0,
+            ticket: {
+                title: '',
+                status: {
+                    name: ''
+                },
+                course_id: ''
+            },
             reply: '',
             messages: [],
             notes: [],
-            course_tas: [],
             show: false,
             noteTextArea: "",
+            course_tas: [],
             mentionOptions: defaultMention,
         }
     },
@@ -120,9 +130,12 @@ export default {
                     console.log(err)
                 })
         },
-        sendReply () {
+        sendReply() {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
-            this.$ajax.post(path, {message: this.reply, user_id: 11037393})
+            this.$ajax.post(path, {
+                    message: this.reply,
+                    user_id: user_id
+                })
                 .then(response => {
                     this.reply = ''
                     this.getMessages()
@@ -155,8 +168,6 @@ export default {
                     this.noteTextArea = ""
                     this.$refs.popoverRef.$emit('close')
                     this.notes.push(response.data.json_data)
-                    console.log("successfully sent note")
-                    console.log(response)
                 })
                 .catch(error => {
                     console.log(error)
@@ -223,7 +234,6 @@ export default {
        VueTribute,
     },
     watch :{
-
     }
 }
 </script>

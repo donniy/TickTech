@@ -29,9 +29,7 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
-package-lock.json
 app/frontend/package-lock.json
-
 app/dist
 
 # PyInstaller
@@ -159,3 +157,6 @@ Thumbs.db
 .db-credentials
 
 app/frontend/test/unit/coverage/lcov.info
+
+#Fuse files.
+.fuse_*
