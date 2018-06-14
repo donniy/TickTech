@@ -3,7 +3,7 @@ import json
 from flaskr.database import get_db
 from flaskr.models.user import *
 from flaskr.models.ticket import *
-from flaskr.tests.test_user import *
+from flaskr.tests.utils import *
 
 
 def test_get_courses(client):
@@ -73,8 +73,3 @@ def test_get_ticket(client):
     assert len(tickets.get_json()['json_data']) == 1
     ticketid = tickets.get_json()['json_data'][0]['id']
     assert ticketid is not None
-
-
-def test_db_acces(app):
-    user1 = create_user(app, 1111)
-    print(user1.name)
