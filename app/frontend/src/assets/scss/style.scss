@@ -130,7 +130,6 @@ h1 {
 .first-background-image {
     background-image: url("../low-poly-texture.png");
     background-position: center;
-
     min-height: 100vh;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -150,7 +149,6 @@ h1 {
     min-height: 100vh;
     background-position: center;
     background-size: 100%;
-    padding-bottom: 250px;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -158,10 +156,13 @@ h1 {
 }
 
 .service-section {
-    background-image: url("../low-poly-texture.png");
+    div.row {
+        padding: 10px;
+        background-color: rgba(255,255,255,0.7) !important;
+    }
+    background-image: url("../multibuisness.png") ;
     min-height: 100vh;
     background-position: center;
-    padding-bottom: 300px;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;

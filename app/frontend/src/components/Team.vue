@@ -67,13 +67,13 @@
     		<div class="middle-display">
     			<router-link to="/" :class="'text-uppercase scroll-button btn-arrow'">
     				<span>Back to home
-                        <svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 36.1 25.8"
+                        <svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="-1 0 36.1 27.8"
                             enable-background="new 0 0 36.1 25.8" xml:space="preserve">
                             <g>
                                 <line fill="none" stroke="#FFFFFF" stroke-width="3" stroke-miterlimit="10" x1="0"
                                     y1="12.9" x2="34" y2="12.9">
                                 </line>
-                                <polyline fill="none" stroke="#FFFFFF" stroke-width="3" stroke-miterlimit="10" points="22.2,1.1 34,12.9 22.2,24.7">
+                                <polyline fill="none" stroke="#FFFFFF" stroke-width="3" stroke-miterlimit="10" points="12.2, 0 1.3, 12.9 12.2, 24.7">
                                 </polyline>
                             </g>
                         </svg>
