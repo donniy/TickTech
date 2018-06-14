@@ -25,7 +25,8 @@ h1 {
 }
 
 .navbar-tiktech {
-    box-shadow: 0 15px 35px rgba(50,50,93,.1),0 5px 15px rgba(0,0,0,.07);
+    background-color: #FFF;
+    box-shadow: $medium-shadow;
     border: none;
 }
 
@@ -52,6 +53,23 @@ h1 {
 
 .home-right {
     margin-right: 25vh
+}
+
+.form-header {
+    text-indent: 0.5em;
+    line-height: 1.5;
+    opacity: 0.8;
+}
+
+.material-form {
+    background-color: #FFF;
+    padding: 18px;
+    border-radius: 4px;
+    box-shadow: $medium-shadow;
+}
+
+.form-text {
+    opacity: 0.7;
 }
 
 .scroll-button {
@@ -297,7 +315,14 @@ header.masthead {
 .material-card {
     background: #FFF;
     padding: 18px 24px;
-    box-shadow: 0 2px 4px 0 rgba(50,50,93,.1);
+    border-radius: 4px;
+    box-shadow: $light-shadow;
+}
+
+.material-card {
+    p:last-of-type {
+        margin-bottom: 0;
+    }
 }
 
 a.list-ticket {
@@ -307,15 +332,6 @@ a.list-ticket {
 a.list-ticket:hover, a.list-ticket:focus {
     transform: translate(1em);
     color: rgba(#000, 0.8);
-}
-
-
-.reply-area {
-    width: 100%;
-    bottom: 1em;
-    display: flex;
-    margin-top: 2em;
-    margin-bottom: 4em;
 }
 
 .message {
@@ -375,14 +391,25 @@ a.list-ticket:hover, a.list-ticket:focus {
     color: white;
 
 }
+
+// Reply area is the part of the messaging system that contains
+// the input field and the submit button.
+.reply-area {
+    width: 100%;
+    bottom: 1em;
+    display: block;
+    margin-top: 2em;
+    margin-bottom: 4em;
+}
+
 .reply-area {
     textarea {
-        box-shadow: 0 2px 4px 0 rgba(50,50,93,.1);
+        box-shadow: $light-shadow;
         border: 0;
-        flex-grow: 4;
         resize: none;
-        height: 4em;
         padding: 0.5em;
+        width: 100%;
+        margin-bottom: 1em;
     }
 
     .reply-button {
@@ -392,7 +419,12 @@ a.list-ticket:hover, a.list-ticket:focus {
         text-align: center;
         line-height: 4rem;
         font-size: 1.5em;
+        box-shadow: $light-shadow;
     }
+}
+
+hr {
+    border-color: $default-red;
 }
 
 .summary-container {
@@ -407,6 +439,7 @@ a.list-ticket:hover, a.list-ticket:focus {
   left: 50%;
   margin-left: -40%;
 }
+
 .summary-header{
   float: left;
   width: 100%;
