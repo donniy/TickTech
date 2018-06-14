@@ -196,6 +196,11 @@ h1 {
     float: right;
 }
 
+.middle-button{
+    // width: 10%;
+
+}
+
 .btn-primary:disabled {
     background-color: darken($text-color-lighter, 7%);
     border-color: darken($text-color-lighter, 7%);
@@ -283,7 +288,7 @@ a.list-ticket:hover, a.list-ticket:focus {
     }
 
     & p {
-        overflow-wrap: break-word; 
+        overflow-wrap: break-word;
     }
 }
 

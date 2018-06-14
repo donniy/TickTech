@@ -3,16 +3,9 @@
     <div class="modal-mask">
       <div class="modal-wrapper">
         <div class="modal-container">
-
-          <div class="modal-header">
-            <slot name="header">
-              <h3>{{warning}}</h3>
-            </slot>
-          </div>
-
           <div class="modal-body">
             <slot name="body">
-            <section>
+                <h1>{{warning}}</h1>
                 <!--Student name and number  -->
                 <form @submit.prevent="handleSubmit">
                     <div class="form-group">
@@ -30,19 +23,26 @@
                         <label for="port">Port</label>
                         <input id="port" class="form-control" name="port" v-model="form.port" v-validate="'required|min:1'" type="text" placeholder="995">
 
-                        <p for="error" class="def-error-msg" v-show="error.show">{{error.text}}</p>
+                        <p for="error" class="def-error-msg middle-display" v-show="error.show">{{error.text}}</p>
                     </div>
                 </form>
-                <button type="submit" class="btn btn-primary" v-on:click="changeClose">
-                    {{ button.text }}
-                </button>
-                <button v-show="isRunning" class="btn btn-primary stop-button" v-on:click="stopThread">
-                    Stop
-                </button>
-                <button class="btn btn-primary close-button" @click="$emit('close')">
-                    Cancel
-                </button>
-            </section>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <button type="submit" class="btn btn-primary" v-on:click="changeClose">
+                            {{ button.text }}
+                        </button>
+                    </div>
+                    <div class="col-sm-4 subheading-middle">
+                        <button v-show="isRunning" class="btn btn-primary middle-button" v-on:click="stopThread">
+                            Stop
+                        </button>
+                    </div>
+                    <div class="col-sm-4">
+                        <button class="btn btn-primary close-button" @click="$emit('close')">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
             </slot>
           </div>
         </div>
@@ -64,7 +64,7 @@
                   course_id: this.$route.params.course_id
               },
               button: {
-                  text: "start"
+                  text: "Start"
               },
               isRunning: false,
               error: {
@@ -123,7 +123,7 @@
                   }
 
                   if (response.data.json_data.running){
-                      this.button.text = "update"
+                      this.button.text = "Update"
                       this.isRunning = true
 
                   }
@@ -146,7 +146,7 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, .5);
-    display: table;
+    display: inline-table;
     transition: opacity .3s ease;
 }
 
@@ -156,9 +156,9 @@
 }
 
 .modal-container {
-    width: 600px;
+    width: 50%;
     margin: auto auto;
-    padding: 30px 30px;
+    padding: auto auto;
     background-color: #fff;
     border-radius: 2px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
@@ -172,13 +172,17 @@
 }
 
 .modal-body {
-    margin: 20px 0;
+    /* margin: 20px 0; */
+    overflow-y: auto;
+    padding: 50px 50px;
 }
 
 .modal-default-button {
     float: right;
 }
-
+.modal-stop-button {
+    float: left;
+}
 /*
  * The following styles are auto-applied to elements with
  * transition="modal" when their visibility is toggled
