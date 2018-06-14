@@ -276,6 +276,11 @@ header.masthead {
     float: right;
 }
 
+.middle-button{
+    // width: 10%;
+
+}
+
 .btn-primary:disabled {
     background-color: darken($text-color-lighter, 7%);
     border-color: darken($text-color-lighter, 7%);
