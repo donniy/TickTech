@@ -73,7 +73,6 @@ def is_email_running(course_id):
     """
     return if email is already running
     """
-    print("GOT THIS REQUEST\n\n\n")
     thread = MailThread.exist_thread_courseid(course_id)
     running = False
     if (thread is not None):
