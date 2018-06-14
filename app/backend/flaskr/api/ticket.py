@@ -28,7 +28,9 @@ def retrieve_single_ticket(ticket_id):
     """
     # TODO: Controlleer rechten
     ticketObj = Ticket.query.get(ticket_id)
+    print(ticketObj)
     if ticketObj is None:
+        print("Ticket is None")
         return Iresponse.create_response("", 404)
     return Iresponse.create_response(ticketObj.serialize, 200)
 
