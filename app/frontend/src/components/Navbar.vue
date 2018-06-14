@@ -2,31 +2,31 @@
     <nav class="navbar navbar-tiktech navbar-expand-md">
          <ul class="navbar-nav mr-auto">
              <div>
-                 <a class="navbar-brand home-left" href="#">Home</a>
+                <router-link class="navbar-brand home-left" to="/">Home</router-link>
              </div>
          </ul>
          <ul class="navbar-nav">
              <!-- if-else for student, supervisor (or both) and not logged in. -->
              <div v-if="rights() == 0" class="div-inline mt-2 mt-md-0">
                  <div>
-                     <router-link to="/asdf" tag="button" :class="'btn btn-outline-danger my-2 my-sm-0'" type="button">Login</router-link>
-                     <router-link to="/asdf" tag="button" :class="'btn btn-outline-danger my-2 my-sm-0 home-right'" type="button">Register</router-link>
+                     <router-link to="/login">Login</router-link>
+                     <router-link to="/register" :class="'home-right'">Register</router-link>
                  </div>
              </div>
              <!-- Student and Supervisor -->
              <div v-else-if="rights() == 1" class="div-inline mt-2 mt-md-0">
                  <div v-if="environment() == 0">
-                     <router-link to="/asdf" tag="button" :class="'btn btn-outline-danger my-2 my-sm-0'" type="button">Switch Supervisor</router-link>
-                     <router-link to="/asdf" tag="button" :class="'btn btn-outline-danger my-2 my-sm-0 home-right'" type="button">Logout</router-link>
+                     <router-link to="/login">Switch Supervisor</router-link>
+                     <router-link to="/" :class="'home-right'">Logout</router-link>
                  </div>
                  <div v-else>
-                     <router-link to="/asdf" tag="button" :class="'btn btn-outline-danger my-2 my-sm-0'" type="button">Switch Student</router-link>
-                     <router-link to="/asdf" tag="button" :class="'btn btn-outline-danger my-2 my-sm-0 home-right'" type="button">Logout</router-link>
+                     <router-link to="/">Switch Student</router-link>
+                     <router-link to="/":class="'home-right'">Logout</router-link>
                  </div>
              </div>
              <!-- Student or Supervisor -->
              <div v-else-if="rights() > 1" class="div-inline mt-2 mt-md-0">
-                 <router-link to="/asdf" tag="button" :class="'btn btn-outline-danger my-2 my-sm-0 home-right'" type="button">Logout</router-link>
+                 <router-link to="/":class="'home-right'">Logout</router-link>
              </div>
          </ul>
     </nav>
