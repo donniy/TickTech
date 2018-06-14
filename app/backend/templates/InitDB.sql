@@ -1,18 +1,34 @@
-insert into course values ('71d929a8-6b13-11e8-adc0-fa7ae01bbebc',"mail@mail.com","course 1","this is a test description");
-insert into course values ('51d929a8-6b13-11e8-adc0-fa7ae01bbebc',"test@test.com","course 2","this is a test description 2");
+/* Add test courses */
+insert or replace into course values ('71d929a86b1311e8adc0fa7ae01bbebc',"project software engineering","this is a test description","mail@mail.com","",1,"");
+insert or replace into course values ('51d929a86b1311e8adc0fa7ae01bbebc',"operating systems","this is a test description 2","test@test.com","",1,"");
 
-insert into user values (1234,"Erik","ERIK@mail.com");
-insert into user values (4321,"Kire","KIRE@mail.com");
+/* Add test users */
+insert or replace into user values (1234,"Erik","ERIK@mail.com");
+insert or replace into user values (4321,"Kire","KIRE@mail.com");
+insert or replace into user values (5678, "student","student@mail.com");
 
-insert into ta_link_course values (1234,'71d929a8-6b13-11e8-adc0-fa7ae01bbebc');
-insert into ta_link_course values (1234,'51d929a8-6b13-11e8-adc0-fa7ae01bbebc');
-insert into ta_link_course values (4321,'71d929a8-6b13-11e8-adc0-fa7ae01bbebc');
+/* link users to course as ta */
+insert or replace into ta_link_course values (1234,'71d929a86b1311e8adc0fa7ae01bbebc');
+insert or replace into ta_link_course values (1234,'51d929a86b1311e8adc0fa7ae01bbebc');
+insert or replace into ta_link_course values (4321,'71d929a86b1311e8adc0fa7ae01bbebc');
 
-insert into ticket_status values (11,'Unassigned');
-insert into ticket_status values (12,'Assigned');
-insert into ticket_status values (13,'Receiving help');
-insert into ticket_status values (14,'Closed');
+/* Create ticket statuses */
+insert or replace into ticket_status values (1,'Unassigned');
+insert or replace into ticket_status values (3,'Assigned');
+insert or replace into ticket_status values (4,'Receiving help');
+insert or replace into ticket_status values (2,'Closed');
 
-insert into ticket values ('126b261c-6d70-11e8-adc0-fa7ae01bbebc',5678,'71d929a8-6b13-11e8-adc0-fa7ae01bbebc',11,'pieter@test.nl','ticketnaam','2018-06-11 13:25:05');
-insert into ticket values ('326b261c-6d70-11e8-adc0-fa7ae01bbebc',5678,'71d929a8-6b13-11e8-adc0-fa7ae01bbebc',12,'pieter2@test.nl','ticketnaam2','2018-06-11 13:25:06');
-insert into ticket values ('526b261c-6d70-11e8-adc0-fa7ae01bbebc',0000,'71d929a8-6b13-11e8-adc0-fa7ae01bbebc',13,'pieter3@test.nl','ticketnaam3','2018-06-11 13:25:02');
+/* Create tickets */
+insert or replace into ticket values ('126b261c6d7011e8adc0fa7ae01bbebc',5678,'71d929a86b1311e8adc0fa7ae01bbebc',1,'pieter@test.nl','ticketnaam','2018-06-11 13:25:05');
+insert or replace into ticket values ('326b261c6d7011e8adc0fa7ae01bbebc',5678,'71d929a86b1311e8adc0fa7ae01bbebc',2,'pieter2@test.nl','ticketnaam2','2018-06-11 13:25:06');
+insert or replace into ticket values ('526b261c6d7011e8adc0fa7ae01bbebc',4321,'71d929a86b1311e8adc0fa7ae01bbebc',3,'pieter3@test.nl','ticketnaam3','2018-06-11 13:25:02');
+
+/* link ta's to a ticket */
+insert or replace into ta_tracker values ('126b261c6d7011e8adc0fa7ae01bbebc',1234);
+insert or replace into ta_tracker values ('326b261c6d7011e8adc0fa7ae01bbebc',1234);
+
+insert or replace into label values ('fa1b7b20307e4250b59c6d0811315203','testlabel');
+
+insert or replace into label_link_course values ('71d929a86b1311e8adc0fa7ae01bbebc','fa1b7b20307e4250b59c6d0811315203');
+insert or replace into label_link_course values ('51d929a86b1311e8adc0fa7ae01bbebc','fa1b7b20307e4250b59c6d0811315203');
+

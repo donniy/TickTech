@@ -1,11 +1,12 @@
 <template>
     <div id="app">
         <navbar v-bind:active="active"></navbar>
-        <div class="navbar-spacing"></div>
-        <div class="container">
-            <transition name="slide">
-                <router-view></router-view>
-            </transition>
+        <!-- <div class="navbar-spacing"></div> -->
+        <div v-if="isHome" class="container-fluid first-background-image">
+            <router-view />
+        </div>
+        <div v-else class="container">
+            <router-view />
         </div>
     </div>
 </template>
@@ -18,8 +19,19 @@ export default {
     name: 'App',
     data () {
       return {
-        active: 'home'
+        active: 'home',
+        isHome: false
       }
+    },
+    watch:{
+        $route (to, from) {
+            console.log(to.name)
+            if(to.name === 'home') {
+                this.isHome = true
+            } else {
+                this.isHome = false
+            }
+        }
     },
     components: {
         'navbar': Navbar,
@@ -58,4 +70,3 @@ nav {
     height: 100%;
 }
 </style>
-

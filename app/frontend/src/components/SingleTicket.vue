@@ -32,27 +32,51 @@
                 <h2>Notities</h2>
                 <note v-for="note in notes" v-bind:key="note.id" v-bind:note="note"></note>
 
-                <b-btn id="popoverButton-sync" variant="primary" class="note-add-button btn btn-primary">
-                    Notitie toevoegen
-                </b-btn>
+    			<b-btn id="popoverButton-sync" variant="primary" class="note-add-button btn btn-primary">
+    				Notitie toevoegen
+    			</b-btn>
+    			<b-popover ref="popoverRef" target="popoverButton-sync" triggers="click blur" placement='top'>
+            <vue-tribute :options="mentionOptions" v-on:tribute-replaced="matchFound">
+    				  <textarea v-model="noteTextArea" class="form-control"
+                        id="textAreaForNotes"
+                        style="height:200px;width:250px;" placeholder="Voer uw opmerking in">
 
-                <b-popover ref="popoverRef" target="popoverButton-sync" triggers="click blur" placement='top'>
-                    <textarea v-model="noteTextArea" class="form-control" style="height:200px;width:250px;" placeholder="Voer uw opmerking in"></textarea>
-                    <button @click="addNote" class="btn btn-primary" style="margin-top:10px">Verzenden</button>
-                </b-popover>
-            </div>
-        </div>
+              </textarea>
+            </vue-tribute>
+    				<button @click="addNote" class="btn btn-primary" style="margin-top:10px">Verzenden</button>
+    			</b-popover>
+    		</div>
+    	</div>
     </div>
 </template>
 
 <script>
 
-    import Message from './Message.vue'
-    import Modal from './ClosePrompt.vue'
-    import Note from './Note.vue'
+import Message from './Message.vue'
+import VueTribute from 'vue-tribute'
+import Modal from './ClosePrompt.vue'
+import Note from './Note.vue'
+
+
+/* This is an addition to the default config
+ * for tributejs.
+ * DOCS: https://github.com/zurb/tribute
+ */
+let defaultMention = {
+    values: [
+    ],
+
+    selectTemplate: function (item) {
+        return '@' + item.original.id;
+    },
+    lookup: function (ta) {
+        return ta.name + ' ' + ta.id;
+    }
+}
+
 
 export default {
-    data() {
+    data () {
         return {
             showModal: false,
             user_id: 0,
@@ -67,22 +91,23 @@ export default {
             messages: [],
             notes: [],
             show: false,
-            noteTextArea: ""
+            noteTextArea: "",
+            course_tas: [],
+            mentionOptions: defaultMention,
         }
     },
     methods: {
-        getTicket() {
+        getTicket () {
             const path = '/api/ticket/' + this.$route.params.ticket_id
             this.$ajax.get(path)
                 .then(response => {
                     this.ticket = response.data.json_data
-                })
-                .catch(error => {
-                    console.log("NO TICKET")
+                    this.getCourseTas()
+                }).catch(error => {
                     console.log(error)
                 })
         },
-        getMessages() {
+        getMessages () {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
             this.$ajax.get(path)
                 .then(response => {
@@ -92,9 +117,9 @@ export default {
                     console.log(error)
                 })
         },
-        getNotes() {
+        getNotes () {
             //get all notes
-            this.$ajax.get('/api/notes/' + this.$route.params.ticket_id)
+            this.$ajax.get('/api/notes/'+this.$route.params.ticket_id)
                 .then(response => {
                     this.notes = response.data.json_data
                     console.log(response)
@@ -103,14 +128,11 @@ export default {
                     console.log(err)
                 })
         },
-        goCourse (here) {
-            this.$router.push(here);
-        },
         sendReply() {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
             this.$ajax.post(path, {
                     message: this.reply,
-                    user_id: user_id
+                    user_id: this.user_id
                 })
                 .then(response => {
                     this.reply = ''
@@ -120,7 +142,7 @@ export default {
                     console.log(error)
                 })
         },
-        closeTicket() {
+        closeTicket () {
             this.showModal = false
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/close'
             this.$ajax.post(path)
@@ -129,13 +151,13 @@ export default {
                     this.ticket.status.name = "closed"
                 })
         },
-        addNote() {
+        addNote(){
             console.log(this.noteTextArea)
             const path = '/api/notes'
             var noteData = {
-                "ticket_id": this.$route.params.ticket_id,
-                "user_id": this.$route.params.user_id | 1,
-                "text": this.noteTextArea
+                "ticket_id":this.$route.params.ticket_id ,
+                "user_id":this.$route.params.user_id | 1 ,
+                "text":this.noteTextArea
             }
             console.log("Note")
             console.log(this.noteTextArea)
@@ -144,34 +166,72 @@ export default {
                     this.noteTextArea = ""
                     this.$refs.popoverRef.$emit('close')
                     this.notes.push(response.data.json_data)
-                    console.log("successfully sent note")
-                    console.log(response)
                 })
                 .catch(error => {
                     console.log(error)
                 })
-        }
+        },
+
+        /* Get the ta's in this course. Will add all the ta's to the
+         * course_tas array.
+         * NOTE: This can maybe stay local and course_tas can be removed from data.
+         */
+        getCourseTas() {
+            const path = '/api/courses/' + this.ticket.course_id + '/tas'
+            this.$ajax.get(path)
+                .then(response => {
+                    this.course_tas = response.data.json_data
+                    build_ta_matching_table(this)
+                }).catch(error => {
+                    console.log(error)
+                })
+
+            /* Function to build the matching table for mentioning.
+             * It grabs all ta's for this course and appends them to the
+             * table.
+             */
+            function build_ta_matching_table(obj) {
+                console.log(obj.mentionOptions)
+                for (let i = 0; i < obj.course_tas.length; i++) {
+                    let ta = obj.course_tas[i]
+                    console.log(ta)
+                    obj.mentionOptions.values.push(
+                        {name: String(ta.name), id: String(ta.id)})
+                }
+            }
+        },
+
+        /* This replaced the noteTextArea when a match if found. Otherwise
+           The user has to append a space after matching to include the whole match.
+           So this makes it possible to click on a match and then immediately post
+           The note.
+         */
+        matchFound(e) {
+            let matchedValue = document.getElementById("textAreaForNotes").value
+            this.noteTextArea = matchedValue
+        },
     },
-    beforeMount: function() {
-        this.user_id = this.$user.get().id
+    mounted: function () {
         this.getTicket()
         this.getMessages()
         this.getNotes()
-        this.$socket.emit('join-room', {
-            room: 'ticket-messages-' + this.$route.params.ticket_id
-        })
+        this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
     },
     sockets: {
-        connect: function() {},
-        messageAdded: function(data) {
+        connect: function () {
+        },
+        messageAdded: function (data) {
             console.log(data)
             this.messages.push(data)
         }
     },
     components: {
         'message': Message,
-        'modal': Modal,
-        'note': Note
+        'modal' : Modal,
+        'note': Note,
+       VueTribute,
+    },
+    watch :{
     }
 }
 </script>

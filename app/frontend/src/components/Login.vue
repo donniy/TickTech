@@ -54,11 +54,13 @@
     						this.$ajax.get('/api/user/retrieve', response => {
 
     							let params = this.$route.params;
-    							let url = '/';
+    							let url = '/courses';
     							if (typeof params !== 'undefined' && typeof params.prev_url !== 'undefined')
-    								url = params.prev_url;
-    							if (this.$user.set(response.data.json_data.user))
-    								this.$router.replace(url);
+									url = params.prev_url;
+								console.log(response.data.json_data)
+								if (this.$user.set(response.data.json_data.user)){
+									this.$router.replace(url);
+								}
     							else
     								console.log("Can\'t set user.");
     						})
