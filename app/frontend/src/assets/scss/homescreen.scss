@@ -9,6 +9,10 @@ p {
   line-height: 1.75;
 }
 
+.p-subtext {
+    font-weight: 500;
+}
+
 a {
   color: $default-red;
   background-color: #FFF;
@@ -28,6 +32,35 @@ a:hover {
     transition: color 100ms ease-out;
     text-decoration: none;
 }
+
+.home-left {
+    margin-left: 35vh;
+
+}
+
+.home-right {
+    margin-right: 25vh;
+}
+
+.navbar-buttons {
+    font-weight: 600;
+    color: #000;
+    background-color: rgba(0,0,0,0);
+    border-color: rgba(0,0,0,0);
+}
+
+.navbar-buttons:hover {
+    background-color: rgba(0,0,0,0);
+    color: #000;
+}
+
+
+
+.home-right:hover {
+    background-color: rgba(0,0,0,0);
+    color: #000;
+}
+
 .team-button {
     text-align: center;
     margin: auto;

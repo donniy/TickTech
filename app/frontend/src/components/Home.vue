@@ -39,12 +39,12 @@
 			<div class="row text-center">
 				<div class="col-md-6">
 					<h4 class="service-heading">The Student</h4>
-					<p>As enrolled student, you can message your supervisors through the web interface or through the existing mail channels. You will never have to wait long on a reply again as either message will be directed to the right person. You may view your conversations
+					<p class="p-subtext">As enrolled student, you can message your supervisors through the web interface or through the existing mail channels. You will never have to wait long on a reply again as either message will be directed to the right person. You may view your conversations
 						with supervisors and reply in a convenient way.</p>
 				</div>
 				<div class="col-md-6">
 					<h4 class="service-heading">The Supervisor</h4>
-					<p>As Supervisor, you can see which tickets have been assigned to you! You may also choose to view all tickets in a course, discuss tickets with your colleagues and have them join you in answering those harder questions. Create labels and assign yourselfs
+					<p class="p-subtext">As Supervisor, you can see which tickets have been assigned to you! You may also choose to view all tickets in a course, discuss tickets with your colleagues and have them join you in answering those harder questions. Create labels and assign yourselfs
 						to them to direct questions to the right people. Set up your courses e-mail to intergrate into TIKTECH seamlessly! The possibilities are endless.</p>
 				</div>
 			</div>
@@ -85,7 +85,7 @@
 					<p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
 				</div>
 				<div class="col-md-12">
-					<h7 class="sevice-subheading">Check out the people who made this possible:</h7>
+					<h6 class="sevice-subheading">Check out the people who made this possible:</h6>
 					</br>
 					</br>
 					<router-link to="/team" class="team-button">Meet the team!
