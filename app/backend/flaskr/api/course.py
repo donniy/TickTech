@@ -37,7 +37,7 @@ def create_course():
 
 @apiBluePrint.route('/courses', methods=['GET'])
 def retrieve_all_courses():
-    #TODO authorization
+    # TODO authorization
     courses = Course.query.all()
     return Iresponse.create_response(database.serialize_list(courses), 200)
 
