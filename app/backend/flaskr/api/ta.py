@@ -20,7 +20,6 @@ def retrieve_tickets(user_id):
     return Iresponse.create_response(database.serialize_list(tickets), 200)
 
 
-
 @apiBluePrint.route('/ta/<user_id>/courses')
 def get_all_courses_for_ta(user_id):
     user = User.query.get(user_id)

@@ -7,30 +7,43 @@ db = database.db
 
 ta_course_linker = db.Table(
     'ta_link_course',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-    db.Column('course_id', UUIDType(binary=False), db.ForeignKey('course.id'), primary_key=True)
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'),
+              primary_key=True),
+    db.Column('course_id', UUIDType(binary=False), db.ForeignKey('course.id'),
+              primary_key=True)
 )
 
 student_course_linker = db.Table(
     'student_link_course',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-    db.Column('course_id', UUIDType(binary=False), db.ForeignKey('course.id'), primary_key=True)
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'),
+              primary_key=True),
+    db.Column('course_id', UUIDType(binary=False), db.ForeignKey('course.id'),
+              primary_key=True)
 )
 
 label_course_linker = db.Table(
     "label_link_course",
-    db.Column('course_id', UUIDType(binary=False), db.ForeignKey('course.id'), primary_key=True),
-    db.Column('label_id', UUIDType(binary=False), db.ForeignKey('label.label_id'), primary_key=True)
+    db.Column('course_id', UUIDType(binary=False), db.ForeignKey('course.id'),
+              primary_key=True),
+    db.Column('label_id', UUIDType(binary=False),
+              db.ForeignKey('label.label_id'), primary_key=True)
 )
 
+
 class Course(db.Model):
+
     """
     Een course.
     """
     id = db.Column(UUIDType(binary=False), primary_key=True)
-    course_email = db.Column(db.String(120), unique=False, nullable=False)
     title = db.Column(db.String(255), unique=False, nullable=False)
     description = db.Column(db.Text, nullable=True)
+
+    # TODO: lengthe van deze data
+    course_email = db.Column(db.String(120), unique=False, nullable=True)
+    mail_server_url = db.Column(db.String(120), unique=False, nullable=True)
+    mail_port = db.Column(db.Integer, nullable=True)
+    mail_password = db.Column(db.String(120), unique=False, nullable=True)
 
     # Many to many relation
     student_courses = db.relationship(
@@ -45,9 +58,9 @@ class Course(db.Model):
         "Label", secondary=label_course_linker, lazy='subquery',
         backref=db.backref('labels', lazy=True))
 
-
-    # Dit is een soort toString zoals in Java, voor het gebruiken van de database
-    # in de commandline. Op die manier kan je data maken en weergeven zonder formulier.
+    # Dit is een soort toString zoals in Java, voor het gebruiken van de
+    # database in de commandline. Op die manier kan je data maken en weergeven
+    # zonder formulier.
     def __repr__(self):
         return '<Course {}>'.format(self.title)
 
