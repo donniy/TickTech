@@ -56,9 +56,9 @@
     							let params = this.$route.params;
     							let url = '/';
     							if (typeof params !== 'undefined' && typeof params.prev_url !== 'undefined')
-    								url = params.prev_url;
+									url = params.prev_url;
     							if (this.$user.set(response.data.json_data.user))
-    								this.$router.replace(url);
+    								this.$router.go(url);
     							else
     								console.log("Can\'t set user.");
     						})
@@ -66,7 +66,15 @@
     				}
     			});
     		}
-    	}
+        }, 
+        mounted() {
+            if (this.$user.logged_in()) {
+                this.$router.back();
+            } else {
+                this.$cookies.remove('token');
+                this.$cookies.remove('user');
+            }
+        }
     }
 </script>
 
