@@ -1,11 +1,11 @@
 <template>
     <div id="app">
-        <navbar v-bind:active="active"></navbar>
-        <!-- <div class="navbar-spacing"></div> -->
+        <navbar v-bind:transparent="navbarTransparent" v-bind:active="active"></navbar>
         <div v-if="isHome" class="container-fluid first-background-image">
             <router-view />
         </div>
         <div v-else="isHome" class="container">
+            <div class="navbar-spacing"></div>
             <router-view />
         </div>
     </div>
@@ -20,7 +20,8 @@ export default {
     data () {
       return {
         active: 'home',
-        isHome: false
+        isHome: false,
+        navbarTransparent: true
       }
     },
     watch:{
@@ -28,45 +29,32 @@ export default {
             console.log(to.name)
             if(to.name === 'home') {
                 this.isHome = true
+                this.handleNavbarTransparency()
             } else {
                 this.isHome = false
+                this.navbarTransparent = false
+            }
+        }
+    },
+    methods: {
+        handleNavbarTransparency: function () {
+            if (!this.isHome && this.navbarTransparent) {
+                this.navbarTransparent = false
+                return
+            }
+            if (document.body.scrollTop > 100) {
+                this.navbarTransparent = false
+            } else {
+                this.navbarTransparent = true
             }
         }
     },
     components: {
         'navbar': Navbar,
     },
+    created () {
+        window.addEventListener('scroll', this.handleNavbarTransparency);
+    },
 }
 
 </script>
-
-<style scoped>
-li a:hover {
-    background-color: #fff;
-}
-
-li {
-    height:100%;
-}
-.active {
-    background-color: #fff;
-}
-
-ul {
-    padding: 0;
-    margin: 0;
-}
-
-nav {
-    padding: 0;
-}
-li a {
-    color: white;
-    text-align: center;
-    text-decoration: none;
-}
-
-nav {
-    height: 100%;
-}
-</style>

@@ -1,27 +1,28 @@
 <template>
-    <nav class="navbar navbar-tiktech navbar-expand-md">
+    <nav :class="'navbar navbar-tiktech navbar-expand-md' + (transparent ? ' navbar-transparent' : '')">
          <ul class="navbar-nav mr-auto">
              <div>
-                 <router-link to="/" class="navbar-brand home-left">Home</router-link>
+                <router-link class="navbar-brand home-left navbar-buttons" to="/">Home</router-link>
+
              </div>
          </ul>
          <ul class="navbar-nav">
              <!-- if-else for student, supervisor (or both) and not logged in. -->
              <div v-if="(rights() & 1) === 0" class="div-inline mt-2 mt-md-0">
                  <div>
-                     <router-link to="/login" tag="button" :class="'btn btn-outline-danger my-2 my-sm-0'" type="button">Login</router-link>
-                     <router-link to="/register" tag="button" :class="'btn btn-outline-danger my-2 my-sm-0 home-right'" type="button">Register</router-link>
+                     <router-link to="/login" :class="'navbar-buttons'">Login</router-link>
+                     <router-link to="/register" :class="'home-right navbar-buttons'">Register</router-link>
                  </div>
              </div>
              <!-- Student and Supervisor -->
              <div v-else-if="rights() ^ 7 === 0" class="div-inline mt-2 mt-md-0">
                  <div v-if="environment() === 0">
-                     <router-link to="/asdf" tag="button" :class="'btn btn-outline-danger my-2 my-sm-0'" type="button">Switch Supervisor</router-link>
+                     <router-link to="/login" :class="'navbar-buttons'">Switch Supervisor</router-link>
                      <button class="'btn note-add-button btn btn-primary btn-primary home-right'" type="button" v-on:click="$user.logout()">Logout</button>
                  </div>
                  <div v-else>
-                     <router-link to="/asdf" tag="button" :class="'btn btn-outline-danger my-2 my-sm-0'" type="button">Switch Student</router-link>
-                     <button class="'btn note-add-button btn btn-primary btn-primary home-right'" type="button" v-on:click="$user.logout()">Logout</button>
+                     <router-link to="/" :class="'navbar-buttons'">Switch Student</router-link>
+                      <button class="'btn note-add-button btn btn-primary btn-primary home-right'" type="button" v-on:click="$user.logout()">Logout</button>
                  </div>
              </div>
              <!-- Student or Supervisor -->
@@ -35,8 +36,8 @@
 <script>
 
   export default {
-      props: [],
-      data() {
+      props: ['transparent'],
+      data: function () {
           return {};
       },
       mounted: () => {
