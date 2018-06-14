@@ -97,6 +97,9 @@ export default {
         }
     },
     methods: {
+        goCourse (here) {
+            this.$router.push(here);
+        },
         getTicket () {
             const path = '/api/ticket/' + this.$route.params.ticket_id
             this.$ajax.get(path)
