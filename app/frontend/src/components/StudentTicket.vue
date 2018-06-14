@@ -10,12 +10,10 @@
         <message v-bind:user="user" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
 
         <form v-on:submit.prevent="sendReply" class="reply-area">
-            <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
-            <button class="reply-button btn btn-primary">
-                    <i class="material-icons">
-                        send
-                    </i>
-                </button>
+            <h4>Provide additional information</h4>
+            <hr />
+            <textarea v-model="reply" rows="6" placeholder="Schrijf een reactie..."></textarea>
+            <button class="btn btn-primary">Submit reaction</button>
         </form>
     </div>
 </template>
