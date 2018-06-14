@@ -30,7 +30,7 @@
 				<div class="col-lg-12 text-center">
 					<h2 class="section-heading text-uppercase">The Messaging Structure</h2>
 					<div class="subheading-middle">
-						<h3 class="section-subheading text-muted" style="left: 50%; width: 50%; color: black!important;">"TIKTECH has everything you need for a smooth academic career!
+						<h3 class="section-subheading text-muted" style="left: 50%; width: 50%;color: #3e4042 !important;">"TIKTECH has everything you need for a smooth academic career!
                 With our advanced ticket service, the problems of communication between students and supervisors are ancient history. With slick interfaces and intuitive design,
                 creating the right channels between the right people has never been easier." - TIKTECH CEO</h3>
 					</div>
@@ -39,12 +39,12 @@
 			<div class="row text-center">
 				<div class="col-md-6">
 					<h4 class="service-heading">The Student</h4>
-					<p class="text-muted" style="color: black!important;">As enrolled student, you can message your supervisors through the web interface or through the existing mail channels. You will never have to wait long on a reply again as either message will be directed to the right person. You may view your conversations
+					<p>As enrolled student, you can message your supervisors through the web interface or through the existing mail channels. You will never have to wait long on a reply again as either message will be directed to the right person. You may view your conversations
 						with supervisors and reply in a convenient way.</p>
 				</div>
 				<div class="col-md-6">
 					<h4 class="service-heading">The Supervisor</h4>
-					<p class="text-muted" style="color: black!important;">As Supervisor, you can see which tickets have been assigned to you! You may also choose to view all tickets in a course, discuss tickets with your colleagues and have them join you in answering those harder questions. Create labels and assign yourselfs
+					<p>As Supervisor, you can see which tickets have been assigned to you! You may also choose to view all tickets in a course, discuss tickets with your colleagues and have them join you in answering those harder questions. Create labels and assign yourselfs
 						to them to direct questions to the right people. Set up your courses e-mail to intergrate into TIKTECH seamlessly! The possibilities are endless.</p>
 				</div>
 			</div>
@@ -52,10 +52,10 @@
 				<a href="#" v-scroll-to="'#services'" class="text-uppercase scroll-button btn-arrow">
                 <span>Our Services!
                     <svg width="40" height="20" viewBox="-2.5 -5 75 60" preserveAspectRatio="none">
-                        <path d="M0,0 l35,50 l35,-50" fill="none" stroke="black" stroke-linecap="round" stroke-width="5" />
+                        <path d="M0,0 l35,50 l35,-50" fill="none" stroke="white" stroke-linecap="round" stroke-width="5" />
                     </svg>
                     <svg width="40" height="20" viewBox="-2.5 -5 75 60" preserveAspectRatio="none">
-                        <path d="M0,-20 l35,50 l35,-50" fill="none" stroke="black" stroke-linecap="round" stroke-width="5" />
+                        <path d="M0,-20 l35,50 l35,-50" fill="none" stroke="white" stroke-linecap="round" stroke-width="5" />
                     </svg>
                 </span>
             </a>
@@ -69,7 +69,6 @@
 			<div class="row">
 				<div class="col-lg-12 text-center">
 					<h2 class="section-heading text-uppercase">Services</h2>
-					<h3 class="section-subheading text-muted">TikTech offers a wide variety of communication methods</h3>
 				</div>
 			</div>
 			<div class="row text-center">
@@ -85,10 +84,7 @@
 					<h4 class="service-heading">Intergration and security</h4>
 					<p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima maxime quam architecto quo inventore harum ex magni, dicta impedit.</p>
 				</div>
-				<!-- Empty slot to make everything line up nicely. -->
-				<div class="col-md-4">
-				</div>
-				<div class="col-md-4">
+				<div class="col-md-12">
 					<h7 class="sevice-subheading">Check out the people who made this possible:</h7>
 					</br>
 					</br>
