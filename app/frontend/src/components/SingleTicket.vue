@@ -134,7 +134,7 @@ export default {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
             this.$ajax.post(path, {
                     message: this.reply,
-                    user_id: user_id
+                    user_id: this.user_id
                 })
                 .then(response => {
                     this.reply = ''
