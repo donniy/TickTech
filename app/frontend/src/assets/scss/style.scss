@@ -280,7 +280,7 @@ header.masthead {
     display: block;
     box-shadow: 0 2px 4px 0 rgba(50,50,93,.1);
     margin-bottom: 1em;
-    color: rgba(#000, 0.8);
+    color: $default-red;
     transition: transform 0.1s ease-in-out;
 }
 
@@ -305,8 +305,8 @@ a.list-ticket {
 }
 
 a.list-ticket:hover, a.list-ticket:focus {
-    transform: translate(1em);
-    color: rgba(#000, 0.8);
+    transform: translate(0.5em);
+    color: white !important;
 }
 
 
