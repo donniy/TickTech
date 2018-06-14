@@ -1,9 +1,11 @@
 <template>
-    <div :class="'message' + (this.$user.get().id == message.user_id ? ' text-right' : '')">
-        <h4 class="message-sender">{{username}}</h4>
-        <div class="material-card sum">
+    <div :class="'message'">
+        <h4 class="message-sender">{{username}}:</h4>
+        <div class="material-card sum-original">
+            <h5 class="message-sender">{{message.title}}</h5>
             {{message.text}}
         </div>
+        <p>{{message.time}}</p>
     </div>
 </template>
 
@@ -12,7 +14,7 @@
         props: ['message', 'user'],
         computed: {
             username: function() {
-                return this.$user.get().id == this.message.user_id ? 'You:' : this.message.user_id
+                return this.$user.get().name
             },
         },
         data: function() {
