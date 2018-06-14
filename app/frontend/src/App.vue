@@ -1,11 +1,11 @@
 <template>
     <div id="app">
         <navbar v-bind:transparent="navbarTransparent" v-bind:active="active"></navbar>
-        <!-- <div class="navbar-spacing"></div> -->
         <div v-if="isHome" class="container-fluid first-background-image">
             <router-view />
         </div>
         <div v-else="isHome" class="container">
+            <div class="navbar-spacing"></div>
             <router-view />
         </div>
     </div>
