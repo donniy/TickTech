@@ -23,7 +23,7 @@
                         <label for="port">Port</label>
                         <input id="port" class="form-control" name="port" v-model="form.port" v-validate="'required|min:1'" type="text" placeholder="995">
 
-                        <p for="error" class="def-error-msg middle-display" v-show="error.show">{{error.text}}</p>
+                        <p for="error" class="def-error-msg subheading-middle" v-show="error.show">{{error.text}}</p>
                     </div>
                 </form>
                 <div class="row">
@@ -78,16 +78,24 @@
         changeClose() {
             this.error.show = false
             const path = '/api/email'
-            this.$ajax.post(path, this.form).then(response => {
-                if (response.status == 201){
-                    this.$parent.showEmailModal = false
-                }
-                if (response.status == 200){
-                    this.error.show = true
-                    this.error.text = response.data.json_data
-                }
-            }).catch(error => {
-                console.log(error)
+            // this.$ajax.post(path, this.form).then(response => {
+            //     if (response.status == 201){
+            //         this.$parent.showEmailModal = false
+            //     }
+            //     if (response.status == 200){
+            //         this.error.show = true
+            //         this.error.text = response.data.json_data
+            //     }
+            // }).catch(error => {
+            //     console.log(error)
+            // })
+            console.log("i will now emit")
+            this.$socket.emit('setup-email', {
+                email: this.form.email,
+                password: this.form.password,
+                pop: this.form.pop,
+                port: this.form.port,
+                course_id: this.form.course_id
             })
         },
         stopThread() {
@@ -134,6 +142,23 @@
                   this.error.text = response.data.json_data
               }
           });
+      },
+      sockets: {
+          'setup-email': function (data) {
+              console.log(data)
+              console.log(data.result)
+              console.log(data.result == 'fail')
+              if (data.result == 'succes'){
+                  console.log("SUCCES")
+                  this.$parent.showEmailModal = false
+              }
+              if(data.result == 'fail'){
+                  console.log('fail')
+                  this.error.show = true
+                  this.error.text = data.data
+              }
+              console.log("finished")
+          }
       }
 }
 </script>

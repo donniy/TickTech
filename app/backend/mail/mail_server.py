@@ -3,6 +3,7 @@ from time import sleep
 import email
 import poplib
 import requests
+import socket
 
 '''
 Rabbitmqueue: Message mpass system between flask en mail server
@@ -21,6 +22,12 @@ def connect(host, port, user, password):
         server.user(user)
         server.pass_(password)
     except (poplib.error_proto) as msg:
+        print(msg)
+        return None
+    except socket.gaierror as msg:
+        print(msg)
+        return None
+    except OSError as msg:
         print(msg)
         return None
 
@@ -99,13 +106,13 @@ def check_mail(host, port, user, password, courseid):
 
     if server is None:
         # Cannot connect. Try again later
-        return
+        return 1
 
     mailcount = server.stat()[0]
     if (mailcount == 0):
         print("No emails found.")
         server.quit()
-        return
+        return 0
 
     # # TEMP GET COURSE: STEPHHIE IS FIXING THIS :)
     # courseid = None
@@ -155,4 +162,4 @@ def check_mail(host, port, user, password, courseid):
     # Somehow makes you up-to-date with server
     # disable this when debugging
     # server.quit()
-    return
+    return 0

@@ -1,48 +1,62 @@
 from . import apiBluePrint
-from mail.thread import MailThread
 from flaskr.models.Course import Course
 from flaskr import database, Iresponse
 from flask import escape, request, jsonify
 import poplib
+from mail.thread import MailThread
+import time
+from threading import Thread
+from flask_socketio import emit
 
 
-@apiBluePrint.route('/email', methods=['POST'])
-def create_new_email_thread_post():
-    '''
-    Recieve email settings from website. Update it in database and send to
-    mail server.
-    '''
-    # Time between fetching emails
-    sleeptime = 60
-    # Try to make a connection
-    try:
-        server = escape(request.json["pop"])
-        port = escape(request.json["port"])
-        email = escape(request.json["email"])
-        password = escape(request.json["password"])
-        course_id = escape(request.json["course_id"])
-        test_connection = poplib.POP3_SSL(server, port)
-        test_connection.user(email)
-        test_connection.pass_(password)
-        test_connection.quit()
-        print("Succesfull test connection")
-    except (poplib.error_proto) as msg:
-        message = msg.args[0].decode('ascii')
-        return Iresponse.create_response(message, 200)
-    except:
-        return Iresponse.create_response("Invalid settings", 200)
-
-    course = Course.query.get(course_id)
-    course.course_email = email
-    course.mail_password = password
-    course.mail_port = port
-    course.mail_server_url = server
-    if not database.addItemSafelyToDB(course):
-        return Iresponse.create_response("Failed to attach to database", 412)
-
-    create_new_email_thread(sleeptime, server, port, email,
-                            password, course_id)
-    return Iresponse.create_response("Succes", 201)
+# @apiBluePrint.route('/email', methods=['POST'])
+# def notify_succes():
+#     print("Got notify\n\n")
+#     emit('setup-email', {'result': 'succes'})
+#     print("emmited")
+#     return Iresponse.create_response("succes", 200)
+# def create_new_email_thread_post():
+#     '''
+#     Recieve email settings from website. Update it in database and send to
+#     mail server.
+#     '''
+#     # Time between fetching emails
+#     sleeptime = 60
+#     server = escape(request.json["pop"])
+#     port = escape(request.json["port"])
+#     email = escape(request.json["email"])
+#     password = escape(request.json["password"])
+#     course_id = escape(request.json["course_id"])
+#
+#     try:
+#         test_connection = poplib.POP3_SSL(server, port)
+#         print(test_connection)
+#         test_connection.user(email)
+#         test_connection.pass_(password)
+#         test_connection.quit()
+#         print("Succesfull test connection")
+#     except (poplib.error_proto) as msg:
+#         print("failed")
+#         message = msg.args[0].decode('ascii')
+#         return Iresponse.create_response(message, 200)
+#     except OSError as msg:
+#         message = str(msg)
+#         return Iresponse.create_response(message, 200)
+#     except:
+#         return Iresponse.create_response("Invalid settings", 200)
+#
+#     create_new_email_thread(sleeptime, server, port, email,
+#                             password, course_id)
+#
+#     course = Course.query.get(course_id)
+#     course.course_email = email
+#     course.mail_password = password
+#     course.mail_port = port
+#     course.mail_server_url = server
+#     if not database.addItemSafelyToDB(course):
+#         return Iresponse.create_response("Failed to attach to database", 412)
+#
+#     return Iresponse.create_response("wait for further instruction", 201)
 
 
 @apiBluePrint.route('/email/<course_id>/settings', methods=['GET'])
