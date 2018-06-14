@@ -3,6 +3,7 @@ from . import apiBluePrint
 from flaskr.models import user
 from flask_jwt import jwt_required, current_identity
 from flaskr import Iresponse
+from flaskr.models.user import *
 
 
 @apiBluePrint.route('/login', methods=['POST'])

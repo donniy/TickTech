@@ -13,52 +13,52 @@
         </div>
 
         <div class="labelContainer">
-            <myLabel
-               v-for="label in labels"
-               v-bind:key="label.label_id"
-               v-bind:label="label"
-             ></myLabel>
+            <myLabel v-for="label in labels" v-bind:key="label.label_id" v-bind:label="label"></myLabel>
         </div>
-   </div>
+    </div>
 </template>
 
 <script>
-
 import Ticket from './Ticket.vue'
 import Label from './Label.vue'
 
 export default {
-    data () {
+    data() {
         return {
-            course: null,
-            labels : [],
+            course: {title: "loading"},
+            labels: [],
             new_label_name: ''
         }
     },
     methods: {
-        getCourse () {
-          const path = '/api/courses/' + this.$route.params.course_id
-          this.$ajax.get(path, response => {this.course = response.data.json_data})
+        getCourse() {
+            const path = '/api/courses/' + this.$route.params.course_id
+            this.$ajax.get(path, response => {
+                this.course = response.data.json_data
+            })
         },
-        getLabels () {
+        getLabels() {
             const path = '/api/labels/' + this.$route.params.course_id
-            this.$ajax.get(path, response => {this.labels = response.data.json_list})
+            this.$ajax.get(path, response => {
+                this.labels = response.data.json_list
+            })
         },
         createLabel() {
             const path = '/api/labels/' + this.$route.params.course_id
-            this.$ajax.post(path, {name: this.new_label_name}, response => {
+            this.$ajax.post(path, {
+                name: this.new_label_name
+            }, response => {
                 this.tickets = response.data.json_list
                 this.getLabels()
             })
         }
     },
-        mounted: function () {
-            this.getCourse()
-            this.getLabels()
+    mounted: function() {
+        this.getCourse()
+        this.getLabels()
     },
     components: {
-         'myLabel': Label
+        'myLabel': Label
     }
 }
-
 </script>
