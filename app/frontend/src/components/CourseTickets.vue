@@ -1,7 +1,6 @@
 <template>
     <div>
-        <h1>Tickets</h1>
-        <h2>{{ this.course.title }}</h2>
+        <h1>Tickets in cursus {{ $route.params.course_id }}</h1>
 
         <b-button class="labelbutton:right"
             v-on:click="goLabel('/course/'+ $route.params.course_id + '/labels')">
@@ -72,14 +71,7 @@ export default {
             tickets: [],
             showSum: false,
             status: 'not set',
-            status_filter: 'All',
-            course : {
-                'id': "",
-                'course_email': "",
-                'title': "",
-                'description': "",
-                'tas': []
-            }
+            status_filter: 'All'
         }
     },
     methods: {
@@ -122,24 +114,8 @@ export default {
                 console.log(response)
             })
         },
-        getCourseInfo(){
-            this.status = 'getting course information'
-            const path = '/api/courses/single/' + this.$route.params.course_id
-            this.$ajax.get(path)
-            .then(response => {
-                this.course = response.data.json_data
-                this.status = 'Retrieved data'
-                console.log(response.data.json_data)
-                console.log(response)
-            })
-            .catch(error => {
-                console.log(error)
-                this.status = 'failed getting course information'
-            })
-        },
         created () {
             this.status = 'created'
-            this.getCourseInfo()
             this.getTickets()
         }
     },

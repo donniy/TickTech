@@ -64,7 +64,7 @@
                 const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
                 this.$ajax.post(path, {
                         message: this.reply,
-                        user_id: this.$user.get().id
+                        user_id: 123123123
                     })
                     .then(response => {
                         this.reply = ''
