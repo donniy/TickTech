@@ -16,21 +16,29 @@
             <div class="col-md-8 col-sm-8 col-lg-8 col-xs-12">
                 <h2>Ticket Info</h2>
                 <div class="material-card">
-                    <h2>{{ticket.title}}</h2> Status: {{ticket.status.name}}
+                    <div>
+                        <h2>{{ticket.title}}</h2>
+                        Status: {{ticket.status.name}}
+                    </div>
+                    <div>
+                        Ta's:
+                        <b v-for="ta in ticket.tas" v-bind:key="ta.id" v-bind:ta="ta">
+                            {{ ta.name}}
+                        </b>
+                    </div>
                 </div>
 
                 <message v-bind:user="{id: user_id}" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
 
                 <form v-on:submit.prevent="sendReply" class="reply-area">
                     <h4>Respond</h4>
-                    <hr />
                     <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
                     <button class="btn btn-primary">Submit</button>
                 </form>
             </div>
             <div class="col-md-4 col-sm-4 col-lg-4 col-xs-12">
                 <h2>Notities</h2>
-                <note v-for="note in notes" v-bind:key="note.id" v-bind:note="note"></note>
+    			<note v-for="note in notes" v-bind:key="note.id" v-bind:note="note"></note>
 
     			<b-btn id="popoverButton-sync" variant="primary" class="note-add-button btn btn-primary">
     				Notitie toevoegen
@@ -85,7 +93,8 @@ export default {
                 status: {
                     name: ''
                 },
-                course_id: ''
+                course_id: '',
+                tas: []
             },
             reply: '',
             messages: [],
