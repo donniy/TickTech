@@ -10,6 +10,7 @@ import datetime
 from flaskr.request_processing import ticket as rp_ticket
 from flaskr.request_processing import message as rp_message
 from flaskr import Iresponse
+from flask_jwt import jwt_required, current_identity
 
 
 # Make this post with a button.
@@ -29,7 +30,9 @@ def retrieve_single_ticket(ticket_id):
     """
     # TODO: Controlleer rechten
     ticketObj = Ticket.query.get(ticket_id)
+    print(ticketObj)
     if ticketObj is None:
+        print("Ticket is None")
         return Iresponse.create_response("", 404)
     return Iresponse.create_response(ticketObj.serialize, 200)
 
@@ -72,6 +75,7 @@ def get_ticket_messages(ticket_id):
 
 
 @apiBluePrint.route('/ticket/submit', methods=['POST'])
+@jwt_required()
 def create_ticket():
     """
     Check ticket submission and add to database.
@@ -79,4 +83,7 @@ def create_ticket():
     jsonData = request.get_json()
     if jsonData is None:
         return Iresponse.empty_json_request()
+    jsonData['studentid'] = current_identity.id
+    jsonData['name'] = current_identity.name
+    jsonData['email'] = current_identity.email
     return rp_ticket.create_request(jsonData)

@@ -11,6 +11,8 @@ from flaskr.models import Message, ticket, Note, Course, user, Label
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
 from flask_jwt import JWT
 from . import login
+import poplib
+from mail.thread import MailThread
 
 
 db = database.db
@@ -91,8 +93,8 @@ def create_app(test_config=None):
         if app.debug:
             try:
                 res = requests.get(
-                        'http://localhost:8080/{}'.format(path)
-                        ).text
+                    'http://localhost:8080/{}'.format(path)
+                ).text
                 return res
             except Exception as e:
                 return "Je gebruikt dev mode maar hebt je Vue" \
@@ -118,5 +120,59 @@ def create_app(test_config=None):
             leave_room(data['room'])
         except Exception as e:
             print("Failed to leave toom")
+
+    @socketio.on('setup-email')
+    def setup_mail(data):
+        print("recieve data")
+        print(data)
+        email = data['email']
+        password = data['password']
+        port = data['port']
+        server = data['pop']
+        course_id = data['course_id']
+        sleeptime = 60
+
+        try:
+            test_connection = poplib.POP3_SSL(server, port)
+            print(test_connection)
+            test_connection.user(email)
+            test_connection.pass_(password)
+            test_connection.quit()
+            print("Succesfull test connection")
+        except (poplib.error_proto) as msg:
+            print("failed")
+            message = msg.args[0].decode('ascii')
+            emit('setup-email', {'result': 'fail', 'data': message})
+            return
+        except OSError as msg:
+            message = str(msg)
+            emit('setup-email', {'result': 'fail', 'data': message})
+            return
+
+        thread = MailThread.exist_thread_courseid(course_id)
+        if (thread is None):
+            print("create new thread")
+            new_thread = MailThread(sleeptime, server, port, email, password,
+                                    course_id)
+            new_thread.setName(course_id)
+            new_thread.start()
+            print("created")
+        else:
+            print("Thread already exists, update")
+            update_thread(thread, sleeptime, server, port, email, password)
+
+        print("add database")
+        course = Course.Course.query.get(course_id)
+        course.course_email = email
+        course.mail_password = password
+        course.mail_port = port
+        course.mail_server_url = server
+        if not database.addItemSafelyToDB(course):
+            emit('setup-email', {'response': 'fail'})
+            return
+
+        print("wait for response")
+        emit('setup-email', {'result': 'succes'})
+        return
 
     return app
