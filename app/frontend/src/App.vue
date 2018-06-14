@@ -3,7 +3,9 @@
         <navbar v-bind:active="active"></navbar>
         <div class="navbar-spacing"></div>
         <div class="container">
-        <router-view />
+            <transition name="slide">
+                <router-view></router-view>
+            </transition>
         </div>
     </div>
 </template>
