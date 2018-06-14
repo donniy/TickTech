@@ -36,41 +36,35 @@ def test_incorrect_course_post(client):
     assert rv.status == '400 BAD REQUEST'
 
 
-def test_insert_ticket(app, client):
+def test_insert_ticket(client):
     """
     Insert a new ticket.
     """
-    create_user(app, 11188936)
-    auth = login(client, 11188936)
-    rv = client.get('/api/courses', headers={
-        'Authorization': auth
-    })
-    cid = rv.get_json()['json_data'][0]['id']
-    print("course: {}".format(cid))
-    rv = client.post('/api/ticket/submit', json={
-        'subject': 'test ticket',
-        'message': 'Test bericht',
-        'courseid': cid,
-        'labelid': ''
-    }, headers={
-        'Authorization': auth
-    })
-    print(rv.data)
-    assert rv.status == '201 CREATED'
-
-
-def test_get_ticket(app, client):
-    create_user(app, 11188936)
-    auth = login(client, 11188936)
     rv = client.get('/api/courses')
     cid = rv.get_json()['json_data'][0]['id']
     rv = client.post('/api/ticket/submit', json={
+        'studentid': '111111',
+        'name': 'Piet Pietersen',
+        'email': 'piet.pietersen@student.uva.nl',
         'subject': 'test ticket',
         'message': 'Test bericht',
         'courseid': cid,
         'labelid': ''
-    }, headers={
-        'Authorization': auth
+    })
+    assert rv.status == '201 CREATED'
+
+
+def test_get_ticket(client):
+    rv = client.get('/api/courses')
+    cid = rv.get_json()['json_data'][0]['id']
+    rv = client.post('/api/ticket/submit', json={
+        'studentid': '111111',
+        'name': 'Piet Pietersen',
+        'email': 'piet.pietersen@student.uva.nl',
+        'subject': 'test ticket',
+        'message': 'Test bericht',
+        'courseid': cid,
+        'labelid': ''
     })
     rv = client.get('/api/courses')
     cid = rv.get_json()['json_data'][0]['id']
