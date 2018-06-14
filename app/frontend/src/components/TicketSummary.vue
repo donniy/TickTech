@@ -25,6 +25,7 @@
                         <h3>Conversation</h3>
                     </div>
                     <div class="summary-content">
+                        <p class="noreply-text" v-if="this.messages.length <= 1">No messages yet</p>
                         <message
                             v-bind:user="{id: user_id}"
                             v-for="message in messages.slice(1)"

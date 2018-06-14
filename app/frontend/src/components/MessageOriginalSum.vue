@@ -2,10 +2,9 @@
     <div :class="'message'">
         <h4 class="message-sender">{{username}}:</h4>
         <div class="material-card sum-original">
-            <h5 class="message-sender">{{message.title}}</h5>
-            {{message.text}}
+            <h5 class="message-sender">{{this.message.title}}</h5>
+            {{this.message.text}}
         </div>
-        <p>{{message.time}}</p>
     </div>
 </template>
 
