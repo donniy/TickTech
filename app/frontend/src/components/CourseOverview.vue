@@ -39,9 +39,10 @@
       methods: {
         getCourses() {
           this.status = 'getting courses'
-          this.$ajax.get('/api/courses')
+          if(this.$user.get()){
+            this.$ajax.get('/api/courses/user/'+this.$user.get().id)
             .then(response => {
-              this.courses = response.data.json_data
+              this.courses = response.data.json_list
               this.status = 'Retrieved data'
               console.log(response)
             })
@@ -49,6 +50,10 @@
               console.log(error)
               this.status = 'failed getting courses'
             })
+          }
+          else{
+            this.$router.replace("/login");
+          }
         },
         created() {
           this.status = 'created'

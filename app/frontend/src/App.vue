@@ -5,7 +5,7 @@
         <div v-if="isHome" class="container-fluid first-background-image">
             <router-view />
         </div>
-        <div v-else="isHome" class="container">
+        <div v-else class="container">
             <router-view />
         </div>
     </div>
