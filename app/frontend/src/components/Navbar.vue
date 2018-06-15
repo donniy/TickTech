@@ -81,7 +81,7 @@ import VueBreadcrumbs from 'vue-breadcrumbs'
      },
      watch: {
         '$route' (to, from) {
-            this.path_list = [this.$router.matcher.match('/')];
+            this.path_list = [];
             this.breadcrumbList(to, from);
         }
      }

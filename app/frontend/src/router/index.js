@@ -7,21 +7,16 @@ const routerOptions = [
         name: 'Home',
         component: 'Home',
         meta: {
-            breadcrumb: 'Home',
+            breadcrumb: '/',
         },
     },
     {
-        path:'/courses',
-        name:'CourseOverview',
-        component:'CourseOverview',
-        meta: {
-            breadcrumb: 'Course Overview'
-        },
-    },
-    {
-        path: '/home/',
+        path: '/home',
         name: 'userhome',
         component: 'UserHome',
+        meta: {
+            breadcrumb: 'Home'
+        }
     },
     {
         path: '/course/:course_id',
@@ -29,7 +24,7 @@ const routerOptions = [
         component: 'CourseTickets',
         meta: {
             breadcrumb: 'Course',
-            pre: '/courses'
+            pre: '/home'
         },
     },
     {
