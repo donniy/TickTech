@@ -2,9 +2,16 @@
     <nav :class="'navbar navbar-tiktech navbar-expand-md' + (transparent ? ' navbar-transparent' : '')">
          <ul class="navbar-nav mr-auto">
              <div>
-                <router-link class="navbar-brand home-left navbar-buttons" to="/">Home</router-link>
-
+                <!-- <router-link class="navbar-brand home-left navbar-buttons" to="/">Home</router-link> -->
+                <ul class="breadcrumb" v-if="path_list.length">
+                    <li class="breadcrumb-item" v-for="(crumb, key) in path_list" :key="key">
+                        <router-link class="breadcrumb-link" :to="crumb.path">
+                         {{ crumb.meta.breadcrumb }}
+                        </router-link>
+                    </li>
+                </ul>
              </div>
+
          </ul>
          <ul class="navbar-nav">
              <!-- if-else for student, supervisor (or both) and not logged in. -->
@@ -14,19 +21,7 @@
                      <router-link to="/register" :class="'home-right navbar-buttons'">Register</router-link>
                  </div>
              </div>
-             <!-- Student and Supervisor -->
-             <div v-else-if="rights() ^ 7 === 0" class="div-inline mt-2 mt-md-0">
-                 <div v-if="environment() === 0">
-                     <router-link to="/login" :class="'navbar-buttons'">Switch Supervisor</router-link>
-                     <button class="'btn note-add-button btn btn-primary btn-primary home-right'" type="button" v-on:click="$user.logout()">Logout</button>
-                 </div>
-                 <div v-else>
-                     <router-link to="/" :class="'navbar-buttons'">Switch Student</router-link>
-                      <button class="'btn note-add-button btn btn-primary btn-primary home-right'" type="button" v-on:click="$user.logout()">Logout</button>
-                 </div>
-             </div>
-             <!-- Student or Supervisor -->
-             <div v-else-if="rights() ^ 7 > 0" class="div-inline mt-2 mt-md-0">
+             <div v-else class="div-inline mt-2 mt-md-0">
                 <button tag="button" class="'btn note-add-button btn btn-primary btn-primary home-right'" v-on:click="$user.logout()">Logout</button>
              </div>
          </ul>
@@ -34,11 +29,15 @@
 </template>
 
 <script>
+import Vue from 'vue'
+import VueBreadcrumbs from 'vue-breadcrumbs'
 
   export default {
       props: ['transparent'],
       data: function () {
-          return {};
+          return {
+              path_list: []
+          };
       },
       mounted: () => {
           console.log("navbar user: " + this.$user)
@@ -62,6 +61,29 @@
                  return 1
              }
          },
+         breadcrumbList: function (to, from) {
+            let matcher = this.$router.matcher.match;
+            let cur_url = '/';
+            let split_string = to.path.replace(':user_id', this.$user.get().id);
+            split_string = split_string.split('/');
+            let match = null;
+            for (let i = 1; i < split_string.length; i++) {
+                match = matcher(cur_url + split_string[i]);
+                cur_url += split_string[i] + '/';
+                if(typeof match.name !== 'undefined' && match.name !== 'Home') {
+                    if(typeof match.meta.pre !== 'undefined')
+                        this.breadcrumbList({path: match.meta.pre});
+                    this.path_list.push(match);
+                }
+                console.log(this.path_list)
+            }
+         }
+     },
+     watch: {
+        '$route' (to, from) {
+            this.path_list = [];
+            this.breadcrumbList(to, from);
+        }
      }
 
   }
