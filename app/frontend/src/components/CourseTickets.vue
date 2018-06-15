@@ -1,52 +1,80 @@
 <template>
     <div>
-        <h1>Tickets in cursus {{ $route.params.course_id }}</h1>
-
-        <b-button class="labelbutton:right"
-            v-on:click="goLabel('/course/'+ $route.params.course_id + '/labels')">
-            Course labels
-        </b-button>
-
-        <button v-on:click="emailSettings" class="btn btn-primary">
-            Email settings
-        </button>
-
-        <emodal v-if="showEmailModal"
-                warning="Setup a fetcher to your mailinglist."
-                @close="showEmailModal = false">
-        </emodal>
-        <p v-if="email_running">EMAIL IS RUNNING</p>
-
-        <select class="form-control custom-select" v-model="status_filter">
-            <option> All </option>
-            <option> Needs help </option>
-            <option> test </option>
-        </select>
-
-        <div class = TA-tickets>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th scope="col">Title</th>
-                        <th scope="col">Created by</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <ticket
-                        v-for="ticket in tickets"
-                        v-bind:class="{'tr-item':true, 'active':(ticket.id === ticketSum)}"
-                        v-if="status_filter == 'All' || ticket.status.name == status_filter"
-                        @click="ticketSum = ticket.id; Active"
-                        v-bind:key="ticket.id"
-                        v-bind:ticket="ticket"
-                        v-bind:base_url="'/student/ticket/'">
-                    </ticket>
-                </tbody>
-            </table>
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>Course: {{ $route.params.course_id }}</h1>
+            </br>
+                <hr style="width: 20%;">
+            </br>
+            </div>
         </div>
+        <div class="row">
+            <div class="col-lg-10 text-center">
+                <div class="row">
+                    <div class="col-lg-3 text-center">
+                        <h5>Tickets in this course:</h5>
+                    </div>
+                    <div class="col-lg-3 text-center">
+                        <select class="form-control custom-select" v-model="status_filter">
+                            <option> All </option>
+                            <option> Closed </option>
+                            <option> Unassigned </option>
+                            <option> Assigned </option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3 text-center">
+                        <select class="form-control custom-select">
+                            <option> Most recent </option>
+                            <option> Created by </option>
+                            <option> Least recent </option>
+                        </select>
+                    </div>
+                </div>
+                <div class = TA-tickets>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">Title</th>
+                                <th scope="col">Created by</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ticket
+                                v-for="ticket in tickets"
+                                v-bind:class="{'tr-item':true, 'active':(ticket.id === ticketSum)}"
+                                v-if="status_filter == 'All' || ticket.status.name == status_filter"
+                                @click="ticketSum = ticket.id; Active"
+                                v-bind:key="ticket.id"
+                                v-bind:ticket="ticket"
+                                v-bind:base_url="'/student/ticket/'">
+                            </ticket>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-2 text-center" >
+                <b-button class="routerbutton" v-on:click="pushLocation('/course/' + $route.params.course_id + '/labels')">Course labels</b-button>
+            </div>
+            <div class="col-lg-2 text-center" >
+                <b-button class="routerbutton" >Add students</b-button>
+            </div>
+            <div class="col-lg-2 text-center" >
+                <b-button class="routerbutton" @click="emailSettings" :to="''">Mail settings</b-button>
+            </div>
+            <div class="col-lg-2 text-center" >
+                <b-button class="routerbutton" :to="''">Add TA's</b-button>
+            </div>
 
+        </div>
+        <p v-if="email_running">EMAIL IS RUNNING</p>
+        <emodal v-if="showEmailModal"
+            warning="Setup a fetcher to your mailinglist."
+            @close="showEmailModal = false">
+        </emodal>
         <summodal
             @close="showSum = false, ticketSum = 0"
             v-for="ticket in tickets"
@@ -76,6 +104,9 @@ export default {
         }
     },
     methods: {
+        pushLocation (here) {
+            this.$router.push(here)
+        },
         getTickets () {
             this.status = 'getting tickets'
             const path = '/api/courses/' + this.$route.params.course_id + '/tickets'
@@ -90,9 +121,6 @@ export default {
                 console.log(error)
                 this.status = 'failed getting tickets'
             })
-        },
-        goLabel (here) {
-            this.$router.push(here);
         },
         emailSettings() {
             this.showEmailModal = true

@@ -33,6 +33,27 @@ a:hover {
     text-decoration: none;
 }
 
+.routerbutton {
+    color: $default-red;
+    background-color: #FFF;
+    border: 1px solid $default-red;
+    font-size: 1.2em;
+    padding-left: 10px;
+    font-weight: 400 !important;
+    padding-right: 10px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    margin:8px;
+}
+
+.routerbutton:hover {
+    background-color: $default-red;
+    color: #FFF;
+    transition: background-color 300ms ease-out;
+    transition: color 100ms ease-out;
+    text-decoration: none;
+}
+
 .home-left {
     margin-left: 35vh;
 
