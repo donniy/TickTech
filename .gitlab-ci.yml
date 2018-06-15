@@ -19,4 +19,5 @@ test vue:
         - make test-frontend
 test flask:
     stage: test
+    script:
         - make test-backend
