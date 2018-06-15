@@ -40,8 +40,8 @@ def test_get_user_tickets(app, client):
                     headers={'Authorization': auth})
     json_data = rv.get_json()
     assert rv.status == '200 OK'
-    assert len(json_data['json_list']) > 0
-    print(json_data['json_list'])
+    assert len(json_data['json_data']) > 0
+    print(json_data['json_data'])
 
 
 def test_get_active_student_tickets(app, client):
@@ -60,8 +60,8 @@ def test_get_active_student_tickets(app, client):
     rv2 = client.get('/api/user/{}/tickets'.format(1234),
                      headers={'Authorization': auth})
 
-    active_tickets = rv.get_json()['json_list']
-    all_tickets = rv2.get_json()['json_list']
+    active_tickets = rv.get_json()['json_data']
+    all_tickets = rv2.get_json()['json_data']
     assert rv.status == '200 OK'
     assert len(active_tickets) > 0
     assert len(all_tickets) - len(active_tickets) == 1

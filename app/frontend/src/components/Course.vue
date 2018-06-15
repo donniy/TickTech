@@ -1,8 +1,9 @@
 <template>
     <a v-on:click="pushCourse"
-       class="list-ticket">
-        <h3>{{course.title}}</h3>
-        {{course.description}}
+       class="list-course">
+        <h5>{{course.title}}</h5>
+        <h6 style="font-size:0.7em; line-height:1;">{{course.id}}</h6>
+        <p style="font-size:0.8em; line-height:1;">{{course.description}}</p>
     </a>
 </template>
 

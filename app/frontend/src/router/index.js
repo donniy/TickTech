@@ -19,6 +19,11 @@ const routerOptions = [
         },
     },
     {
+        path: '/home/',
+        name: 'userhome',
+        component: 'UserHome',
+    },
+    {
         path: '/course/:course_id',
         name: 'CourseTickets',
         component: 'CourseTickets',
