@@ -40,7 +40,7 @@ export default {
         getLabels() {
             const path = '/api/labels/' + this.$route.params.course_id
             this.$ajax.get(path, response => {
-                this.labels = response.data.json_list
+                this.labels = response.data.json_data
             })
         },
         createLabel() {
@@ -48,7 +48,7 @@ export default {
             this.$ajax.post(path, {
                 name: this.new_label_name
             }, response => {
-                this.tickets = response.data.json_list
+                this.tickets = response.data.json_data
                 this.new_label_name = ''
                 this.getLabels()
             })
