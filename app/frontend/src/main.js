@@ -144,6 +144,7 @@ Vue.prototype.$user = {
 
   logout: () => {
     $cookies.remove('user');
+    $cookies.remove('token');
     router.go('/');
   },
 

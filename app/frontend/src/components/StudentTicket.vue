@@ -30,7 +30,7 @@ export default {
             reply: '',
             messages: [],
             ret_url: '',
-            user: null //window.$user.get()
+            user: null
         }
     },
     methods: {
