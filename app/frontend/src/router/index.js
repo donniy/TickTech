@@ -58,11 +58,6 @@ const routerOptions = [
         component: 'Labels'
     },
     {
-        path: '/ta/:ta_id',
-        name: 'TAInbox',
-        component: 'TA_Inbox'
-    },
-    {
         path: '/student/ticket/:ticket_id',
         name: 'StudentTicket',
         component: 'StudentTicket',
