@@ -19,7 +19,7 @@ test flask:
     script:
         - make test-backend
 
-validate python code style:
+pycodestyle:
     stage: test
     script:
         - make validate-backend
