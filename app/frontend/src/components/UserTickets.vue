@@ -18,7 +18,7 @@
               </template>
     	</div>
     	<div>
-    		<b-button class="create-button" href="/form">New ticket</b-button>
+    		<b-button class="create-button" href="/ticket/submit">New ticket</b-button>
     	</div>
     </div>
 </template>

@@ -11,12 +11,9 @@
         <message v-bind:user="user" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
 
         <form v-on:submit.prevent="sendReply" class="reply-area">
-            <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
-            <button class="reply-button btn btn-primary">
-                    <i class="material-icons">
-                        send
-                    </i>
-                </button>
+            <h4>Provide additional information</h4>
+            <textarea v-model="reply" rows="6" placeholder="Schrijf een reactie..."></textarea>
+            <button class="btn btn-primary">Submit reaction</button>
         </form>
     </div>
 </template>
@@ -33,7 +30,7 @@ export default {
             reply: '',
             messages: [],
             ret_url: '',
-            user: null
+            user: this.$user.get()
         }
     },
     methods: {
@@ -70,7 +67,7 @@ export default {
         }
     },
     mounted: function () {
-        this.user = this.$user.get().id;
+        this.user = this.$user.get();
         this.ret_url = '/user/' + this.user;
         console.log("id: " + this.user);
         console.log(this.ret_url)
@@ -90,6 +87,7 @@ export default {
             console.log("Socket connection!")
         },
         messageAdded: function (data) {
+            console.log("message added!")
             console.log(data)
             this.messages.push(data)
             document.body.scrollTop = document.body.scrollHeight;

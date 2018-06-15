@@ -50,12 +50,17 @@ const routerOptions = [
         },
     },
     {
-        path: '/form/',
-        name: 'AskAQuestion',
+        path: '/ticket/submit/',
+        name: 'SubmitTicket',
         component: 'StudentForm',
         meta: {
             breadcrumb: 'Create Ticket'
         },
+    },
+    {
+        path: '/ticket/:ticket_id',
+        name: 'SingleTicket',
+        component: 'SingleTicket',
     },
     {
         path: '/team/',
