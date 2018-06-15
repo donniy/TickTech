@@ -109,6 +109,10 @@ export default {
         }
     },
     mounted() {
+        if (!this.$user.logged_in()) {
+            this.$router.push('/login')
+        }
+
         const pathLabels = '/api/labels';
         const pathCourses = '/api/courses';
 

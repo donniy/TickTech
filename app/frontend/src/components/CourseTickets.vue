@@ -161,6 +161,9 @@ export default {
         }
     },
     mounted: function () {
+        if (!this.$user.logged_in()) {
+            this.$router.push('/login')
+        }
         this.created()
     },
     components: {

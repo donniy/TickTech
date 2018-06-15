@@ -49,7 +49,7 @@ export default {
                         password: "JWT is cool!!!"
                     }, response => {
                         // TODO: Implement authentication on back-end to work with Canvas.
-                        this.$cookies.set('token', response.data.access_token);
+                        window.$cookies.set('token', response.data.access_token);
                         this.form.username = '';
                         this.$ajax.get('/api/user/retrieve', response => {
 
@@ -71,8 +71,8 @@ export default {
         if (this.$user.logged_in()) {
             this.$router.back();
         } else {
-            this.$cookies.remove('token');
-            this.$cookies.remove('user');
+            window.$cookies.remove('token');
+            window.$cookies.remove('user');
         }
     }
 }

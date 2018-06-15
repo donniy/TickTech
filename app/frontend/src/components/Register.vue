@@ -148,7 +148,7 @@ export default {
             this.$ajax.post(path, {username: this.form.studentid,
                                    password: "JWT is cool!!!"}, response => {
                 // TODO: Implement authentication on backend work with Canvas.
-                this.$cookies.set('token', response.data.access_token);
+                window.$cookies.set('token', response.data.access_token);
                 console.log(response);
                 this.$ajax.get('/api/user/retrieve', response => {
                     if(this.$user.set(response.data.user))
