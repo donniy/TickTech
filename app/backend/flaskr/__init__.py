@@ -13,6 +13,7 @@ from flask_jwt import JWT
 from . import login
 import poplib
 from mail.thread import MailThread
+from datetime import timedelta
 
 
 db = database.db
@@ -42,6 +43,9 @@ def create_app(test_config=None):
     app.config['WTF_CSRF_CHECK_DEFAULT'] = False
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    # Make user logged in for 1 day.
+    app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=86400)
 
     csrf = CSRFProtect(app)
 
