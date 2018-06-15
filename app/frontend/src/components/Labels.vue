@@ -1,16 +1,15 @@
 <template>
     <div>
+
         <div>
-            <section>
-                <h1>{{course.title}} labels</h1>
+            <h1>{{course.title}} labels</h1>
 
-                <div class="addLabelWrapper">
-                    <input v-model="new_label_name" class="addLabelInput"></input>
-                    <button v-on:click="createLabel" class="labelbutton btn">Add label</button>
-                </div>
-
-            </section>
+            <div class="addLabelWrapper">
+                <input v-model="new_label_name" class="addLabelInput"></input>
+                <button v-on:click="createLabel" class="labelbutton btn">Add label</button>
+            </div>
         </div>
+
 
         <div class="labelContainer">
             <myLabel v-for="label in labels" v-bind:key="label.label_id" v-bind:label="label"></myLabel>

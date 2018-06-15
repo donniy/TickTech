@@ -2,6 +2,7 @@ from flaskr import database, Iresponse, request
 from flaskr.models.ticket import TicketLabel
 from flaskr.models.Label import Label
 from flaskr.models.Course import Course
+from flaskr.models.user import User
 from . import apiBluePrint
 import uuid
 
@@ -65,3 +66,29 @@ def create_labels(course_id):
     course.labels.append(new_label)
     database.db.session.commit()
     return Iresponse.create_response("", 200)
+
+@apiBluePrint.route('/labels/<label_id>/select', methods=['POST'])
+def selectLabel(label_id):
+    user = User.query.get(123123123)
+    label = Label.query.get(label_id)
+    user.labels.append(label)
+    database.db.session.add(user)
+    database.db.session.commit()
+
+    return Iresponse.create_response("", 200)
+
+@apiBluePrint.route('/labels/<label_id>/deselect', methods=['POST'])
+def deselectLabel(label_id):
+    user = User.query.get(123123123)
+    label = Label.query.get(label_id)
+    user.labels.remove(label)
+    database.db.session.add(user)
+    database.db.session.commit()
+
+    return Iresponse.create_response("", 200)
+
+@apiBluePrint.route('/labels/<label_id>/selected', methods=['GET'])
+def labelSelected(label_id):
+    user = User.query.get(123123123)
+    label = Label.query.get(label_id)
+    return Iresponse.create_response({'bool': label in user.labels}, 200)

@@ -10,8 +10,9 @@ class Label(db.Model):
     """
     Een Label.
     """
-    label_id = db.Column(UUIDType(binary=False), default=0, nullable=False,
-                         primary_key=True)
+
+    __tablename__ = 'label'
+    label_id = db.Column(UUIDType(binary=False), default=0, nullable=False, primary_key=True)
     label_name = db.Column(db.Text, nullable=False, unique=False)
 
     @property

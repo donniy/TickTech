@@ -5,7 +5,8 @@
                 <i class="material-icons"> close </i>
             </button>
 
-            <button class="label-name" data-toggle="tooltip"
+            <button class="label-name" v-bind:class="{'label-name-selected': isSelected}"
+                    data-toggle="tooltip" @click="clickLabel"
                     title="Select to receive tickets from this label ">
                 <h3>{{label.label_name}}</h3>
             </button>
@@ -23,7 +24,8 @@
       props: ['label'],
       data: function () {
           return {
-              showModal: false
+              showModal: false,
+              isSelected: false
           };
       },
       methods: {
@@ -31,7 +33,32 @@
               const path = '/api/labels/' + this.label.label_id + '/close'
               this.$ajax.post(path, response => {this.showModal = false})
               this.$parent.getLabels()
+          },
+          clickLabel() {
+              if (this.isSelected)
+                  this.deselectLabel()
+              else
+                  this.selectLabel()
+          },
+          selectLabel() {
+              const path = '/api/labels/' + this.label.label_id + '/select'
+              this.$ajax.post(path, {user_id: this.$user.get().id})
+              this.isSelected = true
+          },
+          deselectLabel() {
+              const path = '/api/labels/' + this.label.label_id + '/deselect'
+              this.$ajax.post(path, {user_id: this.$user.get().id})
+              this.isSelected = false
+          },
+          checkSelected() {
+              const path = '/api/labels/' + this.label.label_id + '/selected'
+              this.$ajax.get(path, {user_id: this.$user.get().id}, response => {
+                  this.isSelected = response.data.json_data.bool
+              })
           }
+      },
+      mounted: function () {
+          this.checkSelected()
       },
       components: {
           'modal' : Modal
