@@ -23,19 +23,19 @@ const routerOptions = [
         component: 'mytickets',
     },
     {
-        path: '/ticket/:ticket_id',
-        name: 'SingleTicket',
-        component: 'SingleTicket',
-    },
-    {
         path: '/user/:user_id',
         name: 'UserTickets',
         component: 'UserTickets',
     },
     {
-        path: '/form/',
-        name: 'AskAQuestion',
+        path: '/ticket/submit/',
+        name: 'SubmitTicket',
         component: 'StudentForm',
+    },
+    {
+        path: '/ticket/:ticket_id',
+        name: 'SingleTicket',
+        component: 'SingleTicket',
     },
     {
         path: '/team/',

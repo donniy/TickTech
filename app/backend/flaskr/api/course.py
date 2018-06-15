@@ -7,7 +7,7 @@ from flaskr.models.user import *
 from flaskr.request_processing import courses as rp_courses
 
 
-@apiBluePrint.route('/courses/<course_id>', methods=['GET'])
+@apiBluePrint.route('/courses/single/<course_id>', methods=['GET'])
 def retreive_course(course_id):
     course = Course.query.get(course_id)
     return Iresponse.create_response(course.serialize, 200)
@@ -42,7 +42,7 @@ def retrieve_all_courses():
 
 
 # remember to add file in __init__
-@apiBluePrint.route('/courses/<user_id>', methods=['GET'])
+@apiBluePrint.route('/courses/user/<user_id>', methods=['GET'])
 def retrieve_courses(user_id):
     # TODO get courses from LTI api
     # TODO put user id in data and not in link
