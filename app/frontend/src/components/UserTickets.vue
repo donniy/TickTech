@@ -43,9 +43,9 @@
     			this.status = 'getting tickets'
     			const path = '/api/user/' + this.$route.params.user_id + '/tickets'
     			this.$ajax.get(path).then(response => {
-    				this.tickets = response.data.json_list
+    				this.tickets = response.data.json_data
     				this.status = 'Retrieved data'
-    				console.log(response.data.json_list)
+    				console.log(response.data.json_data)
     				console.log(response)
     			}).catch(error => {
     				console.log(error)

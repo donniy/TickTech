@@ -123,7 +123,7 @@ export default {
                     let currLabelPath = pathLabels + '/' + courseid
                     this.$ajax.get(currLabelPath)
                         .then(response => {
-                            this.categories.labels[courseid] = response.data.json_list
+                            this.categories.labels[courseid] = response.data.json_data
                             console.log(this.categories.labels[courseid])
                         }).catch(error => {
                             console.log(error)
@@ -141,8 +141,8 @@ export default {
         this.$ajax.get(pathLabels)
             .then(response => {
                 console.log
-                for (let i = 0; i < response.data.json_list.length; i++) {
-                    let elem = response.data.json_list[i];
+                for (let i = 0; i < response.data.json_data.length; i++) {
+                    let elem = response.data.json_data[i];
                     if (this.categories.labels[elem.course_id])
                         this.categories.labels[elem.course_id].push({
                             value: elem.name,
