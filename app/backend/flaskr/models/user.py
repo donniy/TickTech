@@ -20,7 +20,6 @@ class User(db.Model):
     id = db.Column(db.Integer, nullable=False, primary_key=True)  # student ID
     name = db.Column(db.String(120), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=False, nullable=True)
-    is_supervisor = db.Column(db.Boolean, unique=False, default=False)
     labels = db.relationship("Label", secondary=association_table)
 
     # Dit is een soort toString zoals in Java, voor het gebruiken van de
@@ -39,7 +38,6 @@ class User(db.Model):
             'name': self.name,
             'id': self.id,
             'email': self.email,
-            'supervisor': self.is_supervisor,
         }
 
     @property
