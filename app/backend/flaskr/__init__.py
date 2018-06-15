@@ -123,6 +123,7 @@ def create_app(test_config=None):
 
     @socketio.on('setup-email')
     def setup_mail(data):
+        emit('setup-email', {'result': 'update', 'data': "recieved data"})
         print("recieve data")
         print(data)
         email = data['email']

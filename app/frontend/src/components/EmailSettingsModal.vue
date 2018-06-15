@@ -43,6 +43,9 @@
                         </button>
                     </div>
                 </div>
+                <div class="subheading-middle" v-show="isLoading">
+                    <Circle8></Circle8>
+                </div>
             </slot>
           </div>
         </div>
@@ -52,114 +55,116 @@
 </template>
 
 <script>
+import {Circle8} from 'vue-loading-spinner'
+
   export default {
-      props: ['warning'],
-      data: function () {
-          return {
-              form: {
-                  email: "",
-                  password: "",
-                  pop: "",
-                  port: "995",
-                  course_id: this.$route.params.course_id
-              },
-              button: {
-                  text: "Start"
-              },
-              isRunning: false,
-              error: {
-                  show: false,
-                  text: ""
-              }
-
-          };
-      },
-      methods: {
-        changeClose() {
-            this.error.show = false
-            const path = '/api/email'
-            // this.$ajax.post(path, this.form).then(response => {
-            //     if (response.status == 201){
-            //         this.$parent.showEmailModal = false
-            //     }
-            //     if (response.status == 200){
-            //         this.error.show = true
-            //         this.error.text = response.data.json_data
-            //     }
-            // }).catch(error => {
-            //     console.log(error)
-            // })
-            console.log("i will now emit")
-            this.$socket.emit('setup-email', {
-                email: this.form.email,
-                password: this.form.password,
-                pop: this.form.pop,
-                port: this.form.port,
-                course_id: this.form.course_id
-            })
-        },
-        stopThread() {
-            const path = '/api/email/stop'
-            this.$ajax.post(path, this.form, response => {
-                if (response.status == 201){
-                    this.$parent.showEmailModal = false
-                }
-                if (response.status == 200){
-                    this.error.show = true
-                    this.error.text = response.data.json_data
-                }
-            })
-        }
-      },
-      beforeCreate: function () {
-          // Get the current email settings from server
-          const path = '/api/email/' + this.$route.params.course_id + '/settings'
-          this.$ajax.get(path, response => {
-              // TODO: Implement authentication on back-end to work with Canvas.
-              if (response.status == 201){
-                  if (response.data.json_data.email != null){
-                      this.form.email = response.data.json_data.email
-                  }
-                  if (response.data.json_data.password != null){
-                      this.form.password = response.data.json_data.password
-                  }
-                  if (response.data.json_data.pop != null){
-                      this.form.pop = response.data.json_data.pop
-                  }
-                  if (response.data.json_data.port != null){
-                      this.form.port = response.data.json_data.port
-                  }
-
-                  if (response.data.json_data.running){
-                      this.button.text = "Update"
-                      this.isRunning = true
-
-                  }
-              }
-
-              if (response.status == 200){
-                  this.error.show = true
-                  this.error.text = response.data.json_data
-              }
-          });
-      },
-      sockets: {
-          'setup-email': function (data) {
-              console.log(data)
-              console.log(data.result)
-              console.log(data.result == 'fail')
-              if (data.result == 'succes'){
-                  console.log("SUCCES")
-                  this.$parent.showEmailModal = false
-              }
-              if(data.result == 'fail'){
-                  console.log('fail')
-                  this.error.show = true
-                  this.error.text = data.data
-              }
-              console.log("finished")
+    props: ['warning'],
+    data: function () {
+      return {
+          form: {
+              email: "",
+              password: "",
+              pop: "",
+              port: "995",
+              course_id: this.$route.params.course_id
+          },
+          button: {
+              text: "Start"
+          },
+          isRunning: false,
+          isLoading: false,
+          error: {
+              show: false,
+              text: ""
           }
+
+      };
+    },
+    methods: {
+    changeClose() {
+        this.error.show = false
+        const path = '/api/email'
+        console.log("i will now emit")
+        this.isLoading = true
+        this.$socket.emit('setup-email', {
+            email: this.form.email,
+            password: this.form.password,
+            pop: this.form.pop,
+            port: this.form.port,
+            course_id: this.form.course_id
+        })
+    },
+    stopThread() {
+        const path = '/api/email/stop'
+        this.$ajax.post(path, this.form, response => {
+            if (response.status == 201){
+                this.$parent.showEmailModal = false
+            }
+            if (response.status == 200){
+                this.error.show = true
+                this.error.text = response.data.json_data
+            }
+        })
+    }
+    },
+    beforeCreate: function () {
+      // Get the current email settings from server
+      const path = '/api/email/' + this.$route.params.course_id + '/settings'
+      this.$ajax.get(path, response => {
+          // TODO: Implement authentication on back-end to work with Canvas.
+          if (response.status == 201){
+              if (response.data.json_data.email != null){
+                  this.form.email = response.data.json_data.email
+              }
+              if (response.data.json_data.password != null){
+                  this.form.password = response.data.json_data.password
+              }
+              if (response.data.json_data.pop != null){
+                  this.form.pop = response.data.json_data.pop
+              }
+              if (response.data.json_data.port != null){
+                  this.form.port = response.data.json_data.port
+              }
+
+              if (response.data.json_data.running){
+                  this.button.text = "Update"
+                  this.isRunning = true
+
+              }
+          }
+
+          if (response.status == 200){
+              this.error.show = true
+              this.error.text = response.data.json_data
+          }
+      });
+    },
+    sockets: {
+      'setup-email': function (data) {
+          if (data.result != "update"){
+              this.isLoading = false
+          }
+          else{
+              console.log(data.data)
+          }
+          console.log("recieve data")
+          console.log(data)
+          console.log(data.result)
+          if (data.result == 'succes'){
+              console.log("SUCCES")
+              this.$parent.showEmailModal = false
+          }
+          if(data.result == 'fail'){
+              console.log('fail')
+              this.error.show = true
+              this.error.text = data.data
+          }
+          console.log("finished")
       }
+    },
+    components: {
+          Circle8
+    }
 }
 </script>
 <style>
