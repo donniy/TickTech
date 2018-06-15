@@ -89,7 +89,7 @@ export default {
             this.$ajax.post(path, this.form)
                 .then(response => {
                     this.$router.push({
-                        name: 'StudentViewTicket',
+                        name: 'StudentTicket',
                         params: {
                             ticket_id: response.data.json_data.ticketid
                         }
@@ -121,7 +121,7 @@ export default {
                 for (let i = 0; i < this.categories.courses.length; i++) {
                     let courseid = this.categories.courses[i].id
                     let currLabelPath = pathLabels + '/' + courseid
-                    axios_csrf.get(currLabelPath)
+                    this.$ajax.get(currLabelPath)
                         .then(response => {
                             this.categories.labels[courseid] = response.data.json_list
                             console.log(this.categories.labels[courseid])
