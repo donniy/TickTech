@@ -5,7 +5,7 @@
             <h1>{{course.title}} labels</h1>
 
             <div class="addLabelWrapper">
-                <input v-model="new_label_name" class="addLabelInput"></input>
+                <input v-model="new_label_name" class="addLabelInput" />
                 <button v-on:click="createLabel" class="labelbutton btn">Add label</button>
             </div>
         </div>
@@ -54,6 +54,9 @@ export default {
         }
     },
     mounted: function() {
+        if (!this.$user.logged_in()) {
+            this.$router.push('/login')
+        }
         this.getCourse()
         this.getLabels()
     },

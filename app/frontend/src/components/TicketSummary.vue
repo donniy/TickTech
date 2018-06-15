@@ -1,7 +1,7 @@
 <template>
     <transition name="modal">
         <div class="summary-container">
-            <button type="button" aria-label="Close"class="btn btn-primary close-sum" @click="$emit('close')">
+            <button type="button" aria-label="Close" class="btn btn-primary close-sum" @click="$emit('close')">
                  <span aria-hidden="true">&times;</span>
             </button>
             <div class="summary-wrapper">

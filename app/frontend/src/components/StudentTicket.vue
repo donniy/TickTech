@@ -67,10 +67,11 @@ export default {
         }
     },
     mounted: function () {
+        if (!this.$user.logged_in()) {
+            this.$router.push('/login')
+        }
         this.user = this.$user.get();
-        this.ret_url = '/user/' + this.user;
-        console.log("id: " + this.user);
-        console.log(this.ret_url)
+        this.ret_url = '/user/tickets'
         this.getTicket();
         this.getMessages();
         this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id});
