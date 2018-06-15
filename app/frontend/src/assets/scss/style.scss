@@ -25,8 +25,7 @@ h1 {
 }
 
 .navbar-tiktech {
-    background-color: #FFF;
-    box-shadow: $medium-shadow;
+    box-shadow: 0 15px 35px rgba(50,50,93,.1),0 5px 15px rgba(0,0,0,.07);
     border: none;
     position: fixed;
     top: 0;
@@ -70,23 +69,6 @@ nav {
 
 .home-right {
     margin-right: 25vh
-}
-
-.form-header {
-    text-indent: 0.5em;
-    line-height: 1.5;
-    opacity: 0.8;
-}
-
-.material-form {
-    background-color: #FFF;
-    padding: 18px;
-    border-radius: 4px;
-    box-shadow: $medium-shadow;
-}
-
-.form-text {
-    opacity: 0.7;
 }
 
 .scroll-button {
@@ -378,6 +360,15 @@ a.list-ticket:hover, a.list-ticket:focus {
     color: white !important;
 }
 
+
+.reply-area {
+    width: 100%;
+    bottom: 1em;
+    display: flex;
+    margin-top: 2em;
+    margin-bottom: 4em;
+}
+
 .message {
     margin-top: 1em;
 }
@@ -435,25 +426,14 @@ a.list-ticket:hover, a.list-ticket:focus {
     color: white;
 
 }
-
-// Reply area is the part of the messaging system that contains
-// the input field and the submit button.
-.reply-area {
-    width: 100%;
-    bottom: 1em;
-    display: block;
-    margin-top: 2em;
-    margin-bottom: 4em;
-}
-
 .reply-area {
     textarea {
-        box-shadow: $light-shadow;
+        box-shadow: 0 2px 4px 0 rgba(50,50,93,.1);
         border: 0;
+        flex-grow: 4;
         resize: none;
+        height: 4em;
         padding: 0.5em;
-        width: 100%;
-        margin-bottom: 1em;
     }
 
     .reply-button {
@@ -463,12 +443,7 @@ a.list-ticket:hover, a.list-ticket:focus {
         text-align: center;
         line-height: 4rem;
         font-size: 1.5em;
-        box-shadow: $light-shadow;
     }
-}
-
-hr {
-    border-color: $default-red;
 }
 
 .summary-container {
@@ -486,7 +461,6 @@ hr {
   padding-bottom: 10px;
   margin-left: -40%;
 }
-
 .summary-header{
     h3 {
         font-size: 1.4em;

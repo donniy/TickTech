@@ -39,7 +39,7 @@ import VueBreadcrumbs from 'vue-breadcrumbs'
               path_list: []
           };
       },
-      mounted: function () {
+      mounted: () => {
           console.log("navbar user: " + this.$user)
       },
       methods: {
