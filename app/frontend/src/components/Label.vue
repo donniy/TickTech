@@ -52,7 +52,7 @@
           },
           checkSelected() {
               const path = '/api/labels/' + this.label.label_id + '/selected'
-              this.$ajax.get(path, {user_id: this.$user.get().id}, response => {
+              this.$ajax.post(path, {user_id: this.$user.get().id}, response => {
                   this.isSelected = response.data.json_data.bool
               })
           }
