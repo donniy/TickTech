@@ -3,7 +3,10 @@ import Label from '../../../src/components/Label.vue'
 
 const factory = (values = {}) => {
     return mount(Label, {
-        propsData: { ...values  }
+        propsData: { ...values  },
+        methods: {
+            checkSelected: function () {return}
+        }
     })
 }
 
