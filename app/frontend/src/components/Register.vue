@@ -37,7 +37,7 @@
                                 v-model="form.password"
                                 type="password"
                                 placeholder="Password">
-                            </br>
+                            <br />
 
                             <input
                                 id="password_confirmation"

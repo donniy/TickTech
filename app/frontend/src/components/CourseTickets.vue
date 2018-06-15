@@ -52,7 +52,7 @@
             @close="showSum = false, ticketSum = 0"
             v-for="ticket in tickets"
             v-if="ticket.id == ticketSum"
-            v-bind:key="ticketSum"
+            v-bind:key="ticket.id"
             v-bind:ticket="ticket">
         </summodal>
     </div>

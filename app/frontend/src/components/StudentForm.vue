@@ -25,7 +25,7 @@
                         <label for="course">Course</label>
                         <select id="course" v-validate="''" class="form-control custom-select" v-model="form.courseid">
                             <option disabled value="">Please select a course</option>
-                            <option v-for="obj in categories.courses" v-bind:value="obj.id">
+                            <option v-for="obj in categories.courses" v-bind:key="obj.id" v-bind:value="obj.id">
                             {{ obj.title }}
                             </option>
                         </select>
@@ -35,7 +35,7 @@
                         <label for="category">Category</label>
                         <select id="category" v-validate="''" class="form-control custom-select" v-model="form.labelid">
                             <option disabled value="">Label this question</option>
-                            <option v-for="option in categories.labels[form.courseid]" v-bind:value="option.label_id">{{ option.label_name }}</option>
+                            <option v-for="option in categories.labels[form.courseid]" v-bind:key="option.label_id" v-bind:value="option.label_id">{{ option.label_name }}</option>
                         </select>
                         <small class="form-text">Selecting a category is optional, but can help assign your question to the right person.</small>
 
