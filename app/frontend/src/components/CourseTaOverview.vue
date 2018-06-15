@@ -1,6 +1,4 @@
 <template>
-
-
 <div>
   <user v-for="user in users" v-bind:user="user">
     </user>
@@ -26,7 +24,7 @@ export default {
         }
     },
     mounted: function (){
-        const path = '/api/courses/' + this.$route.params.course_id + '/students'
+        const path = '/api/courses/' + this.$route.params.course_id + '/tas'
         this.$ajax.get(path)
             .then(response => {
                 this.users = response.data.json_data

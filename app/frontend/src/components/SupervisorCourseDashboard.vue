@@ -4,7 +4,7 @@
     <b-button class="dashboard-button" v-on:click="studentView">
       students
     </b-button>
-    <b-button class="dashboard-button">
+    <b-button class="dashboard-button" v-on:click="taView">
       teaching assistants
     </b-button>
     <b-button class="dashboard-button" v-on:click="emailSettings">
@@ -50,6 +50,9 @@ export default {
         studentView() {
             this.$router.push('/course/' + this.$route.params.course_id + '/students')
         },
+        taView () {
+            this.$router.push('/course/' + this.$route.params.course_id + '/tas')
+        }
     },
     components: {
         'emodal': EmailModal,

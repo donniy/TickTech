@@ -60,3 +60,14 @@ def get_course_tas(course_id):
     course = Course.query.get(course_id)
     tas = course.ta_courses
     return Iresponse.create_response(database.serialize_list(tas), 200)
+
+@apiBluePrint.route('/courses/<course_id>/students', methods=['GET'])
+def get_course_students(course_id):
+    course = Course.query.get(course_id)
+    print(course_id)
+    if course is None:
+        return Iresponse.create_response("", 404)
+    print(course.student_courses)
+    return Iresponse.create_response(
+        database.serialize_list(course.student_courses),
+        200)

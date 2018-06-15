@@ -68,6 +68,11 @@ const routerOptions = [
         component: 'CourseStudentOverview'
     },
     {
+        path: '/course/:course_id/tas',
+        name: 'CourseTaOverview',
+        component: 'CourseTaOverview'
+    },
+    {
         path: '/course/:course_id/labels',
         name: 'Labels',
         component: 'Labels'
