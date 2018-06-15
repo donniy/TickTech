@@ -23,7 +23,7 @@ const routerOptions = [
         component: 'mytickets',
     },
     {
-        path: '/user/:user_id',
+        path: '/user/tickets',
         name: 'UserTickets',
         component: 'UserTickets',
     },

@@ -64,6 +64,10 @@
       },
       mounted: function() {
         this.created()
+
+        if (!this.$user.logged_in()) {
+            this.$router.push('/login')
+        }
       },
       components: {
         'course': Course,
