@@ -1,12 +1,14 @@
 <template>
     <div id="app">
         <navbar v-bind:transparent="navbarTransparent" v-bind:active="active"></navbar>
-        <div v-if="isHome" class="container-fluid first-background-image">
+        <div v-if="isHome" class="container-fluid">
             <router-view />
         </div>
-        <div v-else="isHome" class="container">
+        <div v-else="isHome" class="container-fluid second-background-image">
             <div class="navbar-spacing"></div>
-            <router-view />
+            <div class="container">
+                <router-view />
+            </div>
         </div>
     </div>
 </template>

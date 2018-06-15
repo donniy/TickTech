@@ -24,6 +24,17 @@ h1 {
     opacity: 0.7;
 }
 
+.second-background-image {
+    background-image: url(../trianglify.svg);
+    background-size: 100%;
+    background-position: center;
+    min-height: 100vh;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
 .navbar-tiktech {
     background-color: #FFF;
     box-shadow: $medium-shadow;
@@ -332,6 +343,7 @@ a.list-course:hover, a.list-course:focus {
     color: white !important;
 }
 div.notification-container {
+    background-color: rgba(255,255,255,.5);
     box-shadow: 0 2px 4px 0 rgba(50,50,93,.1);
     height: 100%;
     max-height:60vh;
