@@ -35,6 +35,10 @@ h1 {
     background-size: cover;
 }
 
+.navbar {
+    min-height: 68px;
+}
+
 .navbar-tiktech {
     background-color: #FFF;
     box-shadow: $medium-shadow;
@@ -258,6 +262,34 @@ header.masthead {
 
 }
 
+.breadcrumb {
+    background-color: inherit;
+    list-style: none;
+    display: flex;
+    border: none;
+    background-color: inherit;
+    margin: auto;
+    padding: auto;
+
+    & .breadcrumb-item {
+        border: none;
+        background-color: inherit;
+
+        & > .breadcrumb-link {
+            background-color: inherit;
+            border: none;
+            font-weight: 600;
+            transition: all 0.4s ease;
+            // transition: color 0.5s ease;
+
+            &:hover {
+                background-color: #bc0031;
+                color: whitesmoke;
+            }
+        }
+    }
+}
+
 .btn {
     border-radius: 0;
 }
@@ -390,6 +422,7 @@ a.list-ticket:hover, a.list-ticket:focus {
     transform: translate(0.5em);
     color: white !important;
 }
+
 
 .notification {
     text-align: center;
