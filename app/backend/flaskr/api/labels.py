@@ -68,6 +68,7 @@ def create_labels(course_id):
     database.db.session.commit()
     return Iresponse.create_response("", 200)
 
+
 @apiBluePrint.route('/labels/<label_id>/select', methods=['POST'])
 def selectLabel(label_id):
     json_data = request.get_json()
@@ -83,6 +84,7 @@ def selectLabel(label_id):
     database.db.session.commit()
     return Iresponse.create_response("", 200)
 
+
 @apiBluePrint.route('/labels/<label_id>/deselect', methods=['POST'])
 def deselectLabel(label_id):
     json_data = request.get_json()
@@ -97,6 +99,7 @@ def deselectLabel(label_id):
     database.db.session.add(user)
     database.db.session.commit()
     return Iresponse.create_response("", 200)
+
 
 @apiBluePrint.route('/labels/<label_id>/selected', methods=['POST'])
 def labelSelected(label_id):

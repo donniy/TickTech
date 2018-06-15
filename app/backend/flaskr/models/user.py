@@ -5,9 +5,11 @@ from sqlalchemy_utils import UUIDType
 db = database.db
 
 association_table = db.Table('association', db.Model.metadata,
-    db.Column('left_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('right_id', UUIDType(binary=False), db.ForeignKey('label.label_id'))
-)
+                             db.Column('left_id', db.Integer,
+                                       db.ForeignKey('user.id')),
+                             db.Column('right_id', UUIDType(binary=False),
+                                       db.ForeignKey('label.label_id')))
+
 
 class User(db.Model):
 
