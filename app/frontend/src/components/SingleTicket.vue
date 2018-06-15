@@ -33,7 +33,11 @@
                 <form v-on:submit.prevent="sendReply" class="reply-area">
                     <h4>Respond</h4>
                     <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
-                    <button class="btn btn-primary">Submit</button>
+                    <button class="reply-button btn btn-primary">
+                            <i class="material-icons">
+                                send
+                            </i>
+                        </button>
                 </form>
             </div>
             <div class="col-md-4 col-sm-4 col-lg-4 col-xs-12">
@@ -224,6 +228,7 @@ export default {
         },
     },
     mounted: function () {
+        this.user_id = this.$user.get().id
         this.getTicket()
         this.getMessages()
         this.getNotes()

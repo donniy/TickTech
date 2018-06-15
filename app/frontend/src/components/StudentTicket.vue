@@ -30,7 +30,7 @@ export default {
             reply: '',
             messages: [],
             ret_url: '',
-            user: null //window.$user.get()
+            user: this.$user.get()
         }
     },
     methods: {
@@ -67,7 +67,7 @@ export default {
         }
     },
     mounted: function () {
-        this.user = this.$user.get().id;
+        this.user = this.$user.get();
         this.ret_url = '/user/' + this.user;
         console.log("id: " + this.user);
         console.log(this.ret_url)
@@ -87,6 +87,7 @@ export default {
             console.log("Socket connection!")
         },
         messageAdded: function (data) {
+            console.log("message added!")
             console.log(data)
             this.messages.push(data)
             document.body.scrollTop = document.body.scrollHeight;
