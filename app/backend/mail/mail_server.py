@@ -3,7 +3,6 @@ from time import sleep
 import email
 import poplib
 import requests
-import socket
 
 '''
 Rabbitmqueue: Message mpass system between flask en mail server

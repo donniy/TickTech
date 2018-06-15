@@ -3,11 +3,8 @@ from flaskr.models.Course import Course
 from flaskr import database, Iresponse
 from flaskr.request_processing import ticket as rp_ticket
 from flask import escape, request, jsonify
-import poplib
 from mail.thread import MailThread
-import time
-from threading import Thread
-from flask_socketio import emit
+import poplib
 
 
 # @apiBluePrint.route('/email', methods=['POST'])
