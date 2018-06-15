@@ -85,3 +85,9 @@ class MailThread(Thread):
             if (thread.getName() == course_id):
                 return thread
         return None
+
+    def exist_thread_email(email):
+        for thread in threads:
+            if (thread.email == email):
+                return True
+        return False

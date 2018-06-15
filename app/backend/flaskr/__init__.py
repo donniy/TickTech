@@ -133,6 +133,15 @@ def create_app(test_config=None):
         course_id = data['course_id']
         sleeptime = 60
 
+        print("Check if mail exists")
+        if (MailThread.exist_thread_email(email)):
+            print("mail exists")
+            emit('setup-email',
+                 {'result': 'fail', 'data': 'Email already exists'})
+            return
+        else:
+            print("mail does not exists")
+
         try:
             test_connection = poplib.POP3_SSL(server, port)
             print(test_connection)
@@ -169,7 +178,7 @@ def create_app(test_config=None):
         course.mail_port = port
         course.mail_server_url = server
         if not database.addItemSafelyToDB(course):
-            emit('setup-email', {'response': 'fail'})
+            emit('setup-email', {'result': 'fail', 'data': 'database error'})
             return
 
         print("wait for response")
