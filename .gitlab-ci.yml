@@ -3,6 +3,7 @@ cache:
         - app/frontend/node_modules
         - venv
         - app/frontend/package-lock.json
+        - app/dist
 install:
     stage: install
     script:
