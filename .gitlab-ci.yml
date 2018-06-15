@@ -5,7 +5,7 @@ cache:
         - app/frontend/package-lock.json
         - app/dist
 install:
-    stage: install
+    stage: build
     script:
         - ./INSTALL
         - make install
@@ -13,7 +13,10 @@ build:
     stage: build
     script:
         - make build
-unit test:
+test vue:
     stage: test
     script:
-        - make test
+        - make test-frontend
+test flask:
+    stage: test
+        - make test-backend
