@@ -25,9 +25,6 @@
                 <h5>Courses</h5>
                 <div class="home-scroll-courses">
                     <course v-for="course in courses" v-bind:key="course.id" v-bind:course="course"></course>
-                    <course v-for="course in courses" v-bind:key="course.id" v-bind:course="course"></course>
-                    <course v-for="course in courses" v-bind:key="course.id" v-bind:course="course"></course>
-                    <course v-for="course in courses" v-bind:key="course.id" v-bind:course="course"></course>
                 </div>
             </div>
         </div>
