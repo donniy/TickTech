@@ -59,7 +59,7 @@
 
 <script>
 
-import TicketTA from './TicketTA.vue'
+import CourseTicketRow from './CourseTicketRow.vue'
 import SumModal from './TicketSummary.vue'
 import EmailModal from './EmailSettingsModal.vue'
 
@@ -140,7 +140,7 @@ export default {
         this.created()
     },
     components: {
-        'ticket': TicketTA,
+        'ticket': CourseTicketRow,
         'emodal': EmailModal,
         'summodal': SumModal
     },

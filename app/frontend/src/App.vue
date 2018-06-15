@@ -42,7 +42,7 @@ export default {
                 this.navbarTransparent = false
                 return
             }
-            if (document.body.scrollTop > 100) {
+            if (document.body.scrollTop > 100 || window.pageYOffset > 100 || document.documentElement.scrollTop > 100) {
                 this.navbarTransparent = false
             } else {
                 this.navbarTransparent = true
