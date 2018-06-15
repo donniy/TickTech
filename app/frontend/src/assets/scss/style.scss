@@ -350,6 +350,14 @@ a.list-ticket:hover, a.list-ticket:focus {
     color: white !important;
 }
 
+.notification {
+    text-align: center;
+    opacity: 0.7;
+    font-style: italic;
+    font-size: 1.5em;
+    padding: 1em;
+}
+
 .message {
     margin-top: 1em;
 }
@@ -361,6 +369,10 @@ a.list-ticket:hover, a.list-ticket:focus {
         font-weight: bold;
         margin-left: 1em;
         margin-right: 1em;
+    }
+
+    h5 {
+        color: $default-red;
     }
 
     .material-card {

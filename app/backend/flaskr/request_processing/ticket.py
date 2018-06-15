@@ -3,6 +3,7 @@ from flask import jsonify, escape
 import uuid
 from flaskr.models.ticket import *
 from flaskr.models.Message import *
+from flaskr.utils import notifications
 
 
 def create_request(jsonData):
@@ -56,11 +57,17 @@ def create_request(jsonData):
     if not database.addItemSafelyToDB(ticket):
         return Iresponse.internal_server_error()
 
-    new_message = Message(ticket_id=ticket.id, user_id=studentid,
-                          text=message, timestamp=datetime.now(),
-                          ticket=ticket)
-    if not database.addItemSafelyToDB(new_message):
-        return Iresponse.internal_server_error()
+    try:
+        msg = notifications.notify(studentid, ticket, message, Message.NTFY_TYPE_MESSAGE)
+    except Exception as e:
+        raise e
+        return Iresponse.create_response(str(e), 400)
+#    new_message = Message(ticket_id=ticket.id, user_id=studentid,
+#                          text=message, timestamp=datetime.now(),
+#                          ticket=ticket)
+#    if not database.addItemSafelyToDB(new_message):
+#        return Iresponse.internal_server_error()
+
 
     response_body['ticketid'] = ticket.id
     response = Iresponse.create_response(response_body, 201)
