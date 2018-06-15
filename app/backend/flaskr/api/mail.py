@@ -1,6 +1,7 @@
 from . import apiBluePrint
 from flaskr.models.Course import Course
 from flaskr import database, Iresponse
+from flaskr.request_processing import ticket as rp_ticket
 from flask import escape, request, jsonify
 import poplib
 from mail.thread import MailThread
@@ -20,7 +21,7 @@ from flask_socketio import emit
 #     Recieve email settings from website. Update it in database and send to
 #     mail server.
 #     '''
-#     # Time between fetching emails
+# Time between fetching emails
 #     sleeptime = 60
 #     server = escape(request.json["pop"])
 #     port = escape(request.json["port"])
@@ -57,6 +58,18 @@ from flask_socketio import emit
 #         return Iresponse.create_response("Failed to attach to database", 412)
 #
 #     return Iresponse.create_response("wait for further instruction", 201)
+
+@apiBluePrint.route('/email/ticket/submit', methods=['POST'])
+def create_email_ticket():
+    """
+    Check ticket submission and add to database.
+    """
+    print("Create ticket")
+    # Authentication
+    jsonData = request.get_json()
+    msg = rp_ticket.create_request(jsonData)
+    print("created:", msg)
+    return msg
 
 
 @apiBluePrint.route('/email/<course_id>/settings', methods=['GET'])

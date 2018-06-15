@@ -114,7 +114,7 @@ def check_mail(host, port, user, password, courseid):
         server.quit()
         return 0
 
-    # # TEMP GET COURSE: STEPHHIE IS FIXING THIS :)
+    # TEMP GET COURSE: STEPHHIE IS FIXING THIS :)
     # courseid = None
     # result = requests.get('http://localhost:5000/api/courses')
     # if (result.status_code == 200):
@@ -123,7 +123,7 @@ def check_mail(host, port, user, password, courseid):
     # else:
     #     print("Error retrieving course id from server.")
     #     return
-    # # TEMP GET COURSE: STEPHHIE IS FIXING THIS :)
+    # TEMP GET COURSE: STEPHHIE IS FIXING THIS :)
 
     for i in range(mailcount):
         subject, body, sender, address = parse_email(server, i)
@@ -152,8 +152,9 @@ def check_mail(host, port, user, password, courseid):
             }
 
             # Add the new variables to a new ticket.
-            result = requests.post('http://localhost:5000/api/ticket/submit',
-                                   json=newticket)
+            result = requests.post(
+                        'http://localhost:5000/api/email/ticket/submit',
+                        json=newticket)
 
             if (result.status_code != 201):
                 print("Something went wrong creating a"
