@@ -1,25 +1,39 @@
-cache:
-    paths:
-        - app/frontend/node_modules
-        - venv
-        - app/frontend/package-lock.json
-        - app/dist
 build:
     stage: build
     script:
         - ./INSTALL
         - make install
         - make build
+    artifacts:
+        paths:
+            - app/frontend/node_modules
+            - venv
+            - app/frontend-package-lock.json
+            - app/dist
+    cache:
+        paths:
+            - app/frontend/node_modules
+            - venv
+            - app/frontend/package-lock.json
+            - app/dist
+
 test vue:
     stage: test
     script:
         - make test-frontend
+    dependencies:
+        - build
+
 test flask:
     stage: test
     script:
         - make test-backend
+    dependencies:
+        - build
 
 pycodestyle:
     stage: test
     script:
         - make validate-backend
+    dependencies:
+        - build
