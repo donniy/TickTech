@@ -40,7 +40,8 @@ h1 {
 }
 
 .navbar-tiktech {
-    box-shadow: 0 15px 35px rgba(50,50,93,.1),0 5px 15px rgba(0,0,0,.07);
+    background-color: #FFF;
+    box-shadow: $medium-shadow;
     border: none;
     position: fixed;
     top: 0;
@@ -422,14 +423,6 @@ a.list-ticket:hover, a.list-ticket:focus {
     color: white !important;
 }
 
-
-.reply-area {
-    width: 100%;
-    bottom: 1em;
-    display: flex;
-    margin-top: 2em;
-    margin-bottom: 4em;
-}
 
 .notification {
     text-align: center;
