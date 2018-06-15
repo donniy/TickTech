@@ -49,6 +49,7 @@ export default {
                 name: this.new_label_name
             }, response => {
                 this.tickets = response.data.json_list
+                this.new_label_name = ''
                 this.getLabels()
             })
         }

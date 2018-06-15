@@ -69,7 +69,7 @@ const routerOptions = [
     },
     {
         path: '/student/ticket/:ticket_id',
-        name: 'StudentViewTicket',
+        name: 'StudentTicket',
         component: 'StudentTicket',
     },
     {
