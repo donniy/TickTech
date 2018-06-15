@@ -32,7 +32,8 @@ def retrieve_labels(course_id):
     course = Course.query.get(course_id)
     if course is None:
         return Iresponse.create_response("", 404)
-    return database.json_list(course.labels)
+    return Iresponse.create_response(
+        database.serialize_list(course.labels), 200)
 
 
 @apiBluePrint.route('/labels/<course_id>', methods=['POST'])
