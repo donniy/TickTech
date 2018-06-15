@@ -11,11 +11,11 @@
             Email settings
         </button>
 
-        <emodal v-if="showEmail"
+        <emodal v-if="showEmailModal"
                 warning="Setup a fetcher to your mailinglist."
-                @yes="updateEmail()"
-                @close="showEmail = false">
+                @close="showEmailModal = false">
         </emodal>
+        <p v-if="email_running">EMAIL IS RUNNING</p>
 
         <select class="form-control custom-select" v-model="status_filter">
             <option> All </option>
@@ -46,7 +46,7 @@
                 </tbody>
             </table>
         </div>
-        
+
         <summodal
             @close="showSum = false, ticketSum = 0"
             v-for="ticket in tickets"
@@ -61,17 +61,18 @@
 
 import TicketTA from './TicketTA.vue'
 import SumModal from './TicketSummary.vue'
-import EmailModal from './EmailSettingsModel.vue'
+import EmailModal from './EmailSettingsModal.vue'
 
 export default {
     data () {
         return {
             ticketSum: 0,
-            showEmail: false,
             tickets: [],
             showSum: false,
             status: 'not set',
-            status_filter: 'All'
+            status_filter: 'All',
+            showEmailModal: false,
+            email_running: false
         }
     },
     methods: {
@@ -94,10 +95,10 @@ export default {
             this.$router.push(here);
         },
         emailSettings() {
-            this.showEmail = true
+            this.showEmailModal = true
         },
         updateEmail(form) {
-            this.showEmail = false
+            this.showEmailModal = false
             console.log(form)
             const path = '/api/email'
             this.$ajax.post(path, form, response => {
@@ -106,7 +107,7 @@ export default {
             })
         },
         stopEmail(form) {
-            this.showEmail = false
+            this.showEmailModal = false
             console.log(form)
             const path = '/api/email/stop'
             this.$ajax.post(path, form, response => {
@@ -117,6 +118,22 @@ export default {
         created () {
             this.status = 'created'
             this.getTickets()
+        },
+        emailRunning: function () {
+            // Get the current email settings from server
+            // console.log("Check if email is running")
+            const path = '/api/email/' + this.$route.params.course_id + '/online'
+            this.$ajax.get(path, response => {
+                // TODO: Implement authentication on back-end to work with Canvas.
+                // console.log("repsone email running")
+                // console.log(response)
+                if (response.status == 201){
+                    // console.log("Here")
+                    // console.log(response.data.json_data.running)
+                    // console.log(response)
+                    this.email_running = response.data.json_data.running
+                }
+            });
         }
     },
     mounted: function () {
@@ -126,6 +143,15 @@ export default {
         'ticket': TicketTA,
         'emodal': EmailModal,
         'summodal': SumModal
-    }
+    },
+    created: function () {
+        this.emailRunning()
+    },
+    watch: {
+        // whenever showMadel changes, this function will run
+        showEmailModal: function () {
+            this.emailRunning()
+        }
+    },
 }
 </script>

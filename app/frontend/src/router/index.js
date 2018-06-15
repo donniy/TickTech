@@ -4,7 +4,7 @@ import Router from 'vue-router'
 const routerOptions = [
     {
         path: '/',
-        name: 'Home',
+        name: 'home',
         component: 'Home',
     },
     {
@@ -38,9 +38,9 @@ const routerOptions = [
         component: 'StudentForm',
     },
     {
-        path: '/home2/',
-        name: 'Home_Secondary',
-        component: 'Home_Secondary',
+        path: '/team/',
+        name: 'Team',
+        component: 'Team',
     },
     // {
     //     path: '/ticket/:ticket_id/closeticket',
@@ -69,7 +69,7 @@ const routerOptions = [
     },
     {
         path: '/student/ticket/:ticket_id',
-        name: 'StudentViewTicket',
+        name: 'StudentTicket',
         component: 'StudentTicket',
     },
     {

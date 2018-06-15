@@ -9,16 +9,16 @@ db = database.db
 
 binded_tas_helper = db.Table(
     'ta_tracker',
-    db.Column('ticket_id', UUIDType(binary=False), db.ForeignKey('ticket.id'),
-              primary_key=True),
+    db.Column('ticket_id', UUIDType(binary=False),
+              db.ForeignKey('ticket.id'), primary_key=True),
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'),
               primary_key=True)
 )
 
 labels_helper = db.Table(
     'labels',
-    db.Column('label_id', db.Integer, db.ForeignKey('ticket_label.id'),
-              primary_key=True),
+    db.Column('label_id', db.Integer,
+              db.ForeignKey('ticket_label.id'), primary_key=True),
     db.Column('ticket_id', db.Integer, db.ForeignKey('ticket.id'),
               primary_key=True)
 )
@@ -32,6 +32,8 @@ class Ticket(db.Model):
     id = db.Column(UUIDType(binary=False), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     course_id = db.Column(UUIDType(binary=False), unique=False, nullable=False)
+
+    ta_id = db.Column(db.Integer, nullable=True)
 
     status_id = db.Column(db.Integer, db.ForeignKey(
         'ticket_status.id'), default=0, nullable=False)
@@ -67,18 +69,22 @@ class Ticket(db.Model):
     @property
     def serialize(self):
         """
-        Zet dit ticket om in json. Dit is alles wat de frontend kan zien,
-        dus zorg dat er geen gevoelige info in zit.
+        Ticket can be unassigned, so ta_id can be None.
         """
+        if self.ta_id is None:
+            self.ta_id = "null"
+
         return {
             'id': self.id,
             'user_id': self.user_id,
             'course_id': self.course_id,
+            'ta_id': self.ta_id,
             'email': self.email,
             'title': self.title,
             'timestamp': self.timestamp,
             'status': self.ticket_status.serialize,
-            'labels': database.serialize_list(self.labels)
+            'labels': database.serialize_list(self.labels),
+            'tas': database.serialize_list(self.binded_tas)
         }
 
     @property
