@@ -608,3 +608,16 @@ hr {
        border-top: 2px solid #aaaaaa;
        border-bottom: 1px solid #ffffff;
     }
+
+.dashboard-button {
+    background: #FFF;
+    //display: block;
+    box-shadow: 0 2px 4px 0 rgba(50,50,93,.1);
+    margin-bottom: 1em;
+    margin-right: 1em;
+    margin-left: 1em;
+    color: $default-red;
+    transition: transform 0.1s ease-in-out;
+    height: 180px;
+    width: 180px;
+}

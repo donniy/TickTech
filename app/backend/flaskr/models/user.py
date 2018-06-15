@@ -13,6 +13,7 @@ class User(db.Model):
     id = db.Column(db.Integer, nullable=False, primary_key=True)  # student ID
     name = db.Column(db.String(120), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=False, nullable=True)
+    is_supervisor = db.Column(db.Boolean, unique=False, default=False)
 
     # Dit is een soort toString zoals in Java, voor het gebruiken van de
     # database in de commandline. Op die manier kan je data maken en weergeven
@@ -30,6 +31,7 @@ class User(db.Model):
             'name': self.name,
             'id': self.id,
             'email': self.email,
+            'supervisor': self.is_supervisor,
         }
 
     @property

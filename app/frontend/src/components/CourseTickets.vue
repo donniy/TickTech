@@ -11,6 +11,10 @@
             Email settings
         </button>
 
+        <button class="btn btn-primary" v-on:click="dashBoard">
+          Course settings
+        </button>
+
         <emodal v-if="showEmailModal"
                 warning="Setup a fetcher to your mailinglist."
                 @close="showEmailModal = false">
@@ -56,7 +60,6 @@
         </summodal>
     </div>
 </template>
-
 <script>
 
 import TicketTA from './TicketTA.vue'
@@ -80,16 +83,16 @@ export default {
             this.status = 'getting tickets'
             const path = '/api/courses/' + this.$route.params.course_id + '/tickets'
             this.$ajax.get(path)
-            .then(response => {
-                this.tickets = response.data.json_data
-                this.status = 'Retrieved data'
-                console.log(response.data.json_data)
-                console.log(response)
-            })
-            .catch(error => {
-                console.log(error)
-                this.status = 'failed getting tickets'
-            })
+                .then(response => {
+                    this.tickets = response.data.json_data
+                    this.status = 'Retrieved data'
+                    console.log(response.data.json_data)
+                    console.log(response)
+                })
+                .catch(error => {
+                    console.log(error)
+                    this.status = 'failed getting tickets'
+                })
         },
         goLabel (here) {
             this.$router.push(here);
@@ -105,6 +108,11 @@ export default {
                 // TODO: Implement authentication on back-end to work with Canvas.
                 console.log(response)
             })
+        },
+        dashBoard () {
+            console.log("Dashboard")
+            this.$router.push('/course/' + this.$route.params.course_id + '/dashboard')
+
         },
         stopEmail(form) {
             this.showEmailModal = false

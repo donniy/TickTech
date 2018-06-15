@@ -68,11 +68,13 @@ def populate_database_dummy_data():
     course = Course.Course(id=uuid.uuid4(),
                            course_email="test@test.com",
                            title="course 1",
+                           supervisor_id=11111,
                            description="Test")
 
     course2 = Course.Course(id=uuid.uuid4(),
                             course_email="testie@test.com",
                             title="course 2",
+                            supervisor_id=11111,
                             description="Test")
 
     user1 = user.User(id=11111,

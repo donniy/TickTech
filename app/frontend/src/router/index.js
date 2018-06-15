@@ -58,6 +58,16 @@ const routerOptions = [
         component: 'Register'
     },
     {
+        path: '/course/:course_id/dashboard',
+        name: 'SupervisorCourseDashboard',
+        component: 'SupervisorCourseDashboard'
+    },
+    {
+        path: '/course/:course_id/students',
+        name: 'CourseStudentOverview',
+        component: 'CourseStudentOverview'
+    },
+    {
         path: '/course/:course_id/labels',
         name: 'Labels',
         component: 'Labels'
