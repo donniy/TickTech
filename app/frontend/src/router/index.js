@@ -27,15 +27,7 @@ const routerOptions = [
             pre: '/home'
         },
     },
-    {
-        path: '/ticket/:ticket_id',
-        name: 'SingleTicket',
-        component: 'SingleTicket',
-        meta: {
-            breadcrumb: 'Ticket',
-            pre: '/user/:user_id'
-        },
-    },
+
     {
         path: '/user/tickets',
         name: 'UserTickets',
@@ -56,6 +48,10 @@ const routerOptions = [
         path: '/ticket/:ticket_id',
         name: 'SingleTicket',
         component: 'SingleTicket',
+        meta: {
+            breadcrumb: 'Ticket',
+            pre: '/user/:user_id'
+        },
     },
     {
         path: '/team/',
