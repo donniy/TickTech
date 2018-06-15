@@ -3,11 +3,16 @@ cache:
         - app/frontend/node_modules
         - venv
         - app/frontend/package-lock.json
-unit test:
-    image: testim/node-chrome
-    stage: test
+install:
+    stage: build
     script:
         - ./INSTALL
         - make install
+build:
+    stage: build
+    script:
         - make build
+unit test:
+    stage: test
+    script:
         - make test
