@@ -1,6 +1,7 @@
 <template>
     <div>
-        <h1>Tickets in cursus {{ $route.params.course_id }}</h1>
+        <h1>Tickets</h1>
+        <h2>{{ this.course.title }}</h2>
 
         <b-button class="labelbutton:right"
             v-on:click="goLabel('/course/'+ $route.params.course_id + '/labels')">
@@ -72,7 +73,14 @@ export default {
             status: 'not set',
             status_filter: 'All',
             showEmailModal: false,
-            email_running: false
+            email_running: false,
+            course : {
+                'id': "",
+                'course_email': "",
+                'title': "",
+                'description': "",
+                'tas': []
+            }
         }
     },
     methods: {
@@ -117,6 +125,7 @@ export default {
         },
         created () {
             this.status = 'created'
+            this.getCourseInfo()
             this.getTickets()
         },
         emailRunning: function () {
@@ -134,6 +143,21 @@ export default {
                     this.email_running = response.data.json_data.running
                 }
             });
+        },
+        getCourseInfo(){
+            this.status = 'getting course information'
+            const path = '/api/courses/single/' + this.$route.params.course_id
+            this.$ajax.get(path)
+            .then(response => {
+                this.course = response.data.json_data
+                this.status = 'Retrieved data'
+                console.log(response.data.json_data)
+                console.log(response)
+            })
+            .catch(error => {
+                console.log(error)
+                this.status = 'failed getting course information'
+            })
         }
     },
     mounted: function () {

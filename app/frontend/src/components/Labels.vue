@@ -32,7 +32,7 @@ export default {
     },
     methods: {
         getCourse() {
-            const path = '/api/courses/' + this.$route.params.course_id
+            const path = '/api/courses/single/' + this.$route.params.course_id
             this.$ajax.get(path, response => {
                 this.course = response.data.json_data
             })
