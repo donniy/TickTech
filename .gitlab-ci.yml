@@ -4,7 +4,7 @@ cache:
         - venv
         - app/frontend/package-lock.json
 install:
-    stage: build
+    stage: install
     script:
         - ./INSTALL
         - make install
