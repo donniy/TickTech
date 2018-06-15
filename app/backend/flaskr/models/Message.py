@@ -28,7 +28,7 @@ class Message(db.Model):
                              backref=db.backref('messages', lazy=True))
 
     user = db.relationship('User',
-                             backref=db.backref('messages', lazy=True))
+                           backref=db.backref('messages', lazy=True))
 
     # Dit is een soort toString zoals in Java, voor het gebruiken van de
     # database in de commandline. Op die manier kan je data maken en weergeven

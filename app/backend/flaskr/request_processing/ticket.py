@@ -58,7 +58,10 @@ def create_request(jsonData):
         return Iresponse.internal_server_error()
 
     try:
-        msg = notifications.notify(studentid, ticket, message, Message.NTFY_TYPE_MESSAGE)
+        msg = notifications.notify(studentid,
+                                   ticket,
+                                   message,
+                                   Message.NTFY_TYPE_MESSAGE)
     except Exception as e:
         raise e
         return Iresponse.create_response(str(e), 400)
@@ -67,7 +70,6 @@ def create_request(jsonData):
 #                          ticket=ticket)
 #    if not database.addItemSafelyToDB(new_message):
 #        return Iresponse.internal_server_error()
-
 
     response_body['ticketid'] = ticket.id
     response = Iresponse.create_response(response_body, 201)

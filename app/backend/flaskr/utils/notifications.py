@@ -2,6 +2,7 @@ from flaskr.models.Message import *
 from flaskr.models.user import *
 from flaskr import socketio
 
+
 def notify(sender_id, ticket, text, n_type):
     """
     Notify everyone in a ticket.
@@ -19,7 +20,12 @@ def notify(sender_id, ticket, text, n_type):
     # Place the notification in the ticket overview for everyone
     # present in that room.
     socketio.emit('messageAdded',
-            {'text': message.text, 'user_id':  user.id, 'user_name': user.name, 'type': message.n_type}, room='ticket-messages-{}'.format(message.ticket_id))
+                  {'text': message.text,
+                   'user_id':  user.id,
+                   'user_name': user.name,
+                   'type': message.n_type},
+                  room='ticket-messages-{}'
+                  .format(message.ticket_id))
 
     # TODO: Notify everyone via a private websocket.
 

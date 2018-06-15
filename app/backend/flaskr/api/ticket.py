@@ -13,6 +13,7 @@ from flaskr import Iresponse
 from flask_jwt import jwt_required, current_identity
 from flaskr.utils import notifications
 
+
 # Make this post with a button.
 @apiBluePrint.route('/ticket/<ticket_id>/close', methods=['POST', 'PATCH'])
 @jwt_required()
@@ -22,7 +23,10 @@ def close_ticket(ticket_id):
         ticket = Ticket.query.get(ticket_id)
         ticket.close
         db.session.commit()
-        notifications.notify(current_identity.id, ticket, 'Closed ticket', Message.NTFY_TYPE_CLOSED)
+        notifications.notify(current_identity.id,
+                             ticket,
+                             'Closed ticket',
+                             Message.NTFY_TYPE_CLOSED)
     except Exception as e:
         raise e
         return Iresponse.create_response(str(e), 400)
