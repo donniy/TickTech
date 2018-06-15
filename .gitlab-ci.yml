@@ -4,14 +4,11 @@ cache:
         - venv
         - app/frontend/package-lock.json
         - app/dist
-install:
+build:
     stage: build
     script:
         - ./INSTALL
         - make install
-build:
-    stage: build
-    script:
         - make build
 test vue:
     stage: test
