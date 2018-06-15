@@ -54,11 +54,13 @@
     						this.$ajax.get('/api/user/retrieve', response => {
 
     							let params = this.$route.params;
-    							let url = '/';
-    							if (typeof params !== 'undefined' && typeof params.prev_url !== 'undefined')
+    							let url = '/home';
+    							if (typeof params !== 'undefined' && typeof params.prev_url !== 'undefined'){
 									url = params.prev_url;
-    							if (this.$user.set(response.data.json_data.user))
-    								this.$router.go(url);
+								}
+    							if (this.$user.set(response.data.json_data.user)){
+    								this.$router.push('/home');
+								}
     							else
     								console.log("Can\'t set user.");
     						})
@@ -69,7 +71,7 @@
         }, 
         mounted() {
             if (this.$user.logged_in()) {
-                this.$router.back();
+				this.$router.push('/home')
             } else {
                 this.$cookies.remove('token');
                 this.$cookies.remove('user');

@@ -52,7 +52,7 @@ def retrieve_courses(user_id):
         return Iresponse.create_response("", 404)
     courses = user.ta_courses
 
-    return database.json_list(courses)
+    return Iresponse.create_response(database.serialize_list(courses), 200)
 
 
 @apiBluePrint.route('/courses/<course_id>/tas', methods=['GET'])
