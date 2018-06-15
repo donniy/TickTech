@@ -25,7 +25,7 @@
                         <label for="course">Course</label>
                         <select id="course" v-validate="''" class="form-control custom-select" v-model="form.courseid">
                             <option disabled value="">Please select a course</option>
-                            <option v-for="obj in categories.courses" v-bind:value="obj.id">
+                            <option v-for="obj in categories.courses" v-bind:key="obj.id" v-bind:value="obj.id">
                             {{ obj.title }}
                             </option>
                         </select>
@@ -35,7 +35,7 @@
                         <label for="category">Category</label>
                         <select id="category" v-validate="''" class="form-control custom-select" v-model="form.labelid">
                             <option disabled value="">Label this question</option>
-                            <option v-for="option in categories.labels[form.courseid]" v-bind:value="option.label_id">{{ option.label_name }}</option>
+                            <option v-for="option in categories.labels[form.courseid]" v-bind:key="option.label_id" v-bind:value="option.label_id">{{ option.label_name }}</option>
                         </select>
                         <small class="form-text">Selecting a category is optional, but can help assign your question to the right person.</small>
 
@@ -109,6 +109,10 @@ export default {
         }
     },
     mounted() {
+        if (!this.$user.logged_in()) {
+            this.$router.push('/login')
+        }
+
         const pathLabels = '/api/labels';
         const pathCourses = '/api/courses';
 
@@ -123,7 +127,7 @@ export default {
                     let currLabelPath = pathLabels + '/' + courseid
                     this.$ajax.get(currLabelPath)
                         .then(response => {
-                            this.categories.labels[courseid] = response.data.json_list
+                            this.categories.labels[courseid] = response.data.json_data
                             console.log(this.categories.labels[courseid])
                         }).catch(error => {
                             console.log(error)
@@ -141,8 +145,8 @@ export default {
         this.$ajax.get(pathLabels)
             .then(response => {
                 console.log
-                for (let i = 0; i < response.data.json_list.length; i++) {
-                    let elem = response.data.json_list[i];
+                for (let i = 0; i < response.data.json_data.length; i++) {
+                    let elem = response.data.json_data[i];
                     if (this.categories.labels[elem.course_id])
                         this.categories.labels[elem.course_id].push({
                             value: elem.name,

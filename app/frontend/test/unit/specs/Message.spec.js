@@ -17,7 +17,9 @@ describe('Message.vue', () => {
         const wrapper = factory({
             message: {
                 text: 'Hello World',
-                user_id: 123123123
+                user_id: 123123123,
+                user_name: 'Test persoon',
+                type: 0,
             },
             user: {
                 id: 234234234
@@ -27,25 +29,30 @@ describe('Message.vue', () => {
         expect(wrapper.find('.message-text').text()).to.equal('Hello World')
     })
 
-    it('should render message.user_id as its sender if message is from another user', () => {
+    it('should render message.user_name as its sender if message is from another user', () => {
         const wrapper = factory({
             message: {
                 text: 'Hello World',
-                user_id: 123123123
+                user_id: 123123123,
+                user_name: 'Test persoon',
+                type: 0,
+
             },
             user: {
                 id: 234234234
             }
         })
 
-        expect(wrapper.find('.message-sender').text()).to.equal('123123123')
+        expect(wrapper.find('.message-sender').text()).to.equal('Test persoon')
     })
 
     it('should render "You" as its sender if message is from yourself', () => {
         const wrapper = factory({
             message: {
                 text: 'Hello World',
-                user_id: 123123123
+                user_id: 123123123,
+                type: 0,
+
             },
             user: {
                 id: 123123123

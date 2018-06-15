@@ -142,9 +142,10 @@ Vue.prototype.$user = {
     return true;
   },
 
-  logout: () => {
+  logout: function () {
     $cookies.remove('user');
-    router.go('/');
+    $cookies.remove('token');
+    router.push('/');
   },
 
   logged_in: () => {

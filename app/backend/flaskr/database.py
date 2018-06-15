@@ -9,11 +9,13 @@ db = SQLAlchemy()
 
 
 class DatabaseException(Exception):
+
     def __init__(self, debug_message):
         self.debug_message = debug_message
 
 
 class DatabaseInsertException(DatabaseException):
+
     def __init__(self, debug_message):
         super().__init__(debug_message)
         self.response_message = response_message = ""
@@ -66,7 +68,10 @@ def populate_database_dummy_data():
     from flaskr.models import Course, user
     items = []
     course = Course.Course(id=uuid.uuid4(),
-                           course_email="test@test.com",
+                           course_email="uvapsetest@gmail.com",
+                           mail_server_url="pop.gmail.com",
+                           mail_port="995",
+                           mail_password="stephanandrea",
                            title="course 1",
                            supervisor_id=11111,
                            description="Test")
@@ -89,7 +94,12 @@ def populate_database_dummy_data():
                       name="Test mctestie",
                       email="test@test.nl")
 
-    items = [user1, user2, user3, course, course2]
+    # !IMPORTANT! This is for the mail server - ask stephan
+    mail_server = user.User(id=9999999999,
+                            name="Mail server",
+                            email="Noreply@noreply.com")
+
+    items = [user1, user2, user3, mail_server, course, course2]
 
     for item in items:
         addItemSafelyToDB(item)

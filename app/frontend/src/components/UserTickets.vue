@@ -1,6 +1,6 @@
 <template>
     <div>
-    	<h2>Tickets van Student {{ $route.params.user_id }}</h2>
+    	<h2>Tickets van: {{ this.$user.get().name }}</h2>
     	<div>
     		<template v-for="course in courses">
                 <b-btn variant="primary" class="dropdown-button" v-b-toggle="'course-' + course.id">
@@ -18,7 +18,7 @@
               </template>
     	</div>
     	<div>
-    		<b-button class="create-button" href="/form">New ticket</b-button>
+    		<b-button class="create-button" href="/ticket/submit">New ticket</b-button>
     	</div>
     </div>
 </template>
@@ -40,13 +40,13 @@
     	},
     	methods: {
     		getTickets() {
-    			this.status = 'getting tickets'
-    			const path = '/api/user/' + this.$route.params.user_id + '/tickets'
+				this.status = 'getting tickets'
+    			const path = '/api/user/' + this.$user.get().id+ '/tickets'
     			this.$ajax.get(path).then(response => {
-    				this.tickets = response.data.json_list
+    				this.tickets = response.data.json_data
     				this.status = 'Retrieved data'
-    				console.log(response.data.json_list)
-    				console.log(response)
+    				// console.log(response.data.json_data)
+    				// console.log(response)
     			}).catch(error => {
     				console.log(error)
     				this.status = 'failed getting tickets'
@@ -54,12 +54,10 @@
     		},
 
     		getCourses() {
-    			const path = '/api/user/' + this.$route.params.user_id + '/courses'
+    			const path = '/api/user/' + this.$user.get().id + '/courses'
     			this.$ajax.get(path).then(response => {
     				this.courses = response.data.json_data
-    				console.log(response.data)
-    				console.log("Courses")
-    				console.log(response.data.json_data[0])
+    				// console.log(response.data)
     			}).catch(error => {
     				console.log(error)
     			})
@@ -72,14 +70,19 @@
     		}
     	},
     	mounted: function() {
+			if (!this.$user.logged_in()) {
+				console.log("fuck")
+				this.$router.push('/login')
+			}
+
     		this.created()
     		this.$emit('tab-activate', 'my-tickets')
     	},
-    	watch: {
-    		'$route': function() {
-    			this.created()
-    		}
-    	},
+    	// watch: {
+    	// 	'$route': function() {
+    	// 		this.created()
+    	// 	}
+    	// },
     	components: {
     		'ticket': Ticket,
     	}

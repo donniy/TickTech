@@ -1,12 +1,14 @@
 <template>
     <div id="app">
         <navbar v-bind:transparent="navbarTransparent" v-bind:active="active"></navbar>
-        <div v-if="isHome" class="container-fluid first-background-image">
+        <div v-if="isHome" class="container-fluid">
             <router-view />
         </div>
-        <div v-else="isHome" class="container">
+        <div v-else class="container-fluid second-background-image">
             <div class="navbar-spacing"></div>
-            <router-view />
+            <div class="container">
+                <router-view />
+            </div>
         </div>
     </div>
 </template>
@@ -42,7 +44,7 @@ export default {
                 this.navbarTransparent = false
                 return
             }
-            if (document.body.scrollTop > 100) {
+            if (document.body.scrollTop > 100 || window.pageYOffset > 100 || document.documentElement.scrollTop > 100) {
                 this.navbarTransparent = false
             } else {
                 this.navbarTransparent = true

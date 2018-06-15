@@ -1,7 +1,14 @@
 from flaskr import database
 from flaskr.models.Course import *
+from sqlalchemy_utils import UUIDType
 
 db = database.db
+
+association_table = db.Table('association', db.Model.metadata,
+                             db.Column('left_id', db.Integer,
+                                       db.ForeignKey('user.id')),
+                             db.Column('right_id', UUIDType(binary=False),
+                                       db.ForeignKey('label.label_id')))
 
 
 class User(db.Model):
@@ -14,6 +21,7 @@ class User(db.Model):
     name = db.Column(db.String(120), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=False, nullable=True)
     is_supervisor = db.Column(db.Boolean, unique=False, default=False)
+    labels = db.relationship("Label", secondary=association_table)
 
     # Dit is een soort toString zoals in Java, voor het gebruiken van de
     # database in de commandline. Op die manier kan je data maken en weergeven

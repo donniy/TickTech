@@ -13,6 +13,7 @@ from flask_jwt import JWT
 from . import login
 import poplib
 from mail.thread import MailThread
+from datetime import timedelta
 
 
 db = database.db
@@ -42,6 +43,9 @@ def create_app(test_config=None):
     app.config['WTF_CSRF_CHECK_DEFAULT'] = False
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    # Make user logged in for 1 day.
+    app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=86400)
 
     csrf = CSRFProtect(app)
 
@@ -123,6 +127,7 @@ def create_app(test_config=None):
 
     @socketio.on('setup-email')
     def setup_mail(data):
+        emit('setup-email', {'result': 'update', 'data': "recieved data"})
         print("recieve data")
         print(data)
         email = data['email']
@@ -131,6 +136,15 @@ def create_app(test_config=None):
         server = data['pop']
         course_id = data['course_id']
         sleeptime = 60
+
+        print("Check if mail exists")
+        if (MailThread.exist_thread_email(email)):
+            print("mail exists")
+            emit('setup-email',
+                 {'result': 'fail', 'data': 'Email already exists'})
+            return
+        else:
+            print("mail does not exists")
 
         try:
             test_connection = poplib.POP3_SSL(server, port)
@@ -168,7 +182,7 @@ def create_app(test_config=None):
         course.mail_port = port
         course.mail_server_url = server
         if not database.addItemSafelyToDB(course):
-            emit('setup-email', {'response': 'fail'})
+            emit('setup-email', {'result': 'fail', 'data': 'database error'})
             return
 
         print("wait for response")

@@ -30,7 +30,7 @@ export default {
             reply: '',
             messages: [],
             ret_url: '',
-            user: null //window.$user.get()
+            user: this.$user.get()
         }
     },
     methods: {
@@ -67,10 +67,11 @@ export default {
         }
     },
     mounted: function () {
-        this.user = this.$user.get().id;
-        this.ret_url = '/user/' + this.user;
-        console.log("id: " + this.user);
-        console.log(this.ret_url)
+        if (!this.$user.logged_in()) {
+            this.$router.push('/login')
+        }
+        this.user = this.$user.get();
+        this.ret_url = '/user/tickets'
         this.getTicket();
         this.getMessages();
         this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id});
@@ -87,6 +88,7 @@ export default {
             console.log("Socket connection!")
         },
         messageAdded: function (data) {
+            console.log("message added!")
             console.log(data)
             this.messages.push(data)
             document.body.scrollTop = document.body.scrollHeight;

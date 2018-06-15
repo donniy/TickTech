@@ -86,8 +86,8 @@
 				</div>
 				<div class="col-md-12">
 					<h6 class="sevice-subheading">Check out the people who made this possible:</h6>
-					</br>
-					</br>
+					<br />
+					<br />
 					<router-link to="/team" class="team-button">Meet the team!
 					</router-link>
 				</div>
