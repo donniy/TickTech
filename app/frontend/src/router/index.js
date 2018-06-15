@@ -27,17 +27,9 @@ const routerOptions = [
             pre: '/home'
         },
     },
+
     {
-        path: '/ticket/:ticket_id',
-        name: 'SingleTicket',
-        component: 'SingleTicket',
-        meta: {
-            breadcrumb: 'Ticket',
-            pre: '/user/:user_id'
-        },
-    },
-    {
-        path: '/user/:user_id',
+        path: '/user/tickets',
         name: 'UserTickets',
         component: 'UserTickets',
         meta: {
@@ -56,6 +48,10 @@ const routerOptions = [
         path: '/ticket/:ticket_id',
         name: 'SingleTicket',
         component: 'SingleTicket',
+        meta: {
+            breadcrumb: 'Ticket',
+            pre: '/user/:user_id'
+        },
     },
     {
         path: '/team/',
@@ -90,28 +86,12 @@ const routerOptions = [
         },
     },
     {
-        path: '/ta/:user_id',
-        name: 'TAInbox',
-        component: 'TA_Inbox',
-        meta: {
-            breadcrumb: 'Inbox'
-        },
-    },
-    {
         path: '/student/ticket/:ticket_id',
         name: 'StudentTicket',
         component: 'StudentTicket',
         meta: {
             breadcrumb: 'Student Ticket',
             pre: '/user/:user_id'
-        },
-    },
-    {
-        path: '/sort',
-        name: 'SortingTickets',
-        component: 'SortingTickets',
-        meta: {
-            breadcrumb: 'Sort Tickets'
         },
     },
     {

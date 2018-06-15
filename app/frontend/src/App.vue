@@ -4,7 +4,7 @@
         <div v-if="isHome" class="container-fluid">
             <router-view />
         </div>
-        <div v-else="isHome" class="container-fluid second-background-image">
+        <div v-else class="container-fluid second-background-image">
             <div class="navbar-spacing"></div>
             <div class="container">
                 <router-view />

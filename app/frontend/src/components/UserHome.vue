@@ -3,9 +3,9 @@
         <div class="row">
             <div class="col-lg-12">
                 <h2 style="text-align:center;">Homepage for {{ $user.get().name }}</h2>
-            </br>
+            <br />
                 <hr style="width: 20%;">
-            </br>
+            <br />
             </div>
             <div class="col-lg-8 text-center">
                 <h5>Notifications</h5>
@@ -18,8 +18,8 @@
                     v-bind:base_url="'/student/ticket/'"
                     ></ticket>
                 </div>
-                <router-link style="float:right;"to="/settings">Settings</router-link>
-                <router-link style="float:right;"to="/ticket/submit">Create ticket</router-link>
+                <router-link style="float:right;" to="/settings">Settings</router-link>
+                <router-link style="float:right;" to="/ticket/submit">Create ticket</router-link>
             </div>
             <div class="col-lg-4 text-center" >
                 <h5>Courses</h5>
@@ -64,6 +64,10 @@
       },
       mounted: function() {
         this.created()
+
+        if (!this.$user.logged_in()) {
+            this.$router.push('/login')
+        }
       },
       components: {
         'course': Course,

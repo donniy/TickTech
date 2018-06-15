@@ -108,14 +108,6 @@ def userid_exists():
     return Iresponse.create_response({"status": True}, 200)
 
 
-@apiBluePrint.route('/user/<int:user_id>')
-def get_user(user_id):
-    user = User.query.get(user_id)
-    if user is None:
-        return Iresponse.create_response("", 404)
-    return Iresponse.create_response(user.serialize, 200)
-
-
 @apiBluePrint.route('/user/<user_id>/courses')
 def get_courses_from_student(user_id):
     user = User.query.get(user_id)
@@ -125,3 +117,11 @@ def get_courses_from_student(user_id):
     if len(courses) == 0:
         return Iresponse.create_response("", 404)
     return Iresponse.create_response(database.serialize_list(courses), 200)
+
+
+@apiBluePrint.route('/user/<int:user_id>')
+def get_user(user_id):
+    user = User.query.get(user_id)
+    if user is None:
+        return Iresponse.create_response("", 404)
+    return Iresponse.create_response(user.serialize, 200)
