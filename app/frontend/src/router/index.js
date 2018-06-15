@@ -8,6 +8,11 @@ const routerOptions = [
         component: 'Home',
     },
     {
+        path: '/home/',
+        name: 'userhome',
+        component: 'UserHome',
+    },
+    {
         path: '/course/:course_id',
         name: 'CourseTickets',
         component: 'CourseTickets',
@@ -28,11 +33,6 @@ const routerOptions = [
         component: 'UserTickets',
     },
     {
-        path:'/courses',
-        name:'CourseOverview',
-        component:'CourseOverview',
-    },
-    {
         path: '/form/',
         name: 'AskAQuestion',
         component: 'StudentForm',
@@ -42,11 +42,6 @@ const routerOptions = [
         name: 'Team',
         component: 'Team',
     },
-    // {
-    //     path: '/ticket/:ticket_id/closeticket',
-    //     name: 'closeticket',
-    //     component: 'modal'
-    // },
     {
         path: '/login',
         name: 'Login',
