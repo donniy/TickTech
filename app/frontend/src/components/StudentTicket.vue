@@ -13,7 +13,7 @@
         <form v-on:submit.prevent="sendReply" class="reply-area">
             <h4>Provide additional information</h4>
             <textarea v-model="reply" rows="6" placeholder="Schrijf een reactie..."></textarea>
-            <button class="btn btn-primary">Submit reaction</button>
+            <button style="margin-bottom:10px;" class="btn btn-primary">Submit reaction</button>
         </form>
     </div>
 </template>

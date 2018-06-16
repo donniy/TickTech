@@ -509,7 +509,6 @@ a.list-ticket:hover, a.list-ticket:focus {
     bottom: 1em;
     display: block;
     margin-top: 2em;
-    margin-bottom: 4em;
 }
 
 .reply-area {
@@ -523,8 +522,8 @@ a.list-ticket:hover, a.list-ticket:focus {
     }
 
     .reply-button {
-        margin-left: 2rem;
         height: 4rem;
+        margin-bottom: 20px;
         width: 4rem;
         text-align: center;
         line-height: 4rem;
