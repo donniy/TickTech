@@ -29,6 +29,7 @@ h1 {
     background-size: 100%;
     background-position: center;
     min-height: 100vh;
+    max-height: 100vh;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -396,13 +397,28 @@ div.homescreen-container {
     float: right;
 }
 
+.box__dragndrop,
+.box__uploading,
+.box__success,
+.box__error {
+  display: none;
+}
+.box.has-advanced-upload {
+  background-color: white;
+  outline: 2px dashed black;
+  outline-offset: -10px;
+}
+.box.has-advanced-upload .box__dragndrop {
+  display: inline;
+}
+
 .list-ticket {
-    padding: 18px 24px;
+    padding: 10px;
     background: #FFF;
     display: block;
     box-shadow: 0 2px 4px 0 rgba(50,50,93,.1);
-    margin-bottom: 1em;
-    color: $default-red;
+    margin-bottom: 0.5em;
+    color: $text-color-dark;
     transition: transform 0.1s ease-in-out;
 }
 

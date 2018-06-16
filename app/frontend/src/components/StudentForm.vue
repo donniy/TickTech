@@ -20,7 +20,14 @@
                             {{ errors.first('message') }}
                         </div>
                     </div>
-
+                    <b-button class="routerbutton" v-on:click="showUpload">Add file</b-button>
+                        <div v-if="uploadfield"class="form-group">
+                            <vue-dropzone id="dropfiles" :options="dropOptions"></vue-dropzone>
+                      </div>
+                          <div class="box__uploading">Uploading&hellip;</div>
+                          <div class="box__success">Done!</div>
+                          <div class="box__error">Error! <span></span>
+                    </div>
                     <div class="form-group">
                         <label for="course">Course</label>
                         <select id="course" v-validate="''" class="form-control custom-select" v-model="form.courseid">
@@ -74,7 +81,16 @@ export default {
             categories: {
                 courses: [],
                 labels: {}
-            }
+            },
+            uploadfield : false,
+            dropOptions: {
+                url: this.$route + '/uploads',
+                maxFilesize: 10,
+                maxFiles: 4,
+                chunking: true,
+                chunkSize: 500,
+                addRemoveLinks: true
+        }
         }
     },
     computed: {
@@ -83,6 +99,14 @@ export default {
         }
     },
     methods: {
+        showUpload (){
+            if (this.uploadfield) {
+                this.uploadfield = false
+            } else {
+                this.uploadfield = true
+            }
+            console.log(this.uploadfield)
+        },
         sendTicket() {
             this.$validator.validateAll()
             const path = '/api/ticket/submit'
@@ -162,5 +186,8 @@ export default {
                 console.log(error);
             });
     },
+    components: {
+        vueDropzone
+    }
 }
 </script>

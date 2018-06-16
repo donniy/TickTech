@@ -1,6 +1,8 @@
 <template>
     <router-link :to="base_url + ticket.id" class="list-ticket">
-    	<h3>{{ticket.title}}</h3> Status: {{ticket.status.name}} - Gesteld door: {{ticket.user_id}}
+    	<h5>{{ticket.title}}</h5>
+        Status: {{ticket.status.name}} </br>
+        Time: {{ticket.timestamp}}
     </router-link>
 </template>
 

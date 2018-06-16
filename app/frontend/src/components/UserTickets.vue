@@ -1,11 +1,17 @@
 <template>
     <div>
-    	<h2>Tickets van: {{ this.$user.get().name }}</h2>
-    	<div>
+        <router-link style="float:left;" to="/home">Back to home</router-link>
+        <div>
+        	<h3 style="text-align:center">Your tickets: {{ this.$user.get().name }}</h3>
+            <hr>
+            </br>
+        </div>
+    	<div class="ticket-container">
     		<template v-for="course in courses">
                 <b-btn variant="primary" class="dropdown-button" v-b-toggle="'course-' + course.id">
                   {{course.title}} </b-btn>
-                <b-collapse :id="'course-' + course.id" class="mt-2">
+                <b-collapse accordion="my-accordion" :id="'course-' + course.id" class="mt-2">
+                    <p v-if="tickets.length < 1">- No Tickets yet -</p>
                     <b-card>
                       <ticket
                             v-for="ticket in tickets"
@@ -16,9 +22,6 @@
                     </b-card>
                 </b-collapse>
               </template>
-    	</div>
-    	<div>
-    		<b-button class="create-button" href="/ticket/submit">New ticket</b-button>
     	</div>
     </div>
 </template>
