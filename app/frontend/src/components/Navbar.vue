@@ -62,20 +62,22 @@ import VueBreadcrumbs from 'vue-breadcrumbs'
              }
          },
          breadcrumbList: function (to, from) {
-            let matcher = this.$router.matcher.match;
-            let cur_url = '/';
-            let split_string = to.path.replace(':user_id', this.$user.get().id);
-            split_string = split_string.split('/');
-            let match = null;
-            for (let i = 1; i < split_string.length; i++) {
-                match = matcher(cur_url + split_string[i]);
-                cur_url += split_string[i] + '/';
-                if(typeof match.name !== 'undefined' && match.name !== 'Home') {
-                    if(typeof match.meta.pre !== 'undefined')
-                        this.breadcrumbList({path: match.meta.pre});
-                    this.path_list.push(match);
+            if(this.$user.logged_in()){
+                let matcher = this.$router.matcher.match;
+                let cur_url = '/';
+                let split_string = to.path.replace(':user_id', this.$user.get().id);
+                split_string = split_string.split('/');
+                let match = null;
+                for (let i = 1; i < split_string.length; i++) {
+                    match = matcher(cur_url + split_string[i]);
+                    cur_url += split_string[i] + '/';
+                    if(typeof match.name !== 'undefined' && match.name !== 'Home') {
+                        if(typeof match.meta.pre !== 'undefined')
+                            this.breadcrumbList({path: match.meta.pre});
+                        this.path_list.push(match);
+                    }
+                    console.log(this.path_list)
                 }
-                console.log(this.path_list)
             }
          }
      },

@@ -1,20 +1,20 @@
 <template>
-    <div>
+    <div v-on:mouseover="mouseOver">
         <div class="row">
             <div class="col-lg-12">
-                <h1>Course: {{ $route.params.course_id }}</h1>
-            </br>
+                <h1>Course: {{ this.course.title }}</h1>
+            <br />
                 <hr style="width: 20%;">
-            </br>
+            <br />
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-10 text-center">
+            <div class="col-lg-12 col-md-12 text-center">
                 <div class="row">
-                    <div class="col-lg-3 text-center">
+                    <div class="col-lg-4 col-md-4 text-center">
                         <h5>Tickets in this course:</h5>
                     </div>
-                    <div class="col-lg-3 text-center">
+                    <div class="col-lg-4 col-md-4 text-center">
                         <select class="form-control custom-select" v-model="status_filter">
                             <option> All </option>
                             <option> Closed </option>
@@ -22,7 +22,7 @@
                             <option> Assigned </option>
                         </select>
                     </div>
-                    <div class="col-lg-3 text-center">
+                    <div class="col-lg-4 col-md-4 text-center">
                         <select class="form-control custom-select">
                             <option> Most recent </option>
                             <option> Created by </option>
@@ -56,16 +56,16 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-2 text-center" >
+            <div class="col-lg-2 col-md-2 text-center" >
                 <b-button class="routerbutton" v-on:click="pushLocation('/course/' + $route.params.course_id + '/labels')">Course labels</b-button>
             </div>
-            <div class="col-lg-2 text-center" >
+            <div class="col-lg-2 col-md-2 text-center" >
                 <b-button class="routerbutton" >Add students</b-button>
             </div>
-            <div class="col-lg-2 text-center" >
+            <div class="col-lg-2 col-md-2 text-center" >
                 <b-button class="routerbutton" @click="emailSettings" :to="''">Mail settings</b-button>
             </div>
-            <div class="col-lg-2 text-center" >
+            <div class="col-lg-2 col-md-2 text-center" >
                 <b-button class="routerbutton" :to="''">Add TA's</b-button>
             </div>
 
@@ -80,7 +80,8 @@
             v-for="ticket in tickets"
             v-if="ticket.id == ticketSum"
             v-bind:key="ticket.id"
-            v-bind:ticket="ticket">
+            v-bind:ticket="ticket"
+            class="singleTicket">
         </summodal>
     </div>
 </template>
@@ -111,6 +112,15 @@ export default {
         }
     },
     methods: {
+        mouseOver : function (one,two){
+            if(this.ticketSum != 0){
+                let className = one.path[1].className
+                if(!(className.indexOf("singleTicket") > -1 || className.indexOf("summary") > -1)){
+                    this.ticketSum = 0;
+                    this.showSum = false;
+                }
+            }
+        },
         pushLocation (here) {
             this.$router.push(here)
         },
