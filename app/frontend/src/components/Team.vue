@@ -47,7 +47,7 @@
     			</div>
     			<div class="col-md-4">
     				<h4 class="service-heading">Andrea</h4>
-    				<p class="text-muted">Gender diversity administrator and mail parsing</p>
+    				<p class="text-muted">Making homepages even greater and mail parsing</p>
     			</div>
     		</div>
     		<div class="row text-center">
