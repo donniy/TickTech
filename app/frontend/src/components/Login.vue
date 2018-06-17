@@ -24,13 +24,13 @@
 
 
 <script>
-    import Vue from 'vue';
-    import VeeValidate from 'vee-validate';
-    import axios from 'axios';
-    import VueCookies from 'vue-cookies';
-    import Router from 'vue-router';
+    import Vue from 'vue'
+    import VeeValidate from 'vee-validate'
+    import axios from 'axios'
+    import VueCookies from 'vue-cookies'
+    import Router from 'vue-router'
 
-    Vue.use(VueCookies);
+    Vue.use(VueCookies)
 
     export default {
         data() {
@@ -44,36 +44,36 @@
             checkUser() {
                 this.$validator.validateAll().then((result) => {
                     if (result) {
-                        const path = '/auth';
+                        const path = '/auth'
                         this.$ajax.post(path, {
                             username: this.form.username,
                             password: "JWT is cool!!!"
                         }, response => {
                             // TODO: Implement authentication on back-end to work with Canvas.
-                            window.$cookies.set('token', response.data.access_token);
-                            this.form.username = '';
+                            window.$cookies.set('token', response.data.access_token)
+                            this.form.username = ''
                             this.$ajax.get('/api/user/retrieve', response => {
 
-                                let params = this.$route.params;
-                                let url = '/home';
+                                let params = this.$route.params
+                                let url = '/home'
                                 if (typeof params !== 'undefined' && typeof params.prev_url !== 'undefined' && params.prev_url !== '/')
-                                    url = params.prev_url;
+                                    url = params.prev_url
                                 if (this.$user.set(response.data.json_data.user))
-                                    this.$router.push(url);
+                                    this.$router.push(url)
                                 else
-                                    console.log("Can\'t set user.");
+                                    console.log("Can\'t set user.")
                             })
-                        });
+                        })
                     }
-                });
+                })
             }
         },
         mounted() {
             if (this.$user.logged_in()) {
-                this.$router.back();
+                this.$router.back()
             } else {
-                window.$cookies.remove('token');
-                window.$cookies.remove('user');
+                window.$cookies.remove('token')
+                window.$cookies.remove('user')
             }
         }
     }

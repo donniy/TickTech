@@ -80,8 +80,8 @@
 
 <script>
 
-    import VeeValidate from 'vee-validate';
-    import Router from 'vue-router';
+    import VeeValidate from 'vee-validate'
+    import Router from 'vue-router'
 
     export default {
         data() {
@@ -111,27 +111,27 @@
                             } else {
                                 logUserIn()
                             }
-                        });
+                        })
                     }
-                });
+                })
             }, checkEmailAvailability() {
-                const path = '/api/user/exists';
+                const path = '/api/user/exists'
                 this.$ajax.post(path, { email: this.form.email }, response => {
                     this.emailstatus = response.data.json_data.status;
                     console.log(this.emailstatus)
 
-                });
+                })
             }, checkIDAvailability() {
                 const path = '/api/user/idexists';
                 this.$ajax.post(path, { studentid: this.form.studentid }, response => {
                     this.idstatus = response.data.json_data.status;
                     console.log(this.idstatus)
 
-                });
+                })
             }, checkPswConfirmation() {
                 this.pswstatus = (this.form.password === this.form.password_confirmation) || this.form.password === ""
             }, logUserIn() {
-                const path = '/auth';
+                const path = '/auth'
                 this.$ajax.post(path, {
                     username: this.form.studentid,
                     password: "JWT is cool!!!"
