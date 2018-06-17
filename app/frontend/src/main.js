@@ -12,11 +12,8 @@ import './assets/scss/style.scss'
 import axios from 'axios'
 import VueCookies from 'vue-cookies'
 import VueScrollTo from 'vue-scrollto'
-import 'vue2-dropzone/dist/vue2Dropzone.css'
-import vueDropzone from "vue2-dropzone";
 
 Vue.use(VeeValidate);
-Vue.use(vueDropzone);
 Vue.use(VueScrollTo);
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)

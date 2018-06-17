@@ -26,14 +26,22 @@ h1 {
 
 .second-background-image {
     background-image: url(../trianglify.svg);
-    background-size: 100%;
-    background-position: center;
+    background-position: center center;
     min-height: 100vh;
+    min-width: 1024px;
     max-height: 100vh;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
+    width: 100%;
+    height: auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+@media screen and (max-width: 1024px) { /* Specific to this particular image */
+  second-background-image {
+    left: 50%;
+    margin-left: -512px;   /* 50% */
+  }
 }
 
 .navbar {
@@ -80,6 +88,25 @@ nav {
     color: white;
 }
 
+.file-add-text {
+    color: $text-color-def;
+    cursor: pointer;
+    font-size: 1.2em;
+    text-align: left;
+}
+
+.file-add-text:hover {
+    text-decoration: underline;
+    color: $text-color-dark;
+}
+
+.file-add-icon {
+    color: $text-color-def;
+    cursor: pointer;
+    font-size: 1.2em;
+    vertical-align: sub;
+}
+
 .home-left {
     margin-left: 35vh;
 }
@@ -99,6 +126,39 @@ nav {
     padding: 18px;
     border-radius: 4px;
     box-shadow: $medium-shadow;
+}
+
+// Item attachment style (for form)
+.file-name-container {
+    line-height: 1.1em;
+    box-shadow: $medium-shadow;
+    font-size: 1.1em;
+    border-color: lighten(#bc0031, 5%);
+    border: 1px;
+    margin-bottom: 10px;
+}
+.file-listing {
+    padding-bottom: 5px;
+    padding-left: 10px;
+    color: $text-color-def;
+}
+.file-listing:hover {
+    background-color: darken(#FFF, 5%);
+}
+.light-stripe {
+    padding-left: 0px;
+    width: 95%;
+    color: $text-color-lighter;
+    font-size: 1px;
+    margin: 2px;
+}
+
+.file-remove-icon {
+    color: $default-red;
+    text-align: right;
+    cursor:pointer;
+    float: right;
+    padding-right: 15px;
 }
 
 .form-text {
@@ -127,10 +187,15 @@ nav {
 
 
     &:hover {
-        background: lighten(#bc0031, 5%);
-        border-color: lighten(#bc0031, 5%);
+        background: lighten($default-red, 5%);
+        border-color: lighten($default-red, 5%);
         color: #fff;
     }
+}
+
+.hidden-input{
+    position: absolute;
+    top: -500px;
 }
 
 .btn-arrow {

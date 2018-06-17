@@ -4,7 +4,7 @@
         <div class="row justify-content-around">
             <div class="col-sm-8 col-md-6">
                     <h2 class="form-header">Submit a question</h2>
-                <form class="material-form" v-on:submit.prevent="sendTicket">
+                <form enctype="multipart/form-data" class="material-form" v-on:submit.prevent="sendTicket">
                     <div class="form-group">
                         <label for="subject">Subject</label>
                         <input id="subject" class="form-control" v-validate="'required|max:50'" name="subject" v-model="form.subject" type="text" placeholder="Question about...">
@@ -20,14 +20,22 @@
                             {{ errors.first('message') }}
                         </div>
                     </div>
-                    <b-button class="routerbutton" v-on:click="showUpload">Add file</b-button>
-                        <div v-if="uploadfield"class="form-group">
-                            <vue-dropzone id="dropfiles" :options="dropOptions"></vue-dropzone>
-                      </div>
-                          <div class="box__uploading">Uploading&hellip;</div>
-                          <div class="box__success">Done!</div>
-                          <div class="box__error">Error! <span></span>
+                    <p v-on:click="addFiles()" class="file-add-text"> <i class="material-icons file-add-icon">attach_file</i> Add attachments (Max 10 MB, 5 files)</p>
+                    <div class="large-12 medium-12 small-12 cell">
+                        <input name="files" class="hidden-input" type="file" id="files" ref="files" multiple v-on:change="handleFilesUpload()"/>
                     </div>
+                    <div class="file-name-container medium-12 small-12 cell">
+                        <div v-for="(file, key) in files" class="file-listing">{{ file.name }} <i v-on:click="removeFile( key )" class="material-icons file-remove-icon">delete_forever</i><hr class="light-stripe"></div>
+                    </div>
+
+                    <p class="def-error-msg" v-show="fileTooLarge">
+                        Too large a file detected
+                    </br>
+                    </p>
+                    <p class="def-error-msg" v-show="fileTooMany">
+                        Too many files detected
+                    </br>
+                    </p>
                     <div class="form-group">
                         <label for="course">Course</label>
                         <select id="course" v-validate="''" class="form-control custom-select" v-model="form.courseid">
@@ -45,7 +53,6 @@
                             <option v-for="option in categories.labels[form.courseid]" v-bind:key="option.label_id" v-bind:value="option.label_id">{{ option.label_name }}</option>
                         </select>
                         <small class="form-text">Selecting a category is optional, but can help assign your question to the right person.</small>
-
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-block btn-lg" v-bind:disabled="errors.any()">
@@ -66,6 +73,9 @@
 import axios from 'axios'
 import VeeValidate from 'vee-validate';
 
+let maxFiles = 6
+let maxFileSize = 10000000 // 10mb
+
 export default {
     data() {
         return {
@@ -78,19 +88,13 @@ export default {
                 labelid: "",
                 subject: "",
             },
+            files: [],
             categories: {
                 courses: [],
                 labels: {}
             },
-            uploadfield : false,
-            dropOptions: {
-                url: this.$route + '/uploads',
-                maxFilesize: 10,
-                maxFiles: 4,
-                chunking: true,
-                chunkSize: 500,
-                addRemoveLinks: true
-        }
+            fileTooLarge : false,
+            fileTooMany : false,
         }
     },
     computed: {
@@ -99,18 +103,84 @@ export default {
         }
     },
     methods: {
-        showUpload (){
-            if (this.uploadfield) {
-                this.uploadfield = false
-            } else {
-                this.uploadfield = true
+        handleFilesUpload(){
+            if (this.fileTooMany || this.fileTooLarge) {
+                return
             }
-            console.log(this.uploadfield)
+
+            let uploadedFiles = this.$refs.files.files;
+            if (uploadedFiles.length >= maxFiles) {
+                this.fileTooMany = true
+            } else {
+                this.fileTooMany = false
+            }
+
+            // Adds the uploaded file to the files array
+            let largeFileFound = false
+            for( var i = 0; i < uploadedFiles.length; i++ ){
+                if (uploadedFiles[i].size > maxFileSize) {
+                    this.fileTooLarge = true
+                    largeFileFound = true
+                }
+                this.files.push( uploadedFiles[i] );
+            }
+            if (!largeFileFound) {
+                this.fileTooLarge = false
+            }
+        },
+        removeFile( key ){
+            this.files.splice( key, 1 );
+
+            // Recheck the amount of files
+            if (this.files.length >= maxFiles) {
+                this.fileTooMany = true
+            } else {
+                this.fileTooMany = false
+            }
+
+            // Check the size of the files
+            let largeFileFound = false
+            for( var i = 0; i < this.files.length; i++ ){
+                if (this.files[i].size > maxFileSize) {
+                    this.fileTooLarge = true
+                    largeFileFound = true
+                }
+            }
+            if (!largeFileFound) {
+                this.fileTooLarge = false
+            }
+
+        },
+        addFiles(){
+            if (!this.fileTooMany && !this.fileTooLarge) {
+                this.$refs.files.click();
+            }
         },
         sendTicket() {
             this.$validator.validateAll()
+
+            // Create a formdata object
+            let formData = new FormData();
+
+            // Add the uploaded files to the files array
+            for( var i = 0; i < this.files.length; i++ ){
+                let file = this.files[i];
+                formData.append('files[' + i + ']', file);
+            }
+
+            // Add the rest of the form to the formdata
+            formData.append('form', this.form)
+            formData.append('message', this.form.message)
+            formData.append('courseid', this.form.courseid)
+            formData.append('labelid', this.form.labelid)
+            formData.append('subject', this.form.subject)
+
             const path = '/api/ticket/submit'
-            this.$ajax.post(path, this.form)
+            this.$ajax.post(path, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
                 .then(response => {
                     this.$router.push({
                         name: 'StudentTicket',
@@ -186,8 +256,5 @@ export default {
                 console.log(error);
             });
     },
-    components: {
-        vueDropzone
-    }
 }
 </script>

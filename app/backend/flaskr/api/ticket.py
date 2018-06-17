@@ -13,6 +13,8 @@ from flaskr import Iresponse
 from flask_jwt import jwt_required, current_identity
 from flaskr.utils import notifications
 
+UPLOAD_FOLDER = '/useruploads'
+
 
 # Make this post with a button.
 @apiBluePrint.route('/ticket/<ticket_id>/close', methods=['POST', 'PATCH'])
@@ -93,10 +95,12 @@ def create_ticket():
     """
     Check ticket submission and add to database.
     """
-    jsonData = request.get_json()
-    if jsonData is None:
-        return Iresponse.empty_json_request()
-    jsonData['studentid'] = current_identity.id
-    jsonData['name'] = current_identity.name
-    jsonData['email'] = current_identity.email
-    return rp_ticket.create_request(jsonData)
+    ticket_files = request.files
+    ticket_data = request.message
+    print(type(ticket_data))
+    print(ticket_data)
+    # ticket_data['studentid'] = current_identity.id
+    # ticket_data['name'] = current_identity.name
+    # ticket_data['email'] = current_identity.email
+    # rp_ticket.create_request(ticket_data)
+    return
