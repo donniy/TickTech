@@ -60,7 +60,7 @@
                 <b-button class="routerbutton" v-on:click="pushLocation('/course/' + $route.params.course_id + '/labels')">Course labels</b-button>
             </div>
             <div class="col-lg-2 text-center" >
-                <b-button class="routerbutton" >Add students</b-button>
+                <b-button class="routerbutton" @click="addUsers" >Add students</b-button>
             </div>
             <div class="col-lg-2 text-center" >
                 <b-button class="routerbutton" @click="emailSettings" :to="''">Mail settings</b-button>
@@ -82,6 +82,10 @@
             v-bind:key="ticket.id"
             v-bind:ticket="ticket">
         </summodal>
+
+        <addusers v-if="wantsToAddUsers">
+
+        </addusers>
     </div>
 </template>
 <script>
@@ -89,6 +93,7 @@
 import CourseTicketRow from './CourseTicketRow.vue'
 import SumModal from './TicketSummary.vue'
 import EmailModal from './EmailSettingsModal.vue'
+import addUsersModel from './addUsersModel.vue'
 
 export default {
     data () {
@@ -100,6 +105,7 @@ export default {
             status_filter: 'All',
             showEmailModal: false,
             email_running: false,
+            wantsToAddUsers: false,
             course : {
                 'id': "",
                 'course_email': "",
@@ -189,7 +195,11 @@ export default {
                 console.log(error)
                 this.status = 'failed getting course information'
             })
-        }
+        },
+
+        addUsers() {
+            this.wantsToAddUsers = true
+        },
     },
     mounted: function () {
         if (!this.$user.logged_in()) {
@@ -200,7 +210,8 @@ export default {
     components: {
         'ticket': CourseTicketRow,
         'emodal': EmailModal,
-        'summodal': SumModal
+        'summodal': SumModal,
+        'addusers': addUsersModel,
     },
     created: function () {
         this.emailRunning()
