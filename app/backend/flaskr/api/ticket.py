@@ -101,6 +101,7 @@ def create_ticket():
 
     if request.files != '':
         filecount = 0
+        file_names = list()
         for file_id in request.files:
             filecount += 1
             if filecount > 5:
@@ -111,7 +112,7 @@ def create_ticket():
             filename = secure_filename(str(uuid.uuid4()) + extension)
             print(filename)
             file.save(filename)
-            print("SAVED")
+            file_names.append(File(file_location=filename, file_name=file.filename))
             # size = os.stat(UPLOAD_FOLDER + filename).st_size
             # if size > MAX_SIZE:
             #   return Iresponse.create_response("File exeeds sizelimit", 400)
@@ -123,7 +124,8 @@ def create_ticket():
     ticket_data = {'message' :  message,
                    'subject' :  subject,
                    'courseid' :  courseid,
-                   'labelid' :  labelid}
+                   'labelid' :  labelid,
+                   'files' : file_names}
 
     if not course_validation.check_course_validity(courseid, labelid):
         return Iresponse.create_response("Invalid Course/Label", 400)

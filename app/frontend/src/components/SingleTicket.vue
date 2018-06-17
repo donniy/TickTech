@@ -20,6 +20,11 @@
                         <h2>{{ticket.title}}</h2>
                         Status: {{ticket.status.name}}
                     </div>
+                    <div class="file-name-container-small medium-12 small-12 cell" v-if="ticket.files.length > 0">
+                        <div v-for="file in ticket.files">
+                             <p class="file-listing-small"><i v-on:click="downloadFile(file.file_location)" class="material-icons download-icon">folder</i> {{ file.file_name }}</p>
+                        </div>
+                    </div>
                     <div>
                         Ta's:
                         <b v-for="ta in ticket.tas" v-bind:key="ta.id" v-bind:ta="ta">
@@ -186,6 +191,9 @@ export default {
                 .catch(error => {
                     console.log(error)
                 })
+        },
+        downloadFile(key){
+            return
         },
 
         /* Get the ta's in this course. Will add all the ta's to the

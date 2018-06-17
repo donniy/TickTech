@@ -23,6 +23,14 @@ labels_helper = db.Table(
               primary_key=True)
 )
 
+ticket_files_helper = db.Table(
+    'ticket_files',
+    db.Column('file_location', db.String(120),
+              db.ForeignKey('files.file_location'), primary_key=True),
+    db.Column('ticket_id', UUIDType(binary=False),
+              db.ForeignKey('ticket.id'), primary_key=True),
+)
+
 
 class Ticket(db.Model):
 
@@ -55,6 +63,11 @@ class Ticket(db.Model):
         backref=db.backref('ta_tickets', lazy=True)
     )
 
+    #Many to one relationship #TODO: make it one to many instead of many-many
+    files = db.relationship(
+        "File", secondary=ticket_files_helper, lazy='subquery',
+        backref=db.backref('tickets', lazy=True))
+
     # Many to many relation
     labels = db.relationship(
         "TicketLabel", secondary=labels_helper, lazy='subquery',
@@ -84,7 +97,8 @@ class Ticket(db.Model):
             'timestamp': self.timestamp,
             'status': self.ticket_status.serialize,
             'labels': database.serialize_list(self.labels),
-            'tas': database.serialize_list(self.binded_tas)
+            'tas': database.serialize_list(self.binded_tas),
+            'files': database.serialize_list(self.files)
         }
 
     @property
@@ -148,3 +162,30 @@ class TicketLabel(db.Model):
     @property
     def checkValid(self):
         pass
+
+class File(db.Model):
+
+    """
+    Een File.
+    """
+
+    __tablename__ = 'files'
+    file_location = db.Column(db.Text, default=0, nullable=False,
+                         primary_key=True)
+    file_name = db.Column(db.Text, default=0, nullable=False,
+                         unique=False)
+
+    @property
+    def serialize(self):
+        """
+        Zet de message om in json. Dit is alles wat de front-end kan zien,
+        dus zorg dat er geen gevoelige info in zit.
+        """
+        return {
+            'file_location': self.file_location,
+            'file_name': self.file_name
+        }
+
+        @property
+        def checkValid(self):
+            pass

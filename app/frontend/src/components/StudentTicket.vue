@@ -6,6 +6,12 @@
         <div class="material-card">
             <h2>{{ticket.title}}</h2>
             Status: {{ticket.status.name}}
+        </br>
+        <div class="file-name-container-small medium-12 small-12 cell" v-if="ticket.files.length > 0">
+            <div v-for="file in ticket.files">
+                 <p class="file-listing-small"><i v-on:click="downloadFile(file.file_location)" class="material-icons download-icon">folder</i> {{ file.file_name }}</p>
+            </div>
+        </div>
         </div>
 
         <message v-bind:user="user" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
@@ -79,6 +85,9 @@ export default {
     beforeRouteLeave: function (to, from, next) {
         this.$socket.emit('leave-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
         next();
+    },
+    downloadFile(key){
+        return
     },
     components: {
         'message': Message,

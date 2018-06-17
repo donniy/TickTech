@@ -14,11 +14,13 @@ def create_request(jsonData):
     message = escape(jsonData["message"])
     courseid = escape(jsonData["courseid"])
     labelid = escape(jsonData["labelid"])
+    files = jsonData['files']
+
 
     response_body = {}
 
     ticket = Ticket(id=uuid.uuid4(), user_id=studentid, course_id=courseid,
-                    status_id=1, title=subject, email=email,
+                    status_id=1, title=subject, email=email, files=files,
                     timestamp=datetime.now())
 
     if not database.addItemSafelyToDB(ticket):

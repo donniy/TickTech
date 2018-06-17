@@ -88,24 +88,6 @@ nav {
     color: white;
 }
 
-.file-add-text {
-    color: $text-color-def;
-    cursor: pointer;
-    font-size: 1.2em;
-    text-align: left;
-}
-
-.file-add-text:hover {
-    text-decoration: underline;
-    color: $text-color-dark;
-}
-
-.file-add-icon {
-    color: $text-color-def;
-    cursor: pointer;
-    font-size: 1.2em;
-    vertical-align: sub;
-}
 
 .home-left {
     margin-left: 35vh;
@@ -129,6 +111,25 @@ nav {
 }
 
 // Item attachment style (for form)
+.file-add-text {
+    color: $text-color-def;
+    cursor: pointer;
+    font-size: 1.2em;
+    text-align: left;
+}
+
+.file-add-text:hover {
+    text-decoration: underline;
+    color: $text-color-dark;
+}
+
+.file-add-icon {
+    color: $text-color-def;
+    cursor: pointer;
+    font-size: 1.2em;
+    vertical-align: sub;
+}
+
 .file-name-container {
     line-height: 1.1em;
     box-shadow: $medium-shadow;
@@ -137,11 +138,37 @@ nav {
     border: 1px;
     margin-bottom: 10px;
 }
+
+.file-name-container-small {
+    box-shadow: $medium-shadow;
+    font-size: 0.9em;
+    border-color: lighten(#bc0031, 5%);
+    border: 1px;
+    margin-bottom: 5px;
+}
+
+.download-icon{
+    vertical-align: text-bottom;
+}
+
+.file-listing-small {
+    cursor: pointer;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+    padding-left: 10px;
+    color: $text-color-def;
+}
+.file-listing-small:hover {
+    background-color: darken(#FFF, 5%);
+    color: $text-color-dark
+}
+
 .file-listing {
     padding-bottom: 5px;
     padding-left: 10px;
     color: $text-color-def;
 }
+
 .file-listing:hover {
     background-color: darken(#FFF, 5%);
 }
