@@ -1,6 +1,6 @@
 <template>
     <div>
-        <router-link to="/user/123123123" class="btn btn-primary back-button">&laquo; Terug naar overzicht</router-link>
+        <router-link :to="{path: ret_url}" class="btn btn-primary back-button">&laquo; Terug naar overzicht</router-link>
         <br /><br />
         <h1>Mijn ticket</h1>
         <div class="material-card">
@@ -8,27 +8,20 @@
             Status: {{ticket.status.name}}
         </div>
 
-        <message v-bind:self="123123123" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
+        <message v-bind:user="user" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
 
         <form v-on:submit.prevent="sendReply" class="reply-area">
-            <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
-            <button class="reply-button btn btn-primary">
-                <i class="material-icons">
-                    send
-                </i>
-            </button>
+            <h4>Provide additional information</h4>
+            <textarea v-model="reply" rows="6" placeholder="Schrijf een reactie..."></textarea>
+            <button class="btn btn-primary">Submit reaction</button>
         </form>
     </div>
 </template>
 
 <script>
+    import Message from './Message.vue'
+    import VueCookies from 'vue-cookies'
 
-import axios from 'axios'
-import Message from './Message.vue'
-
-const axios_csrf = axios.create({
-  headers: {'X-CSRFToken': csrf_token}
-});
 
 export default {
     data () {
@@ -36,14 +29,16 @@ export default {
             ticket: {title: '', status: {name: ''}, course_id: ''},
             reply: '',
             messages: [],
+            ret_url: '',
+            user: this.$user.get()
         }
     },
     methods: {
         getTicket () {
             const path = '/api/ticket/' + this.$route.params.ticket_id
-            axios.get(path)
+            this.$ajax.get(path)
             .then(response => {
-                this.ticket = response.data
+                this.ticket = response.data.json_data
             })
             .catch(error => {
                 console.log(error)
@@ -51,21 +46,20 @@ export default {
         },
         getMessages () {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
-            axios.get(path)
+            this.$ajax.get(path)
             .then(response => {
-                this.messages = response.data.json_list
+                this.messages = response.data.json_data
             })
             .catch(error => {
                 console.log(error)
             })
         },
         sendReply () {
-            const path = '/api/student/ticket/' + this.$route.params.ticket_id + '/reply'
-            axios_csrf.post(path, {message: this.reply})
+            const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
+            console.log(this.user);
+            this.$ajax.post(path, {message: this.reply, user_id:this.user})
             .then(response => {
-                if (response.data.status == "success") {
                     this.reply = ''
-                }
             })
             .catch(error => {
                 console.log(error)
@@ -73,9 +67,14 @@ export default {
         }
     },
     mounted: function () {
-        this.getTicket()
-        this.getMessages()
-        this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
+        if (!this.$user.logged_in()) {
+            this.$router.push('/login')
+        }
+        this.user = this.$user.get();
+        this.ret_url = '/user/tickets'
+        this.getTicket();
+        this.getMessages();
+        this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id});
     },
     beforeRouteLeave: function (to, from, next) {
         this.$socket.emit('leave-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
@@ -89,11 +88,12 @@ export default {
             console.log("Socket connection!")
         },
         messageAdded: function (data) {
+            console.log("message added!")
             console.log(data)
             this.messages.push(data)
             document.body.scrollTop = document.body.scrollHeight;
         }
-    }
+    },
 }
 
 </script>

@@ -1,9 +1,14 @@
 <template>
     <div id="app">
-        <navbar v-bind:active="active"></navbar>
-        <div class="navbar-spacing"></div>
-        <div class="container">
-        <router-view />
+        <navbar v-bind:transparent="navbarTransparent" v-bind:active="active"></navbar>
+        <div v-if="isHome" class="container-fluid">
+            <router-view />
+        </div>
+        <div v-else class="container-fluid second-background-image">
+            <div class="navbar-spacing"></div>
+            <div class="container">
+                <router-view />
+            </div>
         </div>
     </div>
 </template>
@@ -16,44 +21,42 @@ export default {
     name: 'App',
     data () {
       return {
-        active: 'home'
+        active: 'home',
+        isHome: false,
+        navbarTransparent: true
       }
+    },
+    watch:{
+        $route (to, from) {
+            console.log(to.name)
+            if(to.name === 'Home') {
+                this.isHome = true
+                this.handleNavbarTransparency()
+            } else {
+                this.isHome = false
+                this.navbarTransparent = false
+            }
+        }
+    },
+    methods: {
+        handleNavbarTransparency: function () {
+            if (!this.isHome && this.navbarTransparent) {
+                this.navbarTransparent = false
+                return
+            }
+            if (document.body.scrollTop > 100 || window.pageYOffset > 100 || document.documentElement.scrollTop > 100) {
+                this.navbarTransparent = false
+            } else {
+                this.navbarTransparent = true
+            }
+        }
     },
     components: {
         'navbar': Navbar,
     },
+    created () {
+        window.addEventListener('scroll', this.handleNavbarTransparency);
+    },
 }
 
 </script>
-
-<style scoped>
-li a:hover {
-    background-color: #fff;
-}
-
-li {
-    height:100%;
-}
-.active {
-    background-color: #fff;
-}
-
-ul {
-    padding: 0;
-    margin: 0;
-}
-
-nav {
-    padding: 0;
-}
-li a {
-    color: white;
-    text-align: center;
-    text-decoration: none;
-}
-
-nav {
-    height: 100%;
-}
-</style>
-
