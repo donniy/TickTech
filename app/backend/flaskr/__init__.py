@@ -47,6 +47,9 @@ def create_app(test_config=None):
     # Make user logged in for 1 day.
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=86400)
 
+    # Set the default uploadfolder
+    app.config['UPLOAD_FOLDER'] = '/useruploads'
+
     csrf = CSRFProtect(app)
 
     global socketio
@@ -59,7 +62,8 @@ def create_app(test_config=None):
 
     app.config.from_mapping(
         SECRET_KEY='dev',
-        SQLALCHEMY_DATABASE_URI=db_uri
+        SQLALCHEMY_DATABASE_URI=db_uri,
+        MAX_CONTENT_LENGTH=1000000,
     )
 
     if test_config:

@@ -38,8 +38,8 @@
                     </p>
                     <div class="form-group">
                         <label for="course">Course</label>
-                        <select id="course" v-validate="''" class="form-control custom-select" v-model="form.courseid">
-                            <option disabled value="">Please select a course</option>
+                        <select id="course" v-validate="'required'" class="form-control custom-select" v-model="form.courseid">
+                            <option  disabled value="">Please select a course</option>
                             <option v-for="obj in categories.courses" v-bind:key="obj.id" v-bind:value="obj.id">
                             {{ obj.title }}
                             </option>
@@ -80,9 +80,6 @@ export default {
     data() {
         return {
             form: {
-                name: "",
-                studentid: "",
-                email: "",
                 message: "",
                 courseid: "",
                 labelid: "",
@@ -157,43 +154,47 @@ export default {
             }
         },
         sendTicket() {
-            this.$validator.validateAll()
+            this.$validator.validateAll().then((result)=>
+            {
+                if (result) {
 
-            // Create a formdata object
-            let formData = new FormData();
+                    // Create a formdata object
+                    let formData = new FormData();
 
-            // Add the uploaded files to the files array
-            for( var i = 0; i < this.files.length; i++ ){
-                let file = this.files[i];
-                formData.append('files[' + i + ']', file);
-            }
+                    // Add the uploaded files to the files array
+                    for( var i = 0; i < this.files.length; i++ ){
+                        let file = this.files[i];
+                        formData.append('files[' + i + ']', file);
+                    }
 
-            // Add the rest of the form to the formdata
-            formData.append('form', this.form)
-            formData.append('message', this.form.message)
-            formData.append('courseid', this.form.courseid)
-            formData.append('labelid', this.form.labelid)
-            formData.append('subject', this.form.subject)
+                    // Add the rest of the form to the formdata
+                    formData.append('message', this.form.message)
+                    formData.append('courseid', this.form.courseid)
+                    formData.append('labelid', this.form.labelid)
+                    formData.append('subject', this.form.subject)
 
-            const path = '/api/ticket/submit'
-            this.$ajax.post(path, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            })
-                .then(response => {
-                    this.$router.push({
-                        name: 'StudentTicket',
-                        params: {
-                            ticket_id: response.data.json_data.ticketid
+                    const path = '/api/ticket/submit'
+                    this.$ajax.post(path, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
                         }
                     })
+                    .then(response => {
+                        console.log(response)
+                        this.$router.push({
+                            name: 'StudentTicket',
+                            params: {
+                                ticket_id: response.data.json_data.ticketid
+                            }
+                        })
+                        this.form = ""
 
-                    console.log("Pushed")
-                    this.form = ""
-                }).catch(error => {
-                    console.log(error)
-                })
+                    }).catch((error) => {
+                        window.alert("Something went wrong...")
+                    })
+                }
+            })
+
         },
         onChange: function(e) {
             this.categories = this.categories

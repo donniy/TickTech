@@ -5,15 +5,18 @@ from flaskr import database
 from . import apiBluePrint
 from flask import jsonify, request, escape
 from flaskr import socketio
+from werkzeug.utils import secure_filename
 import uuid
 import datetime
 from flaskr.request_processing import ticket as rp_ticket
 from flaskr.request_processing import message as rp_message
 from flaskr import Iresponse
 from flask_jwt import jwt_required, current_identity
-from flaskr.utils import notifications
+from flaskr.utils import notifications, course_validation, json_validation
+import os
 
-UPLOAD_FOLDER = '/useruploads'
+
+UPLOAD_FOLDER = './useruploads/'
 
 
 # Make this post with a button.
@@ -95,12 +98,44 @@ def create_ticket():
     """
     Check ticket submission and add to database.
     """
-    ticket_files = request.files
-    ticket_data = request.message
-    print(type(ticket_data))
-    print(ticket_data)
-    # ticket_data['studentid'] = current_identity.id
-    # ticket_data['name'] = current_identity.name
-    # ticket_data['email'] = current_identity.email
-    # rp_ticket.create_request(ticket_data)
-    return
+
+    if request.files != '':
+        filecount = 0
+        for file_id in request.files:
+            filecount += 1
+            if filecount > 5:
+                return Iresponse.create_response("Too many files", 400)
+            file = request.files[file_id]
+
+            extension =  '.' + file.filename.rsplit('.', 1)[1].lower()
+            filename = secure_filename(str(uuid.uuid4()) + extension)
+            print(filename)
+            file.save(filename)
+            print("SAVED")
+            # size = os.stat(UPLOAD_FOLDER + filename).st_size
+            # if size > MAX_SIZE:
+            #   return Iresponse.create_response("File exeeds sizelimit", 400)
+
+    message = escape(request.form['message'])
+    subject = escape(request.form['subject'])
+    courseid = escape(request.form['courseid'])
+    labelid = escape(request.form['labelid'])
+    ticket_data = {'message' :  message,
+                   'subject' :  subject,
+                   'courseid' :  courseid,
+                   'labelid' :  labelid}
+
+    if not course_validation.check_course_validity(courseid, labelid):
+        return Iresponse.create_response("Invalid Course/Label", 400)
+
+    ticket_data['studentid'] = current_identity.id
+    ticket_data['name'] = current_identity.name
+    ticket_data['email'] = current_identity.email
+
+    if not json_validation.validate_ticket_data(ticket_data):
+        return Iresponse.create_response("Invalid ticket data", 400)
+
+
+    response = rp_ticket.create_request(ticket_data)
+
+    return response

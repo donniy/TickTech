@@ -15,11 +15,29 @@ def validate_json(json_data, tags):
 def validate_ticket_data(ticket_data):
 
     # Check all required fields
-    required_tags = ['message', 'subject', 'courseid', 'studentid', 'name', 'email']
+    required_tags = ['message', 'subject', 'courseid',
+                     'studentid', 'name', 'email']
+                     
     for tag in required_tags:
         if tag not in ticket_data:
             return False
 
-    # Check
-    if len(ticket_data['message']) > 50 or < 1:
+    # Check subject validity
+    if len(ticket_data['subject']) > 50:
         return False
+
+    # Check message validity
+    if len(ticket_data['message']) < 1 or len(ticket_data['message']) > 10000:
+        return False
+
+    # Check if student data is provided by current_identity
+    lenname = len(ticket_data['name']) < 1
+    lenemail = len(ticket_data['email']) < 1
+
+    if lenname or lenemail:
+        return False
+
+    if ticket_data['studentid'] > 1000000000 or ticket_data['studentid'] < 10000:
+        return False
+
+    return True
