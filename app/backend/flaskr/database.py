@@ -93,9 +93,9 @@ def populate_database_dummy_data():
                       email="test@test.nl")
 
     # !IMPORTANT! This is for the mail server - ask stephan
-    mail_server = user.User(id=9999999999,
+    mail_server = user.User(id=107584259,
                             name="Mail server",
-                            email="Noreply@noreply.com")
+                            email="uvapsetest@gmail.com")
 
     items = [user1, user2, user3, mail_server, course, course2]
 
