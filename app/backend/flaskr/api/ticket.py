@@ -5,18 +5,15 @@ from flaskr import database
 from . import apiBluePrint
 from flask import jsonify, request, escape
 from flaskr import socketio
-from werkzeug.utils import secure_filename
 import uuid
 import datetime
 from flaskr.request_processing import ticket as rp_ticket
 from flaskr.request_processing import message as rp_message
+from flaskr.request_processing import file as rp_file
 from flaskr import Iresponse
 from flask_jwt import jwt_required, current_identity
 from flaskr.utils import notifications, course_validation, json_validation
 import os
-
-
-UPLOAD_FOLDER = './useruploads/'
 
 
 # Make this post with a button.
@@ -108,14 +105,10 @@ def create_ticket():
                 return Iresponse.create_response("Too many files", 400)
             file = request.files[file_id]
 
-            extension =  '.' + file.filename.rsplit('.', 1)[1].lower()
-            filename = secure_filename(str(uuid.uuid4()) + extension)
-            print(filename)
-            file.save(filename)
-            file_names.append(File(file_location=filename, file_name=file.filename))
-            # size = os.stat(UPLOAD_FOLDER + filename).st_size
-            # if size > MAX_SIZE:
-            #   return Iresponse.create_response("File exeeds sizelimit", 400)
+            if not rp_file.save_file(file, file_names):
+                print("invalid file")
+                return Iresponse.create_response("File exeeds sizelimit", 400)
+
 
     message = escape(request.form['message'])
     subject = escape(request.form['subject'])
@@ -128,6 +121,9 @@ def create_ticket():
                    'files' : file_names}
 
     if not course_validation.check_course_validity(courseid, labelid):
+        print("invalid course")
+        for file in file_names:
+            rp_file.remove_file(file)
         return Iresponse.create_response("Invalid Course/Label", 400)
 
     ticket_data['studentid'] = current_identity.id
@@ -135,9 +131,26 @@ def create_ticket():
     ticket_data['email'] = current_identity.email
 
     if not json_validation.validate_ticket_data(ticket_data):
+        print("invalid ticket")
+        for file in file_names:
+            rp_file.remove_file(file)
         return Iresponse.create_response("Invalid ticket data", 400)
 
 
     response = rp_ticket.create_request(ticket_data)
 
     return response
+
+@apiBluePrint.route('/ticket/filedownload', methods=['POST'])
+@jwt_required()
+def download_file():
+    """ Download a file from server (check rights in future)"""
+    json_data = request.get_json()
+    if 'address' in json_data:
+        address = json_data['address']
+
+        if address:
+            return rp_file.get_file(address)
+            # return Iresponse.create_response("No address", 404)
+    else:
+        return Iresponse.create_response("No address", 404)

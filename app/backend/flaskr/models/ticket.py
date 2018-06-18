@@ -25,8 +25,8 @@ labels_helper = db.Table(
 
 ticket_files_helper = db.Table(
     'ticket_files',
-    db.Column('file_location', db.String(120),
-              db.ForeignKey('files.file_location'), primary_key=True),
+    db.Column('file_id', UUIDType(binary=False),
+              db.ForeignKey('files.file_id'), unique=False, primary_key=True),
     db.Column('ticket_id', UUIDType(binary=False),
               db.ForeignKey('ticket.id'), primary_key=True),
 )
@@ -63,7 +63,7 @@ class Ticket(db.Model):
         backref=db.backref('ta_tickets', lazy=True)
     )
 
-    #Many to one relationship #TODO: make it one to many instead of many-many
+    # Many to many relationship
     files = db.relationship(
         "File", secondary=ticket_files_helper, lazy='subquery',
         backref=db.backref('tickets', lazy=True))
@@ -170,10 +170,11 @@ class File(db.Model):
     """
 
     __tablename__ = 'files'
-    file_location = db.Column(db.Text, default=0, nullable=False,
+    file_location = db.Column(db.Text, unique=False, nullable=False,
                          primary_key=True)
-    file_name = db.Column(db.Text, default=0, nullable=False,
-                         unique=False)
+    file_name = db.Column(db.Text, unique=False, nullable=False)
+    file_id = db.Column(UUIDType(binary=False), primary_key=True)
+    is_duplicate = db.Column(db.Boolean, default=False, nullable=False)
 
     @property
     def serialize(self):
@@ -183,7 +184,8 @@ class File(db.Model):
         """
         return {
             'file_location': self.file_location,
-            'file_name': self.file_name
+            'file_name': self.file_name,
+            'is_duplicate': self.is_duplicate
         }
 
         @property
