@@ -61,7 +61,7 @@
             <div class="col-lg-2 col-md-2 text-center">
                 <b-button class="routerbutton" @click="emailSettings" :to="''">Mail settings</b-button>
             </div>
-            <div class="col-lg-2 col-md-2  text-center" >
+            <div class="col-lg-2 col-md-2  text-center" v-if="isSupervisor">
                 <b-button class="routerbutton" @click="addTas" :to="''">Add TA's</b-button>
             </div>
 
@@ -108,12 +108,14 @@ export default {
             wantsToAddTa: false,
             addTasPath: "",
             addStudentsPath: "",
+            isSupervisor: false,
             course : {
                 'id': "",
                 'course_email': "",
                 'title': "",
                 'description': "",
-                'tas': []
+                'tas': [],
+                'supervisors': [],
             }
         }
     },
@@ -205,20 +207,17 @@ export default {
                 }
             })
         },
-        getCourseInfo() {
-            this.status = 'getting course information'
-            const path = '/api/courses/single/' + this.$route.params.course_id
-            this.$ajax.get(path)
-                .then(response => {
-                    this.course = response.data.json_data
-                        this.status = 'Retrieved data'
-                        console.log(response.data.json_data)
-                        console.log(response)
-                    })
-                    .catch(error => {
-                        console.log(error)
-                        this.status = 'failed getting course information'
-                    })
+        /* Function that checks if the current user is a supervisor for this course.
+         * This is used to determine the rights of a user. It checks the id of the user
+         * to the ids of the supervisors of this course. If a match is found we
+         * set the this variable of isSupervisor equal to true. That will be used
+         * in a v-if statement.
+         */
+        checkIfSupervisor() {
+            let supervisors = this.course.supervisors;
+            let userid = this.$user.get().id
+            let matches = supervisors.filter(supervisor => supervisor.id === userid)
+            this.isSupervisor = matches.length === 1
         },
         getCourseInfo(){
             this.status = 'getting course information'
@@ -229,8 +228,7 @@ export default {
                 this.status = 'Retrieved data'
                 this.addStudentsPath = '/api/courses/' + this.course.id + '/students'
                 this.addTasPath = '/api/courses/' + this.course.id + '/tas'
-                console.log(response.data.json_data)
-                console.log(response)
+                this.checkIfSupervisor()
             })
             .catch(error => {
                 console.log(error)

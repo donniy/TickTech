@@ -34,7 +34,7 @@ supervisor_linker = db.Table(
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'),
               primary_key=True),
     db.Column('course_id', UUIDType(binary=False), db.ForeignKey('course.id'),
-              primary_key=False)
+              primary_key=True)
 )
 
 
@@ -86,7 +86,8 @@ class Course(db.Model):
             'course_email': self.course_email,
             'title': self.title,
             'description': self.description,
-            'tas': [ta.serialize for ta in self.ta_courses]
+            'tas': [ta.serialize for ta in self.ta_courses],
+            'supervisors': [suvi.serialize for suvi in self.supervisors]
         }
 
     @property
