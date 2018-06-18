@@ -1,6 +1,5 @@
 <template>
-    <a v-on:click="pushCourse"
-       class="list-course">
+    <a v-on:click="pushCourse" class="list-course">
         <h5>{{course.title}}</h5>
         <h6 style="font-size:0.7em; line-height:1;">{{course.id}}</h6>
         <p style="font-size:0.8em; line-height:1;">{{course.description}}</p>
@@ -9,22 +8,22 @@
 
 <script>
 
-export default {
-    props: {
-        course: Object,
+    export default {
+        props: {
+            course: Object,
             base_url: {
-            type: String,
+                type: String,
                 default: "/ticket/"
             }
-    },
-    data: function () {
-        return {};
-    },
-    methods: {
-        pushCourse () {
-            this.$router.push("/course/" + this.course.id);
-            this.$emit('title', this.course.title)
+        },
+        data: function () {
+            return {}
+        },
+        methods: {
+            pushCourse() {
+                this.$router.push("/course/" + this.course.id)
+                this.$emit('title', this.course.title)
+            }
         }
     }
-}
 </script>

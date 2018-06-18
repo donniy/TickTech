@@ -27,67 +27,66 @@
 </template>
 
 <script>
-    import Vue from 'vue';
-    import axios from 'axios'
-    import Ticket from './Ticket.vue'
-    import VueCookies from 'vue-cookies';
+	import Vue from 'vue'
+	import Ticket from './Ticket.vue'
+	import VueCookies from 'vue-cookies'
 
 
-    export default {
-    	data() {
-    		return {
-    			tickets: [],
-    			courses: [],
-    			status: 'not set'
-    		}
-    	},
-    	methods: {
-    		getTickets() {
+	export default {
+		data() {
+			return {
+				tickets: [],
+				courses: [],
+				status: 'not set'
+			}
+		},
+		methods: {
+			getTickets() {
 				this.status = 'getting tickets'
-    			const path = '/api/user/' + this.$user.get().id+ '/tickets'
-    			this.$ajax.get(path).then(response => {
-    				this.tickets = response.data.json_data
-    				this.status = 'Retrieved data'
-    				// console.log(response.data.json_data)
-    				// console.log(response)
-    			}).catch(error => {
-    				console.log(error)
-    				this.status = 'failed getting tickets'
-    			})
-    		},
+				const path = '/api/user/' + this.$user.get().id + '/tickets'
+				this.$ajax.get(path).then(response => {
+					this.tickets = response.data.json_data
+					this.status = 'Retrieved data'
+					// console.log(response.data.json_data)
+					// console.log(response)
+				}).catch(error => {
+					console.log(error)
+					this.status = 'failed getting tickets'
+				})
+			},
 
-    		getCourses() {
-    			const path = '/api/user/' + this.$user.get().id + '/courses'
-    			this.$ajax.get(path).then(response => {
-    				this.courses = response.data.json_data
-    				// console.log(response.data)
-    			}).catch(error => {
-    				console.log(error)
-    			})
-    		},
+			getCourses() {
+				const path = '/api/user/' + this.$user.get().id + '/courses'
+				this.$ajax.get(path).then(response => {
+					this.courses = response.data.json_data
+					// console.log(response.data)
+				}).catch(error => {
+					console.log(error)
+				})
+			},
 
-    		created() {
-    			this.status = 'created'
-    			this.getTickets()
-    			this.getCourses()
-    		}
-    	},
-    	mounted: function() {
+			created() {
+				this.status = 'created'
+				this.getTickets()
+				this.getCourses()
+			}
+		},
+		mounted: function () {
 			if (!this.$user.logged_in()) {
 				console.log("fuck")
 				this.$router.push('/login')
 			}
 
-    		this.created()
-    		this.$emit('tab-activate', 'my-tickets')
-    	},
-    	// watch: {
-    	// 	'$route': function() {
-    	// 		this.created()
-    	// 	}
-    	// },
-    	components: {
-    		'ticket': Ticket,
-    	}
-    }
+			this.created()
+			this.$emit('tab-activate', 'my-tickets')
+		},
+		// watch: {
+		// 	'$route': function() {
+		// 		this.created()
+		// 	}
+		// },
+		components: {
+			'ticket': Ticket,
+		}
+	}
 </script>

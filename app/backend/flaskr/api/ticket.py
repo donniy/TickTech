@@ -55,14 +55,14 @@ def create_message(ticket_id):
     """
     Maak een nieuw bericht.
     """
-    jsonData = request.get_json()
+    json_data = request.get_json()
     if request is None:
         return Iresponse.empty_json_request()
 
-    jsonData["user_id"] = current_identity.id
+    json_data["studentid"] = current_identity.id
 
-    userId = escape(jsonData["user_id"])
-    msg = rp_message.create_request(jsonData, ticket_id)
+    userId = escape(json_data["studentid"])
+    msg = rp_message.create_request(json_data, ticket_id)
 
     ticket = Ticket.query.get(ticket_id)
     user = User.query.get(userId)

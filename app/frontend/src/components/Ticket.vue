@@ -7,16 +7,16 @@
 </template>
 
 <script>
-    export default {
-    	props: {
-    		ticket: Object,
-    		base_url: {
-    			type: String,
-    			default: "/ticket/"
-    		}
-    	},
-    	data: function() {
-    		return {}
-    	}
-    }
+	export default {
+		props: {
+			ticket: Object,
+			base_url: {
+				type: String,
+				default: "/ticket/"
+			}
+		},
+		data: function () {
+			return {}
+		}
+	}
 </script>

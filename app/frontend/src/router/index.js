@@ -72,7 +72,7 @@ const routerOptions = [
     {
         path: '/register',
         name: 'Register',
-        component: 'Register',
+        component: 'RegisterForm',
         meta: {
             breadcrumb: 'Register'
         },
