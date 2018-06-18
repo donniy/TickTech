@@ -66,7 +66,7 @@
                 <b-button class="routerbutton" @click="emailSettings" :to="''">Mail settings</b-button>
             </div>
             <div class="col-lg-2 text-center" >
-                <b-button class="routerbutton" :to="''">Add TA's</b-button>
+                <b-button class="routerbutton" @click="addTas" :to="''">Add TA's</b-button>
             </div>
 
         </div>
@@ -83,8 +83,16 @@
             v-bind:ticket="ticket">
         </summodal>
 
-        <addusers v-if="wantsToAddUsers" v-bind:course_id="this.course.id">
+        <addusers v-if="wantsToAddUsers"
+                  v-bind:title="'Add students to this course'"
+                  v-bind:label_message="'Students:'"
+                  v-bind:api_path="this.addStudentsPath">
 
+        </addusers>
+        <addusers v-if="wantsToAddTa"
+                  v-bind:title="'Add TAs to this course'"
+                  v-bind:label_message="'TAs:'"
+                  v-bind:api_path="this.addTasPath">
         </addusers>
     </div>
 </template>
@@ -106,6 +114,9 @@ export default {
             showEmailModal: false,
             email_running: false,
             wantsToAddUsers: false,
+            wantsToAddTa: false,
+            addTasPath: "",
+            addStudentsPath: "",
             course : {
                 'id': "",
                 'course_email': "",
@@ -183,6 +194,8 @@ export default {
             .then(response => {
                 this.course = response.data.json_data
                 this.status = 'Retrieved data'
+                this.addStudentsPath = '/api/courses/' + this.course.id + '/students'
+                this.addTasPath = '/api/courses/' + this.course.id + '/tas'
                 console.log(response.data.json_data)
                 console.log(response)
             })
@@ -192,9 +205,16 @@ export default {
             })
         },
 
+        /* Shows the menu to upload a csv file with user data. */
         addStudents() {
-            this.wantsToAddUsers = true
+            this.wantsToAddTa = false
+            this.wantsToAddUsers = this.wantsToAddUsers === false
         },
+        /* Shows the menu to upload a csv file with ta data. */
+        addTas() {
+            this.wantsToAddUsers = false
+            this.wantsToAddTa = this.wantsToAddTa === false
+        }
     },
     mounted: function () {
         if (!this.$user.logged_in()) {

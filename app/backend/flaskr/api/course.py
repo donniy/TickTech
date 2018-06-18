@@ -77,6 +77,43 @@ def get_course_students(course_id):
         200)
 
 
+@apiBluePrint.route('/courses/<course_id>/tas', methods=['POST'])
+def add_tas_to_course(course_id):
+    if request.files == '':
+        return Iresponse.empty_json_request()
+    for f_id in request.files:
+        f = request.files[f_id]
+        if f.filename.split('.').pop() != "csv":
+            return Iresponse.create_response("", 400)
+        filename = secure_filename(f.filename)
+        f.save(filename)
+        read_tas_csv(filename, course_id)
+        os.remove(filename)
+    return Iresponse.create_response("", 200)
+
+
+def read_tas_csv(filename, course_id):
+    f = open(filename, 'r')
+    reader = csv.reader(f, delimiter=',')
+    course = Course.query.get(course_id)
+    if course is None:
+        return False
+    for row in reader:
+        if len(row) != 3:
+            continue
+        stud_id = int(row[0])
+        user = User.query.get(stud_id)
+        if user is None:
+            user = User(id=int(row[0]),name=row[1], email=row[2])
+            if not database.addItemSafelyToDB(user):
+                continue
+
+        if user not in course.ta_courses:
+            print("ADDING TA")
+            course.ta_courses.append(user)
+            database.get_db().session.commit()
+    return True
+
 @apiBluePrint.route('/courses/<course_id>/students', methods=['POST'])
 def add_students_to_course(course_id):
     if request.files == '':
