@@ -60,7 +60,7 @@
                 <b-button class="routerbutton" v-on:click="pushLocation('/course/' + $route.params.course_id + '/labels')">Course labels</b-button>
             </div>
             <div class="col-lg-2 text-center" >
-                <b-button class="routerbutton" @click="addUsers" >Add students</b-button>
+                <b-button class="routerbutton" @click="addStudents" >Add students</b-button>
             </div>
             <div class="col-lg-2 text-center" >
                 <b-button class="routerbutton" @click="emailSettings" :to="''">Mail settings</b-button>
@@ -83,7 +83,7 @@
             v-bind:ticket="ticket">
         </summodal>
 
-        <addusers v-if="wantsToAddUsers">
+        <addusers v-if="wantsToAddUsers" v-bind:course_id="this.course.id">
 
         </addusers>
     </div>
@@ -146,11 +146,6 @@ export default {
                 console.log(response)
             })
         },
-        dashBoard () {
-            console.log("Dashboard")
-            this.$router.push('/course/' + this.$route.params.course_id + '/dashboard')
-
-        },
         stopEmail(form) {
             this.showEmailModal = false
             console.log(form)
@@ -197,7 +192,7 @@ export default {
             })
         },
 
-        addUsers() {
+        addStudents() {
             this.wantsToAddUsers = true
         },
     },
