@@ -24,11 +24,10 @@
 
 
 <script>
-    import Vue from 'vue'
-    import VeeValidate from 'vee-validate'
-    import axios from 'axios'
-    import VueCookies from 'vue-cookies'
-    import Router from 'vue-router'
+import Vue from 'vue';
+import VeeValidate from 'vee-validate';
+import VueCookies from 'vue-cookies';
+import Router from 'vue-router';
 
     Vue.use(VueCookies)
 
