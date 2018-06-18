@@ -136,82 +136,81 @@ export default {
                     this.status = 'failed getting tickets'
                 })
         },
-        methods: {
-            mouseOver: function (one, two) {
-                if (this.ticketSum != 0) {
-                    let className = one.path[1].className
-                    if (!(className.indexOf("singleTicket") > -1 || className.indexOf("summary") > -1)) {
-                        this.ticketSum = 0
-                        this.showSum = false
-                    }
+        mouseOver: function (one, two) {
+            if (this.ticketSum != 0) {
+                let className = one.path[1].className
+                if (!(className.indexOf("singleTicket") > -1 || className.indexOf("summary") > -1)) {
+                    this.ticketSum = 0
+                    this.showSum = false
                 }
-            },
-            pushLocation(here) {
-                this.$router.push(here)
-            },
-            getTickets() {
-                this.status = 'getting tickets'
-                const path = '/api/courses/' + this.$route.params.course_id + '/tickets'
-                this.$ajax.get(path)
-                    .then(response => {
-                        this.tickets = response.data.json_data
-                        this.status = 'Retrieved data'
-                        console.log(response.data.json_data)
-                        console.log(response)
-                    })
-                    .catch(error => {
-                        console.log(error)
-                        this.status = 'failed getting tickets'
-                    })
-            },
-            emailSettings() {
-                this.showEmailModal = true
-            },
-            updateEmail(form) {
-                this.showEmailModal = false
-                console.log(form)
-                const path = '/api/email'
-                this.$ajax.post(path, form, response => {
-                    // TODO: Implement authentication on back-end to work with Canvas.
+            }
+        },
+        pushLocation(here) {
+            this.$router.push(here)
+        },
+        getTickets() {
+            this.status = 'getting tickets'
+            const path = '/api/courses/' + this.$route.params.course_id + '/tickets'
+            this.$ajax.get(path)
+                .then(response => {
+                    this.tickets = response.data.json_data
+                    this.status = 'Retrieved data'
+                    console.log(response.data.json_data)
                     console.log(response)
                 })
-            },
-            stopEmail(form) {
-                this.showEmailModal = false
-                console.log(form)
-                const path = '/api/email/stop'
-                this.$ajax.post(path, form, response => {
-                    // TODO: Implement authentication on back-end to work with Canvas.
-                    console.log(response)
+                .catch(error => {
+                    console.log(error)
+                    this.status = 'failed getting tickets'
                 })
-            },
-            created() {
-                this.status = 'created'
-                this.getCourseInfo()
-                this.getTickets()
-            },
-            emailRunning: function () {
-                // Get the current email settings from server
-                // console.log("Check if email is running")
-                const path = '/api/email/' + this.$route.params.course_id + '/online'
-                this.$ajax.get(path, response => {
-                    // TODO: Implement authentication on back-end to work with Canvas.
-                    // console.log("repsone email running")
+        },
+        emailSettings() {
+            this.showEmailModal = true
+        },
+        updateEmail(form) {
+            this.showEmailModal = false
+            console.log(form)
+            const path = '/api/email'
+            this.$ajax.post(path, form, response => {
+                // TODO: Implement authentication on back-end to work with Canvas.
+                console.log(response)
+            })
+        },
+        stopEmail(form) {
+            this.showEmailModal = false
+            console.log(form)
+            const path = '/api/email/stop'
+            this.$ajax.post(path, form, response => {
+                // TODO: Implement authentication on back-end to work with Canvas.
+                console.log(response)
+            })
+        },
+        created() {
+            this.status = 'created'
+            this.getCourseInfo()
+            this.getTickets()
+        },
+        emailRunning: function () {
+            // Get the current email settings from server
+            // console.log("Check if email is running")
+            const path = '/api/email/' + this.$route.params.course_id + '/online'
+            this.$ajax.get(path, response => {
+                // TODO: Implement authentication on back-end to work with Canvas.
+                // console.log("repsone email running")
+                // console.log(response)
+                if (response.status == 201) {
+                    // console.log("Here")
+                    // console.log(response.data.json_data.running)
                     // console.log(response)
-                    if (response.status == 201) {
-                        // console.log("Here")
-                        // console.log(response.data.json_data.running)
-                        // console.log(response)
-                        this.email_running = response.data.json_data.running
-                    }
-                })
-            },
-            getCourseInfo() {
-                this.status = 'getting course information'
-                const path = '/api/courses/single/' + this.$route.params.course_id
-                this.$ajax.get(path)
-                    .then(response => {
-                        this.course = response.data.json_data
+                    this.email_running = response.data.json_data.running
+                }
+            })
+        },
+        getCourseInfo() {
+            this.status = 'getting course information'
+            const path = '/api/courses/single/' + this.$route.params.course_id
+            this.$ajax.get(path)
+                .then(response => {
+                    this.course = response.data.json_data
                         this.status = 'Retrieved data'
                         console.log(response.data.json_data)
                         console.log(response)
@@ -220,27 +219,6 @@ export default {
                         console.log(error)
                         this.status = 'failed getting course information'
                     })
-            }
-        },
-        mounted: function () {
-            if (!this.$user.logged_in()) {
-                this.$router.push('/login')
-            }
-            this.created()
-        },
-        components: {
-            'ticket': CourseTicketRow,
-            'emodal': EmailModal,
-            'summodal': SumModal
-        },
-        created: function () {
-            this.emailRunning()
-        },
-        watch: {
-            // whenever showMadel changes, this function will run
-            showEmailModal: function () {
-                this.emailRunning()
-            }
         },
         getCourseInfo(){
             this.status = 'getting course information'
@@ -269,7 +247,7 @@ export default {
         addTas() {
             this.wantsToAddUsers = false
             this.wantsToAddTa = this.wantsToAddTa === false
-        }
+        },
     },
     mounted: function () {
         if (!this.$user.logged_in()) {

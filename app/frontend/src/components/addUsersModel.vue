@@ -61,9 +61,8 @@ export default {
                                 'Content-Type': 'multipart/form-data'
                             }
             }).then(response => {
-                //this.file = null;
-                //this.resetFileName()
-                console.log("File uploaded")
+                this.file = null;
+                this.resetFileName()
             })
         },
         resetFileName() {

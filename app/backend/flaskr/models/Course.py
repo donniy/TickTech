@@ -43,7 +43,7 @@ class Course(db.Model):
     mail_server_url = db.Column(db.String(120), unique=False, nullable=True)
     mail_port = db.Column(db.Integer, nullable=True)
     mail_password = db.Column(db.String(120), unique=False, nullable=True)
-    supervisor_id = db.Column(db.Integer, unique=False, nullable=False)
+    supervisor_id = db.Column(db.Integer, unique=False, nullable=True)
 
     # Many to many relation
     student_courses = db.relationship(
