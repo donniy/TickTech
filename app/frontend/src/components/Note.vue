@@ -13,7 +13,6 @@
 
 
 <script>
-    import axios from 'axios'
     import Modal from './ClosePrompt.vue'
 
     export default {
