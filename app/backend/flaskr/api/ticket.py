@@ -12,6 +12,8 @@ from flaskr.request_processing import message as rp_message
 from flaskr import Iresponse
 from flask_jwt import jwt_required, current_identity
 from flaskr.utils import notifications
+from flask_mail import Mail
+from mail.Message import create_email_message
 
 
 # Make this post with a button.
@@ -65,17 +67,26 @@ def create_message(ticket_id):
     ticket = Ticket.query.get(ticket_id)
     user = User.query.get(userId)
 
+    print("Createing message")
+    message = create_email_message(ticket.title,
+                                   ['stephan_handbal@hotmail.com'], ticket_id,
+                                   jsonData['message'], user.name,
+                                   'TIMESTAMP')
+    res = Mail().send(message)
+    print(res)
+    print("message send\n\n")
+
 #    if ticket is not None and user is not None:
-#        # unassigned
+# unassigned
 #        if ticket.ticket_status.id == 1:
 #            ticket.ticket_status = TicketStatus.query.get(4)
-#        # assigned
+# assigned
 #        elif ticket.ticket_status.id == 3:
 #            ticket.ticket_status = TicketStatus.query.get(4)
 #
 #        tas = ticket.binded_tas
 #        if user not in tas:
-#            # add user to bound tas
+# add user to bound tas
 #            tas.append(user)
 #
 #    db.session.commit()

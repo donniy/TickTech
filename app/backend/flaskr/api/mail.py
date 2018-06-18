@@ -52,7 +52,7 @@ import poplib
 #     course.mail_port = port
 #     course.mail_server_url = server
 #     if not database.addItemSafelyToDB(course):
-#         return Iresponse.create_response("Failed to attach to database", 412)
+#        return Iresponse.create_response("Failed to attach to database", 412)
 #
 #     return Iresponse.create_response("wait for further instruction", 201)
 
@@ -117,40 +117,40 @@ def stop_email_fetching():
     thread.stop()
     return Iresponse.create_response("Succes", 201)
 
-
-def create_new_email_thread(sleeptime, server, port, email, password,
-                            course_id):
-    """
-    Create a new email thread
-    """
-    thread = MailThread.exist_thread_courseid(course_id)
-    if (thread is None):
-        print("create new thread")
-        new_thread = MailThread(sleeptime, server, port, email, password,
-                                course_id)
-        new_thread.setName(course_id)
-        new_thread.start()
-        print("done")
-    else:
-        print("Thread already exists, update")
-        update_thread(thread, sleeptime, server, port, email, password)
-    return
-
-
-def stop_thread(thread):
-    """
-    Stop an existing email thread
-    """
-    thread.stop()
-    return
-
-
-def update_thread(thread, sleeptime, server, port, email, password):
-    """
-    Update an existing thread.
-    """
-    # One example
-    print("Updating thread..")
-    thread.update(sleep_time=sleeptime, server=server, port=port, email=email,
-                  password=password)
-    return
+#
+# def create_new_email_thread(sleeptime, server, port, email, password,
+#                             course_id):
+#     """
+#     Create a new email thread
+#     """
+#     thread = MailThread.exist_thread_courseid(course_id)
+#     if (thread is None):
+#         print("create new thread")
+#         new_thread = MailThread(sleeptime, server, port, email, password,
+#                                 course_id)
+#         new_thread.setName(course_id)
+#         new_thread.start()
+#         print("done")
+#     else:
+#         print("Thread already exists, update")
+#         update_thread(thread, sleeptime, server, port, email, password)
+#     return
+#
+#
+# def stop_thread(thread):
+#     """
+#     Stop an existing email thread
+#     """
+#     thread.stop()
+#     return
+#
+#
+# def update_thread(thread, sleeptime, server, port, email, password):
+#     """
+#     Update an existing thread.
+#     """
+#     # One example
+#     print("Updating thread..")
+#     thread.update(sleep_time=sleeptime, server=server, port=port,
+#                   email=email, password=password)
+#     return

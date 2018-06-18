@@ -14,6 +14,7 @@ from . import login
 import poplib
 from mail.thread import MailThread
 from datetime import timedelta
+from flask_mail import Mail
 
 
 db = database.db
@@ -43,6 +44,16 @@ def create_app(test_config=None):
     app.config['WTF_CSRF_CHECK_DEFAULT'] = False
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    # Send email settings, for now hardcoded
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_PORT'] = 465  # = popular email client SSL
+    app.config['MAIL_USE_SSL'] = True
+    app.config['MAIL_USE_TLS'] = False
+    app.config['MAIL_USERNAME'] = 'uvapsetest@gmail.com'
+    app.config['MAIL_PASSWORD'] = 'stephanandrea'
+    app.config['MAIL_DEFAULT_SENDER'] = 'uvapsetest@gmail.com'
+    Mail(app)
 
     # Make user logged in for 1 day.
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=86400)
@@ -173,7 +184,8 @@ def create_app(test_config=None):
             print("created")
         else:
             print("Thread already exists, update")
-            update_thread(thread, sleeptime, server, port, email, password)
+            thread.update(sleep_time=sleeptime, server=server, port=port,
+                          email=email, password=password)
 
         print("add database")
         course = Course.Course.query.get(course_id)

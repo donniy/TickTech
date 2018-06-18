@@ -49,11 +49,18 @@ def parse_email(inbox, i):
         subject = subject_parsed[0][0]
 
     # Get body.
-    body = None
+    body = ''
+    attachments = []
     if parsed_email.is_multipart():
-        for payload in parsed_email.get_payload():
-            if (payload.get_content_type() == "text/plain"):
-                body = payload.get_payload()
+        for part in parsed_email.walk():
+            ctype = part.get_content_type()
+            if (ctype == 'text/plain'):
+                body += str(part.get_payload())
+            if ctype in ['image/jpeg', 'image/png']:
+                # What yo do with the attachment?!
+                # open(part.get_filename(), 'wb')
+                # .write(part.get_payload(decode=True))
+                print("Found image")
     else:
         print("TODO: Not multipart email.")  # TODO: replies on emails
         # print(parsed_email.get_payload())
@@ -83,7 +90,7 @@ def parse_body(string, courseid):
     # keywords = ??
 
     body = string.split()
-    studentid = -1
+    studentid = 123123123
 
     for words in body:
         if words.isdigit() and len(words) > 6 and len(words) < 9:
@@ -132,11 +139,11 @@ def check_mail(host, port, user, password, courseid):
         else:
             studentid, labelid = parse_body(body, courseid)
 
-            print("Sender: " + sender + "\nStudentid: " + studentid +
-                  "\nEmail: " + address + "\nSubject: " + subject)
+            print("Sender: " + str(sender) + "\nStudentid: " + str(studentid) +
+                  "\nEmail: " + str(address) + "\nSubject: " + str(subject))
             print("Course ID: ", courseid)
             print("Label ID: ", labelid, "\n\n")
-            # print("Body: " + body)
+            print("Body: " + body)
 
             # parsed, but should be compared with database
             # parsed, but should be compared with database
@@ -152,14 +159,22 @@ def check_mail(host, port, user, password, courseid):
 
             # Add the new variables to a new ticket.
             result = requests.post(
-                        'http://localhost:5000/api/email/ticket/submit',
-                        json=newticket)
+                'http://localhost:5000/api/email/ticket/submit',
+                json=newticket)
 
             if (result.status_code != 201):
                 print("Something went wrong creating a"
                       "new ticket from an email.")
+                print(result.text)
 
     # Somehow makes you up-to-date with server
     # disable this when debugging
     # server.quit()
     return 0
+
+
+if __name__ == '__main__':
+    print("Run this")
+    check_mail("pop.gmail.com", "995",
+               "uvapsetest@gmail.com", "stephanandrea", 1)
+    print("Finished")
