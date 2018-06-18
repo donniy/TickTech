@@ -44,18 +44,18 @@ def retrieve_all_courses():
     return Iresponse.create_response(database.serialize_list(courses), 200)
 
 
-# remember to add file in __init__
-@apiBluePrint.route('/courses/user/<user_id>', methods=['GET'])
-def retrieve_courses(user_id):
-    # TODO get courses from LTI api
-    # TODO put user id in data and not in link
+# not used at the moment. If still not used in the future delete this function
+# @apiBluePrint.route('/courses/ta/<user_id>', methods=['GET'])
+# def retrieve_courses(user_id):
+#     # TODO get courses from LTI api
+#     # TODO put user id in data and not in link
 
-    user = User.query.get(user_id)
-    if user is None:
-        return Iresponse.create_response("", 404)
-    courses = user.ta_courses
+#     user = User.query.get(user_id)
+#     if user is None:
+#         return Iresponse.create_response("", 404)
+#     courses = user.ta_courses
 
-    return Iresponse.create_response(database.serialize_list(courses), 200)
+#     return Iresponse.create_response(database.serialize_list(courses), 200)
 
 
 @apiBluePrint.route('/courses/<course_id>/tas', methods=['GET'])

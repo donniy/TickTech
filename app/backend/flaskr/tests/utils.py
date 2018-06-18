@@ -1,6 +1,7 @@
 from flaskr import database
 from flaskr.models.user import *
 from flaskr.models.ticket import *
+from flaskr.models.Note import *
 
 
 def create_user(app, id):
@@ -38,6 +39,16 @@ def create_course(app, courseId, tas=[], students=[]):
     course.student_courses = students
     database.addItemSafelyToDB(course)
     return course
+
+
+def create_note(app, noteId, ticketId, userId, text):
+    note = Note()
+    note.id = noteId
+    note.ticket_id = ticketId
+    note.user_id = userId
+    note.text = text
+    database.addItemSafelyToDB(note)
+    return note
 
 
 def link_ta_to_course(user, course):
