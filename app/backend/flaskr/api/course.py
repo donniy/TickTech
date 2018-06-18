@@ -104,7 +104,7 @@ def read_tas_csv(filename, course_id):
         stud_id = int(row[0])
         user = User.query.get(stud_id)
         if user is None:
-            user = User(id=int(row[0]),name=row[1], email=row[2])
+            user = User(id=int(row[0]), name=row[1], email=row[2])
             if not database.addItemSafelyToDB(user):
                 continue
 
@@ -113,6 +113,7 @@ def read_tas_csv(filename, course_id):
             course.ta_courses.append(user)
             database.get_db().session.commit()
     return True
+
 
 @apiBluePrint.route('/courses/<course_id>/students', methods=['POST'])
 def add_students_to_course(course_id):
@@ -152,7 +153,7 @@ def read_students_csv(filename, course_id):
         stud_id = int(row[0])
         user = User.query.get(stud_id)
         if user is None:
-            user = User(id=int(row[0]),name=row[1], email=row[2])
+            user = User(id=int(row[0]), name=row[1], email=row[2])
             if not database.addItemSafelyToDB(user):
                 continue
 
