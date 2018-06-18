@@ -79,8 +79,7 @@ def populate_database_dummy_data():
                             course_email="testie@test.com",
                             title="course 2",
                             description="Test")
-    course.supervisors.append(11111)
-    course2.supervisors.append(11112)
+
     user1 = user.User(id=11111,
                       name="Erik Kooijstra",
                       email="Erik@kooijstra.nl")
@@ -93,6 +92,10 @@ def populate_database_dummy_data():
                       name="Test mctestie",
                       email="test@test.nl")
 
+    user4 = user.User(id=10000,
+                      name="Supervisor",
+                      email="super@visor.nl")
+
     # !IMPORTANT! This is for the mail server - ask stephan
     mail_server = user.User(id=9999999999,
                             name="Mail server",
@@ -104,6 +107,8 @@ def populate_database_dummy_data():
         addItemSafelyToDB(item)
 
     try:
+        course.supervisors.append(user4)
+        course2.supervisors.append(user4)
         course.student_courses.append(user3)
         course2.student_courses.append(user3)
         course.ta_courses.append(user1)
@@ -124,7 +129,7 @@ def addTicketStatus(name="Needs help"):
     try:
         addItemSafelyToDB(ts)
     except Exception as e:
-        print("oeps")
+        print(e)
 
 
 def addTicketLabel(ticked_id=uuid.uuid4(), course_id=uuid.uuid4(),
@@ -137,7 +142,7 @@ def addTicketLabel(ticked_id=uuid.uuid4(), course_id=uuid.uuid4(),
     try:
         addItemSafelyToDB(tl)
     except Exception as e:
-        print("oeps")
+        print(e)
 
 
 def addTicket(user_id=1, email="test@email.com", course_id=uuid.uuid4(),
