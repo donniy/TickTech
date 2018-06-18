@@ -3,11 +3,12 @@ from flaskr.models.Course import *
 from flaskr.request_processing import courses
 import re
 
+
 def check_course_validity(courseid, labelid):
 
     # Check if the ids are valid uuids (to prevent a 500 crash)
     regex = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}"
-            r"-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+                       r"-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
 
     if not courseid:
         return False

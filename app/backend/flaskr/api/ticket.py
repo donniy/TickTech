@@ -96,29 +96,51 @@ def create_ticket():
     Check ticket submission and add to database.
     """
 
-    if request.files != '':
-        filecount = 0
-        file_names = list()
-        for file_id in request.files:
-            filecount += 1
-            if filecount > 5:
-                return Iresponse.create_response("Too many files", 400)
-            file = request.files[file_id]
+    # Mandatory check to comply with incompatible testing.
+    formdata = None
+    if hasattr(request, 'data'):
+        data = request.get_json()
+        formdata = {'subject': data['subject'],
+                    'message': data['message'],
+                    'courseid': data['courseid'],
+                    'labelid': data['labelid'],
+                    }
+        print(formdata)
+    else:
+        formdata = request.form
+        print(formdata)
 
-            if not rp_file.save_file(file, file_names):
-                print("invalid file")
-                return Iresponse.create_response("File exeeds sizelimit", 400)
+    if hasattr(request, 'files'):
+        if request.files != '':
+            filecount = 0
+            file_names = list()
+            for file_id in request.files:
+                filecount += 1
+                if filecount > 5:
+                    return Iresponse.create_response("Too many files", 400)
+                file = request.files[file_id]
 
+                if not rp_file.save_file(file, file_names):
+                    print("invalid file")
+                    return Iresponse.create_response("File too large", 400)
 
-    message = escape(request.form['message'])
-    subject = escape(request.form['subject'])
-    courseid = escape(request.form['courseid'])
-    labelid = escape(request.form['labelid'])
-    ticket_data = {'message' :  message,
-                   'subject' :  subject,
-                   'courseid' :  courseid,
-                   'labelid' :  labelid,
-                   'files' : file_names}
+    print("DATANOW:", formdata)
+
+    if not json_validation.validate_json(formdata, ['message',
+                                                    'subject',
+                                                    'courseid',
+                                                    'labelid']):
+        return Iresponse.create_response("Malformed request", 400)
+
+    message = escape(formdata['message'])
+    subject = escape(formdata['subject'])
+    courseid = escape(formdata['courseid'])
+    labelid = escape(formdata['labelid'])
+    ticket_data = {'message':  message,
+                   'subject':  subject,
+                   'courseid':  courseid,
+                   'labelid':  labelid,
+                   'files': file_names}
 
     if not course_validation.check_course_validity(courseid, labelid):
         print("invalid course")
@@ -136,10 +158,10 @@ def create_ticket():
             rp_file.remove_file(file)
         return Iresponse.create_response("Invalid ticket data", 400)
 
-
     response = rp_ticket.create_request(ticket_data)
 
     return response
+
 
 @apiBluePrint.route('/ticket/filedownload', methods=['POST'])
 @jwt_required()

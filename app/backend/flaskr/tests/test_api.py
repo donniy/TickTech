@@ -48,10 +48,11 @@ def test_insert_ticket(app, client):
     cid = rv.get_json()['json_data'][0]['id']
     print("course: {}".format(cid))
     rv = client.post('/api/ticket/submit', json={
-        'subject': 'test ticket',
-        'message': 'Test bericht',
-        'courseid': cid,
-        'labelid': ''
+            'subject': 'test ticket',
+            'message': 'Test bericht',
+            'courseid': cid,
+            'labelid': '',
+            'files': ''
     }, headers={
         'Authorization': auth
     })

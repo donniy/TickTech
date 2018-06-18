@@ -16,7 +16,6 @@ def create_request(jsonData):
     labelid = escape(jsonData["labelid"])
     files = jsonData['files']
 
-
     response_body = {}
 
     ticket = Ticket(id=uuid.uuid4(), user_id=studentid, course_id=courseid,

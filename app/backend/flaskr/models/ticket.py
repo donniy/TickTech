@@ -163,15 +163,15 @@ class TicketLabel(db.Model):
     def checkValid(self):
         pass
 
-class File(db.Model):
 
+class File(db.Model):
     """
     Een File.
     """
 
     __tablename__ = 'files'
     file_location = db.Column(db.Text, unique=False, nullable=False,
-                         primary_key=True)
+                              primary_key=True)
     file_name = db.Column(db.Text, unique=False, nullable=False)
     file_id = db.Column(UUIDType(binary=False), primary_key=True)
     is_duplicate = db.Column(db.Boolean, default=False, nullable=False)

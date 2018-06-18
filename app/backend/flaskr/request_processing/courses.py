@@ -29,6 +29,7 @@ def retrieve_course_tickets_request(course_id):
 
     return Iresponse.create_response(database.serialize_list(tickets), 200)
 
+
 def single_course_request(course_id):
     course = Course.query.filter_by(id=uuid.UUID(course_id)).first()
     return course

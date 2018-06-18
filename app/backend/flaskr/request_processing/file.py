@@ -8,13 +8,14 @@ import uuid
 
 MAX_SIZE = 10485760
 
+
 def save_file(file, file_names):
 
     # Setup the filesystem
     app = Flask(__name__)
     fs = FlaskHashFS()
 
-    extension =  '.' + file.filename.rsplit('.', 1)[1].lower()
+    extension = '.' + file.filename.rsplit('.', 1)[1].lower()
     address = fs.put(file, extension=extension)
     file_names.append(File(file_id=uuid.uuid4(),
                            file_location=address.relpath,
@@ -22,11 +23,12 @@ def save_file(file, file_names):
                            is_duplicate=address.is_duplicate))
 
     size = os.stat(expanduser("~") + '/serverdata/' + address.relpath).st_size
-    print("FILESIZE",size)
+    print("FILESIZE", size)
     if size > MAX_SIZE:
         print("TOO big")
         return False
     return True
+
 
 def get_file(address):
 
@@ -40,6 +42,7 @@ def get_file(address):
         return fileio.read()
     else:
         return Iresponse.create_response("File not found", 404)
+
 
 def remove_file(file):
 
