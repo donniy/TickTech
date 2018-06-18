@@ -18,7 +18,7 @@ class DatabaseInsertException(DatabaseException):
 
     def __init__(self, debug_message):
         super().__init__(debug_message)
-        self.response_message = response_message = ""
+        self.response_message = ""
 
 
 def init_db():
@@ -73,15 +73,14 @@ def populate_database_dummy_data():
                            mail_port="995",
                            mail_password="stephanandrea",
                            title="course 1",
-                           supervisor_id=11111,
                            description="Test")
 
     course2 = Course.Course(id=uuid.uuid4(),
                             course_email="testie@test.com",
                             title="course 2",
-                            supervisor_id=11111,
                             description="Test")
-
+    course.supervisors.append(11111)
+    course2.supervisors.append(11112)
     user1 = user.User(id=11111,
                       name="Erik Kooijstra",
                       email="Erik@kooijstra.nl")

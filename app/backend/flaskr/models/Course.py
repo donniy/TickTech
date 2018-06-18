@@ -29,6 +29,14 @@ label_course_linker = db.Table(
               db.ForeignKey('label.label_id'), primary_key=True)
 )
 
+supervisor_linker = db.Table(
+    "supervisor_linker",
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'),
+              primary_key=True),
+    db.Column('course_id', UUIDType(binary=False), db.ForeignKey('course.id'),
+              primary_key=False)
+)
+
 
 class Course(db.Model):
     """
@@ -43,7 +51,6 @@ class Course(db.Model):
     mail_server_url = db.Column(db.String(120), unique=False, nullable=True)
     mail_port = db.Column(db.Integer, nullable=True)
     mail_password = db.Column(db.String(120), unique=False, nullable=True)
-    supervisor_id = db.Column(db.Integer, unique=False, nullable=True)
 
     # Many to many relation
     student_courses = db.relationship(
@@ -57,6 +64,10 @@ class Course(db.Model):
     labels = db.relationship(
         "Label", secondary=label_course_linker, lazy='subquery',
         backref=db.backref('labels', lazy=True))
+
+    supervisors = db.relationship(
+        "User", secondary=supervisor_linker, lazy='subquery',
+        backref=db.backref('supervisors', lazy=True))
 
     # Dit is een soort toString zoals in Java, voor het gebruiken van de
     # database in de commandline. Op die manier kan je data maken en weergeven
