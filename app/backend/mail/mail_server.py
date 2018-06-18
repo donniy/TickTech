@@ -120,16 +120,19 @@ def check_mail(host, port, user, password, courseid):
         server.quit()
         return 0
 
-    # TEMP GET COURSE: STEPHHIE IS FIXING THIS :)
-    # courseid = None
-    # result = requests.get('http://localhost:5000/api/courses')
-    # if (result.status_code == 200):
-    #     courses = result.json()
-    #     courseid = courses["json_data"][0]["id"]
-    # else:
-    #     print("Error retrieving course id from server.")
-    #     return
-    # TEMP GET COURSE: STEPHHIE IS FIXING THIS :)
+    # Get all labels available for this course
+    labels = None
+    result = requests.get('http://localhost:5000/api/labels/'+courseid)
+    if (result.status_code == 200):
+        data = result.json()
+        labels = data['json_data']
+        if (labels == []):
+            print("No labels available")
+        else:
+            # This is how it works
+            print(labels[0]['label_id'], labels[0]['label_name'])
+    else:
+        print("Failed", result.text)
 
     for i in range(mailcount):
         subject, body, sender, address = parse_email(server, i)
@@ -175,6 +178,13 @@ def check_mail(host, port, user, password, courseid):
 
 if __name__ == '__main__':
     print("Run this")
+    result = requests.get('http://localhost:5000/api/courses')
+    if (result.status_code == 200):
+        courses = result.json()
+        courseid = courses["json_data"][0]["id"]
+    else:
+        print("Failed", result.text)
+
     check_mail("pop.gmail.com", "995",
-               "uvapsetest@gmail.com", "stephanandrea", 1)
+               "uvapsetest@gmail.com", "stephanandrea", courseid)
     print("Finished")

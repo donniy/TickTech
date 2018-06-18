@@ -69,7 +69,7 @@ def create_message(ticket_id):
 
     print("Createing message")
     message = create_email_message(ticket.title,
-                                   ['stephan_handbal@hotmail.com'], ticket_id,
+                                   [user.mail], ticket_id,
                                    jsonData['message'], user.name,
                                    'TIMESTAMP')
     res = Mail().send(message)

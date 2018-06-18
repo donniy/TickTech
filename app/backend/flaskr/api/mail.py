@@ -104,6 +104,21 @@ def is_email_running(course_id):
     object = {'running': running}
     return Iresponse.create_response(object, 201)
 
+#  This can be added if needed, currently not used
+# @apiBluePrint.route('/email/force/<course_id>/fetch', methods=['POST'])
+# def force_fetch_email(course_id):
+#     """
+#     Force a one time email fetch
+#     """
+#     thread = MailThread.exist_thread_courseid(course_id)
+#     if (thread is not None):
+#         thread.force_fetch()
+#         message = "succes"
+#     else:
+#         message = "failed, thread not found"
+#     result = {'status': message}
+#     return Iresponse.create_response(result, 200)
+
 
 @apiBluePrint.route('/email/stop', methods=['POST'])
 def stop_email_fetching():
