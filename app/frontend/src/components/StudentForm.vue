@@ -58,7 +58,6 @@
 </template>
 
 <script>
-    import axios from 'axios'
     import VeeValidate from 'vee-validate'
 
     export default {
@@ -139,11 +138,11 @@
                 }).catch(error => {
                     console.log(error)
                 });
-            for (let i = 0; i < this.categories.courses.length; i++) {
-                //axios_csrf.get(pathLabels + '/' + this.courses[i].course_id)
-                console.log("HELLO")
-                console.log(this.categories.courses[i].course_id)
-            }
+            // for (let i = 0; i < this.categories.courses.length; i++) {
+            //     //axios_csrf.get(pathLabels + '/' + this.courses[i].course_id)
+            //     console.log("HELLO")
+            //     console.log(this.categories.courses[i].course_id)
+            // }
             this.$ajax.get(pathLabels)
                 .then(response => {
                     console.log
