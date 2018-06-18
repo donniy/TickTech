@@ -30,7 +30,8 @@ wheels/
 *.egg
 MANIFEST
 app/frontend/package-lock.json
-app/dist
+/app/dist
+/app/dist/*
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

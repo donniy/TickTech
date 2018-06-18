@@ -20,14 +20,14 @@
     	headers: {
     		'X-CSRFToken': 'need_to_replace'
     	}
-    });
+    })
 
     export default {
     	props: ['note'],
     	data: function() {
     		return {
     			showModal: false
-    		};
+    		}
     	},
     	methods: {
     		closeNote() {

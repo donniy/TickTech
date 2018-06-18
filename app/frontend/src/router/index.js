@@ -4,78 +4,95 @@ import Router from 'vue-router'
 const routerOptions = [
     {
         path: '/',
-        name: 'home',
+        name: 'Home',
         component: 'Home',
+        meta: {
+            breadcrumb: '/',
+        },
+    },
+    {
+        path: '/home',
+        name: 'userhome',
+        component: 'UserHome',
+        meta: {
+            breadcrumb: 'Home'
+        }
     },
     {
         path: '/course/:course_id',
         name: 'CourseTickets',
         component: 'CourseTickets',
+        meta: {
+            breadcrumb: 'Course',
+            pre: '/home'
+        },
+    },
+
+    {
+        path: '/user/tickets',
+        name: 'UserTickets',
+        component: 'UserTickets',
+        meta: {
+            breadcrumb: 'User Tickets'
+        },
     },
     {
-        path: '/mytickets/',
-        name: 'mytickets',
-        component: 'mytickets',
+        path: '/ticket/submit/',
+        name: 'SubmitTicket',
+        component: 'StudentForm',
+        meta: {
+            breadcrumb: 'Create Ticket'
+        },
     },
     {
         path: '/ticket/:ticket_id',
         name: 'SingleTicket',
         component: 'SingleTicket',
-    },
-    {
-        path: '/user/:user_id',
-        name: 'UserTickets',
-        component: 'UserTickets',
-    },
-    {
-        path:'/courses',
-        name:'CourseOverview',
-        component:'CourseOverview',
-    },
-    {
-        path: '/form/',
-        name: 'AskAQuestion',
-        component: 'StudentForm',
+        meta: {
+            breadcrumb: 'Ticket',
+            pre: '/user/:user_id'
+        },
     },
     {
         path: '/team/',
         name: 'Team',
         component: 'Team',
+        meta: {
+            breadcrumb: 'Team'
+        },
     },
-    // {
-    //     path: '/ticket/:ticket_id/closeticket',
-    //     name: 'closeticket',
-    //     component: 'modal'
-    // },
     {
         path: '/login',
         name: 'Login',
-        component: 'Login'
+        component: 'Login',
+        meta: {
+            breadcrumb: 'Login'
+        },
     },
     {
         path: '/register',
         name: 'Register',
-        component: 'Register'
+        component: 'RegisterForm',
+        meta: {
+            breadcrumb: 'Register'
+        },
     },
     {
         path: '/course/:course_id/labels',
         name: 'Labels',
-        component: 'Labels'
-    },
-    {
-        path: '/ta/:ta_id',
-        name: 'TAInbox',
-        component: 'TA_Inbox'
+        component: 'Labels',
+        meta: {
+            breadcrumb: 'Course Labels'
+        },
     },
     {
         path: '/student/ticket/:ticket_id',
         name: 'StudentTicket',
         component: 'StudentTicket',
-    },
-    {
-        path: '/sort',
-        name: 'SortingTickets',
-        component: 'SortingTickets'
+        meta: {
+            breadcrumb: 'Student Ticket',
+            pre: '/user/:user_id'
+        },
     },
     {
         path: '*',
