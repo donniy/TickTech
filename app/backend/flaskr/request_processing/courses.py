@@ -9,14 +9,12 @@ def create_request(jsonData):
     mail = escape(jsonData['mail'])
     title = escape(jsonData['title'])
     description = escape(jsonData['description'])
-    supervisor_id = escape(jsonData['supervisor_id'])
 
     course = Course()
     course.id = uuid.uuid4()
     course.course_email = mail
     course.title = title
     course.description = description
-    course.supervisor_id = supervisor_id
 
     if not database.addItemSafelyToDB(course):
         return Iresponse.internal_server_error()
