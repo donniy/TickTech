@@ -30,11 +30,11 @@
     export default {
     	props: ['warning'],
     	data: function() {
-    		return {};
+    		return {}
     	},
     	method: {
     		changeClose() {
-    			this.$emit("closeT", "true");
+    			this.$emit("closeT", "true")
     		}
     	}
     }

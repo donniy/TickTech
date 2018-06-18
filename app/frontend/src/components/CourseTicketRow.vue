@@ -29,7 +29,7 @@ export default {
             this.$parent.ticketSum = this.ticket.id
         },
         navTicket () {
-            this.$router.push("/ticket/" + this.ticket.id);
+            this.$router.push("/ticket/" + this.ticket.id)
         }
     },
 }

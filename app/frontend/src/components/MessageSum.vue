@@ -11,12 +11,12 @@
     export default {
         props: ['message', 'user'],
         computed: {
-            username: function() {
+            username: function () {
                 return this.$user.get().id == this.message.user_id ? 'You:' : this.message.user_id
             },
         },
-        data: function() {
-            return {};
+        data: function () {
+            return {}
         },
     }
 </script>

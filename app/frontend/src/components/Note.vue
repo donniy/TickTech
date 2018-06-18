@@ -21,7 +21,7 @@
     	data: function() {
     		return {
     			showModal: false
-    		};
+    		}
     	},
     	methods: {
     		closeNote() {
