@@ -16,9 +16,9 @@ def download_file():
     if 'address' in json_data:
         address = json_data['address']
         print("ASDFASDFASDF")
-        # return rp_file.get_file(address)
-
-        if address:
+        if not address:
             return Iresponse.create_response("No address", 404)
+        return Iresponse.create_response(rp_file.get_file(address),201)
+
     else:
         return Iresponse.create_response("No address", 404)

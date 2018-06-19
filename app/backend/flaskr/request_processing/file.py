@@ -15,6 +15,8 @@ def save_file(file, file_names):
     app = Flask(__name__)
     fs = FlaskHashFS()
 
+    print(type(file))
+
     extension = '.' + file.filename.rsplit('.', 1)[1].lower()
     address = fs.put(file, extension=extension)
     file_names.append(File(file_id=uuid.uuid4(),
@@ -25,7 +27,6 @@ def save_file(file, file_names):
     size = os.stat(expanduser("~") + '/serverdata/' + address.relpath).st_size
     print("FILESIZE", size)
     if size > MAX_SIZE:
-        print("TOO big")
         return False
     return True
 
@@ -36,8 +37,7 @@ def get_file(address):
     app = Flask(__name__)
     fs = FlaskHashFS()
     fileio = fs.open(address)
-
-    print("FILETYPE:" + str(type(fileio)))
+    
     if fileio:
         return fileio.read()
     else:

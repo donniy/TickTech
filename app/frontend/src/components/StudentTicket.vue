@@ -78,15 +78,26 @@
                 .then((response) => {
 
                     // Create response donwload link
-                    const url = window.URL.createObjectURL(new Blob([response.data]))
-                    const link = document.createElement('a')
-
-                    // Ref to the link and activate download.
-                    link.href = url
-                    link.setAttribute('download', name)
-                    document.body.appendChild(link)
-                    link.click();
-                    document.body.removeChild(link)
+                    let mime_type =  response.headers["content-type"]
+                    console.log(response)
+                    let blob = new Blob([response.data], { type: response.headers["content-type"]})
+                    var reader = new FileReader()
+                    var returnedURL
+                    var returnedBase64
+                    reader.onload = function(e) {
+                        returnedURL = e.target.result
+                        returnedBase64 = returnedURL.replace(/^[^,]+,/, '')
+                        console.log(returnedBase64)
+                    }
+                    reader.readAsDataURL(blob)
+                    var element = document.createElement('a');
+                    element.id = 'downloadLink';
+                    element.href = returnedURL;
+                    element.download = name;
+                    document.body.appendChild(element);
+                    var downloadLink = document.getElementById('downloadLink');
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
                 })
                 .catch(error => {
                     console.log(error)

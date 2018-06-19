@@ -3,7 +3,7 @@ from flaskr.models.Message import *
 from flaskr.models.user import *
 from flaskr import database
 from . import apiBluePrint
-from flask import jsonify, request, escape
+from flask import jsonify, request, escape, send_from_directory
 from flaskr import socketio
 import uuid
 import datetime
@@ -13,8 +13,8 @@ from flaskr.request_processing import file as rp_file
 from flaskr import Iresponse
 from flask_jwt import jwt_required, current_identity
 from flaskr.utils import notifications, course_validation, json_validation
+from os.path import expanduser
 import os
-
 
 # Make this post with a button.
 @apiBluePrint.route('/ticket/<ticket_id>/close', methods=['POST', 'PATCH'])
@@ -167,10 +167,11 @@ def download_file():
     """ Download a file from server (check rights in future)"""
     json_data = request.get_json()
     if 'address' in json_data:
-        address = json_data['address']
+        folder = expanduser("~") + '/serverdata/' + json_data['address'].rsplit('/', 1)[0]
+        file = json_data['address'].rsplit('/', 1)[1]
+        print(folder, file)
 
-        if address:
-            return rp_file.get_file(address)
-            # return Iresponse.create_response("No address", 404)
+        if folder and file:
+            return send_from_directory(folder, file, as_attachment=True)
     else:
         return Iresponse.create_response("No address", 404)
