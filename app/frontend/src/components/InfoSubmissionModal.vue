@@ -8,15 +8,26 @@
                         <h1>Ticket Submission</h1>
 
                         <div class="row">
-                            This form is used to create a ticket.
+                            <p>This page is can be used to create a ticket. Use this form to ask a question or remark on
+                            an assignment or exam. </p>
+                            
+                            <p>Use the subject input to specify the question and use the message
+                            input to provide more information. In order to assign the right Teacher Assistant (TA) to your
+                            ticket please select the corresponding course. To futher help us assign the right TA to you ticket
+                            it is possible to add a label. For example this label could be the name of the assignment or
+                            exam.</p>
+
+                            <p>For futher questions about ticket submission please e-mail us at: test@test.com </p>
                         </div>  
                         
-                        <div class="row">
-                            <div class="text-center">
+                        <div class="row buttom">
+                            <div class="col-sm-4"></div>
+                            <div class="col-sm-4 subheading-middle">
                                 <button class="btn btn-primary close-button" @click="$emit('close')">
                                     Close
                                 </button>
                             </div>
+                            <div class="col-sm-4"></div>
                         </div>
                         </slot>
                     </div>
@@ -83,6 +94,10 @@
 
     .modal-stop-button {
         float: left;
+    }
+
+    .close-button {
+        margin-top: 40px;
     }
 
     /*
