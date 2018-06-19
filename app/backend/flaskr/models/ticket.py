@@ -106,8 +106,6 @@ class Ticket(db.Model):
         """
         tmp = [self.owner]
         tmp.extend(self.binded_tas)
-        print("Binded tas:")
-        print(self.binded_tas)
         return set(tmp)
 
     def __eq__(self, other):

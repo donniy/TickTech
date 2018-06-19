@@ -72,6 +72,20 @@ export default {
         'message': function (data) {
             console.log("received message")
             console.log(data)
+            switch (message.type) {
+                case 0:
+                    // Message (ticket reply)
+                    break;
+                case 1:
+                    // Status update
+                    break;
+                case 2:
+                    // Ticket closed
+                    break;
+                case 3:
+                    // New ticket
+                    break;
+            }
             this.snackbar.text = data.text
             this.snackbar.ticket = data.ticket
             this.showSnackbar = true

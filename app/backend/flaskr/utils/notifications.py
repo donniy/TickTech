@@ -3,7 +3,7 @@ from flaskr.models.user import *
 from flaskr import socketio
 
 
-def notify(sender_id, ticket, text, n_type):
+def notify(sender_id, ticket, text, n_type, initial=False):
     """
     Notify everyone in a ticket.
     """
@@ -28,10 +28,14 @@ def notify(sender_id, ticket, text, n_type):
                   room='ticket-messages-{}'
                   .format(message.ticket_id))
 
-    notification = {'text': "{}: {}{}"
+    notification = {'text': "{}{}"
                     .format(user.name, message.text[:40],
                     '...' if len(message.text) > 40 else ''),
-                    'ticket': str(ticket.id)}
+                    'ticket': str(ticket.id),
+                    'ticket_owner': str(ticket.owner.id),
+                    'sender': user.serialize,
+                    'initial': initial,
+                    'type': n_type}
 
     # We need to notify everyone related to the course. For this,
     # we first retrieve all related users. After that, we remove
@@ -39,10 +43,15 @@ def notify(sender_id, ticket, text, n_type):
     # have everyone who needs to be notified and we can notify
     # them with the notify function on the user model.
     us = ticket.related_users
+    print("Users related to ticket:")
+    for u in us:
+        print(" - {}".format(u.name))
     if user in us:
         us.remove(user)
 
+    print("Users to notify:")
     for u in us:
+        print(" - {}".format(u.name))
         u.notify(notification)
 
     return message
