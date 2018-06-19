@@ -57,6 +57,7 @@ def parse_email(bytes_email):
                 # What yo do with the attachment?!
                 # open(part.get_filename(), 'wb')
                 # .write(part.get_payload(decode=True))
+                print("THIS IS TYPE: ", type(part.get_payload(decode=True)))
                 print("Found image")
     else:
         # Emails are always multipart?
@@ -114,6 +115,9 @@ def find_user_id(body, sender, sendermail):
 
 
 def retrieve_labels(courseid):
+    '''
+    Retrieve all available labels of a course from the server.
+    '''
     labels = None
     result = requests.get('http://localhost:5000/api/labels/' + courseid)
     if (result.status_code == 200):
@@ -132,7 +136,7 @@ def retrieve_labels(courseid):
 
 def check_mail(host, port, user, password, courseid):
     '''
-    Start a mail server.
+    Start a mail server and sync all emails once.
     '''
     # connect
     server = connect(host, port, user, password)

@@ -10,27 +10,29 @@ import poplib
 
 
 @apiBluePrint.route('/email/user/match', methods=["POST"])
-def retrieve_mail_user():
+def mail_match_on_mail():
+    '''
+    Try to match incomming email on email-address.
+    '''
+    # Check data
     json_data = request.get_json()
     if not validate_json(json_data, ["email"]):
         return Iresponse.empty_json_request()
 
-    print("got here")
-    # match on email
+    # Match on first succes
     email = json_data["email"]
     user = User.query.filter_by(email=email).first()
+
     if user is not None:
-        response = {
-            "succes": True,
-            "studentid": user.id
-        }
-        print("Succes")
-        return Iresponse.create_response(response, 200)
+        id = user.id
+        succes = True
+    else:
+        id = None
+        succes = True
     response = {
-        "succes": False,
-        "studentid": None
+        "succes": succes,
+        "studentid": id
     }
-    print("Fail")
     return Iresponse.create_response(response, 200)
 
 
@@ -50,9 +52,8 @@ def create_email_ticket():
 @apiBluePrint.route('/email/<course_id>/settings', methods=['GET'])
 def retrieve_current_mail_settings(course_id):
     """
-    Geeft email instelling van course.
+    Geef email instelling van course.
     """
-    # TODO: Controlleer rechten
     course = Course.query.get(course_id)
     if course is None:
         return Iresponse.create_response("This course does no longer exists",
