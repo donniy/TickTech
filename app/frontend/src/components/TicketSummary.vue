@@ -16,7 +16,7 @@
                     </div>
                 </div>
 
-                <div class="summary-tab middle">
+                <div class="summary-tab-middle">
                     <div class="summary-header">
                         <h3>Conversation</h3>
                     </div>

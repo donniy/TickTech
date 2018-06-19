@@ -1,6 +1,6 @@
 <template>
-    <tr v-on:mouseover="showTicket"
-        v-on:click="navTicket"
+    <tr v-on:click="showTicket"
+        v-on:dblclick="navTicket"
         style="cursor:pointer;"
         class="singleTicket">
         <th>{{ticket.title}}</th>
