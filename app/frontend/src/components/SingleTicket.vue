@@ -1,7 +1,6 @@
 <template>
     <div>
-        <button class="btn btn-primary back-button"
-                v-on:click="goCourse('/course/' + ticket.course_id)">
+        <button class="btn btn-primary back-button" v-on:click="goCourse('/course/' + ticket.course_id)">
             Terug naar cursus
         </button>
 
@@ -10,7 +9,8 @@
         </button>
 
         <modal v-if="showModal" warning="Are you sure you want to close this ticket?" @yes="closeTicket()" @close="showModal = false"></modal>
-        <br /><br />
+        <br />
+        <br />
 
         <div class="row">
             <div class="col-md-8 col-sm-8 col-lg-8 col-xs-12">
@@ -33,7 +33,11 @@
                 <form v-on:submit.prevent="sendReply" class="reply-area">
                     <h4>Respond</h4>
                     <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
-                    <button class="btn btn-primary">Submit</button>
+                    <button class="reply-button btn btn-primary">
+                        <i class="material-icons">
+                            send
+                        </i>
+                    </button>
                 </form>
             </div>
             <div class="col-md-4 col-sm-4 col-lg-4 col-xs-12">
@@ -45,9 +49,7 @@
                 </b-btn>
                 <b-popover ref="popoverRef" target="popoverButton-sync" triggers="click blur" placement='top'>
                     <vue-tribute :options="mentionOptions" v-on:tribute-replaced="matchFound">
-                        <textarea v-model="noteTextArea" class="form-control"
-                                                         id="textAreaForNotes"
-                                                         style="height:200px;width:250px;" placeholder="Voer uw opmerking in">
+                        <textarea v-model="noteTextArea" class="form-control" id="textAreaForNotes" style="height:200px;width:250px;" placeholder="Voer uw opmerking in">
 
                         </textarea>
                     </vue-tribute>
@@ -75,16 +77,16 @@ let defaultMention = {
     ],
 
     selectTemplate: function (item) {
-        return '@' + item.original.id;
+        return '@' + item.original.id
     },
     lookup: function (ta) {
-        return ta.name + ' ' + ta.id;
+        return ta.name + ' ' + ta.id
     }
 }
 
 
 export default {
-    data () {
+    data() {
         return {
             showModal: false,
             user_id: 0,
@@ -106,10 +108,10 @@ export default {
         }
     },
     methods: {
-        goCourse (here) {
-            this.$router.push(here);
+        goCourse(here) {
+            this.$router.push(here)
         },
-        getTicket () {
+        getTicket() {
             const path = '/api/ticket/' + this.$route.params.ticket_id
             this.$ajax.get(path)
                 .then(response => {
@@ -119,7 +121,7 @@ export default {
                     console.log(error)
                 })
         },
-        getMessages () {
+        getMessages() {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
             this.$ajax.get(path)
                 .then(response => {
@@ -129,9 +131,9 @@ export default {
                     console.log(error)
                 })
         },
-        getNotes () {
+        getNotes() {
             //get all notes
-            this.$ajax.get('/api/notes/'+this.$route.params.ticket_id)
+            this.$ajax.get('/api/notes/' + this.$route.params.ticket_id)
                 .then(response => {
                     this.notes = response.data.json_data
                     console.log(response)
@@ -154,7 +156,7 @@ export default {
                     console.log(error)
                 })
         },
-        closeTicket () {
+        closeTicket() {
             this.showModal = false
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/close'
             this.$ajax.post(path)
@@ -163,13 +165,13 @@ export default {
                     this.ticket.status.name = "closed"
                 })
         },
-        addNote(){
+        addNote() {
             console.log(this.noteTextArea)
             const path = '/api/notes'
             var noteData = {
-                "ticket_id":this.$route.params.ticket_id ,
-                "user_id":this.$route.params.user_id | 1 ,
-                "text":this.noteTextArea
+                "ticket_id": this.$route.params.ticket_id,
+                "user_id": this.$route.params.user_id | 1,
+                "text": this.noteTextArea
             }
             console.log("Note")
             console.log(this.noteTextArea)
@@ -204,19 +206,22 @@ export default {
              */
             function build_ta_matching_table(obj) {
                 console.log(obj.mentionOptions)
+                // Vue-tribute keeps an instance of the Optionsarray, so clear it.
+                // Yes this is a valid way to clear out an array in JS.
+                obj.mentionOptions.values.length = 0;
                 for (let i = 0; i < obj.course_tas.length; i++) {
                     let ta = obj.course_tas[i]
                     console.log(ta)
                     obj.mentionOptions.values.push(
-                        {name: String(ta.name), id: String(ta.id)})
+                        { name: String(ta.name), id: String(ta.id) })
                 }
             }
         },
 
         /* This replaced the noteTextArea when a match if found. Otherwise
-           The user has to append a space after matching to include the whole match.
-           So this makes it possible to click on a match and then immediately post
-           The note.
+               The user has to append a space after matching to include the whole match.
+               So this makes it possible to click on a match and then immediately post
+               The note.
          */
         matchFound(e) {
             let matchedValue = document.getElementById("textAreaForNotes").value
@@ -224,28 +229,30 @@ export default {
         },
     },
     mounted: function () {
+        if (!this.$user.logged_in()) {
+            this.$router.push('/login')
+        }
         this.user_id = this.$user.get().id
         this.getTicket()
         this.getMessages()
         this.getNotes()
-        this.$socket.emit('join-room', {room: 'ticket-messages-' + this.$route.params.ticket_id})
+        this.$socket.emit('join-room', { room: 'ticket-messages-' + this.$route.params.ticket_id })
     },
     sockets: {
         connect: function () {
         },
         messageAdded: function (data) {
-            console.log("message added")
             console.log(data)
             this.messages.push(data)
         }
     },
     components: {
         'message': Message,
-        'modal' : Modal,
+        'modal': Modal,
         'note': Note,
         VueTribute,
     },
-    watch :{
+    watch: {
     }
 }
 </script>

@@ -35,6 +35,10 @@ h1 {
     background-size: cover;
 }
 
+.navbar {
+    min-height: 68px;
+}
+
 .navbar-tiktech {
     background-color: #FFF;
     box-shadow: $medium-shadow;
@@ -241,6 +245,14 @@ header.masthead {
     border-radius: 0;
 }
 
+
+.table-bordered {
+    background-color: rgba(255,255,255,0.6);
+    margin-top: 10px;
+    max-height: 65vh;
+    overflow-y: scroll;
+}
+
 .form-control-title {
     width: 100%;
     background: transparent;
@@ -256,6 +268,34 @@ header.masthead {
     border-bottom: 1px solid #ced4da;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
+}
+
+.breadcrumb {
+    background-color: inherit;
+    list-style: none;
+    display: flex;
+    border: none;
+    background-color: inherit;
+    margin: auto;
+    padding: auto;
+
+    & .breadcrumb-item {
+        border: none;
+        background-color: inherit;
+
+        & > .breadcrumb-link {
+            background-color: inherit;
+            border: none;
+            font-weight: 600;
+            transition: all 0.4s ease;
+            // transition: color 0.5s ease;
+
+            &:hover {
+                background-color: #bc0031;
+                color: whitesmoke;
+            }
+        }
+    }
 }
 
 .btn {
@@ -390,6 +430,7 @@ a.list-ticket:hover, a.list-ticket:focus {
     transform: translate(0.5em);
     color: white !important;
 }
+
 
 .notification {
     text-align: center;
@@ -661,3 +702,16 @@ hr {
        border-top: 2px solid #aaaaaa;
        border-bottom: 1px solid #ffffff;
     }
+
+.dashboard-button {
+    background: #FFF;
+    //display: block;
+    box-shadow: 0 2px 4px 0 rgba(50,50,93,.1);
+    margin-bottom: 1em;
+    margin-right: 1em;
+    margin-left: 1em;
+    color: $default-red;
+    transition: transform 0.1s ease-in-out;
+    height: 180px;
+    width: 180px;
+}

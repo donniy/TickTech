@@ -148,9 +148,9 @@ Vue.prototype.$user = {
     return true;
   },
 
-  logout: () => {
-    window.$cookies.remove('user');
-    window.$cookies.remove('token');
+  logout: function () {
+    $cookies.remove('user');
+    $cookies.remove('token');
     router.push('/');
   },
 

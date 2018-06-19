@@ -12,12 +12,12 @@
     export default {
         props: ['message', 'user'],
         computed: {
-            username: function() {
+            username: function () {
                 return this.$user.get().name
             },
         },
-        data: function() {
-            return {};
+        data: function () {
+            return {}
         },
     }
 </script>

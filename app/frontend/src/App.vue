@@ -4,7 +4,7 @@
         <div v-if="isHome" class="container-fluid">
             <router-view />
         </div>
-        <div v-else="isHome" class="container-fluid second-background-image">
+        <div v-else class="container-fluid second-background-image">
             <div class="navbar-spacing"></div>
             <div class="container">
                 <router-view />
@@ -38,7 +38,7 @@ export default {
     watch:{
         $route (to, from) {
             console.log(to.name)
-            if(to.name === 'home') {
+            if(to.name === 'Home') {
                 this.isHome = true
                 this.handleNavbarTransparency()
             } else {

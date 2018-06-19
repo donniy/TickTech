@@ -7,9 +7,6 @@ def notify(sender_id, ticket, text, n_type):
     """
     Notify everyone in a ticket.
     """
-    print("#########################################")
-    print("# I will notify that something happened #")
-    print("#########################################")
     user = User.query.get(sender_id)
     message = Message()
     message.ticket_id = ticket.id
@@ -23,8 +20,6 @@ def notify(sender_id, ticket, text, n_type):
 
     # Place the notification in the ticket overview for everyone
     # present in that room.
-    print("#")
-    print("# First send message to ticket chat")
     socketio.emit('messageAdded',
                   {'text': message.text,
                    'user_id':  user.id,
@@ -38,21 +33,16 @@ def notify(sender_id, ticket, text, n_type):
                     '...' if len(message.text) > 40 else ''),
                     'ticket': str(ticket.id)}
 
-    # TODO: For now, we always notify Erik. This needs to be changed.
-    print("#\n# Ticket info:")
-    print("# ------------\n# Sender: {}".format(user.name))
+    # We need to notify everyone related to the course. For this,
+    # we first retrieve all related users. After that, we remove
+    # the sender (:user:) if it is present in the list. Now we
+    # have everyone who needs to be notified and we can notify
+    # them with the notify function on the user model.
     us = ticket.related_users
-
-    print("# All users related to course:")
-    for u in us:
-        print("#  - {}".format(u.name))
-
     if user in us:
         us.remove(user)
 
-    print("# Users to notify:")
     for u in us:
-        print("#  - {}".format(u.name))
         u.notify(notification)
 
     return message

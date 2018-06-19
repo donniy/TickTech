@@ -1,14 +1,14 @@
 <template>
-    <tr v-on:click="showTicket"
-        v-on:dblclick="navTicket">
+    <tr v-on:mouseover="showTicket"
+        v-on:click="navTicket"
+        style="cursor:pointer;"
+        class="singleTicket">
         <th>{{ticket.title}}</th>
         <td>{{ticket.user_id}}</td>
         <td>{{ticket.status.name}}</td>
         <td>{{ticket.timestamp}}</td>
     </tr>
 </template>
-
-
 
 <script>
 
@@ -29,7 +29,7 @@ export default {
             this.$parent.ticketSum = this.ticket.id
         },
         navTicket () {
-            this.$router.push("/ticket/" + this.ticket.id);
+            this.$router.push("/ticket/" + this.ticket.id)
         }
     },
 }
