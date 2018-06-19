@@ -714,4 +714,17 @@ hr {
     transition: transform 0.1s ease-in-out;
     height: 180px;
     width: 180px;
+// UserHome css
+.wrapper {
+    min-height: 100vh;
+}
+
+.courseslist {
+    background-color: blue;
+    float: left;
+}
+
+.fixedlocation{
+    position: fixed;
+    float: right;
 }
