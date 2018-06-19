@@ -48,13 +48,14 @@ def parse_email(bytes_email):
 
     # Get body.
     body = ''
+    html = ''
     attachments = []
     print("parsing body")
     if parsed_email.is_multipart():
         for part in parsed_email.walk():
             ctype = part.get_content_type()
-            # if (ctype == 'text/plain'):
-            #     body += str(part.get_payload())
+            if (ctype == 'text/plain'):
+                body += str(part.get_payload())
             if ctype in ['image/jpeg', 'image/png']:
                 # What yo do with the attachment?!
                 # open(part.get_filename(), 'wb')
@@ -62,15 +63,18 @@ def parse_email(bytes_email):
                 print("THIS IS TYPE: ", type(part.get_payload(decode=True)))
                 print("Found image")
             if ctype == "text/html":
-                # Todo parse html to plain
-                html = str(part.get_payload())
-                body += html2text.html2text(html)
+                html += str(part.get_payload())
     else:
         # Emails are always multipart?
         if (parsed_email.get_content_type() == 'text/plain'):
-            body += (parsed_email.get_payload())
+            body += str(parsed_email.get_payload())
+        elif if parsed_email.get_content_type() == "text/html":
+            html += str(part.get_payload())
         else:
             print("Not multipart and  not plain")
+
+    if body == '':
+        body += html2text.html2text(html)
 
     # Get sender.
     sender_parsed = decode_header(parsed_email['From'])
