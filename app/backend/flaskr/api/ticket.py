@@ -101,10 +101,10 @@ def create_ticket():
     if request.get_json():
         data = request.get_json()
         formdata = {'subject': data['subject'],
-        'message': data['message'],
-        'courseid': data['courseid'],
-        'labelid': data['labelid'],
-        }
+                    'message': data['message'],
+                    'courseid': data['courseid'],
+                    'labelid': data['labelid'],
+                    }
     else:
         formdata = request.form
 
