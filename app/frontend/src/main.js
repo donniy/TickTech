@@ -48,7 +48,7 @@ Vue.prototype.$ajax = {
     let token = window.$auth.token();
 
     if(token)
-      hdr['Authorization'] = 'Bearer ' + token;
+      hdr['Authorization'] = 'JWT ' + token;
 
     let axios_auth = axios.create({
       headers: hdr
@@ -61,7 +61,7 @@ Vue.prototype.$ajax = {
     let token = window.$auth.token();
 
     if(token)
-      hdr['Authorization'] = 'Bearer ' + token;
+      hdr['Authorization'] = 'JWT ' + token;
 
     hdr['X-CSRFToken'] = csrf_token;
     let axios_csrf = axios.create({
@@ -75,7 +75,7 @@ Vue.prototype.$ajax = {
     let token = window.$auth.token();
 
     if(token)
-      hdr['Authorization'] = 'Bearer ' + token;
+      hdr['Authorization'] = 'JWT ' + token;
 
     hdr['X-CSRFToken'] = csrf_token;
     let axios_csrf = axios.create({
@@ -89,7 +89,7 @@ Vue.prototype.$ajax = {
     let token = window.$auth.token();
 
     if(token)
-      hdr['Authorization'] = 'Bearer ' + token;
+      hdr['Authorization'] = 'JWT ' + token;
 
     hdr['X-CSRFToken'] = csrf_token;
     let axios_csrf = axios.create({
@@ -103,7 +103,7 @@ Vue.prototype.$ajax = {
     let token = window.$auth.token();
 
     if(token)
-      hdr['Authorization'] = 'Bearer ' + token;
+      hdr['Authorization'] = 'JWT ' + token;
 
     hdr['X-CSRFToken'] = csrf_token;
     let axios_csrf = axios.create({
@@ -156,12 +156,12 @@ Vue.axios = axios
 Vue.router = router
 
 Vue.use(require('@websanova/vue-auth'), {
-  auth: require('@websanova/vue-auth/drivers/auth/bearer.js'),
+  auth: require('./components/jwtHeader.js'),
   http: require('@websanova/vue-auth/drivers/http/axios.1.x.js'),
   router: require('@websanova/vue-auth/drivers/router/vue-router.2.x.js'),
   token: [
-    {request: 'Authorization', response: 'Authorization', authType: 'Bearer', foundIn: 'header'},
-    {request: 'access_token', response: 'access_token', authType: 'Bearer', foundIn: 'response'}
+    {request: 'Authorization', response: 'Authorization', authType: 'JWT', foundIn: 'header'},
+    {request: 'access_token', response: 'access_token', authType: 'JWT', foundIn: 'response'}
   ],
   fetchData: {url: '/api/user/retrieve', method: 'GET', enabled: true},
   refreshData: {url: '/api/user/retrieve', method: 'GET', enabled: true},
