@@ -98,7 +98,7 @@ def create_ticket():
 
     # Mandatory check to comply with incompatible testing.
     formdata = None
-    if 'message' in request.get_json():
+    if request.get_json():
         data = request.get_json()
         formdata = {'subject': data['subject'],
         'message': data['message'],
