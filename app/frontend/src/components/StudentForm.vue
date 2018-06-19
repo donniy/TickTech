@@ -52,13 +52,23 @@
                     </p>
 
                 </form>
+
             </div>
         </div>
+        <div class="row">
+            <b-button class="info-button" @click="showInfoModal" :to="''">
+                <img class="info-img" src="../assets/outline_help_black_48dp.png"/>
+            </b-button>
+        </div>
+
+        <infomodal v-if="showModal" @close="showModal = false">
+        </infomodal>
     </div>
 </template>
 
 <script>
     import VeeValidate from 'vee-validate'
+    import InfoSubmissionModal from './InfoSubmissionModal.vue'
 
     export default {
         data() {
@@ -75,7 +85,8 @@
                 categories: {
                     courses: [],
                     labels: {}
-                }
+                },
+                showModal: false,
             }
         },
         computed: {
@@ -101,6 +112,9 @@
                     }).catch(error => {
                         console.log(error)
                     })
+            },
+            showInfoModal() {
+                this.showModal = true
             },
             onChange: function (e) {
                 this.categories = this.categories
@@ -163,5 +177,31 @@
                     console.log(error)
                 })
         },
+        components: {
+            'infomodal': InfoSubmissionModal
+        },
     }
 </script>
+
+<style>
+
+.info-button {
+    border: none;
+    background:transparent;
+    outline: none;
+}
+
+.info-button:hover {
+    background: transparent;
+    border: none;
+}
+
+.info-button::-moz-focus-inner {
+    border: 0;
+}
+
+.info-img {
+    width: 30px;
+    height: 30px;
+}
+</style>
