@@ -14,6 +14,7 @@ from flask_jwt import jwt_required, current_identity
 from flaskr.utils import notifications
 from flask_mail import Mail
 from mail.Message import create_email_message
+from time import gmtime, strftime
 
 
 # Make this post with a button.
@@ -67,14 +68,33 @@ def create_message(ticket_id):
     ticket = Ticket.query.get(ticket_id)
     user = User.query.get(userId)
 
-    print("Createing message")
-    message = create_email_message(ticket.title,
-                                   [user.mail], ticket_id,
-                                   jsonData['message'], user.name,
-                                   'TIMESTAMP')
-    res = Mail().send(message)
-    print(res)
-    print("message send\n\n")
+    if(ticket.user_id != user.id):
+        print("Createing message")
+        # If we want this
+        # messages = list(ticket.messages)
+        # print(len(messages))
+        # prev_messages = ''
+        # for m in reversed(messages[1:]):
+        #     '''
+        #     -------- Oorspronkelijk bericht --------
+        #     Van: Stephan Kok <stephan_handbal@hotmail.com>
+        #     Datum: 08-06-18 13:22 (GMT+01:00)
+        #     Aan: uvapsetest@gmail.com
+        #     Onderwerp: Hoi vanaf steffie
+        #     '''
+        #     prev_messages +=
+        # '\n\n-------- Oorspronkelijk bericht --------\n'
+        #     prev_messages += 'Van: ' + m.user.name + '\n'
+        #     prev_messages += 'Datum: ' +
+        # m.timestamp.strftime("%a, %d %b %Y %H:%M:%S +0000") + '\n'
+        #     prev_messages += m.text
+        # print(prev_messages)
+        message = create_email_message(ticket.title,
+                                       [ticket.email], ticket_id,
+                                       jsonData['message'], user.name)
+        res = Mail().send(message)
+        print(res)
+        print("message send\n\n")
 
 #    if ticket is not None and user is not None:
 # unassigned

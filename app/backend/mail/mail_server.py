@@ -3,6 +3,7 @@ from time import sleep
 import email
 import poplib
 import requests
+import html2text
 
 '''
 Rabbitmqueue: Message mpass system between flask en mail server
@@ -48,20 +49,28 @@ def parse_email(bytes_email):
     # Get body.
     body = ''
     attachments = []
+    print("parsing body")
     if parsed_email.is_multipart():
         for part in parsed_email.walk():
             ctype = part.get_content_type()
-            if (ctype == 'text/plain'):
-                body += str(part.get_payload())
+            # if (ctype == 'text/plain'):
+            #     body += str(part.get_payload())
             if ctype in ['image/jpeg', 'image/png']:
                 # What yo do with the attachment?!
                 # open(part.get_filename(), 'wb')
                 # .write(part.get_payload(decode=True))
                 print("THIS IS TYPE: ", type(part.get_payload(decode=True)))
                 print("Found image")
+            if ctype == "text/html":
+                # Todo parse html to plain
+                html = str(part.get_payload())
+                body += html2text.html2text(html)
     else:
         # Emails are always multipart?
-        print("TODO: Not multipart email.")
+        if (parsed_email.get_content_type() == 'text/plain'):
+            body += (parsed_email.get_payload())
+        else:
+            print("Not multipart and  not plain")
 
     # Get sender.
     sender_parsed = decode_header(parsed_email['From'])
@@ -71,8 +80,13 @@ def parse_email(bytes_email):
         sender = sender_parsed[0][0]
 
     # Sender is of format "Firstname Lastname <email@email.com>".
-    name = sender.split("<")
-    address = name[1].split(">")
+    print(sender, '\n\n')
+    try:
+        name = sender.split("<")
+        address = name[1].split(">")
+    except IndexError:
+        name = sender
+        address = sender
 
     return subject, body, name[0], address[0]
 
@@ -96,8 +110,8 @@ def find_user_id(body, sender, sendermail):
         json = result.json()
         if (json['json_data']['succes']):
             id = json['json_data']['studentid']
-            print('succes', id)
-            return id
+            if id is not None:
+                return id
 
     return 123123123
 
@@ -149,6 +163,8 @@ def check_mail(host, port, user, password, courseid):
         print("No emails found.")
         server.quit()
         return 0
+    else:
+        print(mailcount, "emails found. parsing...")
 
     # Get all labels available for this course
     labels = retrieve_labels(courseid)
@@ -171,15 +187,6 @@ def check_mail(host, port, user, password, courseid):
             else:
                 labelid = None
 
-            # Done finished create ticket
-            print("Sender: " + str(sender) + "\nStudentid: " + str(studentid) +
-                  "\nEmail: " + str(address) + "\nSubject: " + str(subject))
-            print("Course ID: ", courseid)
-            print("Label ID: ", labelid, "\n\n")
-            print("Body: " + body)
-
-            # parsed, but should be compared with database
-            # parsed, but should be compared with database
             newticket = {
                 'name': sender,
                 'studentid': studentid,
@@ -199,6 +206,13 @@ def check_mail(host, port, user, password, courseid):
                 print("Something went wrong creating a"
                       "new ticket from an email.")
                 print(result.text)
+                print("******")
+                print("Sender: " + str(sender) + "\nStudentid: " +
+                      str(studentid) + "\nEmail: " + str(address) +
+                      "\nSubject: " + str(subject))
+                print("Course ID: ", courseid)
+                print("Label ID: ", labelid, "\n\n")
+                print("Body: " + body)
 
     # Somehow makes you up-to-date with server
     # disable this when debugging
