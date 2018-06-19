@@ -72,7 +72,7 @@
                 this.$router.push('/login')
             }
             this.user = this.$user.get()
-            this.ret_url = '/user/tickets'
+            this.ret_url = '/home'
             this.getTicket()
             this.getMessages()
             this.$socket.emit('join-room', { room: 'ticket-messages-' + this.$route.params.ticket_id })
