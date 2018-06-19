@@ -46,6 +46,7 @@ def create_app(test_config=None):
 
     # Make user logged in for 1 day.
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=86400)
+    app.config['JWT_AUTH_HEADER_PREFIX'] = 'Bearer'
 
     csrf = CSRFProtect(app)
 
