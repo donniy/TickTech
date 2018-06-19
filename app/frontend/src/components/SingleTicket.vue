@@ -56,7 +56,7 @@
                     <vue-tribute :options="mentionOptions" v-on:tribute-replaced="matchFound">
                         <textarea v-model="noteTextArea" class="form-control" id="textAreaForNotes" style="height:200px;width:250px;" placeholder="Voer uw opmerking in">
 
-              </textarea>
+                        </textarea>
                     </vue-tribute>
                     <button @click="addNote" class="btn btn-primary" style="margin-top:10px">Verzenden</button>
                 </b-popover>
@@ -232,6 +232,9 @@
                  */
                 function build_ta_matching_table(obj) {
                     console.log(obj.mentionOptions)
+                    // Vue-tribute keeps an instance of the Optionsarray, so clear it.
+                    // Yes this is a valid way to clear out an array in JS.
+                    obj.mentionOptions.values.length = 0;
                     for (let i = 0; i < obj.course_tas.length; i++) {
                         let ta = obj.course_tas[i]
                         console.log(ta)
@@ -278,5 +281,4 @@
         watch: {
         }
     }
-
 </script>
