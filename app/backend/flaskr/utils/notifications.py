@@ -27,6 +27,7 @@ def notify(sender_id, ticket, text, n_type):
                   room='ticket-messages-{}'
                   .format(message.ticket_id))
 
-    # TODO: Notify everyone via a private websocket.
+    # TODO: Notify everyone involved via a private websocket.
+    socketio.emit('')
 
     return message

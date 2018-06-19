@@ -12,7 +12,6 @@ association_table = db.Table('association', db.Model.metadata,
 
 
 class User(db.Model):
-
     """
     Een user.
     """
@@ -46,3 +45,10 @@ class User(db.Model):
         Niet nodig.
         """
         pass
+
+    def notify(self, message):
+        """
+        Sends a message to this user in a private websocket.
+        """
+        socketio.emit('notification', {text: message},
+                       room="user-{}".format(self.id))
