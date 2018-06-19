@@ -690,18 +690,18 @@ footer:hover {
 }
 
 hr {
-       padding: 0;
-       margin: 8px auto;
-       height: 0;
-       width: 50%;
-       max-height: 0;
-       font-size: 2px;
-       line-height: 0;
-       clear: both;
-       border: none;
-       border-top: 2px solid #aaaaaa;
-       border-bottom: 1px solid #ffffff;
-    }
+   padding: 0;
+   margin: 8px auto;
+   height: 0;
+   width: 50%;
+   max-height: 0;
+   font-size: 2px;
+   line-height: 0;
+   clear: both;
+   border: none;
+   border-top: 2px solid #aaaaaa;
+   border-bottom: 1px solid #ffffff;
+}
 
 .dashboard-button {
     background: #FFF;
@@ -714,7 +714,8 @@ hr {
     transition: transform 0.1s ease-in-out;
     height: 180px;
     width: 180px;
-// UserHome css
+}
+
 .wrapper {
     min-height: 100vh;
 }
@@ -724,7 +725,7 @@ hr {
     float: left;
 }
 
-.fixedlocation{
+.fixedlocation {
     position: fixed;
     float: right;
 }

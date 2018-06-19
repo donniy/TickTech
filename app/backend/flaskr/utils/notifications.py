@@ -29,12 +29,15 @@ def notify(sender_id, ticket, text, n_type, initial=False):
                   .format(message.ticket_id))
 
     notification = {'text': "{}{}"
-                    .format(user.name, message.text[:40],
+                    .format(message.text[:40],
                     '...' if len(message.text) > 40 else ''),
                     'ticket': str(ticket.id),
                     'ticket_owner': str(ticket.owner.id),
                     'sender': user.serialize,
                     'initial': initial,
+                    'ticket_title': "{}{}"
+                    .format(ticket.title[:40],
+                    '...' if len(ticket.title) > 40 else ''),
                     'type': n_type}
 
     # We need to notify everyone related to the course. For this,
