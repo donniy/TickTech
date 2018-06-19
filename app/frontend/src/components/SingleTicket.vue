@@ -1,12 +1,12 @@
 <template>
     <div>
         <button class="btn btn-primary back-button"
-            v-on:click="goCourse('/course/' + ticket.course_id)">
+                v-on:click="goCourse('/course/' + ticket.course_id)">
             Terug naar cursus
         </button>
 
         <button class="btn btn-primary close-button" @click="showModal = true">
-                Close Ticket
+            Close Ticket
         </button>
 
         <modal v-if="showModal" warning="Are you sure you want to close this ticket?" @yes="closeTicket()" @close="showModal = false"></modal>
@@ -38,23 +38,23 @@
             </div>
             <div class="col-md-4 col-sm-4 col-lg-4 col-xs-12">
                 <h2>Notities</h2>
-    			<note v-for="note in notes" v-bind:key="note.id" v-bind:note="note"></note>
+                <note v-for="note in notes" v-bind:key="note.id" v-bind:note="note"></note>
 
-    			<b-btn id="popoverButton-sync" variant="primary" class="note-add-button btn btn-primary">
-    				Notitie toevoegen
-    			</b-btn>
-    			<b-popover ref="popoverRef" target="popoverButton-sync" triggers="click blur" placement='top'>
-            <vue-tribute :options="mentionOptions" v-on:tribute-replaced="matchFound">
-    				  <textarea v-model="noteTextArea" class="form-control"
-                        id="textAreaForNotes"
-                        style="height:200px;width:250px;" placeholder="Voer uw opmerking in">
+                <b-btn id="popoverButton-sync" variant="primary" class="note-add-button btn btn-primary">
+                    Notitie toevoegen
+                </b-btn>
+                <b-popover ref="popoverRef" target="popoverButton-sync" triggers="click blur" placement='top'>
+                    <vue-tribute :options="mentionOptions" v-on:tribute-replaced="matchFound">
+                        <textarea v-model="noteTextArea" class="form-control"
+                                                         id="textAreaForNotes"
+                                                         style="height:200px;width:250px;" placeholder="Voer uw opmerking in">
 
-              </textarea>
-            </vue-tribute>
-    				<button @click="addNote" class="btn btn-primary" style="margin-top:10px">Verzenden</button>
-    			</b-popover>
-    		</div>
-    	</div>
+                        </textarea>
+                    </vue-tribute>
+                    <button @click="addNote" class="btn btn-primary" style="margin-top:10px">Verzenden</button>
+                </b-popover>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -143,9 +143,9 @@ export default {
         sendReply() {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
             this.$ajax.post(path, {
-                    message: this.reply,
-                    user_id: this.user_id
-                })
+                message: this.reply,
+                user_id: this.user_id
+            })
                 .then(response => {
                     this.reply = ''
                     this.getMessages()
@@ -234,6 +234,7 @@ export default {
         connect: function () {
         },
         messageAdded: function (data) {
+            console.log("message added")
             console.log(data)
             this.messages.push(data)
         }
@@ -242,7 +243,7 @@ export default {
         'message': Message,
         'modal' : Modal,
         'note': Note,
-       VueTribute,
+        VueTribute,
     },
     watch :{
     }

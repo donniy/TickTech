@@ -1,4 +1,3 @@
-// hoi
 import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
 import App from './App'
@@ -12,6 +11,9 @@ import './assets/scss/style.scss'
 import axios from 'axios'
 import VueCookies from 'vue-cookies'
 import VueScrollTo from 'vue-scrollto'
+import { MdSnackbar, MdButton } from 'vue-material/dist/components'
+import 'vue-material/dist/vue-material.min.css'
+import 'vue-material/dist/theme/default.css'
 
 Vue.use(VeeValidate);
 Vue.use(VueScrollTo);
@@ -19,6 +21,10 @@ Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 Vue.use(VueSocketio, 'http://' + document.domain + ':' + location.port)
 Vue.use(VueTextareaAutosize)
+// Material
+Vue.use(MdSnackbar)
+Vue.use(MdButton)
+
 
 function handle_ajax_error(error) {
   console.warn(error);

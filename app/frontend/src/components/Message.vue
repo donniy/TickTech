@@ -42,10 +42,6 @@ export default {
         return {};
     },
     mounted: function () {
-        console.log("Creating a new message")
-        console.log("message.type: " + this.message.type)
-        console.log("message.user_id: " + this.message.user_id)
-        console.log("message.user_name: " + this.message.user_name)
     }
 }
 </script>

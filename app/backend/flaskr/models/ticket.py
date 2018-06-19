@@ -55,6 +55,9 @@ class Ticket(db.Model):
         backref=db.backref('ta_tickets', lazy=True)
     )
 
+    owner = db.relationship(
+            "User", backref=db.backref('created_tickets', lazy=True))
+
     # Many to many relation
     labels = db.relationship(
         "TicketLabel", secondary=labels_helper, lazy='subquery',
@@ -93,6 +96,27 @@ class Ticket(db.Model):
         if closed_status is None:
             return
         self.status_id = closed_status.id
+
+    @property
+    def related_users(self):
+        """
+        Returns all users that are somehow related to this
+        ticket. That means, all TA's and the student that
+        created this ticket.
+        """
+        tmp = [self.owner]
+        tmp.extend(self.binded_tas)
+        print("Binded tas:")
+        print(self.binded_tas)
+        return tmp
+
+    def __eq__(self, other):
+        """
+        Compare two instances of this model. Note that this only
+        compares the id's since it assumes both models were retrieved
+        from the database (primary keys are unique).
+        """
+        return self.id == other.id
 
 
 class TicketStatus(db.Model):

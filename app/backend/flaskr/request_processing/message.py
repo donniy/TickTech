@@ -53,5 +53,4 @@ def retrieve_all_request(ticket_id):
         body['ticket_id'] = "invalid"
         return Iresponse.create_response(body, 404)
     messages = database.serialize_list(list(ticket.messages))
-    print(messages)
     return Iresponse.create_response(messages, 200)
