@@ -29,9 +29,16 @@ label_course_linker = db.Table(
               db.ForeignKey('label.label_id'), primary_key=True)
 )
 
+supervisor_linker = db.Table(
+    "supervisor_linker",
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'),
+              primary_key=True),
+    db.Column('course_id', UUIDType(binary=False), db.ForeignKey('course.id'),
+              primary_key=True)
+)
+
 
 class Course(db.Model):
-
     """
     Een course.
     """
@@ -58,6 +65,10 @@ class Course(db.Model):
         "Label", secondary=label_course_linker, lazy='subquery',
         backref=db.backref('labels', lazy=True))
 
+    supervisors = db.relationship(
+        "User", secondary=supervisor_linker, lazy='subquery',
+        backref=db.backref('supervisors', lazy=True))
+
     # Dit is een soort toString zoals in Java, voor het gebruiken van de
     # database in de commandline. Op die manier kan je data maken en weergeven
     # zonder formulier.
@@ -75,7 +86,8 @@ class Course(db.Model):
             'course_email': self.course_email,
             'title': self.title,
             'description': self.description,
-            'tas': [ta.serialize for ta in self.ta_courses]
+            'tas': [ta.serialize for ta in self.ta_courses],
+            'supervisors': [suvi.serialize for suvi in self.supervisors]
         }
 
     @property
