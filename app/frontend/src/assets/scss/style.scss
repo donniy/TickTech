@@ -702,3 +702,18 @@ hr {
        border-top: 2px solid #aaaaaa;
        border-bottom: 1px solid #ffffff;
     }
+
+// UserHome css
+.wrapper {
+    min-height: 100vh;
+}
+
+.courseslist {
+    background-color: blue;
+    float: left;
+}
+
+.fixedlocation{
+    position: fixed;
+    float: right;
+}
