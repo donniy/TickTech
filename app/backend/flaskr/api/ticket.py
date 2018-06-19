@@ -98,17 +98,15 @@ def create_ticket():
 
     # Mandatory check to comply with incompatible testing.
     formdata = None
-    if hasattr(request, 'form'):
-        formdata = request.form
-        print(formdata)
-    else:
+    if 'message' in request.get_json():
         data = request.get_json()
         formdata = {'subject': data['subject'],
         'message': data['message'],
         'courseid': data['courseid'],
         'labelid': data['labelid'],
         }
-        print(formdata)
+    else:
+        formdata = request.form
 
     if hasattr(request, 'files'):
         if request.files != '':
