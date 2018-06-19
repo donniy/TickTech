@@ -23,10 +23,10 @@
                         </select>
                     </div>
                     <div class="col-lg-4 col-md-4 text-center">
-                        <select class="form-control custom-select">
-                            <option> Most recent </option>
+                        <select class="form-control custom-select" v-model="sort_filter">
+                            <option> Most Recent </option>
                             <option> Created by </option>
-                            <option> Least recent </option>
+                            <option> Least Recent </option>
                         </select>
                     </div>
                 </div>
@@ -41,7 +41,10 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <ticket v-for="ticket in tickets" v-bind:class="{'tr-item':true, 'active':(ticket.id === ticketSum)}" v-if="status_filter == 'All' || ticket.status.name == status_filter"
+                            <ticket v-for="ticket in tickets" v-bind:class="{'tr-item':true, 'active':(ticket.id === ticketSum)}" v-if="status_filter == 'All' && sort_filter == 'Most Recent'"
+                                @click="ticketSum = ticket.id; Active" v-bind:key="ticket.id" v-bind:ticket="ticket" v-bind:base_url="'/student/ticket/'">
+                            </ticket>
+                            <ticket v-for="ticket in tickets_reverse" v-bind:class="{'tr-item':true, 'active':(ticket.id === ticketSum)}" v-else-if="status_filter == 'All' && sort_filter == 'Least Recent'"
                                 @click="ticketSum = ticket.id; Active" v-bind:key="ticket.id" v-bind:ticket="ticket" v-bind:base_url="'/student/ticket/'">
                             </ticket>
                         </tbody>
@@ -102,6 +105,7 @@ export default {
             showSum: false,
             status: 'not set',
             status_filter: 'All',
+            sort_filter: "Most Recent",
             showEmailModal: false,
             email_running: false,
             wantsToAddUsers: false,
@@ -268,5 +272,10 @@ export default {
             this.emailRunning()
         }
     },
+    computed: {
+        tickets_reverse: function () {
+            return this.tickets.slice().reverse()
+        }
+    }
 }
 </script>
