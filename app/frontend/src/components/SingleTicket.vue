@@ -162,7 +162,7 @@
                 this.$ajax.post(path)
                     .then(response => {
                         // TODO: Iets van een notificatie ofzo? '234 closed this ticket'? iig niet meer hardcoden "closed"
-                        this.ticket.status.name = "closed"
+                        this.ticket.status.name = "Closed"
                     })
             },
             addNote() {
