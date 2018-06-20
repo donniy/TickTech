@@ -24,77 +24,20 @@
                         <md-subheader>Notifications</md-subheader>
 
                         <md-content class="md-scrollbar notification-section">
-                            <md-ripple>
-                                <md-list-item to="/asdf">
-                                    <div class="md-list-item-text">
-                                        <span>Erik Kooistra</span>
-                                        <span>Je krijgt geen hoger cijfer</span>
-                                    </div>
-                                </md-list-item>
-                            </md-ripple>
+                            <template v-for="notification in notifications">
+                                <md-ripple>
+                                    <md-list-item :to="{name: (notification.ta ? 'SingleTicket' : 'StudentTicket'), params: {ticket_id: notification.ticket.id}}">
+                                        <div class="md-list-item-text">
+                                            <span>{{notification.ticket.title}}</span>
+                                            <span>Je krijgt geen hoger cijfer</span>
+                                        </div>
+                                        <md-badge class="md-primary" :md-content="notification.n" />
 
-                            <md-divider></md-divider>
+                                    </md-list-item>
+                                </md-ripple>
 
-                            <md-list-item to="/asdf">
-                                <div class="md-list-item-text">
-                                    <span>Erik Kooistra</span>
-                                    <span>Je krijgt geen hoger cijfer</span>
-                                </div>
-                            </md-list-item>
-
-                            <md-divider></md-divider>
-
-                            <md-list-item to="/asdf">
-                                <div class="md-list-item-text">
-                                    <span>Erik Kooistra</span>
-                                    <span>Je krijgt geen hoger cijfer</span>
-                                </div>
-                            </md-list-item>
-
-                            <md-divider></md-divider>
-
-                            <md-list-item to="/asdf">
-                                <div class="md-list-item-text">
-                                    <span>Erik Kooistra</span>
-                                    <span>Je krijgt geen hoger cijfer</span>
-                                </div>
-                            </md-list-item>
-
-                            <md-divider></md-divider>
-
-                            <md-list-item to="/asdf">
-                                <div class="md-list-item-text">
-                                    <span>Erik Kooistra</span>
-                                    <span>Je krijgt geen hoger cijfer</span>
-                                </div>
-                            </md-list-item>
-
-                            <md-divider></md-divider>
-
-                            <md-list-item to="/asdf">
-                                <div class="md-list-item-text">
-                                    <span>Erik Kooistra</span>
-                                    <span>Je krijgt geen hoger cijfer</span>
-                                </div>
-                            </md-list-item>
-
-                            <md-divider></md-divider>
-
-                            <md-list-item to="/asdf">
-                                <div class="md-list-item-text">
-                                    <span>Erik Kooistra</span>
-                                    <span>Je krijgt geen hoger cijfer</span>
-                                </div>
-                            </md-list-item>
-
-                            <md-divider></md-divider>
-
-                            <md-list-item to="/asdf">
-                                <div class="md-list-item-text">
-                                    <span>Erik Kooistra</span>
-                                    <span>Je krijgt geen hoger cijfer</span>
-                                </div>
-                            </md-list-item>
+                                <md-divider></md-divider>
+                            </template>
                         </md-content>
 
                     </md-list>
@@ -120,7 +63,8 @@
             return {
                 courses: [],
                 status: 'not set',
-                tickets: []
+                tickets: [],
+                notifications: [],
             }
         },
         methods: {
@@ -137,9 +81,16 @@
                         this.status = 'failed getting courses'
                     })
             },
+            getTodos () {
+                this.$ajax.get('/api/user/notifications', response => {
+                    console.log(response.data.json_data)
+                    this.notifications = response.data.json_data
+                })
+            },
             created() {
                 this.status = 'created'
                 this.getCourses()
+                this.getTodos()
             }
         },
         mounted: function () {
