@@ -1,25 +1,19 @@
 from . import apiBluePrint
 import oauth2
 from flask import jsonify, request, escape
+from flaskr.i_request import *
+from flaskr import lti
 
 
 @apiBluePrint.route('lti/launch', methods=['POST'])
 def launch_lti_session():
-    params = {}
-    # oauth2 cant have an immutable dict.
-    is_valid_oauth(dict(request.headers), request.form.to_dict().copy(),
-                   request.url, request.method)
-    return "WORKED"
+    i_req = IrequestFlask()
+    i_req.transform_request_to_internal_request(request)
+    try:
+        lti.validate_lti_Irequest(i_req)
+    except lti.InvalidLTIRequest:
+        return "Invalid LTI request, check your key and secret."
 
-
-
-def is_valid_oauth(headers, body, url, method):
-    oauth_server = oauth2.Server()
-    signature_method = oauth2.SignatureMethod_HMAC_SHA1()
-    oauth_server.add_signature_method(signature_method)
-    consumer = oauth2.Consumer('consumerKey', 'test')
-    print(consumer)
-    oauth_request = oauth2.Request.from_request(
-                method, url, headers=headers, parameters=body
-    )
-    oauth_server.verify_request(oauth_request, consumer, {})
+    lti_instance = lti.LTI(i_req)
+    print(lti_instance.params)
+    return "LTI SUCCES"
