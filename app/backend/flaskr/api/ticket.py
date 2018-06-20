@@ -168,7 +168,10 @@ def download_file():
     """ Download a file from server (check rights in future)"""
     json_data = request.get_json()
     if 'address' in json_data:
-        folder = expanduser("~") + '/serverdata/' + json_data['address'].rsplit('/', 1)[0]
+        homefolder = expanduser("~")
+        base = '/serverdata/'
+        location = json_data['address'].rsplit('/', 1)[0]
+        folder = homefolder + base + location
         file = json_data['address'].rsplit('/', 1)[1]
         print(folder, file)
 

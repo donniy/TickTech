@@ -88,19 +88,21 @@ def test_get_ticket(app, client):
     auth = login(client, 11188936)
     rv = client.get('/api/courses')
     cid = rv.get_json()['json_data'][0]['id']
+    # TODO: add file to request
     file = open('file.txt', 'w')
     file.write('Hello')
-    # TODO: add file to request
-    rv = client.post('/api/ticket/submit',
-    json={
-        'subject': 'test ticket',
-        'message': 'Test bericht',
-        'courseid': cid,
-        'labelid': ''
-    }, headers={
-        'Authorization': auth,
-        'Content-Type': 'multipart/form-data'
-    })
+
+    json = {'subject': 'test ticket',
+            'message': 'Test bericht',
+            'courseid': cid,
+            'labelid': ''
+            }
+
+    headers = {'Authorization': auth,
+               'Content-Type': 'multipart/form-data'
+               }
+
+    rv = client.post('/api/ticket/submit', json=json, headers=headers)
     rv = client.get('/api/courses')
     cid = rv.get_json()['json_data'][0]['id']
     tickets = client.get('/api/courses/{}/tickets'.format(cid))

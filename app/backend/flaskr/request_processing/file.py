@@ -37,7 +37,7 @@ def get_file(address):
     app = Flask(__name__)
     fs = FlaskHashFS()
     fileio = fs.open(address)
-    
+
     if fileio:
         return fileio.read()
     else:
