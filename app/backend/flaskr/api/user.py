@@ -34,6 +34,27 @@ def retrieve_active_user_tickets(user_id):
     return Iresponse.create_response(database.serialize_list(tickets), 200)
 
 
+@apiBluePrint.route('/user/notifications', methods=["GET"])
+@jwt_required()
+def unread_messages():
+    """
+    Retrieve all unread messages of this user.
+    """
+    tmp = {}
+    unread = current_identity.unread
+    for msg in unread:
+        if str(msg.ticket_id) not in tmp:
+            ticket_id = str(msg.ticket_id)
+            tmp[ticket_id] = {'ticket': msg.ticket.serialize, 'n': 0}
+            if current_identity in msg.ticket.binded_tas:
+                tmp[ticket_id]['ta'] = True
+            else:
+                tmp[ticket_id]['ta'] = False
+        tmp[ticket_id]['n'] += 1
+
+    return Iresponse.create_response(tmp, 200)
+
+
 @apiBluePrint.route('/user/register', methods=["POST"])
 def register_user():
     ''' Expects a request with email, name, id and password (and confirmed)
