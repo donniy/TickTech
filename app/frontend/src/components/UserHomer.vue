@@ -4,25 +4,19 @@
             <h2>Welcome back {{ $user.get().name }} :)</h2>
         </div>
         <div class="md-layout md-gutter wrapper">
-            <!-- <div class="md-layout-item">
-                <md-content class="md-scrollbar notification-section">
-                    <div class="md-list-item-text">
-                        <course v-for="course in courses" v-bind:key="course.id" v-bind:course="course"></course>
-                    </div>
-                </md-content> -->
-                <div class="md-layout-item">
-                    <md-content class="md-elevation-5">
-                        <md-list class="md-double-line">
-                            <md-subheader>Courses</md-subheader>
+            <div class="md-layout-item">
+                <md-content class="md-elevation-5">
+                    <md-list class="md-double-line">
+                        <md-subheader>Courses</md-subheader>
 
-                            <md-content class="md-scrollbar courses-section">
+                        <md-content class="md-scrollbar courses-section">
 
-                                <course v-for="course in courses" v-bind:key="course.id" v-bind:course="course" class="md-list-item-text single-course"></course>
+                            <course v-for="course in courses" v-bind:key="course.id" v-bind:course="course" class="md-list-item-text single-course"></course>
 
-                            </md-content>
+                        </md-content>
 
-                        </md-list>
-                    </md-content>
+                    </md-list>
+                </md-content>
             </div>
             <div class="md-layout-item">
                 <md-content class="md-elevation-5">
