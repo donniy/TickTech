@@ -58,6 +58,14 @@ const routerOptions = [
         },
     },
     {
+        path: '/ticket/submiter/',
+        name: 'SubmitTicketer',
+        component: 'StudentFormer',
+        meta: {
+            breadcrumb: 'Create Ticket'
+        },
+    },
+    {
         path: '/ticket/:ticket_id',
         name: 'SingleTicket',
         component: 'SingleTicket',

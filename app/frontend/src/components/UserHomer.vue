@@ -1,79 +1,56 @@
 <template>
     <div class="container">
+        <div class="md-layout welcome-header">
+            <h2>Welcome back {{ $user.get().name }} :)</h2>
+        </div>
         <div class="md-layout md-gutter wrapper">
             <div class="md-layout-item">
-                <md-content>
-                    hehehe
+                <md-content class="md-elevation-5">
+                    <md-list class="md-double-line">
+                        <md-subheader>Courses</md-subheader>
+
+                        <md-content class="md-scrollbar courses-section">
+
+                            <course v-for="course in courses" v-bind:key="course.id" v-bind:course="course" class="md-list-item-text single-course"></course>
+
+                        </md-content>
+
+                    </md-list>
                 </md-content>
             </div>
             <div class="md-layout-item">
                 <md-content class="md-elevation-5">
                     <md-list class="md-double-line">
-                      <md-subheader>Notifications</md-subheader>
+                        <md-subheader>Notifications</md-subheader>
 
-                      <md-list-item @click="alert">
-                          <div class="md-list-item-text">
-                              <span>Erik Kooistra</span>
-                              <span>Je krijgt geen hoger cijfer</span>
-                          </div>
-                      </md-list-item>
+                        <md-content class="md-scrollbar notification-section">
+                            <template v-for="notification in notifications">
+                                <md-ripple>
+                                    <md-list-item :to="{name: (notification.ta ? 'SingleTicket' : 'StudentTicket'), params: {ticket_id: notification.ticket.id}}">
+                                        <div class="md-list-item-text">
+                                            <span>{{notification.ticket.title}}</span>
+                                            <span>Je krijgt geen hoger cijfer</span>
+                                        </div>
+                                        <md-badge class="md-primary" :md-content="notification.n" />
 
-                      <md-list-item @click="alert">
-                          <div class="md-list-item-text">
-                              <span>Erik Kooistra</span>
-                              <span>Je krijgt geen hoger cijfer</span>
-                          </div>
-                      </md-list-item>
+                                    </md-list-item>
+                                </md-ripple>
 
-                      <md-divider></md-divider>
+                                <md-divider></md-divider>
+                            </template>
+                        </md-content>
 
-                      <md-subheader>Email</md-subheader>
-
-                      <md-list-item>
-                        <md-icon class="md-primary">email</md-icon>
-
-                        <div class="md-list-item-text">
-                          <span>aliconnors@example.com</span>
-                          <span>Personal</span>
-                        </div>
-                      </md-list-item>
-
-                      <md-list-item class="md-inset">
-                        <div class="md-list-item-text">
-                          <span>ali_connors@example.com</span>
-                          <span>Work</span>
-                        </div>
-                      </md-list-item>
                     </md-list>
                 </md-content>
-                <md-content class="md-elevation-5 mt-3">
-                    nehnehneh
-                </md-content>
+                <md-card md-with-hover class="md-elevation-5 md-raised md-primary create-ticket-section1" @click.native="$router.push('/ticket/submit')">
+                    <md-ripple>
+                        <md-card-content class="create-ticket-section2">
+                            <h1>Create ticket</h1>
+                        </md-card-content>
+                    </md-ripple>
+                </md-card>
             </div>
         </div>
-        <!-- <div class="row">
-            <div class="col-lg-12">
-                <h2 style="text-align:center;">Welcome back {{ $user.get().name }} :)</h2>
-                <br />
-                <hr style="width: 20%;">
-                <br />
-            </div>
-            <div class="col-lg-8 text-center">
-                <h5>Notifications</h5>
-                <div class="notification-container">
-                    <p v-if="tickets.length < 1">- No notifications -</p>
-                    <ticket v-for="ticket in tickets" v-bind:key="ticket.id" v-bind:ticket="ticket" v-bind:base_url="'/student/ticket/'"></ticket>
-                </div>
-                <router-link style="float:right;" to="/settings">Settings</router-link>
-                <router-link style="float:right;" to="/ticket/submit">Create ticket</router-link>
-            </div>
-            <div class="col-lg-4 text-center">
-                <h5>Courses</h5>
-                <div class="home-scroll-courses">
-                    <course v-for="course in courses" v-bind:key="course.id" v-bind:course="course"></course>
-                </div>
-            </div>
-        </div> -->
     </div>
 </template>
 
@@ -86,7 +63,8 @@
             return {
                 courses: [],
                 status: 'not set',
-                tickets: []
+                tickets: [],
+                notifications: [],
             }
         },
         methods: {
@@ -103,9 +81,16 @@
                         this.status = 'failed getting courses'
                     })
             },
+            getTodos () {
+                this.$ajax.get('/api/user/notifications', response => {
+                    console.log(response.data.json_data)
+                    this.notifications = response.data.json_data
+                })
+            },
             created() {
                 this.status = 'created'
                 this.getCourses()
+                this.getTodos()
             }
         },
         mounted: function () {
