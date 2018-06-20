@@ -47,11 +47,13 @@ def test_insert_ticket(app, client):
     })
     cid = rv.get_json()['json_data'][0]['id']
     print("course: {}".format(cid))
+
     rv = client.post('/api/ticket/submit', json={
-        'subject': 'test ticket',
-        'message': 'Test bericht',
-        'courseid': cid,
-        'labelid': ''
+            'subject': 'test ticket',
+            'message': 'Test bericht',
+            'courseid': cid,
+            'labelid': '',
+            'files': ''
     }, headers={
         'Authorization': auth
     })
@@ -72,6 +74,35 @@ def test_get_ticket(app, client):
     }, headers={
         'Authorization': auth
     })
+    rv = client.get('/api/courses')
+    cid = rv.get_json()['json_data'][0]['id']
+    tickets = client.get('/api/courses/{}/tickets'.format(cid))
+    print(tickets.get_json())
+    assert len(tickets.get_json()['json_data']) == 1
+    ticketid = tickets.get_json()['json_data'][0]['id']
+    assert ticketid is not None
+
+
+def test_get_ticket(app, client):
+    create_user(app, 11188936)
+    auth = login(client, 11188936)
+    rv = client.get('/api/courses')
+    cid = rv.get_json()['json_data'][0]['id']
+    # TODO: add file to request
+    file = open('file.txt', 'w')
+    file.write('Hello')
+
+    json = {'subject': 'test ticket',
+            'message': 'Test bericht',
+            'courseid': cid,
+            'labelid': ''
+            }
+
+    headers = {'Authorization': auth,
+               'Content-Type': 'multipart/form-data'
+               }
+
+    rv = client.post('/api/ticket/submit', json=json, headers=headers)
     rv = client.get('/api/courses')
     cid = rv.get_json()['json_data'][0]['id']
     tickets = client.get('/api/courses/{}/tickets'.format(cid))

@@ -32,14 +32,19 @@ def parse_note(message, ticket):
     course = Course.query.get(ticket.course_id)
     if course is None:
         return
+
     ta_in_course = course.ta_courses
     for mention in mentions:
         user_id = mention.group(0).split('@')[1]
         print(user_id)
+
         for ta in ta_in_course:
             if str(ta.id) == user_id:
+                if ta in ticket.binded_tas:
+                    continue
                 ticket.binded_tas.append(ta)
                 database.db.session.commit()
+
     print(ticket.binded_tas)
 
 

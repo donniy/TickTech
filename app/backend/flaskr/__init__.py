@@ -2,24 +2,27 @@ import os
 import requests
 from flask import Flask, render_template, jsonify, request
 from flask import Flask
-from flaskr import database
+from flaskr import database, sockets
 from . import models
 from datetime import datetime
 from flask_wtf.csrf import CSRFProtect
 import os.path
 from flaskr.models import Message, ticket, Note, Course, user, Label
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
-from flask_jwt import JWT
+from flask_jwt import JWT, jwt_required, current_identity
 from . import login
 import poplib
 from mail.thread import MailThread
 from datetime import timedelta
+from flask_hashfs import FlaskHashFS
+from os.path import expanduser
 
 
 db = database.db
-socketio = None
+socketio = sockets.get_socketio()
 login_manager = None
 app = None
+fs = None
 
 
 def create_app(test_config=None):
@@ -47,10 +50,20 @@ def create_app(test_config=None):
     # Make user logged in for 1 day.
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=86400)
 
-    csrf = CSRFProtect(app)
+    # Set hashfs preferences
+    fs = FlaskHashFS()
+    app.config.update({
+        'HASHFS_HOST': None,
+        'HASHFS_PATH_PREFIX': '/useruploads',
+        'HASHFS_ROOT_FOLDER': expanduser("~") + '/serverdata',
+        'HASHFS_DEPTH': 4,
+        'HASHFS_WIDTH': 1,
+        'HASHFS_ALGORITHM': 'sha256'
+    })
+    print("Uploads are saved in: " + expanduser("~") + '/serverdata')
+    fs.init_app(app)
 
-    global socketio
-    socketio = SocketIO(app)
+    csrf = CSRFProtect(app)
 
     db_uri = os.environ.get('DATABASE_CONNECTION')
 
@@ -59,7 +72,8 @@ def create_app(test_config=None):
 
     app.config.from_mapping(
         SECRET_KEY='dev',
-        SQLALCHEMY_DATABASE_URI=db_uri
+        SQLALCHEMY_DATABASE_URI=db_uri,
+        MAX_CONTENT_LENGTH=10485760,
     )
 
     if test_config:
@@ -80,6 +94,7 @@ def create_app(test_config=None):
 
     db.init_app(app)
     socketio.init_app(app)
+
     if not os.path.isfile('/tmp/test.db') and not test_config:
         app.app_context().push()
         database.init_db()
@@ -110,10 +125,19 @@ def create_app(test_config=None):
         # TODO: Check if allowed to join room
         print(data)
         print("Want to join {}".format(data['room']))
+        r_type, r_id = tuple(data['room'].split('-', maxsplit=1))
+        if r_type == "user":
+            print("That room is a private user room")
+            print("it belongs to user {}".format(r_id))
+            print("TODO: check if request was sent by that user")
         try:
             join_room(data['room'])
+            emit('join-room', {'status': 'success',
+                               'room': data['room']})
         except Exception as e:
             print("Failed to join room")
+            emit('join-room', {'status': 'failure',
+                               'room': data['room']})
 
     @socketio.on('leave-room')
     def sock_leave_room(data):
