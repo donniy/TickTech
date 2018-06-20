@@ -20,6 +20,11 @@
                         <h2>{{ticket.title}}</h2>
                         Status: {{ticket.status.name}}
                     </div>
+                    <div class="file-name-container-small medium-12 small-12 cell" v-if="ticket.files.length > 0">
+                        <div v-for="file in ticket.files">
+                             <p v-on:click="downloadFile(file.file_location, file.file_name)" class="file-listing-small"><i class="material-icons download-icon">folder</i> {{ file.file_name }}</p>
+                        </div>
+                    </div>
                     <div>
                         Ta's:
                         <b v-for="ta in ticket.tas" v-bind:key="ta.id" v-bind:ta="ta">
@@ -185,7 +190,27 @@ export default {
                     console.log(error)
                 })
         },
+        downloadFile(key, name){
+            const path = '/api/ticket/filedownload'
+            this.$ajax.post(path, {address: key})
+            .then((response) => {
 
+                // Create response donwload link
+                const url = window.URL.createObjectURL(new Blob([response.data]))
+                const link = document.createElement('a')
+
+                // Ref to the link and activate download.
+                link.href = url
+                link.setAttribute('download', name)
+                document.body.appendChild(link)
+                link.click();
+                document.body.removeChild(link)
+            })
+            .catch(error => {
+                console.log(error)
+                window.alert("File not found")
+            })
+        },
         /* Get the ta's in this course. Will add all the ta's to the
          * course_tas array.
          * NOTE: This can maybe stay local and course_tas can be removed from data.

@@ -14,12 +14,15 @@ from . import login
 import poplib
 from mail.thread import MailThread
 from datetime import timedelta
+from flask_hashfs import FlaskHashFS
+from os.path import expanduser
 
 
 db = database.db
 socketio = sockets.get_socketio()
 login_manager = None
 app = None
+fs = None
 
 
 def create_app(test_config=None):
@@ -47,6 +50,19 @@ def create_app(test_config=None):
     # Make user logged in for 1 day.
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=86400)
 
+    # Set hashfs preferences
+    fs = FlaskHashFS()
+    app.config.update({
+        'HASHFS_HOST': None,
+        'HASHFS_PATH_PREFIX': '/useruploads',
+        'HASHFS_ROOT_FOLDER': expanduser("~") + '/serverdata',
+        'HASHFS_DEPTH': 4,
+        'HASHFS_WIDTH': 1,
+        'HASHFS_ALGORITHM': 'sha256'
+    })
+    print("Uploads are saved in: " + expanduser("~") + '/serverdata')
+    fs.init_app(app)
+
     csrf = CSRFProtect(app)
 
     db_uri = os.environ.get('DATABASE_CONNECTION')
@@ -56,7 +72,8 @@ def create_app(test_config=None):
 
     app.config.from_mapping(
         SECRET_KEY='dev',
-        SQLALCHEMY_DATABASE_URI=db_uri
+        SQLALCHEMY_DATABASE_URI=db_uri,
+        MAX_CONTENT_LENGTH=10485760,
     )
 
     if test_config:

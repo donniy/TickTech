@@ -8,7 +8,7 @@ from flaskr import socketio
 
 
 def create_request(jsonData, ticket_id):
-    user_id = escape(jsonData["user_id"])
+    user_id = escape(jsonData["studentid"])
     text = escape(jsonData["message"])
 
     response_body = {}

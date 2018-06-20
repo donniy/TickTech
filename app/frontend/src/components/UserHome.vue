@@ -15,6 +15,7 @@
                 </div>
                 <router-link style="float:right;" to="/settings">Settings</router-link>
                 <router-link style="float:right;" to="/ticket/submit">Create ticket</router-link>
+                <router-link style="float:right;" to="/user/tickets">All tickets</router-link>
             </div>
             <div class="col-lg-4 text-center" v-if="isTA">
                 <h5>TA Courses</h5>

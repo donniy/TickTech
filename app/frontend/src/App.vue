@@ -49,7 +49,7 @@ export default {
     },
     methods: {
         handleNavbarTransparency: function () {
-            if (!this.isHome && this.navbarTransparent) {
+            if (!this.isHome) {
                 this.navbarTransparent = false
                 return
             }
