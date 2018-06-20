@@ -16,17 +16,17 @@
                     </div>
                     <div class="col-lg-4 col-md-4 text-center">
                         <select class="form-control custom-select" v-model="status_filter">
-                            <option> All </option>
-                            <option> Closed </option>
-                            <option> Unassigned </option>
-                            <option> Assigned </option>
+                            <option>All</option>
+                            <option>closed</option>
+                            <option>Unassigned</option>
+                            <option>Assigned</option>
                         </select>
                     </div>
                     <div class="col-lg-4 col-md-4 text-center">
-                        <select class="form-control custom-select">
-                            <option> Most recent </option>
-                            <option> Created by </option>
-                            <option> Least recent </option>
+                        <select class="form-control custom-select" v-model="sort_filter">
+                            <option>Most Recent</option>
+                            <option>Created by</option>
+                            <option>Least Recent</option>
                         </select>
                     </div>
                 </div>
@@ -41,7 +41,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <ticket v-for="ticket in tickets" v-bind:class="{'tr-item':true, 'active':(ticket.id === ticketSum)}" v-if="status_filter == 'All' || ticket.status.name == status_filter"
+                            <ticket v-for="ticket in tickets" v-bind:class="{'tr-item':true, 'active':(ticket.id === ticketSum)}" v-if="(status_filter == 'All' || ticket.status.name == status_filter) && sort_filter == 'Most Recent'"
+                                @click="ticketSum = ticket.id; Active" v-bind:key="ticket.id" v-bind:ticket="ticket" v-bind:base_url="'/student/ticket/'">
+                            </ticket>
+                            <ticket v-for="ticket in tickets_reverse" v-bind:class="{'tr-item':true, 'active':(ticket.id === ticketSum)}" v-if="(status_filter == 'All' || ticket.status.name == status_filter) && sort_filter == 'Least Recent'"
+                                @click="ticketSum = ticket.id; Active" v-bind:key="ticket.id" v-bind:ticket="ticket" v-bind:base_url="'/student/ticket/'">
+                            </ticket>
+                            <ticket v-for="ticket in tickets_by_alpabet" v-bind:class="{'tr-item':true, 'active':(ticket.id === ticketSum)}" v-if="(status_filter == 'All' || ticket.status.name == status_filter) && sort_filter == 'Created by'"
                                 @click="ticketSum = ticket.id; Active" v-bind:key="ticket.id" v-bind:ticket="ticket" v-bind:base_url="'/student/ticket/'">
                             </ticket>
                         </tbody>
@@ -102,6 +108,7 @@ export default {
             showSum: false,
             status: 'not set',
             status_filter: 'All',
+            sort_filter: "Most Recent",
             showEmailModal: false,
             email_running: false,
             wantsToAddUsers: false,
@@ -268,5 +275,17 @@ export default {
             this.emailRunning()
         }
     },
+    computed: {
+        tickets_reverse: function () {
+            return this.tickets.slice().reverse()
+        },
+
+        tickets_by_alpabet: function() {
+            return this.tickets.slice().sort(function(a,b) {
+                // return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);
+                return a.user_id - b.user_id;
+                }); 
+        },
+    }
 }
 </script>

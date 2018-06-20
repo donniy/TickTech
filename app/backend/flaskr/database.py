@@ -96,12 +96,16 @@ def populate_database_dummy_data():
                       name="Supervisor",
                       email="super@visor.nl")
 
+    user5 = user.User(id=111111111,
+                      name="Test test",
+                      email="test@test.nl")
+
     # !IMPORTANT! This is for the mail server - ask stephan
     mail_server = user.User(id=107584259,
                             name="Mail server",
                             email="uvapsetest@gmail.com")
 
-    items = [user1, user2, user3, mail_server, course, course2]
+    items = [user1, user2, user3, user5, mail_server, course, course2]
 
     for item in items:
         addItemSafelyToDB(item)
@@ -111,6 +115,8 @@ def populate_database_dummy_data():
         course2.supervisors.append(user4)
         course.student_courses.append(user3)
         course2.student_courses.append(user3)
+        course.student_courses.append(user5)
+        course2.student_courses.append(user5)
         course.ta_courses.append(user1)
         course2.ta_courses.append(user2)
     except Exception as exp:
