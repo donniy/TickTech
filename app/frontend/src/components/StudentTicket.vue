@@ -103,15 +103,32 @@
                 this.$ajax.post(path, {address: key})
                 .then((response) => {
                     // console.log(response.data)
+                    console.log("here")
+                    console.log(response)
+                    console.log(response.data.json_data)
+                    var byteCharacters = atob(response.data.json_data);
+                    console.log(byteCharacters)
 
-                    var mime_type = response.headers['content-type']
-                    var data = new Blob([response.data], {mime_type})
-                    const link = document.createElement('a');
-                    data = window.URL.createObjectURL(data)
-                    link.setAttribute("href", data)
-                    link.setAttribute('download', name);
-                    document.body.appendChild(link);
+                    var byteNumbers = new Array(byteCharacters.length);
+                    for (var i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+
+                    var byteArray = new Uint8Array(byteNumbers);
+
+                    // var mime_type = response.headers['content-type']
+                    var blob = new Blob([byteArray], {type: "image/png"});
+
+
+                    const url = window.URL.createObjectURL(blob)
+                    const link = document.createElement('a')
+
+                    // Ref to the link and activate download.
+                    link.href = url
+                    link.setAttribute('download', name)
+                    document.body.appendChild(link)
                     link.click();
+                    document.body.removeChild(link)
                 })
                 .catch(error => {
                     console.log(error)

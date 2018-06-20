@@ -161,6 +161,7 @@ def create_ticket():
 @apiBluePrint.route('/ticket/filedownload', methods=['POST'])
 @jwt_required()
 def download_file():
+    import base64
     """ Download a file from server (check rights in future)"""
     json_data = request.get_json()
     if 'address' in json_data:
@@ -171,6 +172,9 @@ def download_file():
         file = json_data['address'].rsplit('/', 1)[1]
 
         if folder and file:
-            return send_from_directory(folder, file, as_attachment=True)
+            fp = open(folder+'/'+file, 'br').read()
+            encoded = base64.b64encode(fp)
+            print(encoded)
+            return Iresponse.create_response(encoded, 200)
     else:
         return Iresponse.create_response("No address", 404)

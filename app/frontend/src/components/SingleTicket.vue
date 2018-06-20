@@ -151,9 +151,24 @@
                 const path = '/api/ticket/filedownload'
                 this.$ajax.post(path, {address: key})
                 .then((response) => {
+                    console.log("here")
+                    console.log(response)
+                    console.log(response.data.json_data)
+                    var byteCharacters = atob(response.data.json_data);
+                    console.log(byteCharacters)
 
-                    // Create response donwload link
-                    const url = window.URL.createObjectURL(new Blob([response.data]))
+                    var byteNumbers = new Array(byteCharacters.length);
+                    for (var i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+
+                    var byteArray = new Uint8Array(byteNumbers);
+
+                    // var mime_type = response.headers['content-type']
+                    var blob = new Blob([byteArray], {type: "image/png"});
+
+
+                    const url = window.URL.createObjectURL(blob)
                     const link = document.createElement('a')
 
                     // Ref to the link and activate download.
