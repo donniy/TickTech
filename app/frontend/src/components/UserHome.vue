@@ -70,6 +70,9 @@
             created() {
                 this.status = 'created'
                 this.getCourses()
+                this.$ajax.get('/api/user/notifications', (response) => {
+                    console.log(response.data.json_data)
+                })
             }
         },
         mounted: function () {
