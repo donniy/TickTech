@@ -15,14 +15,6 @@ binded_tas_helper = db.Table(
               primary_key=True)
 )
 
-labels_helper = db.Table(
-    'labels',
-    db.Column('label_id', db.Integer,
-              db.ForeignKey('ticket_label.id'), primary_key=True),
-    db.Column('ticket_id', db.Integer, db.ForeignKey('ticket.id'),
-              primary_key=True)
-)
-
 ticket_files_helper = db.Table(
     'ticket_files',
     db.Column('file_id', UUIDType(binary=False),
@@ -49,6 +41,11 @@ class Ticket(db.Model):
     email = db.Column(db.String(120), unique=False, nullable=True)
     title = db.Column(db.String(255), unique=False, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    
+    label_id = db.Column(
+        UUIDType(binary=False), db.ForeignKey('label.label_id'), unique=False,
+        nullable=True)
+    label = db.relationship('Label', backref=db.backref('tickets', lazy=True))
 
     # Dit is hoe je een relatie maakt. ticket.status geeft een TicketStatus
     # object met de status van dit ticket. backref betekent: maak een veld
@@ -66,11 +63,6 @@ class Ticket(db.Model):
     # Many to many relationship
     files = db.relationship(
         "File", secondary=ticket_files_helper, lazy='subquery',
-        backref=db.backref('tickets', lazy=True))
-
-    # Many to many relation
-    labels = db.relationship(
-        "TicketLabel", secondary=labels_helper, lazy='subquery',
         backref=db.backref('tickets', lazy=True))
 
     # Dit is een soort toString zoals in Java, voor het gebruiken van de
@@ -96,7 +88,7 @@ class Ticket(db.Model):
             'title': self.title,
             'timestamp': self.timestamp,
             'status': self.ticket_status.serialize,
-            'labels': database.serialize_list(self.labels),
+            'label': self.label.serialize,
             'tas': database.serialize_list(self.binded_tas),
             'files': database.serialize_list(self.files)
         }

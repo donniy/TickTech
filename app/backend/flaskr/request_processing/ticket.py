@@ -4,6 +4,7 @@ import uuid
 from flaskr.models.ticket import *
 from flaskr.models.Message import *
 from flaskr.utils import notifications
+from flaskr.models.Label import Label
 
 
 def create_request(jsonData):
@@ -18,9 +19,11 @@ def create_request(jsonData):
 
     response_body = {}
 
+    label = Label.query.get(labelid)
+
     ticket = Ticket(id=uuid.uuid4(), user_id=studentid, course_id=courseid,
-                    status_id=1, title=subject, email=email, files=files,
-                    timestamp=datetime.now())
+                    label=label, status_id=1, title=subject, email=email, 
+                    files=files, timestamp=datetime.now())
 
     if not database.addItemSafelyToDB(ticket):
         return Iresponse.internal_server_error()
