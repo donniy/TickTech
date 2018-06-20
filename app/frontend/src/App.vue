@@ -86,6 +86,7 @@ export default {
                     break;
                 case 3:
                     // New ticket
+                    text = 'New ticket: ' + data.ticket_title
                     break;
             }
             this.snackbar.text = text

@@ -46,11 +46,17 @@ def create_request(jsonData, ticket_id):
     return Iresponse.create_response("", 201)
 
 
-def retrieve_all_request(ticket_id):
+def retrieve_all_request(ticket_id, for_user, read=False):
     body = {}
     ticket = Ticket.query.get(ticket_id)
     if ticket is None:
         body['ticket_id'] = "invalid"
         return Iresponse.create_response(body, 404)
-    messages = database.serialize_list(list(ticket.messages))
+
+    msgs = list(ticket.messages)
+
+    if read:
+        for_user.read_messages(msgs)
+
+    messages = database.serialize_list(msgs)
     return Iresponse.create_response(messages, 200)

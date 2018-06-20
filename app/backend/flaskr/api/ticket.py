@@ -81,8 +81,12 @@ def create_message(ticket_id):
 
 
 @apiBluePrint.route('/ticket/<ticket_id>/messages', methods=['GET'])
+@jwt_required()
 def get_ticket_messages(ticket_id):
-    return rp_message.retrieve_all_request(ticket_id)
+    # TODO: Check if user is related to ticket.
+    return rp_message.retrieve_all_request(ticket_id,
+                                           current_identity,
+                                           read=True)
 
 
 @apiBluePrint.route('/ticket/submit', methods=['POST'])

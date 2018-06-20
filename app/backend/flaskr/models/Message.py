@@ -4,18 +4,27 @@ from sqlalchemy_utils import UUIDType
 
 db = database.db
 
+unread_messages_linker = db.Table(
+    'unread_link_user',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'),
+              primary_key=True),
+    db.Column('message_id', db.Integer, db.ForeignKey('message.id'),
+              primary_key=True)
+)
+
 
 class Message(db.Model):
+    """
+    Een message.
+    """
 
+    # Enum workaround
     NTFY_TYPE_MESSAGE = 0
     NTFY_TYPE_STATUS = 1
     NTFY_TYPE_CLOSED = 2
     NTFY_TYPE_NEW = 3
 
-    """
-    Een message.
-    """
-    message_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     ticket_id = db.Column(UUIDType(binary=False), db.ForeignKey('ticket.id'),
                           default=0, nullable=False)
     n_type = db.Column(db.Integer, nullable=False)
@@ -27,14 +36,19 @@ class Message(db.Model):
     ticket = db.relationship('Ticket',
                              backref=db.backref('messages', lazy=True))
 
-    user = db.relationship('User',
-                           backref=db.backref('messages', lazy=True))
+    sender = db.relationship('User',
+                             backref=db.backref('messages', lazy=True))
 
-    # Dit is een soort toString zoals in Java, voor het gebruiken van de
-    # database in de commandline. Op die manier kan je data maken en weergeven
-    # zonder formulier.
+    recipients = db.relationship('User', secondary=unread_messages_linker,
+                                 backref=db.backref('unread', lazy='subquery'))
+
     def __repr__(self):
-        return '<Message {}>'.format(self.message_id)
+        """
+        Dit is een soort toString zoals in Java, voor het gebruiken van de
+        database in de commandline. Op die manier kan je data maken en
+        weergeven zonder formulier.
+        """
+        return '<{} {}: {}>'.format(self.readable_type, self.id, self.text)
 
     @property
     def serialize(self):
@@ -43,16 +57,40 @@ class Message(db.Model):
         dus zorg dat er geen gevoelige info in zit.
         """
         return {
-            'id': self.message_id,
+            'id': self.id,
             'ticket': self.ticket.serialize,
             'type': self.n_type,
             'user_id': self.user_id,
-            'user_name': self.user.name,
+            'user_name': self.sender.name,
             'text': self.text,
             'timestamp': self.timestamp,
             'reply_id': self.reply_id
         }
 
     @property
+    def readable_type(self):
+        """
+        String variant of message type.
+        """
+        if self.n_type == NTFY_TYPE_MESSAGE:
+            return 'Message'
+        elif self.n_type == NTFY_TYPE_STATUS:
+            return 'StatusMessage'
+        elif self.n_type == NTFY_TYPE_CLOSED:
+            return 'ClosedMessage'
+        elif self.n_type == NTFY_TYPE_NEW:
+            return 'NewTicketMessage'
+
+    @property
     def checkValid(self):
+        """
+        This function appears not to do anything.
+        """
+        # TODO: Check if this is used anywhere and if possible remove.
         pass
+
+    def __eq__(self, other):
+        """
+        Compare to another Message. Relies on uniqueness of id.
+        """
+        return self.id == other.id
