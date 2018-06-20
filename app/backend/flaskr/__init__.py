@@ -2,14 +2,14 @@ import os
 import requests
 from flask import Flask, render_template, jsonify, request
 from flask import Flask
-from flaskr import database
+from flaskr import database, sockets
 from . import models
 from datetime import datetime
 from flask_wtf.csrf import CSRFProtect
 import os.path
 from flaskr.models import Message, ticket, Note, Course, user, Label
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
-from flask_jwt import JWT
+from flask_jwt import JWT, jwt_required, current_identity
 from . import login
 import poplib
 from mail.thread import MailThread
@@ -19,7 +19,7 @@ from os.path import expanduser
 from flask_mail import Mail
 
 db = database.db
-socketio = None
+socketio = sockets.get_socketio()
 login_manager = None
 app = None
 fs = None
@@ -75,9 +75,6 @@ def create_app(test_config=None):
 
     csrf = CSRFProtect(app)
 
-    global socketio
-    socketio = SocketIO(app)
-
     db_uri = os.environ.get('DATABASE_CONNECTION')
 
     if db_uri in [None, '']:
@@ -107,6 +104,7 @@ def create_app(test_config=None):
 
     db.init_app(app)
     socketio.init_app(app)
+
     if not os.path.isfile('/tmp/test.db') and not test_config:
         app.app_context().push()
         database.init_db()
@@ -137,10 +135,19 @@ def create_app(test_config=None):
         # TODO: Check if allowed to join room
         print(data)
         print("Want to join {}".format(data['room']))
+        r_type, r_id = tuple(data['room'].split('-', maxsplit=1))
+        if r_type == "user":
+            print("That room is a private user room")
+            print("it belongs to user {}".format(r_id))
+            print("TODO: check if request was sent by that user")
         try:
             join_room(data['room'])
+            emit('join-room', {'status': 'success',
+                               'room': data['room']})
         except Exception as e:
             print("Failed to join room")
+            emit('join-room', {'status': 'failure',
+                               'room': data['room']})
 
     @socketio.on('leave-room')
     def sock_leave_room(data):
