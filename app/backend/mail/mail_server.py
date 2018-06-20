@@ -55,11 +55,12 @@ def parse_email(bytes_email):
     # print("parsing body")
     if parsed_email.is_multipart():
         for part in parsed_email.walk():
+            data = part.get_payload(decode=True)
             ctype = part.get_content_type()
             if (ctype == 'text/plain'):
-                body += str(part.get_payload())
+                body += str(data)
             elif ctype == "text/html":
-                html += str(part.get_payload())
+                html += str(data)
             else:
                 ctype_split = ctype.split('/')
                 # print("splitted", ctype_split)
@@ -68,9 +69,8 @@ def parse_email(bytes_email):
                         # print("Attachment text")
                         # print("Found:", ctype_split[1])
                         attachments.append((part.get_filename(),
-                                            part.get_payload(decode=True)))
-                        files[part.get_filename()] =
-                                                part.get_payload(decode=True)
+                                            data))
+                        files[part.get_filename()] = data
                 except IndexError:
                     print("Something wrong with MIMI type;",
                           ctype, ctype_split)
