@@ -15,8 +15,6 @@ import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css'
 import axios from 'axios'
 import VueAxios from 'vue-axios';
-import VueMaterial from 'vue-material'
-import 'vue-material/dist/vue-material.min.css'
 
 Vue.use(VueMaterial)
 Vue.use(VueAxios, axios);
