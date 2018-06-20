@@ -15,8 +15,6 @@ def save_file(file, file_names):
     app = Flask(__name__)
     fs = FlaskHashFS()
 
-    print(type(file))
-
     extension = '.' + file.filename.rsplit('.', 1)[1].lower()
     address = fs.put(file, extension=extension)
     file_names.append(File(file_id=uuid.uuid4(),
@@ -25,7 +23,6 @@ def save_file(file, file_names):
                            is_duplicate=address.is_duplicate))
 
     size = os.stat(expanduser("~") + '/serverdata/' + address.relpath).st_size
-    print("FILESIZE", size)
     if size > MAX_SIZE:
         return False
     return True

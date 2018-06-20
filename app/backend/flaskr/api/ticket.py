@@ -123,8 +123,6 @@ def create_ticket():
                     print("invalid file")
                     return Iresponse.create_response("File too large", 400)
 
-    print("DATANOW:", formdata)
-
     if not json_validation.validate_json(formdata, ['message',
                                                     'subject',
                                                     'courseid',
@@ -142,7 +140,6 @@ def create_ticket():
                    'files': file_names}
 
     if not course_validation.check_course_validity(courseid, labelid):
-        print("invalid course")
         for file in file_names:
             rp_file.remove_file(file)
         return Iresponse.create_response("Invalid Course/Label", 400)
@@ -152,7 +149,6 @@ def create_ticket():
     ticket_data['email'] = current_identity.email
 
     if not json_validation.validate_ticket_data(ticket_data):
-        print("invalid ticket")
         for file in file_names:
             rp_file.remove_file(file)
         return Iresponse.create_response("Invalid ticket data", 400)
@@ -173,7 +169,6 @@ def download_file():
         location = json_data['address'].rsplit('/', 1)[0]
         folder = homefolder + base + location
         file = json_data['address'].rsplit('/', 1)[1]
-        print(folder, file)
 
         if folder and file:
             return send_from_directory(folder, file, as_attachment=True)
