@@ -12,7 +12,10 @@ import VueCookies from 'vue-cookies'
 import VueScrollTo from 'vue-scrollto'
 import axios from 'axios'
 import VueAxios from 'vue-axios';
+import VueMaterial from 'vue-material'
+import 'vue-material/dist/vue-material.min.css'
 
+Vue.use(VueMaterial)
 Vue.use(VueAxios, axios);
 Vue.use(VeeValidate);
 Vue.use(VueScrollTo);

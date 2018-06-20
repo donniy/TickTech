@@ -5,6 +5,14 @@
             <div class="col-sm-8 col-md-6">
                     <h2 class="form-header">Submit a question</h2>
                 <form enctype="multipart/form-data" class="material-form" v-on:submit.prevent="sendTicket">
+                    <md-avatar>
+                        <i class="material-icons">
+                            info
+                        </i>
+                            <md-tooltip md-direction="left">This page is can be used to create a ticket.
+                            </br>In order to assign the right Teaching Assistant (TA) to your
+                            </br>ticket please select the right corresponding course and label</md-tooltip>
+                        </md-avatar>
                     <div class="form-group">
                         <label for="subject">Subject</label>
                         <input id="subject" class="form-control" v-validate="'required|max:50'" name="subject" v-model="form.subject" type="text"
@@ -69,11 +77,6 @@
 
             </div>
         </div>
-        <div class="row">
-            <b-button class="info-button" @click="showInfoModal" :to="''">
-                <img class="info-img" src="../assets/outline_help_black_48dp.png"/>
-            </b-button>
-        </div>
 
         <infomodal v-if="showModal" @close="showModal = false">
         </infomodal>
@@ -81,8 +84,8 @@
 </template>
 
 <script>
-    import VeeValidate from 'vee-validate'
-    import InfoSubmissionModal from './InfoSubmissionModal.vue'
+
+import VeeValidate from 'vee-validate'
 
 let maxFiles = 6
 let maxFileSize = 10000000 // 10mb
@@ -103,7 +106,6 @@ export default {
             },
             fileTooLarge : false,
             fileTooMany : false,
-            showModal: false,
         }
     },
     computed: {
@@ -207,9 +209,7 @@ export default {
                 }
             })
 
-        },showInfoModal() {
-            this.showModal = true
-        },
+        }
     },
     mounted() {
         if (!this.$user.logged_in()) {
@@ -264,32 +264,7 @@ export default {
             }).catch(error => {
                 console.log(error)
             })
-        }, components: {
-            'infomodal': InfoSubmissionModal
-        },
+        }
     }
 
 </script>
-
-<style>
-
-.info-button {
-border: none;
-background:transparent;
-outline: none;
-}
-
-.info-button:hover {
-background: transparent;
-border: none;
-}
-
-.info-button::-moz-focus-inner {
-border: 0;
-}
-
-.info-img {
-width: 30px;
-height: 30px;
-}
-</style>
