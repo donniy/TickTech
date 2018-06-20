@@ -15,6 +15,8 @@ from flask_jwt import jwt_required, current_identity
 from flaskr.utils import notifications, course_validation, json_validation
 from os.path import expanduser
 import os
+import base64
+import mimetypes
 
 
 # Make this post with a button.
@@ -161,7 +163,6 @@ def create_ticket():
 @apiBluePrint.route('/ticket/filedownload', methods=['POST'])
 @jwt_required()
 def download_file():
-    import base64
     """ Download a file from server (check rights in future)"""
     json_data = request.get_json()
     if 'address' in json_data:
@@ -170,11 +171,14 @@ def download_file():
         location = json_data['address'].rsplit('/', 1)[0]
         folder = homefolder + base + location
         file = json_data['address'].rsplit('/', 1)[1]
+        full_path = folder + json_data['address']
+
+        fileType, fileEncoding = mimetypes.guess_type(full_path)
 
         if folder and file:
             fp = open(folder+'/'+file, 'br').read()
-            encoded = base64.b64encode(fp)
-            print(encoded)
-            return Iresponse.create_response(encoded, 200)
+            encoded = base64.b64encode(fp).decode("utf-8")
+            return Iresponse.create_response({'encstring': str(encoded),
+                                             'mimetype': fileType}, 200)
     else:
         return Iresponse.create_response("No address", 404)

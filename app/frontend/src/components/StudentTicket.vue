@@ -102,24 +102,19 @@
                 const path = '/api/ticket/filedownload'
                 this.$ajax.post(path, {address: key})
                 .then((response) => {
-                    // console.log(response.data)
-                    console.log("here")
-                    console.log(response)
-                    console.log(response.data.json_data)
-                    var byteCharacters = atob(response.data.json_data);
-                    console.log(byteCharacters)
+                    // Get data from response
+                    var byteCharacters = atob(response.data.json_data['encstring']);
+                    var mimetype = response.data.json_data['mimetype']
 
+                    // Convert data to bytearray and decode
                     var byteNumbers = new Array(byteCharacters.length);
                     for (var i = 0; i < byteCharacters.length; i++) {
                         byteNumbers[i] = byteCharacters.charCodeAt(i);
                     }
-
                     var byteArray = new Uint8Array(byteNumbers);
 
-                    // var mime_type = response.headers['content-type']
-                    var blob = new Blob([byteArray], {type: "image/png"});
-
-
+                    // Generate blob and download element.
+                    var blob = new Blob([byteArray], {mimetype});
                     const url = window.URL.createObjectURL(blob)
                     const link = document.createElement('a')
 
