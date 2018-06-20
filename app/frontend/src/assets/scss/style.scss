@@ -824,9 +824,50 @@ hr {
     min-height: 100vh;
 }
 
-.courseslist {
-    background-color: blue;
-    float: left;
+.welcome-header {
+    padding: 5vh;
+    justify-content: center;
+}
+
+.center-display {
+    justify-content: center;
+    text-align: center;
+}
+
+.margin-top {
+    margin-top: 10vh;
+}
+
+.notification-section {
+    min-height: 40vh;
+    max-height: 40vh;
+    overflow: auto;
+}
+
+.courses-section {
+    max-height: 65vh;
+    min-height: 65vh;
+    overflow: auto;
+}
+
+.single-course {
+    color: green!important;
+    background-color: white;
+}
+
+.create-ticket-section1 {
+    margin-top: 5vh;
+}
+
+.create-ticket-section2 {
+    min-height: 20vh;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.create-ticket-section:hover {
+    cursor: pointer;
 }
 
 .fixedlocation {
