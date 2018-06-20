@@ -58,25 +58,22 @@ def parse_email(bytes_email):
             ctype = part.get_content_type()
             if (ctype == 'text/plain'):
                 body += str(part.get_payload())
-            elif ctype in ['image/jpeg', 'image/png']:
-                # What yo do with the attachment?!
-                # open(part.get_filename(), 'wb')
-                # .write(part.get_payload(decode=True))
-                # print("Found image")
-                attachments.append((part.get_filename(),
-                                    part.get_payload(decode=True)))
-                files[part.get_filename()] = part.get_payload(decode=True)
             elif ctype == "text/html":
                 html += str(part.get_payload())
             else:
                 ctype_split = ctype.split('/')
                 # print("splitted", ctype_split)
-                if (ctype_split[0] == 'text'):
-                    # print("Attachment text")
-                    # print("Found:", ctype_split[1])
-                    attachments.append((part.get_filename(),
-                                        part.get_payload(decode=True)))
-                    files[part.get_filename()] = part.get_payload(decode=True)
+                try:
+                    if (ctype_split[0] == 'text' or ctype_split[0] == 'image'):
+                        # print("Attachment text")
+                        # print("Found:", ctype_split[1])
+                        attachments.append((part.get_filename(),
+                                            part.get_payload(decode=True)))
+                        files[part.get_filename()] =
+                                                part.get_payload(decode=True)
+                except IndexError:
+                    print("Something wrong with MIMI type;",
+                          ctype, ctype_split)
     else:
         # Emails are always multipart?
         if (parsed_email.get_content_type() == 'text/plain'):
