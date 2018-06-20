@@ -9,7 +9,9 @@ from flaskr.utils import notifications, course_validation, json_validation
 from flask import escape, request, jsonify
 from flaskr.utils.json_validation import *
 from mail.thread import MailThread
-import poplib, base64
+import poplib
+import base64
+
 
 @apiBluePrint.route('/email/user/match', methods=["POST"])
 def mail_match_on_mail():
@@ -47,21 +49,19 @@ def create_email_ticket():
 
     formdata = request.get_json()
     files = formdata['files']
-    print(files.keys())
+    # print(files.keys())
 
     if(len(files.keys()) > 5):
         return Iresponse.create_response("Too many files", 400)
 
     file_names = list()
     for filename in files.keys():
-        print("FILE", filename)
+        # print("FILE", filename)
         file = base64.b64decode(files[filename])
 
-
         if not rp_file.save_file_from_mail(file, filename, file_names):
-            print("invalid file")
+            # print("invalid file")
             return Iresponse.create_response("File too large", 400)
-
 
     # if not json_validation.validate_json(formdata, ['message',
     #                                                 'subject',
@@ -95,15 +95,7 @@ def create_email_ticket():
     response = rp_ticket.create_request(ticket_data)
 
     return response
-    # print("Create ticket")
-    # # Authentication
-    # jsonData = request.get_json()
-    # jsonData['files'] = (request.files)
-    # #print(jsonData)
-    # msg = rp_ticket.create_request(jsonData)
-    # print("created:", msg)
-    # return msg
-#    return Iresponse.create_response('response', 200)
+
 
 @apiBluePrint.route('/email/<course_id>/settings', methods=['GET'])
 def retrieve_current_mail_settings(course_id):

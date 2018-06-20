@@ -52,7 +52,7 @@ def parse_email(bytes_email):
     html = ''
     files = {}
     attachments = []
-    print("parsing body")
+    # print("parsing body")
     if parsed_email.is_multipart():
         for part in parsed_email.walk():
             ctype = part.get_content_type()
@@ -62,20 +62,20 @@ def parse_email(bytes_email):
                 # What yo do with the attachment?!
                 # open(part.get_filename(), 'wb')
                 # .write(part.get_payload(decode=True))
-                print("THIS IS TYPE: ", type(part.get_payload(decode=True)))
-                print("Found image")
-                attachments.append((part.get_filename(), part.get_payload(decode=True)))
+                # print("Found image")
+                attachments.append((part.get_filename(),
+                                    part.get_payload(decode=True)))
                 files[part.get_filename()] = part.get_payload(decode=True)
             elif ctype == "text/html":
                 html += str(part.get_payload())
             else:
                 ctype_split = ctype.split('/')
-                print("splitted", ctype_split)
+                # print("splitted", ctype_split)
                 if (ctype_split[0] == 'text'):
-                    print("Attachment text")
-                    print("THIS IS TYPE: ", type(part.get_payload(decode=True)))
-                    print("Found:",ctype_split[1])
-                    attachments.append((part.get_filename(), part.get_payload(decode=True)))
+                    # print("Attachment text")
+                    # print("Found:", ctype_split[1])
+                    attachments.append((part.get_filename(),
+                                        part.get_payload(decode=True)))
                     files[part.get_filename()] = part.get_payload(decode=True)
     else:
         # Emails are always multipart?
@@ -122,7 +122,7 @@ def find_user_id(body, sender, sendermail):
         'http://localhost:5000/api/email/user/match',
         json=info)
 
-    #sprint(result.text)
+    # sprint(result.text)
     if(result.status_code == 200):
         json = result.json()
         if (json['json_data']['succes']):
@@ -160,7 +160,7 @@ def retrieve_labels(courseid):
             # This is how it works
             print(labels[0]['label_id'], labels[0]['label_name'])
     else:
-        print("Failed", result.text)
+        print("Failed retrieving labels", result.text)
 
     return labels
 
@@ -191,7 +191,7 @@ def check_mail(host, port, user, password, courseid):
         bytes_email = b"\n".join(server.retr(i + 1)[1])
         subject, body, files, sender, address = parse_email(bytes_email)
 
-        #print("FILES:", files)
+        # print("FILES:", files)
 
         # Check for succes
         if (subject is None or body is None or sender is None):
@@ -213,7 +213,7 @@ def check_mail(host, port, user, password, courseid):
                 labelid = labels[0]['label_id']
             else:
                 labelid = None
-            #print("CHECKLABEL:",labelid, labels)
+            # print("CHECKLABEL:",labelid, labels)
 
             newticket = {
                 'name': sender,
@@ -230,18 +230,17 @@ def check_mail(host, port, user, password, courseid):
 
             newticket['files'] = attachments
 
-
-
             # Add the new variables to a new ticket.
-            #print(newticket)
+            # print(newticket)
             result = requests.post(
-                'http://localhost:5000/api/email/ticket/submit', json=newticket)
+                'http://localhost:5000/api/email/ticket/submit',
+                json=newticket)
 
             print("RESULT:", result.status_code)
             if (result.status_code != 201):
                 print("Something went wrong creating a"
                       "new ticket from an email.")
-                #print(result.text)
+                # print(result.text)
                 print("******")
                 print("Sender: " + str(sender) + "\nStudentid: " +
                       str(studentid) + "\nEmail: " + str(address) +
@@ -266,7 +265,7 @@ if __name__ == '__main__':
         courseid = courses["json_data"][0]["id"]
     else:
         print(result.status_code)
-        #print("Failed", result.text)
+        # print("Failed", result.text)
 
     check_mail("pop.gmail.com", "995",
                "uvapsetest@gmail.com", "stephanandrea", courseid)

@@ -18,9 +18,6 @@ def save_file(file, file_names):
 
     extension = '.' + file.filename.rsplit('.', 1)[1].lower()
     address = fs.put(file, extension=extension)
-    print(type(file.filename))
-    print(file.filename)
-    print('\n\n\n\n\n\n\n')
     file_names.append(File(file_id=uuid.uuid4(),
                            file_location=address.relpath,
                            file_name=file.filename,
@@ -31,13 +28,13 @@ def save_file(file, file_names):
         return False
     return True
 
+
 def save_file_from_mail(bytes, filename, file_names):
     # Setup the filesystem
     app = Flask(__name__)
     fs = FlaskHashFS()
     file = io.BytesIO(bytes)
     extension = '.' + filename.rsplit('.', 1)[1].lower()
-    print(filename, '\n\n\n\n\n')
     address = fs.put(file, extension=extension)
     file_names.append(File(file_id=uuid.uuid4(),
                            file_location=address.relpath,
@@ -48,6 +45,7 @@ def save_file_from_mail(bytes, filename, file_names):
     if size > MAX_SIZE:
         return False
     return True
+
 
 def get_file(address):
 
