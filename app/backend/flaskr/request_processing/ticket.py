@@ -19,6 +19,9 @@ def create_request(jsonData):
 
     response_body = {}
 
+    print("HEREEEE\n\n\n\n\n")
+    print(files)
+
     ticket = Ticket(id=uuid.uuid4(), user_id=studentid, course_id=courseid,
                     status_id=1, title=subject, email=email, files=files,
                     timestamp=datetime.now())

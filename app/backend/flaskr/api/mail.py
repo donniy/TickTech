@@ -9,8 +9,7 @@ from flaskr.utils import notifications, course_validation, json_validation
 from flask import escape, request, jsonify
 from flaskr.utils.json_validation import *
 from mail.thread import MailThread
-import poplib
-
+import poplib, base64
 
 @apiBluePrint.route('/email/user/match', methods=["POST"])
 def mail_match_on_mail():
@@ -45,28 +44,30 @@ def create_email_ticket():
     Check ticket submission and add to database.
     """
     # Mandatory check to comply with incompatible testing.
+
     formdata = request.get_json()
+    files = formdata['files']
+    print(files.keys())
 
-    if hasattr(request, 'files'):
-        if request.files != '':
-            filecount = 0
-            file_names = list()
-            for file_id in request.files:
-                filecount += 1
-                if filecount > 5:
-                    return Iresponse.create_response("Too many files", 400)
-                file = request.files[file_id]
+    if(len(files.keys()) > 5):
+        return Iresponse.create_response("Too many files", 400)
 
-                if not rp_file.save_file(file, file_names):
-                    print("invalid file")
-                    return Iresponse.create_response("File too large", 400)
+    file_names = list()
+    for filename in files.keys():
+        print("FILE", filename)
+        file = base64.b64decode(files[filename])
 
-    if not json_validation.validate_json(formdata, ['message',
-                                                    'subject',
-                                                    'courseid',
-                                                    'labelid']):
-        return Iresponse.create_response("Malformed request", 400)
 
+        if not rp_file.save_file_from_mail(file, filename, file_names):
+            print("invalid file")
+            return Iresponse.create_response("File too large", 400)
+
+
+    # if not json_validation.validate_json(formdata, ['message',
+    #                                                 'subject',
+    #                                                 'courseid',
+    #                                                 'labelid']):
+    #     return Iresponse.create_response("Malformed request", 400)
     message = (formdata['message'])
     subject = (formdata['subject'])
     courseid = (formdata['courseid'])
@@ -85,10 +86,6 @@ def create_email_ticket():
     ticket_data['studentid'] = (formdata['studentid'])
     ticket_data['name'] = (formdata['name'])
     ticket_data['email'] = (formdata['email'])
-
-    print("********************************")
-    print(ticket_data['studentid'])
-    print(type(ticket_data['studentid']))
 
     if not json_validation.validate_ticket_data(ticket_data):
         for file in file_names:

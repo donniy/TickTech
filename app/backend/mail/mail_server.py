@@ -3,6 +3,7 @@ from time import sleep
 import email
 import poplib
 import requests
+import base64
 import html2text
 
 '''
@@ -63,6 +64,7 @@ def parse_email(bytes_email):
                 # .write(part.get_payload(decode=True))
                 print("THIS IS TYPE: ", type(part.get_payload(decode=True)))
                 print("Found image")
+                attachments.append((part.get_filename(), part.get_payload(decode=True)))
                 files[part.get_filename()] = part.get_payload(decode=True)
             elif ctype == "text/html":
                 html += str(part.get_payload())
@@ -73,6 +75,7 @@ def parse_email(bytes_email):
                     print("Attachment text")
                     print("THIS IS TYPE: ", type(part.get_payload(decode=True)))
                     print("Found:",ctype_split[1])
+                    attachments.append((part.get_filename(), part.get_payload(decode=True)))
                     files[part.get_filename()] = part.get_payload(decode=True)
     else:
         # Emails are always multipart?
@@ -102,7 +105,7 @@ def parse_email(bytes_email):
         name = sender
         address = sender
 
-    return subject, body, files, name[0], address[0]
+    return subject, body, attachments, name[0], address[0]
 
 
 def find_user_id(body, sender, sendermail):
@@ -221,17 +224,24 @@ def check_mail(host, port, user, password, courseid):
                 'courseid': courseid,
                 'labelid': labelid
             }
+            attachments = {}
+            for name, bytes in files:
+                attachments[name] = base64.b64encode(bytes)
+
+            newticket['files'] = attachments
+
+
 
             # Add the new variables to a new ticket.
+            #print(newticket)
             result = requests.post(
-                'http://localhost:5000/api/email/ticket/submit',
-                json=newticket, files=files)
+                'http://localhost:5000/api/email/ticket/submit', json=newticket)
 
             print("RESULT:", result.status_code)
             if (result.status_code != 201):
                 print("Something went wrong creating a"
                       "new ticket from an email.")
-                print(result.text)
+                #print(result.text)
                 print("******")
                 print("Sender: " + str(sender) + "\nStudentid: " +
                       str(studentid) + "\nEmail: " + str(address) +
@@ -239,8 +249,8 @@ def check_mail(host, port, user, password, courseid):
                 print("Course ID: ", courseid)
                 print("Label ID: ", labelid, "\n\n")
                 print("Body: " + body)
-            else:
-                print(result.text)
+            # else:
+            #     print(result.text)
 
     # Somehow makes you up-to-date with server
     # disable this when debugging
@@ -255,7 +265,8 @@ if __name__ == '__main__':
         courses = result.json()
         courseid = courses["json_data"][0]["id"]
     else:
-        print("Failed", result.text)
+        print(result.status_code)
+        #print("Failed", result.text)
 
     check_mail("pop.gmail.com", "995",
                "uvapsetest@gmail.com", "stephanandrea", courseid)
