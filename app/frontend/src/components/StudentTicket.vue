@@ -3,7 +3,7 @@
         <router-link :to="{path: ret_url}" class="btn btn-primary back-button">&laquo; Terug naar overzicht</router-link>
         <br />
         <br />
-        <h1>Mijn ticket</h1>
+        <h1>My ticket</h1>
         <div class="material-card">
             <h2>{{ticket.title}}</h2>
             Status: {{ticket.status.name}}
@@ -22,6 +22,7 @@
             <textarea v-model="reply" rows="6" placeholder="Schrijf een reactie..."></textarea>
             <button style="margin-bottom:10px;" class="btn btn-primary">Submit reaction</button>
         </form>
+        <form class="hidden-input" action="/api/ticket/filedownload" method="POST"><input type="hidden" name="file" value="value1">...</form>
     </div>
 </template>
 
@@ -71,39 +72,52 @@
                     .catch(error => {
                         console.log(error)
                     })
+            }, b64toBlob(b64Data, contentType, sliceSize) {
+                  contentType = contentType || '';
+                  sliceSize = sliceSize || 512;
+
+                  var byteCharacters = atob(b64Data);
+                  console.log(byteCharacters)
+
+                  var byteArrays = [];
+
+                  for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+                      var slice = byteCharacters.slice(offset, offset + sliceSize);
+
+                      var byteNumbers = new Array(slice.length);
+                      for (var i = 0; i < slice.length; i++) {
+                          byteNumbers[i] = slice.charCodeAt(i);
+                      }
+
+                      var byteArray = new Uint8Array(byteNumbers);
+
+                      byteArrays.push(byteArray);
+                  }
+
+                  var blob = new Blob(byteArrays, {type: contentType});
+                  return blob;
             },
             downloadFile(key, name){
+
                 const path = '/api/ticket/filedownload'
                 this.$ajax.post(path, {address: key})
                 .then((response) => {
+                    // console.log(response.data)
 
-                    // Create response donwload link
-                    let mime_type =  response.headers["content-type"]
-                    console.log(response)
-                    let blob = new Blob([response.data], { type: response.headers["content-type"]})
-                    var reader = new FileReader()
-                    var returnedURL
-                    var returnedBase64
-                    reader.onload = function(e) {
-                        returnedURL = e.target.result
-                        returnedBase64 = returnedURL.replace(/^[^,]+,/, '')
-                        console.log(returnedBase64)
-                    }
-                    reader.readAsDataURL(blob)
-                    var element = document.createElement('a');
-                    element.id = 'downloadLink';
-                    element.href = returnedURL;
-                    element.download = name;
-                    document.body.appendChild(element);
-                    var downloadLink = document.getElementById('downloadLink');
-                    downloadLink.click();
-                    document.body.removeChild(downloadLink);
+                    var mime_type = response.headers['content-type']
+                    var data = new Blob([response.data], {mime_type})
+                    const link = document.createElement('a');
+                    data = window.URL.createObjectURL(data)
+                    link.setAttribute("href", data)
+                    link.setAttribute('download', name);
+                    document.body.appendChild(link);
+                    link.click();
                 })
                 .catch(error => {
                     console.log(error)
                     window.alert("File not found")
                 })
-            },
+            }
         },
         mounted: function () {
             if (!this.$user.logged_in()) {

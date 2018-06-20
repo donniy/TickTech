@@ -55,7 +55,7 @@ Vue.prototype.$ajax = {
     return axios_auth.get(url, data).then(f).catch(handle_ajax_error)
   },
   post: function (url, data={}, f) {
-    let hdr = {};
+    let hdr = {'responseType': 'blob'};
 
     let token = window.$cookies.get('token')
 

@@ -43,6 +43,7 @@
     "css-color-names": "0.0.4",
     "css-loader": "^0.28.0",
     "defined": "^1.0.0",
+    "downloadjs": "^1.4.7",
     "es6-map": "^0.1.5",
     "es6-weak-map": "^2.0.2",
     "escope": "^3.6.0",

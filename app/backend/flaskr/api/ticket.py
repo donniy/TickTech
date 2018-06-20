@@ -16,6 +16,7 @@ from flaskr.utils import notifications, course_validation, json_validation
 from os.path import expanduser
 import os
 
+
 # Make this post with a button.
 @apiBluePrint.route('/ticket/<ticket_id>/close', methods=['POST', 'PATCH'])
 @jwt_required()
