@@ -12,6 +12,8 @@ import VueCookies from 'vue-cookies'
 import VueScrollTo from 'vue-scrollto'
 import axios from 'axios'
 import VueAxios from 'vue-axios';
+import VueAuth from '@websanova/vue-auth'
+import JWTHeader from './components/jwtHeader'
 
 Vue.use(VueAxios, axios);
 Vue.use(VeeValidate);
@@ -116,7 +118,7 @@ Vue.prototype.$ajax = {
 Vue.prototype.$user = {
   get: () => {
     let usr = window.$auth.user().user;
-    return usr
+    return usr;
   },
 
   set: (user) => {
@@ -124,10 +126,10 @@ Vue.prototype.$user = {
   },
 
   logout: function () {
-    $auth.logout({
+    this.$auth.logout({
       makeRequest: false,
       success: function () {
-        $auth.token(null, '')
+        $auth.token(null, '');
       },
       redirect: '/',
     });
@@ -150,13 +152,20 @@ Vue.prototype.$user = {
       return 0
     return (typeof usr.ta !== 'undefined') ? 1 : 0
   },
+
+  isTa: () => {
+    let usr = window.$auth.user().user;
+    if(typeof usr === 'undefined')
+      return 0
+    return (typeof usr.ta !== 'undefined') ? 1 : 0
+  }
 }
 
 Vue.axios = axios
 Vue.router = router
 
-Vue.use(require('@websanova/vue-auth'), {
-  auth: require('./components/jwtHeader.js'),
+Vue.use(VueAuth, {
+  auth: JWTHeader,
   http: require('@websanova/vue-auth/drivers/http/axios.1.x.js'),
   router: require('@websanova/vue-auth/drivers/router/vue-router.2.x.js'),
   token: [
@@ -170,10 +179,12 @@ Vue.use(require('@websanova/vue-auth'), {
     console.log(response.json_data)
     return response.json_data
   },
-  tokenStore: ['cookie']
+  tokenStore: ['localStorage', 'cookie']
 });
 
+
 window.$auth = Vue.auth;
+window.Auth = VueAuth;
 window.$user = Vue.prototype.$user;
 
 /* eslint-disable no-new */
