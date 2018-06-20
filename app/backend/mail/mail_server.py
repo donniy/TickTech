@@ -56,19 +56,26 @@ def parse_email(bytes_email):
             ctype = part.get_content_type()
             if (ctype == 'text/plain'):
                 body += str(part.get_payload())
-            if ctype in ['image/jpeg', 'image/png']:
+            elif ctype in ['image/jpeg', 'image/png']:
                 # What yo do with the attachment?!
                 # open(part.get_filename(), 'wb')
                 # .write(part.get_payload(decode=True))
                 print("THIS IS TYPE: ", type(part.get_payload(decode=True)))
                 print("Found image")
-            if ctype == "text/html":
+            elif ctype == "text/html":
                 html += str(part.get_payload())
+            else:
+                ctype_split = ctype.split('/')
+                print("splitted", ctype_split)
+                if (ctype_split[0] == 'text'):
+                    print("Attachment text")
+                    print("THIS IS TYPE: ", type(part.get_payload(decode=True)))
+                    print("Found:",ctype_split[1])
     else:
         # Emails are always multipart?
         if (parsed_email.get_content_type() == 'text/plain'):
             body += str(parsed_email.get_payload())
-        elif if parsed_email.get_content_type() == "text/html":
+        elif parsed_email.get_content_type() == "text/html":
             html += str(part.get_payload())
         else:
             print("Not multipart and  not plain")
@@ -117,7 +124,7 @@ def find_user_id(body, sender, sendermail):
             if id is not None:
                 return id
 
-    return 123123123
+    return None
 
     # body = body.split()
     # for words in body:
@@ -173,17 +180,25 @@ def check_mail(host, port, user, password, courseid):
     # Get all labels available for this course
     labels = retrieve_labels(courseid)
     for i in range(mailcount):
+
+        # parse email
         bytes_email = b"\n".join(server.retr(i + 1)[1])
         subject, body, sender, address = parse_email(bytes_email)
 
+        # Check for succes
         if (subject is None or body is None or sender is None):
             print("Error parsing email.")
             print("subject", subject)
             print('body', body)
             print('sender', sender)
         else:
-            # Try to find user
+            # validate user
             studentid = find_user_id(body, sender, address)
+            if studentid is None:
+                # TODO: What to do?
+                studentid = 123123123
+
+            # Check if email with subject exists
 
             # Try To attach label
             if (labels != []):
