@@ -1,6 +1,5 @@
 from . import apiBluePrint
-import oauth2
-from flask import jsonify, request, escape
+from flask import request
 from flaskr.i_request import *
 from flaskr import lti
 
