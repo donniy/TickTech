@@ -3,6 +3,9 @@ from flaskr.models.Course import Course
 from flaskr.models.user import User
 from flaskr import database, Iresponse
 from flaskr.request_processing import ticket as rp_ticket
+from flaskr.request_processing import message as rp_message
+from flaskr.request_processing import file as rp_file
+from flaskr.utils import notifications, course_validation, json_validation
 from flask import escape, request, jsonify
 from flaskr.utils.json_validation import *
 from mail.thread import MailThread
@@ -41,13 +44,69 @@ def create_email_ticket():
     """
     Check ticket submission and add to database.
     """
-    print("Create ticket")
-    # Authentication
-    jsonData = request.get_json()
-    msg = rp_ticket.create_request(jsonData)
-    print("created:", msg)
-    return msg
+    # Mandatory check to comply with incompatible testing.
+    formdata = request.get_json()
 
+    if hasattr(request, 'files'):
+        if request.files != '':
+            filecount = 0
+            file_names = list()
+            for file_id in request.files:
+                filecount += 1
+                if filecount > 5:
+                    return Iresponse.create_response("Too many files", 400)
+                file = request.files[file_id]
+
+                if not rp_file.save_file(file, file_names):
+                    print("invalid file")
+                    return Iresponse.create_response("File too large", 400)
+
+    if not json_validation.validate_json(formdata, ['message',
+                                                    'subject',
+                                                    'courseid',
+                                                    'labelid']):
+        return Iresponse.create_response("Malformed request", 400)
+
+    message = (formdata['message'])
+    subject = (formdata['subject'])
+    courseid = (formdata['courseid'])
+    labelid = (formdata['labelid'])
+    ticket_data = {'message':  message,
+                   'subject':  subject,
+                   'courseid':  courseid,
+                   'labelid':  labelid,
+                   'files': file_names}
+
+    if not course_validation.check_course_validity(courseid, labelid):
+        for file in file_names:
+            rp_file.remove_file(file)
+        return Iresponse.create_response("Invalid Course/Label", 400)
+
+    ticket_data['studentid'] = (formdata['studentid'])
+    ticket_data['name'] = (formdata['name'])
+    ticket_data['email'] = (formdata['email'])
+
+    print("********************************")
+    print(ticket_data['studentid'])
+    print(type(ticket_data['studentid']))
+
+    if not json_validation.validate_ticket_data(ticket_data):
+        for file in file_names:
+            rp_file.remove_file(file)
+        return Iresponse.create_response("Invalid ticket data", 400)
+
+    response = rp_ticket.create_request(ticket_data)
+
+    return response
+    # print("Create ticket")
+    # # Authentication
+    # jsonData = request.get_json()
+    # jsonData['files'] = (request.files)
+    # #print(jsonData)
+    # msg = rp_ticket.create_request(jsonData)
+    # print("created:", msg)
+    # return msg
+#    return Iresponse.create_response('response', 200)
 
 @apiBluePrint.route('/email/<course_id>/settings', methods=['GET'])
 def retrieve_current_mail_settings(course_id):

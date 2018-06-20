@@ -49,6 +49,7 @@ def parse_email(bytes_email):
     # Get body.
     body = ''
     html = ''
+    files = {}
     attachments = []
     print("parsing body")
     if parsed_email.is_multipart():
@@ -62,6 +63,7 @@ def parse_email(bytes_email):
                 # .write(part.get_payload(decode=True))
                 print("THIS IS TYPE: ", type(part.get_payload(decode=True)))
                 print("Found image")
+                files[part.get_filename()] = part.get_payload(decode=True)
             elif ctype == "text/html":
                 html += str(part.get_payload())
             else:
@@ -71,6 +73,7 @@ def parse_email(bytes_email):
                     print("Attachment text")
                     print("THIS IS TYPE: ", type(part.get_payload(decode=True)))
                     print("Found:",ctype_split[1])
+                    files[part.get_filename()] = part.get_payload(decode=True)
     else:
         # Emails are always multipart?
         if (parsed_email.get_content_type() == 'text/plain'):
@@ -99,7 +102,7 @@ def parse_email(bytes_email):
         name = sender
         address = sender
 
-    return subject, body, name[0], address[0]
+    return subject, body, files, name[0], address[0]
 
 
 def find_user_id(body, sender, sendermail):
@@ -116,7 +119,7 @@ def find_user_id(body, sender, sendermail):
         'http://localhost:5000/api/email/user/match',
         json=info)
 
-    print(result.text)
+    #sprint(result.text)
     if(result.status_code == 200):
         json = result.json()
         if (json['json_data']['succes']):
@@ -183,7 +186,9 @@ def check_mail(host, port, user, password, courseid):
 
         # parse email
         bytes_email = b"\n".join(server.retr(i + 1)[1])
-        subject, body, sender, address = parse_email(bytes_email)
+        subject, body, files, sender, address = parse_email(bytes_email)
+
+        #print("FILES:", files)
 
         # Check for succes
         if (subject is None or body is None or sender is None):
@@ -202,9 +207,10 @@ def check_mail(host, port, user, password, courseid):
 
             # Try To attach label
             if (labels != []):
-                labelid = labels[0]
+                labelid = labels[0]['label_id']
             else:
                 labelid = None
+            #print("CHECKLABEL:",labelid, labels)
 
             newticket = {
                 'name': sender,
@@ -219,8 +225,9 @@ def check_mail(host, port, user, password, courseid):
             # Add the new variables to a new ticket.
             result = requests.post(
                 'http://localhost:5000/api/email/ticket/submit',
-                json=newticket)
+                json=newticket, files=files)
 
+            print("RESULT:", result.status_code)
             if (result.status_code != 201):
                 print("Something went wrong creating a"
                       "new ticket from an email.")
@@ -232,6 +239,8 @@ def check_mail(host, port, user, password, courseid):
                 print("Course ID: ", courseid)
                 print("Label ID: ", labelid, "\n\n")
                 print("Body: " + body)
+            else:
+                print(result.text)
 
     # Somehow makes you up-to-date with server
     # disable this when debugging
