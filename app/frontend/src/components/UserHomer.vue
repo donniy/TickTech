@@ -6,16 +6,16 @@
         <div class="md-layout md-gutter wrapper">
             <div class="md-layout-item">
                 <md-content class="md-elevation-5">
-                    <md-list class="md-double-line">
                         <md-subheader>Courses</md-subheader>
 
                         <md-content class="md-scrollbar courses-section">
+                        <md-list class="md-triple-line">
 
-                            <course v-for="course in courses" v-bind:key="course.id" v-bind:course="course" class="md-list-item-text single-course"></course>
-
+                            <course v-for="course in courses" v-bind:key="course.id" v-bind:course="course"></course>
+                        
+                        </md-list>
                         </md-content>
 
-                    </md-list>
                 </md-content>
             </div>
             <div class="md-layout-item">
