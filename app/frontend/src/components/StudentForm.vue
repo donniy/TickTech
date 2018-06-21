@@ -24,7 +24,9 @@
                     <md-field>
                         <label for="message">Message</label>
                         <md-textarea id="message" name="message" v-validate="'required'" v-model="form.message"></md-textarea>
-
+                        <div v-if="errors.has('message')" class="invalid-feedback">
+                            {{ errors.first('message') }}
+                        </div>
                     </md-field>
 
                     <p v-on:click="addFiles()" class="file-add-text"> <i class="material-icons file-add-icon">attach_file</i> Add attachments (Max 10 MB, 5 files)</p>
@@ -47,7 +49,7 @@
                     </div>
 
                     <md-field>
-                        <label for="subject">Course</label>
+                        <label for="course">Course</label>
                         <md-select id="course" v-validate="''" md-dense v-model="form.courseid">
                             <md-option disabled value="">Please select a course</md-option>
                             <md-option v-for="obj in categories.courses" v-bind:key="obj.id" v-bind:value="obj.id">
@@ -57,7 +59,7 @@
                     </md-field>
 
                     <md-field>
-                        <label for="subject">Category</label>
+                        <label for="category">Category</label>
                         <md-select id="category" v-validate="''" md-dense v-model="form.labelid">
                             <md-option disabled value="">Label this question</md-option>
                             <md-option v-for="option in categories.labels[form.courseid]" v-bind:key="option.label_id" v-bind:value="option.label_id">
