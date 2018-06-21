@@ -76,8 +76,6 @@ def create_message(ticket_id):
                                        [ticket.email], ticket_id,
                                        jsonData['message'], user.name)
         res = Mail().send(message)
-        print(res)
-        print("message send\n\n")
     return msg
 
 

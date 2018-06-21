@@ -17,7 +17,7 @@ from datetime import timedelta
 from flask_hashfs import FlaskHashFS
 from os.path import expanduser
 from flask_mail import Mail
-from config import EMAIL_SEND_EMAIL, EMAIL_SEND_PASSWORD
+from flaskr.config import EMAIL_SEND_EMAIL, EMAIL_SEND_PASSWORD
 
 db = database.db
 socketio = sockets.get_socketio()

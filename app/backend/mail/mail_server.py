@@ -55,13 +55,13 @@ def parse_email(bytes_email):
     # print("parsing body")
     if parsed_email.is_multipart():
         for part in parsed_email.walk():
-            data = part.get_payload(decode=True)
             ctype = part.get_content_type()
             if (ctype == 'text/plain'):
-                body += str(data)
+                body += str(part.get_payload())
             elif ctype == "text/html":
-                html += str(data)
+                html += str(part.get_payload())
             else:
+                data = part.get_payload(decode=True)
                 ctype_split = ctype.split('/')
                 # print("splitted", ctype_split)
                 try:
@@ -83,8 +83,10 @@ def parse_email(bytes_email):
         else:
             print("Not multipart and  not plain")
 
+    print("BODY!!!",body)
     if body == '':
         body += html2text.html2text(html)
+        print("body was empty", body)
 
     # Get sender.
     sender_parsed = decode_header(parsed_email['From'])
