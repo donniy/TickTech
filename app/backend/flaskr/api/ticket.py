@@ -78,21 +78,6 @@ def create_message(ticket_id):
         res = Mail().send(message)
         print(res)
         print("message send\n\n")
-
-#    if ticket is not None and user is not None:
-# unassigned
-#        if ticket.ticket_status.id == 1:
-#            ticket.ticket_status = TicketStatus.query.get(4)
-# assigned
-#        elif ticket.ticket_status.id == 3:
-#            ticket.ticket_status = TicketStatus.query.get(4)
-#
-#        tas = ticket.binded_tas
-#        if user not in tas:
-# add user to bound tas
-#            tas.append(user)
-#
-#    db.session.commit()
     return msg
 
 
