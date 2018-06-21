@@ -5,6 +5,7 @@ demo data.
 
 display_name = "Demo Plugin"
 
+
 def get_ta(student_id, assignment_id):
     '''
     Returns the ta of this student. Should receive an assignment_id that is
@@ -22,6 +23,6 @@ def get_assignment_info(student_id, assignment_id):
     '''
     tmp = {}
     tmp['Grade'] = {'type': 'grade', 'value': 5}
-    tmp['Feedback'] = {'type': 'text', 'value': 'Code was not PEP8 compliant. Lorem ipsum dolor sit amet.'}
+    tmp['Feedback'] = {'type': 'text', 'value': 'Code was not PEP8 compliant.'}
     tmp['Assignment'] = {'type': 'url', 'value': 'https://www.google.com'}
     return tmp

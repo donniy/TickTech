@@ -1,7 +1,6 @@
 <template>
     <div>
-        <md-button tag="button" class="md-primary" :to="'/course/' + ticket.course_id">
-            Terug naar cursus
+        <md-button tag="button" class="md-primary" :to="'/course/' + ticket.course_id"> Terug naar cursus
         </md-button>
 
         <md-speed-dial md-event="click" class="close-button" md-direction="bottom">
@@ -215,6 +214,39 @@ export default {
                     // TODO: Iets van een notificatie ofzo? '234 closed this ticket'? iig niet meer hardcoden "closed"
                     this.ticket.status.name = "closed"
                 })
+
+        },downloadFile(key, name){
+
+            const path = '/api/ticket/filedownload'
+            this.$ajax.post(path, {address: key})
+            .then((response) => {
+                // Get data from response
+                var byteCharacters = atob(response.data.json_data['encstring']);
+                var mimetype = response.data.json_data['mimetype']
+
+                // Convert data to bytearray and decode
+                var byteNumbers = new Array(byteCharacters.length);
+                for (var i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                var byteArray = new Uint8Array(byteNumbers);
+
+                // Generate blob and download element.
+                var blob = new Blob([byteArray], {mimetype});
+                const url = window.URL.createObjectURL(blob)
+                const link = document.createElement('a')
+
+                // Ref to the link and activate download.
+                link.href = url
+                link.setAttribute('download', name)
+                document.body.appendChild(link)
+                link.click();
+                document.body.removeChild(link)
+            })
+            .catch(error => {
+                console.log(error)
+                window.alert("File not found")
+            })
         },
         addNote() {
             console.log(this.noteTextArea)
