@@ -206,6 +206,8 @@
                         this.noteTextArea = ""
                         this.$refs.popoverRef.$emit('close')
                         this.notes.push(response.data.json_data)
+
+                        this.bind_ta_to_ticket(this.ticket.id, this.nodeTextArea)
                     })
                     .catch(error => {
                         console.log(error)
@@ -251,8 +253,12 @@
              */
             matchFound(e) {
                 let matchedValue = document.getElementById("textAreaForNotes").value
+                console.log(e)
                 this.noteTextArea = matchedValue
             },
+            bind_ta_to_ticket(ticketid, taid) {
+                console.log(this.ticket.id, this.nodeTextArea)
+            }
         },
         mounted: function () {
             if (!this.$user.logged_in()) {
