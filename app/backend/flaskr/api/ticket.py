@@ -15,6 +15,8 @@ from flask_jwt import jwt_required, current_identity
 from flaskr.utils import notifications, course_validation, json_validation
 from os.path import expanduser
 import os
+import base64
+import mimetypes
 
 
 # Make this post with a button.
@@ -171,8 +173,14 @@ def download_file():
         location = json_data['address'].rsplit('/', 1)[0]
         folder = homefolder + base + location
         file = json_data['address'].rsplit('/', 1)[1]
+        full_path = folder + json_data['address']
+
+        fileType, fileEncoding = mimetypes.guess_type(full_path)
 
         if folder and file:
-            return send_from_directory(folder, file, as_attachment=True)
+            fp = open(folder+'/'+file, 'br').read()
+            encoded = base64.b64encode(fp).decode("utf-8")
+            return Iresponse.create_response({'encstring': str(encoded),
+                                             'mimetype': fileType}, 200)
     else:
         return Iresponse.create_response("No address", 404)
