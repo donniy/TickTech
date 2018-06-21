@@ -11,10 +11,16 @@
         <div class="row">
             <div class="col-lg-12 col-md-12 text-center">
                 <div class="row">
-                    <div class="col-lg-4 col-md-4 text-center">
+                    <div class="col-lg-3 col-md-3 text-center">
                         <h5>Tickets in this course:</h5>
                     </div>
-                    <div class="col-lg-4 col-md-4 text-center">
+                    <div class="col-lg-3 col-md-3 text-center">
+                        <select class="form-control custom-select" v-model="label_filter">
+                            <option>All</option>
+                            <option v-for="option in labels">{{option.label_name}}</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3 col-md-3 text-center">
                         <select class="form-control custom-select" v-model="status_filter">
                             <option>All</option>
                             <option>closed</option>
@@ -22,7 +28,7 @@
                             <option>Assigned</option>
                         </select>
                     </div>
-                    <div class="col-lg-4 col-md-4 text-center">
+                    <div class="col-lg-3 col-md-3 text-center">
                         <select class="form-control custom-select" v-model="sort_filter">
                             <option>Most Recent</option>
                             <option>Created by</option>
@@ -35,19 +41,14 @@
                         <thead>
                             <tr>
                                 <th scope="col">Title</th>
+                                <th scope="col">Label</th>
                                 <th scope="col">Created by</th>
                                 <th scope="col">Status</th>
                                 <th scope="col">Date</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <ticket v-for="ticket in tickets" v-bind:class="{'tr-item':true, 'active':(ticket.id === ticketSum)}" v-if="(status_filter == 'All' || ticket.status.name == status_filter) && sort_filter == 'Most Recent'"
-                                @click="ticketSum = ticket.id; Active" v-bind:key="ticket.id" v-bind:ticket="ticket" v-bind:base_url="'/student/ticket/'">
-                            </ticket>
-                            <ticket v-for="ticket in tickets_reverse" v-bind:class="{'tr-item':true, 'active':(ticket.id === ticketSum)}" v-if="(status_filter == 'All' || ticket.status.name == status_filter) && sort_filter == 'Least Recent'"
-                                @click="ticketSum = ticket.id; Active" v-bind:key="ticket.id" v-bind:ticket="ticket" v-bind:base_url="'/student/ticket/'">
-                            </ticket>
-                            <ticket v-for="ticket in tickets_by_alpabet" v-bind:class="{'tr-item':true, 'active':(ticket.id === ticketSum)}" v-if="(status_filter == 'All' || ticket.status.name == status_filter) && sort_filter == 'Created by'"
+                            <ticket v-for="ticket in tickets" v-bind:class="{'tr-item':true, 'active':(ticket.id === ticketSum)}" v-if="(status_filter == 'All' || ticket.status.name == status_filter) && (label_filter == 'All' || ticket.label.label_name == label_filter)"
                                 @click="ticketSum = ticket.id; Active" v-bind:key="ticket.id" v-bind:ticket="ticket" v-bind:base_url="'/student/ticket/'">
                             </ticket>
                         </tbody>
@@ -105,8 +106,10 @@ export default {
         return {
             ticketSum: 0,
             tickets: [],
+            labels: [],
             showSum: false,
             status: 'not set',
+            label_filter: 'All',
             status_filter: 'All',
             sort_filter: "Most Recent",
             showEmailModal: false,
@@ -144,6 +147,12 @@ export default {
                     console.log(error)
                     this.status = 'failed getting tickets'
                 })
+        },
+        getLabels() {
+            const path = '/api/labels/' + this.$route.params.course_id
+            this.$ajax.get(path, response => {
+                this.labels = response.data.json_data
+            })
         },
         mouseOver: function (one, two) {
             if (this.ticketSum != 0) {
@@ -197,6 +206,7 @@ export default {
             this.status = 'created'
             this.getCourseInfo()
             this.getTickets()
+            this.getLabels()
         },
         emailRunning: function () {
             // Get the current email settings from server
@@ -253,6 +263,14 @@ export default {
             this.wantsToAddUsers = false
             this.wantsToAddTa = this.wantsToAddTa === false
         },
+        sort_tickets(val) {
+            if (val == "Most Recent")
+                this.tickets.sort((a, b) => a.timestamp > b.timestamp)
+            else if (val == "Least Recent")
+                this.tickets.sort((a, b) => a.timestamp < b.timestamp)
+            else if (val == "Created by")
+                this.tickets.sort((a, b) => a.user_id > b.user_id)
+        }
     },
     mounted: function () {
         if (!this.$user.logged_in()) {
@@ -273,19 +291,10 @@ export default {
         // whenever showMadel changes, this function will run
         showEmailModal: function () {
             this.emailRunning()
+        },
+        sort_filter: function (val) {
+            this.sort_tickets(val)
         }
-    },
-    computed: {
-        tickets_reverse: function () {
-            return this.tickets.slice().reverse()
-        },
-
-        tickets_by_alpabet: function() {
-            return this.tickets.slice().sort(function(a,b) {
-                // return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);
-                return a.user_id - b.user_id;
-                }); 
-        },
     }
 }
 </script>

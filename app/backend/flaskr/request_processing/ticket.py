@@ -3,6 +3,7 @@ from flask import jsonify, escape
 import uuid
 from flaskr.models.ticket import *
 from flaskr.models.user import *
+from flaskr.models.Label import Label
 from flaskr.models.Message import *
 from flaskr.utils import notifications
 
@@ -20,12 +21,20 @@ def create_request(json_data):
     response_body = {}
 
     binded_tas = list()
-    if labelid:
-        binded_tas = get_label_tas(labelid)
+    label = None
+
+    if labelid != "":
+        label = Label.query.get(uuid.UUID(labelid))
+        binded_tas = get_label_tas(label)
+        print(binded_tas)
 
     ticket = Ticket(id=uuid.uuid4(), user_id=studentid, course_id=courseid,
-                    status_id=1, title=subject, email=email, files=files,
-                    timestamp=datetime.now(), binded_tas=binded_tas)
+                    status_id=1, title=subject, email=email, label=label,
+                    files=files, timestamp=datetime.now())
+
+    for ta in binded_tas:
+        print(ta)
+        ticket.binded_tas.append(ta)
 
     if not database.addItemSafelyToDB(ticket):
         return Iresponse.internal_server_error()
@@ -89,9 +98,9 @@ def remove_ta_from_ticket(json_data):
     return Iresponse.create_response("Failure", 400)
 
 
-def get_label_tas(label_id):
-    if label_id:
-        tas_by_label = User.query.filterby(labels=label_id).all()
+def get_label_tas(label):
+    if label:
+        tas_by_label = label.users
         print(tas_by_label)
         return tas_by_label
     return None
