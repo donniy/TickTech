@@ -7,7 +7,7 @@ from flask import Response, jsonify, escape
 
 db = database.db
 
-binded_tas_helper = db.Table(
+bound_tas_helper = db.Table(
     'ta_tracker',
     db.Column('ticket_id', UUIDType(binary=False),
               db.ForeignKey('ticket.id'), primary_key=True),
@@ -56,8 +56,8 @@ class Ticket(db.Model):
     # status = db.relationship(
     #     'TicketStatus', backref=db.backref('tickets', lazy=False))
 
-    binded_tas = db.relationship(
-        "User", secondary=binded_tas_helper, lazy='subquery',
+    bound_tas = db.relationship(
+        "User", secondary=bound_tas_helper, lazy='subquery',
         backref=db.backref('ta_tickets', lazy=True)
     )
 
@@ -99,7 +99,7 @@ class Ticket(db.Model):
             'timestamp': self.timestamp,
             'status': self.ticket_status.serialize,
             'label': serialized_label,
-            'tas': database.serialize_list(self.binded_tas),
+            'tas': database.serialize_list(self.bound_tas),
             'files': database.serialize_list(self.files)
         }
 
@@ -118,7 +118,7 @@ class Ticket(db.Model):
         created this ticket.
         """
         tmp = [self.owner]
-        tmp.extend(self.binded_tas)
+        tmp.extend(self.bound_tas)
         return set(tmp)
 
     def __eq__(self, other):

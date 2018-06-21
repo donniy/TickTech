@@ -20,21 +20,26 @@ def create_request(json_data):
 
     response_body = {}
 
-    binded_tas = list()
+    bound_tas = list()
     label = None
 
     if labelid != "":
         label = Label.query.get(uuid.UUID(labelid))
-        binded_tas = get_label_tas(label)
-        print(binded_tas)
+        bound_tas = get_label_tas(label)
+
+    if len(bound_tas) < 1:
+        status_id = 1
+    else:
+        status_id = 3
+
+    print(status_id)
 
     ticket = Ticket(id=uuid.uuid4(), user_id=studentid, course_id=courseid,
-                    status_id=1, title=subject, email=email, label=label,
-                    files=files, timestamp=datetime.now())
+                    status_id=status_id, title=subject, email=email,
+                    label=label, files=files, timestamp=datetime.now())
 
-    for ta in binded_tas:
-        print(ta)
-        ticket.binded_tas.append(ta)
+    for ta in bound_tas:
+        ticket.bound_tas.append(ta)
 
     if not database.addItemSafelyToDB(ticket):
         return Iresponse.internal_server_error()
@@ -65,8 +70,8 @@ def add_ta_to_ticket(json_data):
 
     # Check if the ta and ticket were found and add if not already there.
     if ticket and ta:
-        if ta not in ticket.binded_tas:
-            ticket.binded_tas.append(ta)
+        if ta not in ticket.bound_tas:
+            ticket.bound_tas.append(ta)
         return Iresponse.create_response("Success", 200)
     return Iresponse.create_response("Failure", 400)
 
@@ -81,7 +86,7 @@ def add_ta_list_to_ticket(json_data):
 
     if ticket and length(ta_list) > 0 and None not in ta_list:
         for ta in ta_list:
-            ticket.binded_tas.append(ta)
+            ticket.bound_tas.append(ta)
         return Iresponse.create_response("Success", 200)
     return Iresponse.create_response("No Ta's found", 400)
 
@@ -91,9 +96,9 @@ def remove_ta_from_ticket(json_data):
     ta = User.query.filterby(id=json_data['taid']).first()
 
     if ticket and ta:
-        if ta in ticket.binded_tas:
+        if ta in ticket.bound_tas:
             print("found ta in ticket")
-            ticket.binded_tas.remove(ta)
+            ticket.bound_tas.remove(ta)
             return Iresponse.create_response("Success", 200)
     return Iresponse.create_response("Failure", 400)
 
