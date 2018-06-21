@@ -1,34 +1,60 @@
 <template>
     <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <h2 style="text-align:center;">Welcome back {{ $user.get().name }} :)</h2>
-                <br />
-                <hr style="width: 20%;">
-                <br />
+        <div class="md-layout welcome-header">
+            <h2>Welcome back {{ $user.get().name }} :)</h2>
+        </div>
+        <div class="md-layout md-gutter wrapper">
+            <div class="md-layout-item" v-if="isTA">
+                <md-content class="md-elevation-5">
+                        <md-subheader>Courses</md-subheader>
+
+                        <md-content class="md-scrollbar courses-section">
+                        <md-list class="md-triple-line">
+
+                            <course v-for="course in courses" v-bind:key="course.id" v-bind:course="course"></course>
+
+                        </md-list>
+                        </md-content>
+
+                </md-content>
             </div>
-            <div class="col-lg-8 text-center">
-                <h5>Notifications</h5>
-                <div class="notification-container">
-                    <p v-if="tickets.length < 1">- No notifications -</p>
-                    <ticket v-for="ticket in tickets" v-bind:key="ticket.id" v-bind:ticket="ticket" v-bind:base_url="'/student/ticket/'"></ticket>
-                </div>
-                <router-link style="float:right;" to="/settings">Settings</router-link>
-                <router-link style="float:right;" to="/ticket/submit">Create ticket</router-link>
-                <router-link style="float:right;" to="/user/tickets">All tickets</router-link>
-            </div>
-            <div class="col-lg-4 text-center" v-if="isTA">
-                <h5>TA Courses</h5>
-                <div class="home-scroll-courses">
-                  <course v-for="course in courses"
-                          v-bind:key="course.id"
-                          v-bind:course="course">
-                  </course>
-                </div>
+            <div class="md-layout-item">
+                <md-content class="md-elevation-5">
+                    <md-list class="md-double-line padding-bottom-0">
+                        <md-subheader>Notifications</md-subheader>
+
+                        <md-content class="md-scrollbar notification-section">
+                            <p style="padding-left: 16px;" v-if="tickets.length < 1">No notifications</p>
+                            <template v-for="notification in notifications">
+                                <md-ripple>
+                                    <md-list-item :to="{name: (notification.ta ? 'SingleTicket' : 'StudentTicket'), params: {ticket_id: notification.ticket.id}}">
+                                        <div class="md-list-item-text">
+                                            <span>{{notification.ticket.title}}</span>
+                                            <span>{{notification.ticket.message}}</span>
+                                        </div>
+                                        <md-badge class="md-primary" :md-content="notification.n" />
+
+                                    </md-list-item>
+                                </md-ripple>
+
+                                <md-divider></md-divider>
+                            </template>
+                        </md-content>
+
+                    </md-list>
+                </md-content>
+                <md-card md-with-hover class="md-elevation-5 md-raised md-primary create-ticket-section1" @click.native="$router.push('/ticket/submit')">
+                    <md-ripple>
+                        <md-card-content class="create-ticket-section2">
+                            <h1 style="opacity:1;">Create ticket</h1>
+                        </md-card-content>
+                    </md-ripple>
+                </md-card>
             </div>
         </div>
     </div>
 </template>
+
 <script>
 
     import Course from './Course.vue'
@@ -40,40 +66,32 @@
                 status: 'not set',
                 tickets: [],
                 isTA: false,
+                notifications: [],
             }
         },
         methods: {
             getCourses() {
                 let courses_ta_in = Object.keys(this.$user.get().ta).length
-                console.log(courses_ta_in)
                 if (courses_ta_in == 0) {
                     this.courses = [];
                     this.isTA = false;
                     return;
                 }
                 this.status = 'getting courses'
-                /* We now get the ta courses from the user object.
-                   Students only dont have courses
-                this.$ajax.get('/api/courses')
-                    .then(response => {
-                        //this.courses = response.data.json_data
-                        this.status = 'Retrieved data'
-                        console.log(response)
-                    })
-                    .catch(error => {
-                        console.log(error)
-                        this.status = 'failed getting courses'
-                    })
-                */
                 this.courses = [this.$user.get().ta]
                 this.isTA = true;
+            },
+
+            getTodos () {
+                this.$ajax.get('/api/user/notifications', response => {
+                    console.log(response.data.json_data)
+                    this.notifications = response.data.json_data
+                })
             },
             created() {
                 this.status = 'created'
                 this.getCourses()
-                this.$ajax.get('/api/user/notifications', (response) => {
-                    console.log(response.data.json_data)
-                })
+                this.getTodos()
             }
         },
         mounted: function () {
