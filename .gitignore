@@ -163,4 +163,4 @@ app/frontend/test/unit/coverage/lcov.info
 .fuse_*
 
 #Passwords
-app/backend/flaskr/config-template.py
+# TODO: app/backend/flaskr/config.py
