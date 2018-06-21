@@ -89,12 +89,13 @@ def get_ticket_messages(ticket_id):
                                            current_identity,
                                            read=True)
 
+
 @apiBluePrint.route('ticket/addta', methods=['POST'])
 @jwt_required()
 def add_ta_to_ticket():
     json_data = request.get_json()
     if json_data:
-        if json_validation.validate_json(json_data, ['taid','ticketid']):
+        if json_validation.validate_json(json_data, ['taid', 'ticketid']):
             return rp_ticket.add_ta_to_ticket(json_data)
     return Iresponse.create_response("Invalid request", 400)
 
@@ -104,7 +105,7 @@ def add_ta_to_ticket():
 def remove_ta_from_ticket():
     json_data = request.get_json()
     if json_data:
-        if json_validation.validate_json(json_data, ['taid','ticketid']):
+        if json_validation.validate_json(json_data, ['taid', 'ticketid']):
             return rp_ticket.remove_ta_from_ticket(json_data)
     return Iresponse.create_response("Invalid request", 400)
 
