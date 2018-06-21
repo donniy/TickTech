@@ -24,6 +24,7 @@
                         <md-subheader>Notifications</md-subheader>
 
                         <md-content class="md-scrollbar notification-section">
+                            <p style="padding-left: 16px;" v-if="tickets.length < 1">No notifications</p>
                             <template v-for="notification in notifications">
                                 <md-ripple>
                                     <md-list-item :to="{name: (notification.ta ? 'SingleTicket' : 'StudentTicket'), params: {ticket_id: notification.ticket.id}}">
