@@ -8,6 +8,7 @@ import requests
 import cv2
 import os
 
+
 def ocr_file(image_path):
     # load the example image and convert it to grayscale
     img = cv2.imread(image_path)
@@ -27,7 +28,7 @@ def ocr_file(image_path):
     # -load_freq_dawg=False -load_system_dawg=False-preserve_interword_spaces=1
     # -psm=5
     # config='--preserve_interword_spaces 1',
-    text = pytesseract.image_to_string(Image.open(filename), lang='eng', 
+    text = pytesseract.image_to_string(Image.open(filename), lang='eng',
         nice=1)
     os.remove(filename)
     textfile.write(text)
