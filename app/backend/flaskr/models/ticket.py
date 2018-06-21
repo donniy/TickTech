@@ -62,6 +62,10 @@ class Ticket(db.Model):
     )
 
     # Many to many relationship
+    owner = db.relationship(
+            "User", backref=db.backref('created_tickets', lazy=True))
+
+    # Many to many relationship
     files = db.relationship(
         "File", secondary=ticket_files_helper, lazy='subquery',
         backref=db.backref('tickets', lazy=True))
@@ -105,6 +109,25 @@ class Ticket(db.Model):
         if closed_status is None:
             return
         self.status_id = closed_status.id
+
+    @property
+    def related_users(self):
+        """
+        Returns all users that are somehow related to this
+        ticket. That means, all TA's and the student that
+        created this ticket.
+        """
+        tmp = [self.owner]
+        tmp.extend(self.binded_tas)
+        return set(tmp)
+
+    def __eq__(self, other):
+        """
+        Compare two instances of this model. Note that this only
+        compares the id's since it assumes both models were retrieved
+        from the database (primary keys are unique).
+        """
+        return self.id == other.id
 
 
 class TicketStatus(db.Model):
@@ -186,6 +209,6 @@ class File(db.Model):
             'is_duplicate': self.is_duplicate
         }
 
-        @property
-        def checkValid(self):
-            pass
+    @property
+    def checkValid(self):
+        pass
