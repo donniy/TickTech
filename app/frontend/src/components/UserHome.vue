@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div class="md-layout welcome-header">
-            <h2>Welcome back {{ $user.get().name }} :)</h2>
+            <h2>Welcome back {{ $user.get().name }}</h2>
         </div>
         <div class="md-layout md-gutter wrapper">
             <div class="md-layout-item" v-if="isTA">

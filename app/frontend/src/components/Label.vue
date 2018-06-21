@@ -1,16 +1,24 @@
 <template>
-    <div>
-        <div class="label">
-            <button class="btn removeLabel" @click="showModal = true">
+    <div v-if="exists">
+        <i v-if="isSelected" class="label_selected material-icons"> done_outline </i>
+        <md-field>
+            <md-button class="label-name" v-bind:class="{'label-name-selected': isSelected}" data-toggle="tooltip" @click="clickLabel" title="Select to receive tickets from this label ">
+                <h5>{{label.label_name}}</h5>
+            </md-button>
+            <md-button class="btn removeLabel" @click="showModal = true">
                 <i class="material-icons"> close </i>
-            </button>
+            </md-button>
 
-            <button class="label-name" v-bind:class="{'label-name-selected': isSelected}" data-toggle="tooltip" @click="clickLabel" title="Select to receive tickets from this label ">
-                <h3>{{label.label_name}}</h3>
-            </button>
-        </div>
+        </md-field>
 
-        <modal v-if="showModal" warning="Are you sure you want to remove this label?" @yes="closeLabel()" @close="showModal = false"></modal>
+
+        <md-dialog  :md-active.sync="showModal">
+            <md-dialog-title>Do you want to remove this label?</md-dialog-title>
+            <md-dialog-actions>
+                <md-button class="md-primary" @click="showModal = false">Nope</md-button>
+                <md-button class="md-primary" @click="closeLabel()">Yes I'm sure</md-button>
+            </md-dialog-actions>
+        </md-dialog>
     </div>
 </template>
 
@@ -22,14 +30,18 @@
         data: function () {
             return {
                 showModal: false,
+                exists: true,
                 isSelected: false
             }
         },
         methods: {
             closeLabel() {
                 const path = '/api/labels/' + this.label.label_id + '/close'
-                this.$ajax.post(path, response => { this.showModal = false })
+                this.showModal = false
+                this.exists = false
+                this.$ajax.post(path, response => { })
                 this.$parent.getLabels()
+
             },
             clickLabel() {
                 if (this.isSelected)
