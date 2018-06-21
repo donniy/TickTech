@@ -3,15 +3,19 @@
         <ul class="navbar-nav mr-auto">
             <div>
                 <!-- <router-link class="navbar-brand home-left navbar-buttons" to="/">Home</router-link> -->
-                <ul class="breadcrumb" v-if="path_list.length">
-                    <li class="breadcrumb-item" v-for="(crumb, key) in path_list" :key="key">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <router-link class="breadcrumb-link" :to="( $user.logged_in() ? '/home' : '/' )">
+                            Home
+                        </router-link>
+                    </li>
+                    <li v-if="path_list.length" class="breadcrumb-item" v-for="(crumb, key) in path_list" :key="key">
                         <router-link class="breadcrumb-link" :to="crumb.path">
                             {{ crumb.meta.breadcrumb }}
                         </router-link>
                     </li>
                 </ul>
             </div>
-
         </ul>
         <ul class="navbar-nav">
             <!-- if-else for student, supervisor (or both) and not logged in. -->
@@ -22,7 +26,7 @@
                 </div>
             </div>
             <div v-else class="div-inline mt-2 mt-md-0">
-                <button tag="button" class="'btn note-add-button btn btn-primary btn-primary home-right'" v-on:click="$user.logout()">Logout</button>
+                <button tag="button" class="'btn note-add-button btn btn-primary btn-primary home-right'" v-on:click="$auth.logout({makeRequest: false, success: function () { $auth.token(null, '') }, redirect: '/'})">Logout</button>
             </div>
         </ul>
     </nav>
@@ -61,30 +65,50 @@
                     return 1
                 }
             },
-            breadcrumbList: function (to, from) {
-                if (this.$user.logged_in()) {
-                    let matcher = this.$router.matcher.match
-                    let cur_url = '/'
-                    let split_string = to.path.replace(':user_id', this.$user.get().id)
-                    split_string = split_string.split('/')
-                    let match = null
-                    for (let i = 1; i < split_string.length; i++) {
-                        match = matcher(cur_url + split_string[i])
-                        cur_url += split_string[i] + '/'
-                        if (typeof match.name !== 'undefined' && match.name !== 'Home') {
-                            if (typeof match.meta.pre !== 'undefined')
-                                this.breadcrumbList({ path: match.meta.pre })
-                            this.path_list.push(match)
-                        }
-                        console.log(this.path_list)
+            breadcrumbList: function (to) {
+                // if (this.$user.logged_in()) {
+                    let matcher = this.$router.matcher.match;
+                    let cur_url = '/';
+                    let split_string = [];
+                    let match = null;
+                    let usr = this.$user.get();
+                    if(typeof usr !== 'undefined') {
+                        split_string = to.path.replace(':user_id', usr.id)
+                        if(window.$current_course_id !== null)
+                            try {
+                                split_string = split_string.replace(':course_id', window.$current_course_id)
+                            } catch(e) {
+                                console.error(e);
+                            }
+                        split_string = split_string.split('/');
+                    } else {
+                        if(window.$current_course_id !== null)
+                            try {
+                                split_string = split_string.replace(':course_id', window.$current_course_id)
+                            } catch(e) {
+                                console.error(e);
+                            }
+                        split_string = to.path.split('/');
                     }
+                    for (let i = 0; i < split_string.length; i++) {
+                        if(split_string[i] === '') continue;
+                        match = matcher(cur_url + split_string[i]);
+                        cur_url += split_string[i] + '/';
+                        if (typeof match.name !== 'undefined' && match.name !== 'Home'
+                                && match.name !== 'UserHome' && cur_url.indexOf(':course_id') === -1) {
+                            if (typeof match.meta.pre !== 'undefined')
+                                this.breadcrumbList({ path: match.meta.pre });
+                            this.path_list.push(match);
+                        }
+                    }
+                    return;
                 }
-            }
+            // }
         },
         watch: {
             '$route'(to, from) {
-                this.path_list = []
-                this.breadcrumbList(to, from)
+                this.path_list = [];
+                this.breadcrumbList(this.$router.currentRoute)
             }
         }
 

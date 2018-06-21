@@ -60,7 +60,7 @@ class Ticket(db.Model):
 
     binded_tas = db.relationship(
         "User", secondary=binded_tas_helper, lazy='subquery',
-        backref=db.backref('ta_tickets', lazy=True)
+        backref=db.backref('ta_tickets', lazy=True),
     )
 
     # Many to many relationship
