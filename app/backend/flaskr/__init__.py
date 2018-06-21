@@ -49,7 +49,7 @@ def create_app(test_config=None):
 
     # Send email settings, for now hardcoded
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-    app.config['MAIL_PORT'] = 465  # = popular email client SSL
+    app.config['MAIL_PORT'] = 465
     app.config['MAIL_USE_SSL'] = True
     app.config['MAIL_USE_TLS'] = False
     app.config['MAIL_USERNAME'] = 'tiktech.noreply@gmail.com'

@@ -7,7 +7,6 @@ from flaskr.utils import notifications
 
 
 def create_request(jsonData):
-    print(jsonData)
     name = escape(jsonData["name"])
     studentid = escape(jsonData["studentid"])
     email = escape(jsonData["email"])
