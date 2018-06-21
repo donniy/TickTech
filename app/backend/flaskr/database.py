@@ -4,6 +4,7 @@ from datetime import datetime
 import os.path
 from sqlalchemy_utils import UUIDType
 import uuid
+from config import EMAIL_FETCH_EMAIL, EMAIL_FETCH_PASSWORD
 
 db = SQLAlchemy()
 
@@ -68,10 +69,10 @@ def populate_database_dummy_data():
     from flaskr.models import Course, user
     items = []
     course = Course.Course(id=uuid.uuid4(),
-                           course_email="uvapsetest@gmail.com",
+                           course_email=EMAIL_FETCH_EMAIL,
                            mail_server_url="pop.gmail.com",
                            mail_port="995",
-                           mail_password="",
+                           mail_password=EMAIL_FETCH_PASSWORD,
                            title="course 1",
                            description="Test")
 

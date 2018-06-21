@@ -17,6 +17,7 @@ from datetime import timedelta
 from flask_hashfs import FlaskHashFS
 from os.path import expanduser
 from flask_mail import Mail
+from config import EMAIL_SEND_EMAIL, EMAIL_SEND_PASSWORD
 
 db = database.db
 socketio = sockets.get_socketio()
@@ -52,9 +53,9 @@ def create_app(test_config=None):
     app.config['MAIL_PORT'] = 465
     app.config['MAIL_USE_SSL'] = True
     app.config['MAIL_USE_TLS'] = False
-    app.config['MAIL_USERNAME'] = 'tiktech.noreply@gmail.com'
-    app.config['MAIL_PASSWORD'] = ''
-    app.config['MAIL_DEFAULT_SENDER'] = 'ticktech.noreply@gmail.com'
+    app.config['MAIL_USERNAME'] = EMAIL_SEND_EMAIL
+    app.config['MAIL_PASSWORD'] = EMAIL_SEND_PASSWORD
+    app.config['MAIL_DEFAULT_SENDER'] = EMAIL_SEND_EMAIL
     Mail(app)
 
     # Make user logged in for 1 day.

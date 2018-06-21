@@ -161,3 +161,6 @@ app/frontend/test/unit/coverage/lcov.info
 
 #Fuse files.
 .fuse_*
+
+#Passwords
+app/backend/flaskr/config-template.py
