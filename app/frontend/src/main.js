@@ -20,6 +20,7 @@ import JWTHeader from './components/jwtHeader'
 
 Vue.use(VueMaterial)
 Vue.use(VueAxios, axios);
+Vue.use(require('vue-moment'));
 Vue.use(VeeValidate);
 Vue.use(VueScrollTo);
 Vue.config.productionTip = false
