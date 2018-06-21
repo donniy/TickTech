@@ -72,7 +72,7 @@ def add_ta_list_to_ticket(json_data):
     return Iresponse.create_response("No Ta's found", 400)
 
 def remove_ta_from_ticket(json_data):
-    ticket = Ticket.query.filterby(id=uuid.UUID(json_data['ticketid'])).first()
+    ticket = Ticket.get(UUID(json_data['ticketid']))
     ta = User.query.filterby(id=json_data['taid']).first()
 
     if ticket and ta:

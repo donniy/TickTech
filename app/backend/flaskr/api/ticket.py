@@ -91,7 +91,7 @@ def get_ticket_messages(ticket_id):
                                            current_identity,
                                            read=True)
 
-@apiBluePrint.route('ticket/addta/', methods=['POST'])
+@apiBluePrint.route('ticket/addta', methods=['POST'])
 @jwt_required()
 def add_ta_to_ticket():
     json_data = request.get_json()
