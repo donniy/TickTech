@@ -41,10 +41,11 @@ class Ticket(db.Model):
     email = db.Column(db.String(120), unique=False, nullable=True)
     title = db.Column(db.String(255), unique=False, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    
+
     label_id = db.Column(
         UUIDType(binary=False), db.ForeignKey('label.label_id'), unique=False,
         nullable=True)
+
     label = db.relationship('Label', backref=db.backref('tickets', lazy=True))
 
     # Dit is hoe je een relatie maakt. ticket.status geeft een TicketStatus
@@ -79,6 +80,11 @@ class Ticket(db.Model):
         if self.ta_id is None:
             self.ta_id = "null"
 
+        if self.label_id is None:
+            serialized_label = {}
+        else:
+            serialized_label = self.label.serialize
+
         return {
             'id': self.id,
             'user_id': self.user_id,
@@ -88,7 +94,7 @@ class Ticket(db.Model):
             'title': self.title,
             'timestamp': self.timestamp,
             'status': self.ticket_status.serialize,
-            'label': self.label.serialize,
+            'label': serialized_label,
             'tas': database.serialize_list(self.binded_tas),
             'files': database.serialize_list(self.files)
         }

@@ -19,10 +19,13 @@ def create_request(jsonData):
 
     response_body = {}
 
-    label = Label.query.get(labelid)
+    if labelid == "":
+        label = None
+    else:
+        label = Label.query.get(labelid)
 
     ticket = Ticket(id=uuid.uuid4(), user_id=studentid, course_id=courseid,
-                    label=label, status_id=1, title=subject, email=email, 
+                    status_id=1, title=subject, email=email, label=label,
                     files=files, timestamp=datetime.now())
 
     if not database.addItemSafelyToDB(ticket):
