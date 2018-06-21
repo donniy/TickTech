@@ -50,6 +50,7 @@ import Router from 'vue-router';
                                             this.$auth.fetch({
                                                 params: {},
                                                 success: function () {
+                                                    console.log(this.$auth.user())
                                                     this.$router.push('/home');
                                                 },
                                                 error: function (response_fetch) {

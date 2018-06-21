@@ -8,12 +8,12 @@ const routerOptions = [
         component: 'Home',
         meta: {
             breadcrumb: '/',
-            auth: false
+            auth: undefined
         },
     },
     {
         path: '/home',
-        name: 'userhome',
+        name: 'UserHome',
         component: 'UserHome',
         meta: {
             breadcrumb: 'Home',
@@ -54,6 +54,7 @@ const routerOptions = [
         component: 'StudentForm',
         meta: {
             breadcrumb: 'Create Ticket',
+            pre: '/home',
             auth: true
         },
     },
@@ -71,7 +72,7 @@ const routerOptions = [
         component: 'SingleTicket',
         meta: {
             breadcrumb: 'Ticket',
-            pre: '/user/:user_id',
+            pre: '/course/:course_id',
             auth: true
         },
     },
@@ -81,7 +82,7 @@ const routerOptions = [
         component: 'Team',
         meta: {
             breadcrumb: 'Team',
-            auth: false
+            auth: undefined
         },
     },
     {
