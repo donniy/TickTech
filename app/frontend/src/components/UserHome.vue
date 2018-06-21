@@ -12,7 +12,7 @@
                         <md-list class="md-triple-line">
 
                             <course v-for="course in courses" v-bind:key="course.id" v-bind:course="course"></course>
-                        
+
                         </md-list>
                         </md-content>
 
@@ -20,7 +20,7 @@
             </div>
             <div class="md-layout-item">
                 <md-content class="md-elevation-5">
-                    <md-list class="md-double-line">
+                    <md-list class="md-double-line padding-bottom-0">
                         <md-subheader>Notifications</md-subheader>
 
                         <md-content class="md-scrollbar notification-section">
