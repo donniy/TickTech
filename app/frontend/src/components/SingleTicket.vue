@@ -215,7 +215,8 @@ export default {
                     this.ticket.status.name = "closed"
                 })
 
-        },downloadFile(key, name){
+        },
+        downloadFile(key, name){
 
             const path = '/api/ticket/filedownload'
             this.$ajax.post(path, {address: key})
@@ -266,27 +267,6 @@ export default {
                 })
                 .catch(error => {
                     console.log(error)
-                })
-        },
-        downloadFile(key, name){
-            const path = '/api/ticket/filedownload'
-            this.$ajax.post(path, {address: key})
-                .then((response) => {
-
-                    // Create response donwload link
-                    const url = window.URL.createObjectURL(new Blob([response.data]))
-                    const link = document.createElement('a')
-
-                    // Ref to the link and activate download.
-                    link.href = url
-                    link.setAttribute('download', name)
-                    document.body.appendChild(link)
-                    link.click();
-                    document.body.removeChild(link)
-                })
-                .catch(error => {
-                    console.log(error)
-                    window.alert("File not found")
                 })
         },
         /* Get the ta's in this course. Will add all the ta's to the
