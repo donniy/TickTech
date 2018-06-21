@@ -1,5 +1,7 @@
 from . import i_request
-from flaskr.models import Course
+from flaskr.models.Course import Course
+from flaskr.models.user import User
+from flaskr import database
 import oauth2
 import uuid
 """
@@ -9,7 +11,12 @@ https://github.com/CodeGra-de/CodeGra.de/blob/master/psef/auth.py
 
 """
 
+class LTI_roles_mapper:
+    def __init__(ext_roles):
+        pass
 
+
+# TODO: Add batch processing for the database.
 class InvalidLTIRequest(Exception):
     pass
 
@@ -22,12 +29,34 @@ class LTI_instance_database_helper:
     def __init__(self, lti_instance):
         self.lti_instance = lti_instance
         self.ensure_course_exists()
+        self.ensure_user_exists()
 
     def ensure_course_exists(self):
+        """
+        Function that ensures the course in the lti instance
+        exists.
+        """
         course_name = self.lti_instance.course_name
         if Course.query.filter_by(title=course_name).first() is None:
-            course = Course(uuid.uuid4(), course_name,
-                            self.lti_instance.course_description,)
+            course = Course(id=uuid.uuid4(), title=course_name,
+                            description=self.lti_instance.course_description)
+            if not database.addItemSafelyToDB(course):
+                pass
+
+    def ensure_user_exists(self):
+        """
+        Function that ensures the user exists.
+        """
+        user_id = int(self.lti_instance.user_id)
+        if User.query.get(user_id) is None:
+            user = User(id=user_id,
+                        name=self.lti_instance.user_full_name,
+                        email=self.lti_instance.user_primary_email)
+            if not database.addItemSafelyToDB(user):
+                pass
+        print(User.query.all())
+
+    def ensure_user_coupled_to_course(self):
 
 
 class LTI_instance:
@@ -70,10 +99,13 @@ class LTI_instance:
             'lis_person_name_full',
             'roles',
             'lis_person_contact_email_primary',
+            'lis_person_sourcedid',
             'ext_roles',
+            'lis_person_contact_email_primary',
         ]
         for key in required_keys:
             if body.get(key) is None:
+                print(key)
                 raise InvalidLTIRequest
 
     # TODO: add getting of secret key from consumerKey
@@ -125,3 +157,24 @@ class LTI_instance:
     @property
     def course_description(self):
         return self.params['context_label']
+
+    @property
+    def user_full_name(self):
+        return self.params['lis_person_name_full']
+
+    @property
+    def user_id(self):
+        return self.params['lis_person_sourcedid']
+
+    @property
+    def user_primary_email(self):
+        return self.params['lis_person_contact_email_primary']
+
+    @property
+    def get_mapped_roles(self):
+        if self.params.get('mapped_roles') is None:
+            self.map_ext_roles_to_roles()
+        return self.params['mapped_roles']
+
+    def _map_ext_roles_to_roles(self):
+        self.params['mapped_roles'] = LTI_roles_mapper(self.params['ext_roles'])
