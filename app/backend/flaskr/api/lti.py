@@ -2,7 +2,7 @@ from . import apiBluePrint
 from flask import request
 from flaskr.i_request import *
 from flaskr import lti
-
+from flask_jwt import JWT
 
 @apiBluePrint.route('lti/launch', methods=['POST'])
 def launch_lti_session():
@@ -12,4 +12,6 @@ def launch_lti_session():
         lti_instance = lti.LTI_instance(i_req)
     except lti.InvalidLTIRequest:
         return "Invalid LTI request, check your key and secret."
+
+    print(lti_instance.params)
     return "LTI SUCCES"

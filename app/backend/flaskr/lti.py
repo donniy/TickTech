@@ -9,14 +9,46 @@ This file contains some of the code for lti from the following file:
 Mostly the signature validation.
 https://github.com/CodeGra-de/CodeGra.de/blob/master/psef/auth.py
 
+
+This module containts most of the logic for LTI.
+Possible data given by the LTI launch request can be found here:
+https://github.com/instructure/canvas-lms/blob/stable/lib%2Flti%2Fvariable_expander.rb#L83
+
+The above source also shows custom variables that can be added to the xml.
+So far we use on custom variable, check the xml.
 """
-
-class LTI_roles_mapper:
-    def __init__(ext_roles):
-        pass
-
-
 # TODO: Add batch processing for the database.
+
+# ext_roles are roles a person has over all the courses.
+ext_roles_lookup_table = {
+    'urn:lti:role:ims/lis/Learner': 'student',
+    'urn:lti:role:ims/lis/Instructor': 'teacher',
+    'urn:lti:role:ims/lis/TeachingAssistant': 'teachingAssistant',
+    'urn:lti:role:ims/lis/ContentDeveloper': 'designer',
+    'urn:lti:role:ims/lis/Learner/NonCreditLearner': 'observer',
+}
+
+# Map for the roles a person has in a certain course.
+course_roles_lookup_table = {
+    'Learner': 'student',
+    'Instructor': 'teacher',
+    'urn:lti:role:ims/lis/TeachingAssistant': 'teachingAssistant',
+}
+
+
+class course_roles_manager(LTI_roles_manager):
+    """
+    Maps the roles the user has in this course to internal roles.
+    """
+    def __init__(self, lti_roles):
+        self.roles = []
+        for role in lti_roles.split(','):
+            map_role = self.roles_map.get(role)
+            if map_role is None:
+                continue
+            self.roles.append(map_role)
+
+
 class InvalidLTIRequest(Exception):
     pass
 
@@ -27,9 +59,14 @@ class LTI_instance_database_helper:
     in the lti instance exists in our database.
     """
     def __init__(self, lti_instance):
+        # Cache for queried objects.
+        self.cache = {}
         self.lti_instance = lti_instance
         self.ensure_course_exists()
         self.ensure_user_exists()
+        self.ensure_user_coupled_to_course()
+        # Clear the cache again.
+        self.cache = {}
 
     def ensure_course_exists(self):
         """
@@ -37,26 +74,48 @@ class LTI_instance_database_helper:
         exists.
         """
         course_name = self.lti_instance.course_name
-        if Course.query.filter_by(title=course_name).first() is None:
+        course = Course.query.filter_by(title=course_name).first()
+        if course is None:
             course = Course(id=uuid.uuid4(), title=course_name,
                             description=self.lti_instance.course_description)
             if not database.addItemSafelyToDB(course):
                 pass
+        self.cache['course'] = course
 
     def ensure_user_exists(self):
         """
         Function that ensures the user exists.
         """
         user_id = int(self.lti_instance.user_id)
-        if User.query.get(user_id) is None:
+        user = User.query.get(user_id)
+        if user is None:
             user = User(id=user_id,
                         name=self.lti_instance.user_full_name,
                         email=self.lti_instance.user_primary_email)
             if not database.addItemSafelyToDB(user):
                 pass
-        print(User.query.all())
+        self.cache['user'] = user
 
     def ensure_user_coupled_to_course(self):
+        """
+        Function that ensures a user is linked to the course with the
+        right role.
+        """
+        roles_mapper = self.lti_instance.get_course_roles_manager()
+        course = self.cache['course']
+        user = self.cache['user']
+        if 'student' in roles_mapper:
+            if user not in course.student_courses:
+                course.student_courses.append(user)
+        if 'teacher' in roles_mapper:
+            if user not in course.supervisors:
+                course.supervisors.append(user)
+        if 'teachingAssistant' in roles_mapper:
+            if user not in course.ta_courses:
+                course.ta_courses.append(user)
+
+        # Wrap this into a safe commit.
+        database.get_db().session.commit()
 
 
 class LTI_instance:
@@ -85,7 +144,6 @@ class LTI_instance:
             self._ensure_params_exists(self.params)
         except InvalidLTIRequest:
             raise
-        print(self.params)
         self.database_helper = LTI_instance_database_helper(self)
 
     def _ensure_params_exists(self, body):
@@ -100,7 +158,7 @@ class LTI_instance:
             'roles',
             'lis_person_contact_email_primary',
             'lis_person_sourcedid',
-            'ext_roles',
+            'custom_canvas_custom_member_roles',
             'lis_person_contact_email_primary',
         ]
         for key in required_keys:
@@ -148,11 +206,19 @@ class LTI_instance:
                 del i_req.body[key]
         self.params = i_req.body
 
+    def _map_course_roles_to_internal_roles(self):
+        for role in self.params['roles'].split(','):
+            if course_roles_lookup_table[role] is 'student':
+                self.params['tiktech_is_course_student'] = True
+            elif course_roles_lookup_table[role] is 'teacher':
+                self.params['tiktech_is_course_teacher'] = True
+            elif course_roles_lookup_table[role] is 'teachingAssistant':
+                self.params['tiktech_is_course_TA'] = True
+
 
     @property
     def course_name(self):
         return self.params['context_title']
-
 
     @property
     def course_description(self):
@@ -169,12 +235,3 @@ class LTI_instance:
     @property
     def user_primary_email(self):
         return self.params['lis_person_contact_email_primary']
-
-    @property
-    def get_mapped_roles(self):
-        if self.params.get('mapped_roles') is None:
-            self.map_ext_roles_to_roles()
-        return self.params['mapped_roles']
-
-    def _map_ext_roles_to_roles(self):
-        self.params['mapped_roles'] = LTI_roles_mapper(self.params['ext_roles'])
