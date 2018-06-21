@@ -5,7 +5,7 @@
     enter-active-class="animated tada"
     leave-active-class="animated bounceOutRight"
     >
-        <div  v-bind:class="{subbox:(ticketSum != 0)}">
+        <div class= "subbox">
             <div class="row">
                 <div class="col-lg-12">
                     <h1>Course: {{ this.course.title }}</h1>
@@ -17,57 +17,36 @@
             <div class="row">
                 <div class="col-lg-12 col-md-12 text-center">
                     <div class="row">
-                        <div class="col-lg-4 col-md-4 text-center">
-                            <h5>Tickets in this course:</h5>
-                        </div>
-                        <div class="col-lg-4 col-md-4 text-center">
-                            <select class="form-control custom-select" v-model="status_filter">
-                                <option> All </option>
-                                <option> Closed </option>
-                                <option> Unassigned </option>
-                                <option> Assigned </option>
-                            </select>
-                        </div>
-                        <div class="col-lg-4 col-md-4 text-center">
-                            <select class="form-control custom-select">
-                                <option> Most recent </option>
-                                <option> Created by </option>
-                                <option> Least recent </option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class=T A-tickets>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Title</th>
-                                    <th scope="col">Created by</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col">Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <ticket v-for="ticket in tickets" v-bind:class="{'tr-item':true, 'active':(ticket.id === ticketSum)}" v-if="status_filter == 'All' || ticket.status.name == status_filter"
-                                    @click="ticketSum = ticket.id; Active" v-bind:key="ticket.id" v-bind:ticket="ticket" v-bind:base_url="'/student/ticket/'">
-                                </ticket>
-                            </tbody>
-                        </table>
+                    <md-table v-model="searched" md-sort="name" md-sort-order="asc" md-card md-fixed-header class="white">
+                      <md-table-toolbar class="red">
+                        <h1 class="md-title">Tickets</h1>
+                        <md-field md-clearable class="md-toolbar-section-end">
+                            <md-input placeholder="Search by title..." v-model="search" @input="searchOnTable" style="color = white; background-color = white;"/>
+                        </md-field>
+                      </md-table-toolbar>
+
+                      <md-table-empty-state
+                        md-label="No tickets found"
+                        :md-description="`No ticket found for this '${search}' query. Try a different search term.`">
+                      </md-table-empty-state>
+
+                      <md-table-row md-delay="1000" slot="md-table-row" slot-scope="{ item }" class="tickettable" v-on:click="navTicket(item.id)" v-on:mouseover="showTicket(item.id)" v-bind:class="{'md-table-cell':true, 'activated':(item.id === ticketSum)}">
+                        <md-table-cell md-label="Title" md-sort-by="title" md-numeric>{{ item.title }}</md-table-cell>
+                        <md-table-cell md-label="Name" md-sort-by="user_id">{{ item.user_id }}</md-table-cell>
+                        <md-table-cell md-label="Status" md-sort-by="status.name">{{ item.status.name }}</md-table-cell>
+                        <md-table-cell md-label="Time" md-sort-by="timestamp">{{ item.timestamp | moment("DD/MM/YY HH:mm")}}</md-table-cell>
+                        <md-table-cell md-label="Operator" md-sort-by="binded_tas" v-if="item.binded_tas != null">{{ item.binded_tas }}</md-table-cell> 
+                        <md-table-cell md-label="Operator" md-sort-by="binded_tas" v-if="item.binded_tas == null">unassigned</md-table-cell> 
+                      </md-table-row>
+                    </md-table>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-2 col-md-2 text-center">
-                    <b-button class="routerbutton" v-on:click="pushLocation('/course/' + $route.params.course_id + '/labels')">Course labels</b-button>
-                </div>
-                <div class="col-lg-2 col-md-2 text-center">
-                    <b-button class="routerbutton">Add students</b-button>
-                </div>
-                <div class="col-lg-2 col-md-2 text-center">
-                    <b-button class="routerbutton" @click="emailSettings" :to="''">Mail settings</b-button>
-                </div>
-                <div class="col-lg-2 col-md-2 text-center">
-                    <b-button class="routerbutton" :to="''">Add TA's</b-button>
-                </div>
+                <b-button class="btn note-add-button btn btn-primary" button v-on:click="pushLocation('/course/' + $route.params.course_id + '/labels')">Course labels</b-button>
+                <b-button class="btn note-add-button btn btn-primary" >Add students</b-button>
+                <b-button class="btn note-add-button btn btn-primary" @click="emailSettings" :to="''">Mail settings</b-button>
+                <b-button class="btn note-add-button btn btn-primary"  :to="''">Add TA's</b-button>
 
             </div>
             <p v-if="email_running">EMAIL IS RUNNING</p>
@@ -89,9 +68,23 @@
     import SumModal from './TicketSummary.vue'
     import EmailModal from './EmailSettingsModal.vue'
 
+  const toLower = text => {
+    return text.toString().toLowerCase()
+  }
+
+  const searchByName = (items, term) => {
+    if (term) {
+      return items.filter(item => toLower(item.title).includes(toLower(term)))
+    }
+
+    return items
+  }
+
     export default {
         data() {
             return {
+                search: null,
+                searched: [],
                 ticketSum: 0,
                 tickets: [],
                 showSum: false,
@@ -118,8 +111,17 @@
             //         }
             //     }
             // },
+            showTicket (item) {
+                this.ticketSum = item
+            },
+            navTicket (item) {
+                this.$router.push("/ticket/" + item)
+            },
             pushLocation(here) {
                 this.$router.push(here)
+            },
+            searchOnTable () {
+                this.searched = searchByName(this.tickets, this.search)
             },
             getTickets() {
                 this.status = 'getting tickets'
@@ -127,6 +129,7 @@
                 this.$ajax.get(path)
                     .then(response => {
                         this.tickets = response.data.json_data
+                        this.searched = this.tickets
                         this.status = 'Retrieved data'
                         console.log(response.data.json_data)
                         console.log(response)
@@ -198,7 +201,10 @@
             if (!this.$user.logged_in()) {
                 this.$router.push('/login')
             }
-            this.created()
+            this.created();
+        },
+        beforemount() {
+            this.searched = this.tickets
         },
         components: {
             'ticket': CourseTicketRow,

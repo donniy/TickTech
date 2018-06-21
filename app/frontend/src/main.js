@@ -12,7 +12,11 @@ import './assets/scss/style.scss'
 import axios from 'axios'
 import VueCookies from 'vue-cookies'
 import VueScrollTo from 'vue-scrollto'
+import VueMaterial from 'vue-material'
+import 'vue-material/dist/vue-material.min.css'
 
+Vue.use(require('vue-moment'));
+Vue.use(VueMaterial);
 Vue.use(VeeValidate);
 Vue.use(VueScrollTo);
 Vue.config.productionTip = false

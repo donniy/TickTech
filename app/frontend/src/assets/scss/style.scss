@@ -542,6 +542,7 @@ hr {
   //position: relative;
   width: 25%;
   height: 100%;
+  top: 12%;
   -webkit-transition: opacity 0.1s ease-in-out;
   padding-bottom: 10px;
 }
@@ -571,7 +572,7 @@ hr {
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
   transition: all .3s ease-out;
   font-family: Helvetica, Arial, sans-serif;
-  height: 90%;
+  height: 85%;
 }
 .summary-tab {
     position: relative;
@@ -659,7 +660,8 @@ hr {
 }
 .summary-sub-container {
     float: right;
-    padding-left: 2%;
+    top: 10%;
+    padding-left: 1%;
     width: 30%;
 }
 .sum {
@@ -668,12 +670,38 @@ hr {
   word-wrap: break-word;
 }
 
+.white {
+        background-color: #F2F2F2
+}
+
+.red {
+    background-color: $default-red;
+    color: white;
+}
 .sum-original {
 
   padding: 10px;
   word-wrap: break-word;
 }
 
+.md-table {
+    min-width: 55em;
+    max-width: 60em;
+}
+
+.tickettable:hover {
+    background-color: lightgrey !important;
+    color: black !important;
+    cursor: pointer;
+}
+
+.md-input {
+    color: white;
+}
+.activated {
+    background-color: lightgrey !important;
+    color: black !important;
+}
 footer {
     a {
         color: white !important;
