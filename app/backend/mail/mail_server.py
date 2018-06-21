@@ -214,7 +214,7 @@ def check_mail(host, port, user, password, courseid, debug=0):
             if (labels != []):
                 labelid = labels[0]['label_id']
             else:
-                labelid = None
+                labelid = ''
             # print("CHECKLABEL:",labelid, labels)
 
             newticket = {
@@ -226,6 +226,8 @@ def check_mail(host, port, user, password, courseid, debug=0):
                 'courseid': courseid,
                 'labelid': labelid
             }
+            print("labelid", labelid)
+            print("body=upload", body)
             attachments = {}
             for name, bytes in files:
                 attachments[name] = base64.b64encode(bytes)
