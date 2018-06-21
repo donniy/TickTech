@@ -67,224 +67,222 @@
 
 <script>
 
-    import Message from './Message.vue'
-    import VueTribute from 'vue-tribute'
-    import Modal from './ClosePrompt.vue'
-    import Note from './Note.vue'
+import Message from './Message.vue'
+import VueTribute from 'vue-tribute'
+import Modal from './ClosePrompt.vue'
+import Note from './Note.vue'
 
 
-    /* This is an addition to the default config
-     * for tributejs.
-     * DOCS: https://github.com/zurb/tribute
-     */
-    let defaultMention = {
-        values: [
-        ],
+/* This is an addition to the default config
+ * for tributejs.
+ * DOCS: https://github.com/zurb/tribute
+ */
+let defaultMention = {
+    values: [
+    ],
 
-        selectTemplate: function (item) {
-            return '@' + item.original.id
-        },
-        lookup: function (ta) {
-            return ta.name + ' ' + ta.id
-        }
+    selectTemplate: function (item) {
+        return '@' + item.original.id
+    },
+    lookup: function (ta) {
+        return ta.name + ' ' + ta.id
     }
+}
 
 
-    export default {
-        data() {
-            return {
-                showModal: false,
-                user_id: 0,
-                ticket: {
-                    title: '',
-                    status: {
-                        name: ''
-                    },
-                    course_id: '',
-                    tas: []
+export default {
+    data() {
+        return {
+            showModal: false,
+            user_id: 0,
+            ticket: {
+                title: '',
+                status: {
+                    name: ''
                 },
-                reply: '',
-                messages: [],
-                notes: [],
-                show: false,
-                noteTextArea: "",
-                course_tas: [],
-                mentionOptions: defaultMention,
-            }
+                course_id: '',
+                tas: []
+            },
+            reply: '',
+            messages: [],
+            notes: [],
+            show: false,
+            noteTextArea: "",
+            course_tas: [],
+            mentionOptions: defaultMention,
+        }
+    },
+    methods: {
+        goCourse(here) {
+            this.$router.push(here)
         },
-        methods: {
-            goCourse(here) {
-                this.$router.push(here)
-            },
-            getTicket() {
-                const path = '/api/ticket/' + this.$route.params.ticket_id
-                this.$ajax.get(path)
-                    .then(response => {
-                        this.ticket = response.data.json_data
-                        this.getCourseTas()
-                    }).catch(error => {
-                        console.log(error)
-                    })
-            },
-            getMessages() {
-                const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
-                this.$ajax.get(path)
-                    .then(response => {
-                        this.messages = response.data.json_data
-                    })
-                    .catch(error => {
-                        console.log(error)
-                    })
-            },
-            getNotes() {
-                //get all notes
-                this.$ajax.get('/api/notes/' + this.$route.params.ticket_id)
-                    .then(response => {
-                        this.notes = response.data.json_data
-                        console.log(response)
-                    })
-                    .catch(err => {
-                        console.log(err)
-                    })
-            },
-            downloadFile(key, name){
-                const path = '/api/ticket/filedownload'
-                this.$ajax.post(path, {address: key})
-                .then((response) => {
-
-                    // Create response donwload link
-                    const url = window.URL.createObjectURL(new Blob([response.data]))
-                    const link = document.createElement('a')
-
-                    // Ref to the link and activate download.
-                    link.href = url
-                    link.setAttribute('download', name)
-                    document.body.appendChild(link)
-                    link.click();
-                    document.body.removeChild(link)
+        getTicket() {
+            const path = '/api/ticket/' + this.$route.params.ticket_id
+            this.$ajax.get(path)
+                .then(response => {
+                    this.ticket = response.data.json_data
+                    this.getCourseTas()
+                }).catch(error => {
+                    console.log(error)
+                })
+        },
+        getMessages() {
+            const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
+            this.$ajax.get(path)
+                .then(response => {
+                    this.messages = response.data.json_data
                 })
                 .catch(error => {
                     console.log(error)
-                    window.alert("File not found")
                 })
-            },
-            sendReply() {
-                const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
-                this.$ajax.post(path, {
-                    message: this.reply,
-                    user_id: this.user_id
+        },
+        getNotes() {
+            //get all notes
+            this.$ajax.get('/api/notes/' + this.$route.params.ticket_id)
+                .then(response => {
+                    this.notes = response.data.json_data
+                    console.log(response)
                 })
-                    .then(response => {
-                        this.reply = ''
-                        this.getMessages()
-                    })
-                    .catch(error => {
-                        console.log(error)
-                    })
-            },
-            closeTicket() {
-                this.showModal = false
-                const path = '/api/ticket/' + this.$route.params.ticket_id + '/close'
-                this.$ajax.post(path)
-                    .then(response => {
-                        // TODO: Iets van een notificatie ofzo? '234 closed this ticket'? iig niet meer hardcoden "closed"
-                        this.ticket.status.name = "Closed"
-                    })
-            },
-            addNote() {
-                console.log(this.noteTextArea)
-                const path = '/api/notes'
-                var noteData = {
-                    "ticket_id": this.$route.params.ticket_id,
-                    "user_id": this.$route.params.user_id | 1,
-                    "text": this.noteTextArea
-                }
-                console.log("Note")
-                console.log(this.noteTextArea)
-                this.$ajax.post(path, noteData)
-                    .then(response => {
-                        this.noteTextArea = ""
-                        this.$refs.popoverRef.$emit('close')
-                        this.notes.push(response.data.json_data)
+                .catch(err => {
+                    console.log(err)
+                })
+        },
+        sendReply() {
+            const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
+            this.$ajax.post(path, {
+                message: this.reply,
+                user_id: this.user_id
+            })
+                .then(response => {
+                    this.reply = ''
+                    this.getMessages()
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        },
+        closeTicket() {
+            this.showModal = false
+            const path = '/api/ticket/' + this.$route.params.ticket_id + '/close'
+            this.$ajax.post(path)
+                .then(response => {
+                    // TODO: Iets van een notificatie ofzo? '234 closed this ticket'? iig niet meer hardcoden "closed"
+                    this.ticket.status.name = "closed"
+                })
+        },
+        addNote() {
+            console.log(this.noteTextArea)
+            const path = '/api/notes'
+            var noteData = {
+                "ticket_id": this.$route.params.ticket_id,
+                "user_id": this.$route.params.user_id | 1,
+                "text": this.noteTextArea
+            }
+            console.log("Note")
+            console.log(this.noteTextArea)
+            this.$ajax.post(path, noteData)
+                .then(response => {
+                    this.noteTextArea = ""
+                    this.$refs.popoverRef.$emit('close')
+                    this.notes.push(response.data.json_data)
+                    this.bind_ta_to_ticket(this.ticket.id, this.nodeTextArea)
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        },
+        downloadFile(key, name){
+            const path = '/api/ticket/filedownload'
+            this.$ajax.post(path, {address: key})
+            .then((response) => {
 
-                        this.bind_ta_to_ticket(this.ticket.id, this.nodeTextArea)
-                    })
-                    .catch(error => {
-                        console.log(error)
-                    })
-            },
+                // Create response donwload link
+                const url = window.URL.createObjectURL(new Blob([response.data]))
+                const link = document.createElement('a')
 
-            /* Get the ta's in this course. Will add all the ta's to the
-             * course_tas array.
-             * NOTE: This can maybe stay local and course_tas can be removed from data.
+                // Ref to the link and activate download.
+                link.href = url
+                link.setAttribute('download', name)
+                document.body.appendChild(link)
+                link.click();
+                document.body.removeChild(link)
+            })
+            .catch(error => {
+                console.log(error)
+                window.alert("File not found")
+            })
+        },
+        /* Get the ta's in this course. Will add all the ta's to the
+         * course_tas array.
+         * NOTE: This can maybe stay local and course_tas can be removed from data.
+         */
+        getCourseTas() {
+            const path = '/api/courses/' + this.ticket.course_id + '/tas'
+            this.$ajax.get(path)
+                .then(response => {
+                    this.course_tas = response.data.json_data
+                    build_ta_matching_table(this)
+                }).catch(error => {
+                    console.log(error)
+                })
+
+            /* Function to build the matching table for mentioning.
+             * It grabs all ta's for this course and appends them to the
+             * table.
              */
-            getCourseTas() {
-                const path = '/api/courses/' + this.ticket.course_id + '/tas'
-                this.$ajax.get(path)
-                    .then(response => {
-                        this.course_tas = response.data.json_data
-                        build_ta_matching_table(this)
-                    }).catch(error => {
-                        console.log(error)
-                    })
-
-                /* Function to build the matching table for mentioning.
-                 * It grabs all ta's for this course and appends them to the
-                 * table.
-                 */
-                function build_ta_matching_table(obj) {
-                    console.log(obj.mentionOptions)
-                    // Vue-tribute keeps an instance of the Optionsarray, so clear it.
-                    // Yes this is a valid way to clear out an array in JS.
-                    obj.mentionOptions.values.length = 0;
-                    for (let i = 0; i < obj.course_tas.length; i++) {
-                        let ta = obj.course_tas[i]
-                        console.log(ta)
-                        obj.mentionOptions.values.push(
-                            { name: String(ta.name), id: String(ta.id) })
-                    }
+            function build_ta_matching_table(obj) {
+                console.log(obj.mentionOptions)
+                // Vue-tribute keeps an instance of the Optionsarray, so clear it.
+                // Yes this is a valid way to clear out an array in JS.
+                obj.mentionOptions.values.length = 0;
+                for (let i = 0; i < obj.course_tas.length; i++) {
+                    let ta = obj.course_tas[i]
+                    console.log(ta)
+                    obj.mentionOptions.values.push(
+                        { name: String(ta.name), id: String(ta.id) })
                 }
-            },
+            }
+        },
 
-            /* This replaced the noteTextArea when a match if found. Otherwise
-               The user has to append a space after matching to include the whole match.
-               So this makes it possible to click on a match and then immediately post
-               The note.
-             */
-            matchFound(e) {
-                let matchedValue = document.getElementById("textAreaForNotes").value
-                console.log(e)
-                this.noteTextArea = matchedValue
-            },
-            bind_ta_to_ticket(ticketid, taid) {
-                console.log(this.ticket.id, this.nodeTextArea)
-            }
+        /* This replaced the noteTextArea when a match if found. Otherwise
+           The user has to append a space after matching to include the whole match.
+           So this makes it possible to click on a match and then immediately post
+           The note.
+         */
+        matchFound(e) {
+            let matchedValue = document.getElementById("textAreaForNotes").value
+            console.log(e)
+            this.noteTextArea = matchedValue
         },
-        mounted: function () {
-            if (!this.$user.logged_in()) {
-                this.$router.push('/login')
-            }
-            this.user_id = this.$user.get().id
-            this.getTicket()
-            this.getMessages()
-            this.getNotes()
-            this.$socket.emit('join-room', { room: 'ticket-messages-' + this.$route.params.ticket_id })
-        },
-        sockets: {
-            connect: function () {
-            },
-            messageAdded: function (data) {
-                console.log(data)
-                this.messages.push(data)
-            }
-        },
-        components: {
-            'message': Message,
-            'modal': Modal,
-            'note': Note,
-            VueTribute,
-        },
-        watch: {
+        bind_ta_to_ticket(ticketid, taid) {
+            console.log(this.ticket.id, this.nodeTextArea)
         }
+    },
+    mounted: function () {
+        if (!this.$user.logged_in()) {
+            this.$router.push('/login')
+        }
+        this.user_id = this.$user.get().id
+        this.getTicket()
+        this.getMessages()
+        this.getNotes()
+        this.$socket.emit('join-room', { room: 'ticket-messages-' + this.$route.params.ticket_id })
+    },
+    sockets: {
+        connect: function () {
+        },
+        messageAdded: function (data) {
+            console.log(data)
+            this.messages.push(data)
+        }
+    },
+    components: {
+        'message': Message,
+        'modal': Modal,
+        'note': Note,
+        VueTribute,
+    },
+    watch: {
     }
+}
 </script>
