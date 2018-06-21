@@ -35,8 +35,8 @@
                         <md-table-cell md-label="Name" md-sort-by="user_id">{{ item.user_id }}</md-table-cell>
                         <md-table-cell md-label="Status" md-sort-by="status.name">{{ item.status.name }}</md-table-cell>
                         <md-table-cell md-label="Time" md-sort-by="timestamp">{{ item.timestamp | moment("DD/MM/YY HH:mm")}}</md-table-cell>
-                        <md-table-cell md-label="Operator" md-sort-by="binded_tas" v-if="item.binded_tas != null">{{ item.binded_tas }}</md-table-cell> 
-                        <md-table-cell md-label="Operator" md-sort-by="binded_tas" v-if="item.binded_tas == null">unassigned</md-table-cell> 
+                        <md-table-cell md-label="Operator" md-sort-by="binded_tas" v-if="item.binded_tas != null">{{ item.binded_tas }}</md-table-cell>
+                        <md-table-cell md-label="Operator" md-sort-by="binded_tas" v-if="item.binded_tas == null">unassigned</md-table-cell>
                       </md-table-row>
                     </md-table>
                     </div>
@@ -100,8 +100,10 @@ export default {
             searched: [],
             ticketSum: 0,
             tickets: [],
+            labels: [],
             showSum: false,
             status: 'not set',
+            label_filter: 'All',
             status_filter: 'All',
             sort_filter: "Most Recent",
             showEmailModal: false,
@@ -175,6 +177,7 @@ export default {
             this.status = 'created'
             this.getCourseInfo()
             this.getTickets()
+            this.getLabels()
         },
         emailRunning: function () {
             // Get the current email settings from server
@@ -232,6 +235,14 @@ export default {
             this.wantsToAddUsers = false
             this.wantsToAddTa = this.wantsToAddTa === false
         },
+        sort_tickets(val) {
+            if (val == "Most Recent")
+                this.tickets.sort((a, b) => a.timestamp > b.timestamp)
+            else if (val == "Least Recent")
+                this.tickets.sort((a, b) => a.timestamp < b.timestamp)
+            else if (val == "Created by")
+                this.tickets.sort((a, b) => a.user_id > b.user_id)
+        }
     },
     mounted: function () {
         if (!this.$user.logged_in()) {
@@ -254,19 +265,10 @@ export default {
         // whenever showMadel changes, this function will run
         showEmailModal: function () {
             this.emailRunning()
+        },
+        sort_filter: function (val) {
+            this.sort_tickets(val)
         }
-    },
-    computed: {
-        tickets_reverse: function () {
-            return this.tickets.slice().reverse()
-        },
-
-        tickets_by_alpabet: function() {
-            return this.tickets.slice().sort(function(a,b) {
-                // return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);
-                return a.user_id - b.user_id;
-                }); 
-        },
     }
 }
 </script>

@@ -218,6 +218,7 @@ export default {
                     this.noteTextArea = ""
                     this.$refs.popoverRef.$emit('close')
                     this.notes.push(response.data.json_data)
+                    this.bind_ta_to_ticket(this.ticket.id, 11111)
                 })
                 .catch(error => {
                     console.log(error)
@@ -256,14 +257,26 @@ export default {
         },
 
         /* This replaced the noteTextArea when a match if found. Otherwise
-               The user has to append a space after matching to include the whole match.
-               So this makes it possible to click on a match and then immediately post
-               The note.
+           The user has to append a space after matching to include the whole match.
+           So this makes it possible to click on a match and then immediately post
+           The note.
          */
         matchFound(e) {
             let matchedValue = document.getElementById("textAreaForNotes").value
+            console.log("found", e)
             this.noteTextArea = matchedValue
         },
+        bind_ta_to_ticket(ticketid, taid) {
+            const path = '/api/ticket/addta'
+            console.log(ticketid, taid)
+            this.$ajax.post(path, {'ticketid': ticketid, 'taid': taid})
+            .then(response => {
+                console.log("Succes")
+                this.ticket.tas[length(this.ticket.tas)] = taid
+            }).catch(error => {
+                console.log(error)
+            })
+        }
     },
     mounted: function () {
         if (!this.$user.logged_in()) {
