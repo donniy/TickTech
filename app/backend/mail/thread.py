@@ -62,6 +62,11 @@ class MailThread(Thread):
         self.running = False
         threads.remove(self)
 
+    def force_fetch():
+        print("Checking", self.email + ". On thread " + self.getName())
+        check_mail(self.server, self.port, self.email,
+                   self.password, self.course_id)
+
     def update(self, sleep_time=None, server=None,
                port=None, email=None, password=None):
         if sleep_time is not None:

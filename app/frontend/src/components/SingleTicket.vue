@@ -169,6 +169,39 @@ export default {
                     // TODO: Iets van een notificatie ofzo? '234 closed this ticket'? iig niet meer hardcoden "closed"
                     this.ticket.status.name = "closed"
                 })
+
+        },downloadFile(key, name){
+
+            const path = '/api/ticket/filedownload'
+            this.$ajax.post(path, {address: key})
+            .then((response) => {
+                // Get data from response
+                var byteCharacters = atob(response.data.json_data['encstring']);
+                var mimetype = response.data.json_data['mimetype']
+
+                // Convert data to bytearray and decode
+                var byteNumbers = new Array(byteCharacters.length);
+                for (var i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                var byteArray = new Uint8Array(byteNumbers);
+
+                // Generate blob and download element.
+                var blob = new Blob([byteArray], {mimetype});
+                const url = window.URL.createObjectURL(blob)
+                const link = document.createElement('a')
+
+                // Ref to the link and activate download.
+                link.href = url
+                link.setAttribute('download', name)
+                document.body.appendChild(link)
+                link.click();
+                document.body.removeChild(link)
+            })
+            .catch(error => {
+                console.log(error)
+                window.alert("File not found")
+            })
         },
         addNote() {
             console.log(this.noteTextArea)
@@ -190,27 +223,6 @@ export default {
                 .catch(error => {
                     console.log(error)
                 })
-        },
-        downloadFile(key, name){
-            const path = '/api/ticket/filedownload'
-            this.$ajax.post(path, {address: key})
-            .then((response) => {
-
-                // Create response donwload link
-                const url = window.URL.createObjectURL(new Blob([response.data]))
-                const link = document.createElement('a')
-
-                // Ref to the link and activate download.
-                link.href = url
-                link.setAttribute('download', name)
-                document.body.appendChild(link)
-                link.click();
-                document.body.removeChild(link)
-            })
-            .catch(error => {
-                console.log(error)
-                window.alert("File not found")
-            })
         },
         /* Get the ta's in this course. Will add all the ta's to the
          * course_tas array.

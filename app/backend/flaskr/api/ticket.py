@@ -12,12 +12,19 @@ from flaskr.request_processing import message as rp_message
 from flaskr.request_processing import file as rp_file
 from flaskr import Iresponse
 from flask_jwt import jwt_required, current_identity
+from flaskr.utils import notifications
+from flask_mail import Mail
+from mail.Message import create_email_message
+from time import gmtime, strftime
 from flaskr.utils import notifications, course_validation, json_validation
 from os.path import expanduser
 import os
-
+import base64
+import mimetypes
 
 # Make this post with a button.
+
+
 @apiBluePrint.route('/ticket/<ticket_id>/close', methods=['POST', 'PATCH'])
 @jwt_required()
 def close_ticket(ticket_id):
@@ -66,20 +73,11 @@ def create_message(ticket_id):
     ticket = Ticket.query.get(ticket_id)
     user = User.query.get(userId)
 
-#    if ticket is not None and user is not None:
-#        # unassigned
-#        if ticket.ticket_status.id == 1:
-#            ticket.ticket_status = TicketStatus.query.get(4)
-#        # assigned
-#        elif ticket.ticket_status.id == 3:
-#            ticket.ticket_status = TicketStatus.query.get(4)
-#
-#        tas = ticket.binded_tas
-#        if user not in tas:
-#            # add user to bound tas
-#            tas.append(user)
-#
-#    db.session.commit()
+    if(ticket.user_id != user.id):
+        message = create_email_message(ticket.title,
+                                       [ticket.email], ticket_id,
+                                       jsonData['message'], user.name)
+        res = Mail().send(message)
     return msg
 
 
@@ -190,8 +188,14 @@ def download_file():
         location = json_data['address'].rsplit('/', 1)[0]
         folder = homefolder + base + location
         file = json_data['address'].rsplit('/', 1)[1]
+        full_path = folder + json_data['address']
+
+        fileType, fileEncoding = mimetypes.guess_type(full_path)
 
         if folder and file:
-            return send_from_directory(folder, file, as_attachment=True)
+            fp = open(folder+'/'+file, 'br').read()
+            encoded = base64.b64encode(fp).decode("utf-8")
+            return Iresponse.create_response({'encstring': str(encoded),
+                                             'mimetype': fileType}, 200)
     else:
         return Iresponse.create_response("No address", 404)

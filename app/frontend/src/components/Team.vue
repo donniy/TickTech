@@ -10,7 +10,7 @@
 			</div>
 			<div class="row text-center">
 				<div class="col-md-4">
-					<h4 class="service-heading">Stefan</h4>
+					<h4 class="service-heading">Stephan</h4>
 					<p class="text-muted">Mailing systems and parsing</p>
 				</div>
 				<div class="col-md-4">
