@@ -49,10 +49,10 @@ def create_app(test_config=None):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Send email settings, for now hardcoded
-    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-    app.config['MAIL_PORT'] = 465
-    app.config['MAIL_USE_SSL'] = True
-    app.config['MAIL_USE_TLS'] = False
+    app.config['MAIL_SERVER'] = EMAIL_SEND_SERVER
+    app.config['MAIL_PORT'] = EMAIL_SEND_PORT
+    app.config['MAIL_USE_SSL'] = EMAIL_SEND_SSL
+    app.config['MAIL_USE_TLS'] = EMAIL_SEND_TLS
     app.config['MAIL_USERNAME'] = EMAIL_SEND_EMAIL
     app.config['MAIL_PASSWORD'] = EMAIL_SEND_PASSWORD
     app.config['MAIL_DEFAULT_SENDER'] = EMAIL_SEND_EMAIL
