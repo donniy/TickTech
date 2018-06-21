@@ -4,7 +4,7 @@
             <h2>Welcome back {{ $user.get().name }} :)</h2>
         </div>
         <div class="md-layout md-gutter wrapper">
-            <div class="md-layout-item">
+            <div class="md-layout-item" v-if="isTA">
                 <md-content class="md-elevation-5">
                         <md-subheader>Courses</md-subheader>
 
@@ -65,11 +65,22 @@
                 courses: [],
                 status: 'not set',
                 tickets: [],
+                isTA: false,
                 notifications: [],
             }
         },
         methods: {
             getCourses() {
+                let courses_ta_in = Object.keys(this.$user.get().ta).length
+                console.log(courses_ta_in)
+                if (courses_ta_in == 0) {
+                    this.courses = [];
+                    this.isTA = false;
+                    return;
+                }
+                /* We now get the ta courses from the user object.
+                    Students only dont have courses
+
                 this.status = 'getting courses'
                 this.$ajax.get('/api/courses')
                     .then(response => {
@@ -81,6 +92,9 @@
                         console.log(error)
                         this.status = 'failed getting courses'
                     })
+                */
+                this.courses = [this.$user.get().ta]
+                this.isTA = true;
             },
             getTodos () {
                 this.$ajax.get('/api/user/notifications', response => {
