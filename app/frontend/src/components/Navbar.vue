@@ -72,28 +72,30 @@
                     let split_string = [];
                     let match = null;
                     let usr = this.$user.get();
-                    console.log(usr);
                     if(typeof usr !== 'undefined') {
                         split_string = to.path.replace(':user_id', usr.id)
-                        try {
-                            split_string = split_string.replace(':course_id', this.ticket.course_id)
-                        } catch(e) {
-                            console.error(e);
-                        }
+                        if(window.$current_course_id !== null)
+                            try {
+                                split_string = split_string.replace(':course_id', window.$current_course_id)
+                            } catch(e) {
+                                console.error(e);
+                            }
                         split_string = split_string.split('/');
                     } else {
-                        try {
-                            split_string = split_string.replace(':course_id', this.ticket.course_id)
-                        } catch(e) {
-                            console.error(e);
-                        }
+                        if(window.$current_course_id !== null)
+                            try {
+                                split_string = split_string.replace(':course_id', window.$current_course_id)
+                            } catch(e) {
+                                console.error(e);
+                            }
                         split_string = to.path.split('/');
                     }
                     for (let i = 0; i < split_string.length; i++) {
                         if(split_string[i] === '') continue;
                         match = matcher(cur_url + split_string[i]);
                         cur_url += split_string[i] + '/';
-                        if (typeof match.name !== 'undefined' && match.name !== 'Home' && match.name !== 'UserHome') {
+                        if (typeof match.name !== 'undefined' && match.name !== 'Home'
+                                && match.name !== 'UserHome' && cur_url.indexOf(':course_id') === -1) {
                             if (typeof match.meta.pre !== 'undefined')
                                 this.breadcrumbList({ path: match.meta.pre });
                             this.path_list.push(match);
@@ -106,7 +108,6 @@
         watch: {
             '$route'(to, from) {
                 this.path_list = [];
-                console.log(this.$router.currentRoute)
                 this.breadcrumbList(this.$router.currentRoute)
             }
         }

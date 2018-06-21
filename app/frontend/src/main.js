@@ -186,6 +186,7 @@ Vue.use(VueAuth, {
 window.$auth = Vue.auth;
 window.Auth = VueAuth;
 window.$user = Vue.prototype.$user;
+window.$current_course_id = null;
 
 /* eslint-disable no-new */
 new Vue({

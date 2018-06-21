@@ -8,7 +8,7 @@ const routerOptions = [
         component: 'Home',
         meta: {
             breadcrumb: '/',
-            auth: false
+            auth: undefined
         },
     },
     {
