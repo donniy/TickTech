@@ -29,7 +29,7 @@ def ocr_file(image_path):
     # -psm=5
     # config='--preserve_interword_spaces 1',
     text = pytesseract.image_to_string(Image.open(filename), lang='eng',
-                                        nice=1)
+                                       nice=1)
     os.remove(filename)
     textfile.write(text)
     textfile.close()
