@@ -4,7 +4,7 @@
             <h2>Welcome back {{ $user.get().name }} :)</h2>
         </div>
         <div class="md-layout md-gutter wrapper">
-            <div class="md-layout-item">
+            <div class="md-layout-item" v-if="isTA">
                 <md-content class="md-elevation-5">
                         <md-subheader>Courses</md-subheader>
 
@@ -65,6 +65,7 @@
                 courses: [],
                 status: 'not set',
                 tickets: [],
+                isTA: false,
                 notifications: [],
             }
         },
