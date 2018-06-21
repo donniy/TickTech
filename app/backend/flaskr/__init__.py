@@ -2,7 +2,7 @@ import os
 import requests
 from flask import Flask, render_template, jsonify, request
 from flask import Flask
-from flaskr import database, sockets
+from flaskr import database, sockets, plugins
 from . import models
 from datetime import datetime
 from flask_wtf.csrf import CSRFProtect

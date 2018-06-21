@@ -27,3 +27,4 @@ WTForms==2.2
 pytest
 pycodestyle
 flask_hashfs
+pluginbase
