@@ -19,9 +19,13 @@ def create_request(json_data):
 
     response_body = {}
 
+    binded_tas = list()
+    if labelid:
+        binded_tas = get_label_tas(labelid)
+
     ticket = Ticket(id=uuid.uuid4(), user_id=studentid, course_id=courseid,
                     status_id=1, title=subject, email=email, files=files,
-                    timestamp=datetime.now())
+                    timestamp=datetime.now(), binded_tas=binded_tas)
 
     if not database.addItemSafelyToDB(ticket):
         return Iresponse.internal_server_error()
@@ -57,13 +61,14 @@ def add_ta_to_ticket(json_data):
         return Iresponse.create_response("Success", 200)
     return Iresponse.create_response("Failure", 400)
 
+
 def add_ta_list_to_ticket(json_data):
-    ticket = Ticket.query.filterby(id=uuid.UUID(json_data['ticketid'])).first()
+    ticket = Ticket.get(uuid.UUID(json_data['ticketid']))
     ta_list = list()
 
     # Retrieve all users and add them to a list.
     for taid in json_data['taids']:
-        ta_list.append(User.query.filterby(id=taid).first())
+        ta_list.append(User.get(taid))
 
     if ticket and length(ta_list) > 0 and None not in ta_list:
         for ta in ta_list:
@@ -71,8 +76,9 @@ def add_ta_list_to_ticket(json_data):
         return Iresponse.create_response("Success", 200)
     return Iresponse.create_response("No Ta's found", 400)
 
+
 def remove_ta_from_ticket(json_data):
-    ticket = Ticket.get(UUID(json_data['ticketid']))
+    ticket = Ticket.get(uuid.UUID(json_data['ticketid']))
     ta = User.query.filterby(id=json_data['taid']).first()
 
     if ticket and ta:
@@ -81,3 +87,11 @@ def remove_ta_from_ticket(json_data):
             ticket.binded_tas.remove(ta)
             return Iresponse.create_response("Success", 200)
     return Iresponse.create_response("Failure", 400)
+
+
+def get_label_tas(label_id):
+    if label_id:
+        tas_by_label = User.query.filterby(labels=label_id).all()
+        print(tas_by_label)
+        return tas_by_label
+    return None

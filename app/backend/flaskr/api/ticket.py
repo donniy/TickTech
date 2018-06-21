@@ -164,8 +164,6 @@ def create_ticket():
         for file in file_names:
             rp_file.remove_file(file)
         return Iresponse.create_response("Invalid Course/Label", 400)
-    if labelid:
-        tas = get_tas_by_label(labelid)
 
     ticket_data['studentid'] = current_identity.id
     ticket_data['name'] = current_identity.name
