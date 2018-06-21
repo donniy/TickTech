@@ -74,7 +74,7 @@ def create_message(ticket_id):
     if(ticket.user_id != user.id):
         message = create_email_message(ticket.title,
                                        [ticket.email], ticket_id,
-                                       jsonData['message'], user.name)
+                                       json_data['message'], user.name)
         res = Mail().send(message)
     return msg
 
