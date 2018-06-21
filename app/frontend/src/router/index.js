@@ -21,14 +21,6 @@ const routerOptions = [
         }
     },
     {
-        path: '/homer',
-        name: 'userhomer',
-        component: 'UserHomer',
-        meta: {
-            breadcrumb: 'Home'
-        }
-    },
-    {
         path: '/course/:course_id',
         name: 'CourseTickets',
         component: 'CourseTickets',

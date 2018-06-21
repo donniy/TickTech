@@ -173,7 +173,7 @@ nav {
     padding-left: 0px;
     width: 95%;
     color: $text-color-lighter;
-    font-size: 1px;
+    border-top: 1px solid #aaaaaa;
     margin: 2px;
 }
 
@@ -864,6 +864,18 @@ hr {
     display:flex;
     align-items: center;
     justify-content: center;
+}
+
+.float-left {
+    float: left;
+}
+
+.padding-left-10 {
+    padding-left: 10px;
+}
+
+.material-icons:hover {
+    cursor: pointer;
 }
 
 .create-ticket-section:hover {

@@ -12,7 +12,7 @@
                             <md-tooltip md-direction="left">This page is can be used to create a ticket.
                             </br>In order to assign the right Teaching Assistant (TA) to your
                             </br>ticket please select the right corresponding course and label</md-tooltip>
-                        </md-avatar>
+                    </md-avatar>
                     <div class="form-group">
                         <label for="subject">Subject</label>
                         <input id="subject" class="form-control" v-validate="'required|max:50'" name="subject" v-model="form.subject" type="text"
@@ -35,7 +35,7 @@
                         <input name="files" class="hidden-input" type="file" id="files" ref="files" multiple v-on:change="handleFilesUpload()"/>
                     </div>
                     <div class="file-name-container medium-12 small-12 cell">
-                        <div v-for="(file, key) in files" class="file-listing">{{ file.name }} <i v-on:click="removeFile( key )" class="material-icons file-remove-icon">delete_forever</i><hr class="light-stripe"></div>
+                        <div v-for="(file, key) in files" class="file-listing"">{{ file.name }} <i v-on:click="removeFile( key )" class="material-icons file-remove-icon">delete_forever</i><hr class="light-stripe"></div>
                     </div>
 
                     <p class="def-error-msg" v-show="fileTooLarge">
