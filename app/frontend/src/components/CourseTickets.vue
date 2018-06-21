@@ -21,7 +21,8 @@
                       <md-table-toolbar class="red">
                         <h1 class="md-title">Tickets</h1>
                         <md-field md-clearable class="md-toolbar-section-end">
-                            <md-input placeholder="Search by title..." v-model="search" @input="searchOnTable" style="color = white; background-color = white;"/>
+                            <label for="searchField">Search by title...</label>
+                            <md-input id="searchField" v-model="search" @input="searchOnTable" style="color = white; background-color = white;"/>
                         </md-field>
                       </md-table-toolbar>
 
