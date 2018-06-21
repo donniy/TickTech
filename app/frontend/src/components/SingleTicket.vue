@@ -1,6 +1,6 @@
 <template>
     <div>
-        <router-link :to="{path: ret_url}" class="btn btn-primary">&laquo; Back to course</router-link>
+        <router-link :to="'/course/' + ticket.course_id " class="btn btn-primary">&laquo; Back to course</router-link>
 
         <md-speed-dial md-event="click" class="close-button" md-direction="bottom">
             <md-speed-dial-target>
