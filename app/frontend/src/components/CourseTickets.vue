@@ -260,8 +260,8 @@ export default {
         this.created()
     },
     components: {
-        'ticket': CourseTicketRow,
         'emodal': EmailModal,
+        'summodal': SumModal,
         'addusers': addUsersModel,
     },
     created: function () {
