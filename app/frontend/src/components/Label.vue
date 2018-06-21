@@ -8,9 +8,7 @@
             <md-button class="btn removeLabel" @click="showModal = true">
                 <i class="material-icons"> close </i>
             </md-button>
-
         </md-field>
-
 
         <md-dialog  :md-active.sync="showModal">
             <md-dialog-title>Do you want to remove this label?</md-dialog-title>

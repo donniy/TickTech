@@ -411,6 +411,11 @@ header.masthead {
 
 .btn {
     border-radius: 0;
+    color: white !important;
+    background-color: $default-red !important;
+}
+.btn:hover{
+    background-color: darken($default-green, 7%);
 }
 
 .btn-submit {
@@ -845,9 +850,25 @@ hr {
 }
 
 .notification-section {
-    min-height: 40vh;
-    max-height: 40vh;
+    min-height: 50vh;
+    max-height: 50vh;
     overflow: auto;
+}
+
+.ticket-single {
+    color: $text-color-def !important;
+    padding: 5px;
+    margin-right: 7px;
+    margin-left: 7px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-size: 1em;
+    border-color: darken($text-color-def, 5%);
+    border: 1px solid;
+}
+
+.ticket-single:hover {
+    opacity: 0.7;
 }
 
 .courses-section {
@@ -862,12 +883,12 @@ hr {
 }
 
 .create-ticket-section1 {
-    margin-top: 5vh;
+    margin-top: 2vh;
 }
 
 .create-ticket-section2 {
-    min-height: 20vh;
-    max-height: 20vh;
+    min-height: 13vh;
+    max-height: 13vh;
     display:flex;
     align-items: center;
     justify-content: center;
