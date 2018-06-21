@@ -1,7 +1,10 @@
 # import the necessary packages
 from PIL import Image
+from PIL import ImageFilter
+from StringIO import StringIO
 import pytesseract
 import argparse
+import requests
 import cv2
 import os
 
