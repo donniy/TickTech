@@ -62,37 +62,26 @@ def create_email_ticket():
         if not rp_file.save_file_from_mail(file, filename, file_names):
             # print("invalid file")
             return Iresponse.create_response("File too large", 400)
+    formdata['files'] = file_names
 
-    # if not json_validation.validate_json(formdata, ['message',
-    #                                                 'subject',
-    #                                                 'courseid',
-    #                                                 'labelid']):
-    #     return Iresponse.create_response("Malformed request", 400)
-    message = (formdata['message'])
-    subject = (formdata['subject'])
-    courseid = (formdata['courseid'])
-    labelid = (formdata['labelid'])
-    ticket_data = {'message':  message,
-                   'subject':  subject,
-                   'courseid':  courseid,
-                   'labelid':  labelid,
-                   'files': file_names}
+    if not json_validation.validate_json(formdata, ['message',
+                                                    'subject',
+                                                    'courseid',
+                                                    'labelid']):
+        return Iresponse.create_response("Malformed request", 400)
 
-    if not course_validation.check_course_validity(courseid, labelid):
+    if not course_validation.check_course_validity(formdata['courseid'],
+                                                   formdata['labelid']):
         for file in file_names:
             rp_file.remove_file(file)
         return Iresponse.create_response("Invalid Course/Label", 400)
 
-    ticket_data['studentid'] = (formdata['studentid'])
-    ticket_data['name'] = (formdata['name'])
-    ticket_data['email'] = (formdata['email'])
-
-    if not json_validation.validate_ticket_data(ticket_data):
+    if not json_validation.validate_ticket_data(formdata):
         for file in file_names:
             rp_file.remove_file(file)
         return Iresponse.create_response("Invalid ticket data", 400)
 
-    response = rp_ticket.create_request(ticket_data)
+    response = rp_ticket.create_request(formdata)
 
     return response
 
