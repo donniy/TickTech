@@ -128,7 +128,10 @@ export default {
         navTicket (item) {
                 this.$router.push("/ticket/" + item)
             },
-        getTickets () {
+        searchOnTable () {
+            this.searched = searchByName(this.tickets, this.search)
+        },
+        getTickets() {
             this.status = 'getting tickets'
             const path = '/api/courses/' + this.$route.params.course_id + '/tickets'
             this.$ajax.get(path)
@@ -144,32 +147,8 @@ export default {
                     this.status = 'failed getting tickets'
                 })
         },
-        mouseOver: function (one, two) {
-            if (this.ticketSum != 0) {
-                let className = one.path[1].className
-                if (!(className.indexOf("singleTicket") > -1 || className.indexOf("summary") > -1)) {
-                    this.ticketSum = 0
-                    this.showSum = false
-                }
-            }
-        },
         pushLocation(here) {
             this.$router.push(here)
-        },
-        getTickets() {
-            this.status = 'getting tickets'
-            const path = '/api/courses/' + this.$route.params.course_id + '/tickets'
-            this.$ajax.get(path)
-                .then(response => {
-                    this.tickets = response.data.json_data
-                    this.status = 'Retrieved data'
-                    console.log(response.data.json_data)
-                    console.log(response)
-                })
-                .catch(error => {
-                    console.log(error)
-                    this.status = 'failed getting tickets'
-                })
         },
         emailSettings() {
             this.showEmailModal = true
@@ -257,7 +236,10 @@ export default {
         if (!this.$user.logged_in()) {
             this.$router.push('/login')
         }
-        this.created()
+        this.created();
+    },
+    beforemount() {
+        this.searched = this.tickets
     },
     components: {
         'emodal': EmailModal,
