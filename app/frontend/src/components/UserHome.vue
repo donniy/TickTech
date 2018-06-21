@@ -18,6 +18,20 @@
 
                 </md-content>
             </div>
+            <div class="md-layout-item" v-if="!isTA">
+                <md-content class="md-elevation-5">
+                        <md-subheader>Tickets</md-subheader>
+
+                        <md-content class="md-scrollbar courses-section">
+                        <md-list class="md-triple-line">
+
+                            <course v-for="ticket in tickets" v-bind:key="ticket.title" v-bind:course="ticket"></course>
+
+                        </md-list>
+                        </md-content>
+
+                </md-content>
+            </div>
             <div class="md-layout-item">
                 <md-content class="md-elevation-5">
                     <md-list class="md-double-line padding-bottom-0">
@@ -70,6 +84,15 @@
             }
         },
         methods: {
+            getTickets() {
+				this.status = 'getting tickets'
+				const path = '/api/user/' + this.$user.get().id + '/tickets'
+				this.$ajax.get(path).then(response => {
+					this.tickets = response.data.json_data
+				}).catch(error => {
+					console.log(error)
+				})
+			},
             getCourses() {
                 let courses_ta_in = Object.keys(this.$user.get().ta).length
                 if (courses_ta_in == 0) {
@@ -92,6 +115,7 @@
                 this.status = 'created'
                 this.getCourses()
                 this.getTodos()
+                this.getTickets()
             }
         },
         mounted: function () {
