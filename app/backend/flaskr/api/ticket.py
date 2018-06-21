@@ -4,7 +4,7 @@ from flaskr.models.user import *
 from flaskr import database
 from . import apiBluePrint
 from flask import jsonify, request, escape, send_from_directory
-from flaskr import socketio
+from flaskr import socketio, plugins
 import uuid
 import datetime
 from flaskr.request_processing import ticket as rp_ticket
@@ -44,6 +44,7 @@ def close_ticket(ticket_id):
 
 
 @apiBluePrint.route('/ticket/<ticket_id>', methods=['GET'])
+@jwt_required()
 def retrieve_single_ticket(ticket_id):
     """
     Geeft een enkel ticket.
@@ -53,6 +54,22 @@ def retrieve_single_ticket(ticket_id):
     if ticketObj is None:
         return Iresponse.create_response("", 404)
     return Iresponse.create_response(ticketObj.serialize, 200)
+
+
+@apiBluePrint.route('/ticket/<ticket_id>/plugins', methods=['GET'])
+@jwt_required()
+def retrieve_plugins(ticket_id):
+    """
+    List the plugins available for this ticket.
+    """
+    print("===Retrieving plugins for ticket===")
+    ticketObj = Ticket.query.get_or_404(ticket_id)
+    # TODO: For now this returns all available plugins.
+    pls = {}
+    for p in plugins.plugin_list():
+        pl = plugins.get_plugin(p)
+        pls[pl.display_name] = pl.get_assignment_info(ticketObj.owner.id, 123)
+    return Iresponse.create_response(pls, 200)
 
 
 @apiBluePrint.route('/ticket/<ticket_id>/messages', methods=['POST'])

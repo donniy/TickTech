@@ -1,12 +1,25 @@
 <template>
     <div>
-        <button class="btn btn-primary back-button" v-on:click="goCourse('/course/' + ticket.course_id)">
-            Terug naar cursus
-        </button>
+        <md-button tag="button" class="md-primary" :to="'/course/' + ticket.course_id"> Terug naar cursus
+        </md-button>
 
-        <button class="btn btn-primary close-button" @click="showModal = true">
-            Close Ticket
-        </button>
+        <md-speed-dial md-event="click" class="close-button" md-direction="bottom">
+            <md-speed-dial-target>
+                <md-icon class="md-morph-initial">more_vert</md-icon>
+                <md-icon class="md-morph-final">close</md-icon>
+            </md-speed-dial-target>
+
+            <md-speed-dial-content>
+                <md-button class="md-icon-button md-raised md-accent" @click="showModal = true">
+                    <md-icon>lock</md-icon>
+                    <md-tooltip md-direction="left">Close ticket</md-tooltip>
+                </md-button>
+                <md-button class="md-icon-button md-raised md-accent" @click="">
+                    <md-icon>delete</md-icon>
+                    <md-tooltip md-direction="left">Delete ticket</md-tooltip>
+                </md-button>
+            </md-speed-dial-content>
+        </md-speed-dial>
 
         <modal v-if="showModal" warning="Are you sure you want to close this ticket?" @yes="closeTicket()" @close="showModal = false"></modal>
         <br />
@@ -22,7 +35,7 @@
                     </div>
                     <div class="file-name-container-small medium-12 small-12 cell" v-if="ticket.files.length > 0">
                         <div v-for="file in ticket.files">
-                             <p v-on:click="downloadFile(file.file_location, file.file_name)" class="file-listing-small"><i class="material-icons download-icon">folder</i> {{ file.file_name }}</p>
+                            <p v-on:click="downloadFile(file.file_location, file.file_name)" class="file-listing-small"><i class="material-icons download-icon">folder</i> {{ file.file_name }}</p>
                         </div>
                     </div>
                     <div>
@@ -49,9 +62,9 @@
                 <h2>Notities</h2>
                 <note v-for="note in notes" v-bind:key="note.id" v-bind:note="note"></note>
 
-                <b-btn id="popoverButton-sync" variant="primary" class="note-add-button btn btn-primary">
+                <md-button id="popoverButton-sync" class="note-add-button md-primary">
                     Notitie toevoegen
-                </b-btn>
+                </md-button>
                 <b-popover ref="popoverRef" target="popoverButton-sync" triggers="click blur" placement='top'>
                     <vue-tribute :options="mentionOptions" v-on:tribute-replaced="matchFound">
                         <textarea v-model="noteTextArea" class="form-control" id="textAreaForNotes" style="height:200px;width:250px;" placeholder="Voer uw opmerking in">
@@ -60,6 +73,34 @@
                     </vue-tribute>
                     <button @click="addNote" class="btn btn-primary" style="margin-top:10px">Verzenden</button>
                 </b-popover>
+
+                <md-content class="md-elevation-5" v-for="(data, plugin) in plugins">
+                    <md-card-header>
+                        <div class="md-title">
+                            {{plugin}}
+                        </div>
+                    </md-card-header>
+                    <md-list>
+                        <template v-for="(value, key) in data">
+                            <md-subheader>
+                                {{key}}
+                            </md-subheader>
+                            <md-list-item v-if="value.type === 'url'" target="__blank" :href="value.value">
+                                {{value.value}}
+                            </md-list-item>
+                            <div style="padding: 4px 16px; display: inline-block" v-else-if="value.type === 'text'">
+                                {{value.value}}
+                            </div>
+                            <md-list-item v-else-if="value.type === 'grade'">
+                                <md-badge class="md-avatar-icon md-primary" :md-content="value.value" />
+                                </md-list-item>
+
+                                <md-list-item v-else>
+                                    {{value.value}}
+                                </md-list-item>
+                        </template>
+                            </md-list>
+                    </md-content>
             </div>
         </div>
     </div>
@@ -106,6 +147,7 @@ export default {
             reply: '',
             messages: [],
             notes: [],
+            plugins: [],
             show: false,
             noteTextArea: "",
             course_tas: [],
@@ -113,9 +155,6 @@ export default {
         }
     },
     methods: {
-        goCourse(here) {
-            this.$router.push(here)
-        },
         getTicket() {
             const path = '/api/ticket/' + this.$route.params.ticket_id
             this.$ajax.get(path)
@@ -125,6 +164,12 @@ export default {
                 }).catch(error => {
                     console.log(error)
                 })
+        },
+        getPlugins() {
+            const path = '/api/ticket/' + this.$route.params.ticket_id + '/plugins'
+            this.$ajax.get(path, response => {
+                this.plugins = response.data.json_data
+            })
         },
         getMessages() {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
@@ -170,7 +215,8 @@ export default {
                     this.ticket.status.name = "closed"
                 })
 
-        },downloadFile(key, name){
+        },
+        downloadFile(key, name){
 
             const path = '/api/ticket/filedownload'
             this.$ajax.post(path, {address: key})
@@ -286,6 +332,7 @@ export default {
         this.getTicket()
         this.getMessages()
         this.getNotes()
+        this.getPlugins()
         this.$socket.emit('join-room', { room: 'ticket-messages-' + this.$route.params.ticket_id })
     },
     sockets: {
