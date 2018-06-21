@@ -43,25 +43,26 @@ import Router from 'vue-router';
             checkUser() {
                 this.$validator.validateAll().then((result) => {
                     if (result) {
-                        const path = '/auth'
-                        this.$ajax.post(path, {
-                            username: this.form.username,
-                            password: "JWT is cool!!!"
-                        }, response => {
-                            // TODO: Implement authentication on back-end to work with Canvas.
-                            window.$cookies.set('token', response.data.access_token)
-                            this.form.username = ''
-                            this.$ajax.get('/api/user/retrieve', response => {
-
-                                let params = this.$route.params
-                                let url = '/home'
-                                if (typeof params !== 'undefined' && typeof params.prev_url !== 'undefined' && params.prev_url !== '/')
-                                    url = params.prev_url
-                                if (this.$user.set(response.data.json_data.user))
-                                    this.$router.push(url)
-                                else
-                                    console.log("Can\'t set user.")
-                            })
+                        this.$auth.login({url: '/auth',
+                                        data: {username: this.form.username, password: "TickTech"},
+                                        success: function (response) {
+                                            this.$auth.token(null, response.data.access_token);
+                                            this.$auth.fetch({
+                                                params: {},
+                                                success: function () {
+                                                    this.$router.push('/home');
+                                                },
+                                                error: function (response_fetch) {
+                                                    console.error(response_fetch)
+                                                },
+                                            });
+                                        },
+                                        error: function (response) {
+                                            console.error(response)
+                                        },
+                                        rememberMe: true,
+                                        fetchUser: false,
+                                        // redirect: '/home',
                         })
                     }
                 })

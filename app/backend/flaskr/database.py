@@ -4,6 +4,7 @@ from datetime import datetime
 import os.path
 from sqlalchemy_utils import UUIDType
 import uuid
+from flaskr.config import EMAIL_FETCH_EMAIL, EMAIL_FETCH_PASSWORD
 
 db = SQLAlchemy()
 
@@ -18,7 +19,7 @@ class DatabaseInsertException(DatabaseException):
 
     def __init__(self, debug_message):
         super().__init__(debug_message)
-        self.response_message = response_message = ""
+        self.response_message = ""
 
 
 def init_db():
@@ -68,10 +69,10 @@ def populate_database_dummy_data():
     from flaskr.models import Course, user
     items = []
     course = Course.Course(id=uuid.uuid4(),
-                           course_email="uvapsetest@gmail.com",
+                           course_email=EMAIL_FETCH_EMAIL,
                            mail_server_url="pop.gmail.com",
                            mail_port="995",
-                           mail_password="stephanandrea",
+                           mail_password=EMAIL_FETCH_PASSWORD,
                            title="course 1",
                            description="Test")
 
@@ -92,19 +93,31 @@ def populate_database_dummy_data():
                       name="Test mctestie",
                       email="test@test.nl")
 
-    # !IMPORTANT! This is for the mail server - ask stephan
-    mail_server = user.User(id=9999999999,
-                            name="Mail server",
-                            email="Noreply@noreply.com")
+    user4 = user.User(id=10000,
+                      name="Supervisor",
+                      email="super@visor.nl")
 
-    items = [user1, user2, user3, mail_server, course, course2]
+    user5 = user.User(id=111111111,
+                      name="Test test",
+                      email="test@test.nl")
+
+    # !IMPORTANT! This is for the mail server - ask stephan
+    mail_server = user.User(id=107584259,
+                            name="Mail server",
+                            email="uvapsetest@gmail.com")
+
+    items = [user1, user2, user3, user5, mail_server, course, course2]
 
     for item in items:
         addItemSafelyToDB(item)
 
     try:
+        course.supervisors.append(user4)
+        course2.supervisors.append(user4)
         course.student_courses.append(user3)
         course2.student_courses.append(user3)
+        course.student_courses.append(user5)
+        course2.student_courses.append(user5)
         course.ta_courses.append(user1)
         course2.ta_courses.append(user2)
     except Exception as exp:
@@ -123,7 +136,7 @@ def addTicketStatus(name="Needs help"):
     try:
         addItemSafelyToDB(ts)
     except Exception as e:
-        print("oeps")
+        print(e)
 
 
 def addTicketLabel(ticked_id=uuid.uuid4(), course_id=uuid.uuid4(),
@@ -136,7 +149,7 @@ def addTicketLabel(ticked_id=uuid.uuid4(), course_id=uuid.uuid4(),
     try:
         addItemSafelyToDB(tl)
     except Exception as e:
-        print("oeps")
+        print(e)
 
 
 def addTicket(user_id=1, email="test@email.com", course_id=uuid.uuid4(),
