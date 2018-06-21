@@ -1,8 +1,9 @@
-from flaskr import database
+from flaskr import database, sockets
 from flaskr.models.Course import *
 from sqlalchemy_utils import UUIDType
 
 db = database.db
+socketio = sockets.get_socketio()
 
 association_table = db.Table('association', db.Model.metadata,
                              db.Column('left_id', db.Integer,
@@ -12,7 +13,6 @@ association_table = db.Table('association', db.Model.metadata,
 
 
 class User(db.Model):
-
     """
     Een user.
     """
@@ -46,3 +46,32 @@ class User(db.Model):
         Niet nodig.
         """
         pass
+
+    def notify(self, notification):
+        """
+        Sends a message to this user in a private websocket.
+        """
+        print("Notifying {}".format(self.name))
+        print("Message: {}".format(notification))
+        print("Room: {}".format("user-{}".format(self.id)))
+        socketio.emit('message', notification,
+                      room="user-{}".format(self.id))
+
+    def read_message(self, message):
+        """
+        Mark given message as read.
+        """
+        if message in self.unread:
+            self.unread.remove(message)
+        db.session.add(self)
+        db.session.commit()
+
+    def read_messages(self, messages):
+        """
+        Mark all messages in :messages: as read.
+        """
+        for message in messages:
+            if message in self.unread:
+                self.unread.remove(message)
+        db.session.add(self)
+        db.session.commit()

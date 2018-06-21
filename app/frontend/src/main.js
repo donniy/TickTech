@@ -10,11 +10,15 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import './assets/scss/style.scss'
 import VueCookies from 'vue-cookies'
 import VueScrollTo from 'vue-scrollto'
+import VueMaterial from 'vue-material'
+import 'vue-material/dist/vue-material.min.css'
+import 'vue-material/dist/theme/default.css'
 import axios from 'axios'
 import VueAxios from 'vue-axios';
 import VueAuth from '@websanova/vue-auth'
 import JWTHeader from './components/jwtHeader'
 
+Vue.use(VueMaterial)
 Vue.use(VueAxios, axios);
 Vue.use(VeeValidate);
 Vue.use(VueScrollTo);
@@ -22,6 +26,7 @@ Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 Vue.use(VueSocketio, 'http://' + document.domain + ':' + location.port)
 Vue.use(VueTextareaAutosize)
+
 
 function handle_ajax_error(error) {
   console.warn(error);

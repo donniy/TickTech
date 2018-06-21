@@ -21,6 +21,14 @@ const routerOptions = [
         }
     },
     {
+        path: '/homer',
+        name: 'userhomer',
+        component: 'UserHomer',
+        meta: {
+            breadcrumb: 'Home'
+        }
+    },
+    {
         path: '/course/:course_id',
         name: 'CourseTickets',
         component: 'CourseTickets',
@@ -48,6 +56,14 @@ const routerOptions = [
             breadcrumb: 'Create Ticket',
             pre: '/home',
             auth: true
+        },
+    },
+    {
+        path: '/ticket/submiter/',
+        name: 'SubmitTicketer',
+        component: 'StudentFormer',
+        meta: {
+            breadcrumb: 'Create Ticket'
         },
     },
     {

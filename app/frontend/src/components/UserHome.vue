@@ -2,7 +2,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                <h2 style="text-align:center;">Homepage for {{ $user.get().name }}</h2>
+                <h2 style="text-align:center;">Welcome back {{ $user.get().name }} :)</h2>
                 <br />
                 <hr style="width: 20%;">
                 <br />
@@ -15,6 +15,7 @@
                 </div>
                 <router-link style="float:right;" to="/settings">Settings</router-link>
                 <router-link style="float:right;" to="/ticket/submit">Create ticket</router-link>
+                <router-link style="float:right;" to="/user/tickets">All tickets</router-link>
             </div>
             <div class="col-lg-4 text-center" v-if="isTA">
                 <h5>TA Courses</h5>
@@ -70,6 +71,9 @@
             created() {
                 this.status = 'created'
                 this.getCourses()
+                this.$ajax.get('/api/user/notifications', (response) => {
+                    console.log(response.data.json_data)
+                })
             }
         },
         mounted: function () {

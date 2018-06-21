@@ -26,13 +26,19 @@ h1 {
 
 .second-background-image {
     background-image: url(../trianglify.svg);
-    background-size: 100%;
-    background-position: center;
-    min-height: 100vh;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
+    background-position: center center;
+    height: 100vh;
+    position: fixed;
+    overflow: scroll;
+    top: 0;
+    left: 0;
+}
+
+@media screen and (max-width: 1024px) { /* Specific to this particular image */
+  second-background-image {
+    left: 50%;
+    margin-left: -512px;   /* 50% */
+  }
 }
 
 .navbar {
@@ -79,6 +85,7 @@ nav {
     color: white;
 }
 
+
 .home-left {
     margin-left: 35vh;
 }
@@ -98,6 +105,84 @@ nav {
     padding: 18px;
     border-radius: 4px;
     box-shadow: $medium-shadow;
+}
+
+// Item attachment style (for form)
+.file-add-text {
+    color: $text-color-def;
+    cursor: pointer;
+    font-size: 1.2em;
+    text-align: left;
+}
+
+.file-add-text:hover {
+    text-decoration: underline;
+    color: $text-color-dark;
+}
+
+.file-add-icon {
+    color: $text-color-def;
+    cursor: pointer;
+    font-size: 1.2em;
+    vertical-align: sub;
+}
+
+.file-name-container {
+    line-height: 1.1em;
+    box-shadow: $medium-shadow;
+    font-size: 1.1em;
+    border-color: lighten(#bc0031, 5%);
+    border: 1px;
+    margin-bottom: 10px;
+}
+
+.file-name-container-small {
+    box-shadow: $medium-shadow;
+    font-size: 0.9em;
+    border-color: lighten(#bc0031, 5%);
+    border: 1px;
+    margin-bottom: 5px;
+}
+
+.download-icon{
+    vertical-align: text-bottom;
+}
+
+.file-listing-small {
+    cursor: pointer;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+    padding-left: 10px;
+    color: $text-color-def;
+}
+.file-listing-small:hover {
+    background-color: darken(#FFF, 5%);
+    color: $text-color-dark
+}
+
+.file-listing {
+    padding-bottom: 5px;
+    padding-left: 10px;
+    color: $text-color-def;
+}
+
+.file-listing:hover {
+    background-color: darken(#FFF, 5%);
+}
+.light-stripe {
+    padding-left: 0px;
+    width: 95%;
+    color: $text-color-lighter;
+    font-size: 1px;
+    margin: 2px;
+}
+
+.file-remove-icon {
+    color: $default-red;
+    text-align: right;
+    cursor:pointer;
+    float: right;
+    padding-right: 15px;
 }
 
 .form-text {
@@ -126,10 +211,15 @@ nav {
 
 
     &:hover {
-        background: lighten(#bc0031, 5%);
-        border-color: lighten(#bc0031, 5%);
+        background: lighten($default-red, 5%);
+        border-color: lighten($default-red, 5%);
         color: #fff;
     }
+}
+
+.hidden-input{
+    position: absolute;
+    top: -500px;
 }
 
 .btn-arrow {
@@ -396,13 +486,28 @@ div.homescreen-container {
     float: right;
 }
 
+.box__dragndrop,
+.box__uploading,
+.box__success,
+.box__error {
+  display: none;
+}
+.box.has-advanced-upload {
+  background-color: white;
+  outline: 2px dashed black;
+  outline-offset: -10px;
+}
+.box.has-advanced-upload .box__dragndrop {
+  display: inline;
+}
+
 .list-ticket {
-    padding: 18px 24px;
+    padding: 10px;
     background: #FFF;
     display: block;
     box-shadow: 0 2px 4px 0 rgba(50,50,93,.1);
-    margin-bottom: 1em;
-    color: $default-red;
+    margin-bottom: 0.5em;
+    color: $text-color-dark;
     transition: transform 0.1s ease-in-out;
 }
 
@@ -509,7 +614,6 @@ a.list-ticket:hover, a.list-ticket:focus {
     bottom: 1em;
     display: block;
     margin-top: 2em;
-    margin-bottom: 4em;
 }
 
 .reply-area {
@@ -523,8 +627,8 @@ a.list-ticket:hover, a.list-ticket:focus {
     }
 
     .reply-button {
-        margin-left: 2rem;
         height: 4rem;
+        margin-bottom: 20px;
         width: 4rem;
         text-align: center;
         line-height: 4rem;
@@ -690,18 +794,18 @@ footer:hover {
 }
 
 hr {
-       padding: 0;
-       margin: 8px auto;
-       height: 0;
-       width: 50%;
-       max-height: 0;
-       font-size: 2px;
-       line-height: 0;
-       clear: both;
-       border: none;
-       border-top: 2px solid #aaaaaa;
-       border-bottom: 1px solid #ffffff;
-    }
+   padding: 0;
+   margin: 8px auto;
+   height: 0;
+   width: 50%;
+   max-height: 0;
+   font-size: 2px;
+   line-height: 0;
+   clear: both;
+   border: none;
+   border-top: 2px solid #aaaaaa;
+   border-bottom: 1px solid #ffffff;
+}
 
 .dashboard-button {
     background: #FFF;
@@ -714,4 +818,59 @@ hr {
     transition: transform 0.1s ease-in-out;
     height: 180px;
     width: 180px;
+}
+
+.wrapper {
+    min-height: 100vh;
+}
+
+.welcome-header {
+    padding: 5vh;
+    justify-content: center;
+}
+
+.center-display {
+    justify-content: center;
+    text-align: center;
+}
+
+.margin-top {
+    margin-top: 10vh;
+}
+
+.notification-section {
+    min-height: 40vh;
+    max-height: 40vh;
+    overflow: auto;
+}
+
+.courses-section {
+    max-height: 65vh;
+    min-height: 65vh;
+    overflow: auto;
+}
+
+.single-course {
+    color: green!important;
+    background-color: white;
+}
+
+.create-ticket-section1 {
+    margin-top: 5vh;
+}
+
+.create-ticket-section2 {
+    min-height: 20vh;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.create-ticket-section:hover {
+    cursor: pointer;
+}
+
+.fixedlocation {
+    position: fixed;
+    float: right;
 }
