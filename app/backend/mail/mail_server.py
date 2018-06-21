@@ -83,7 +83,7 @@ def parse_email(bytes_email):
         else:
             print("Not multipart and  not plain")
 
-    print("BODY!!!",body)
+    print("BODY!!!", body)
     if body == '':
         body += html2text.html2text(html)
         print("body was empty", body)
@@ -239,7 +239,6 @@ def check_mail(host, port, user, password, courseid):
             if (result.status_code != 201):
                 print("Something went wrong creating a"
                       "new ticket from an email.")
-                # print(result.text)
                 print("******")
                 print("Sender: " + str(sender) + "\nStudentid: " +
                       str(studentid) + "\nEmail: " + str(address) +
@@ -247,8 +246,6 @@ def check_mail(host, port, user, password, courseid):
                 print("Course ID: ", courseid)
                 print("Label ID: ", labelid, "\n\n")
                 print("Body: " + body)
-            # else:
-            #     print(result.text)
 
     # Somehow makes you up-to-date with server
     # disable this when debugging

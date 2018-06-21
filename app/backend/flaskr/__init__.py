@@ -174,7 +174,7 @@ def create_app(test_config=None):
         if (MailThread.exist_thread_email(email)):
             if thread is None:
                 emit('setup-email',
-                    {'result': 'fail', 'data': 'Email already exists'})
+                     {'result': 'fail', 'data': 'Email already exists'})
                 return
 
         try:
