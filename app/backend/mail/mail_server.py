@@ -164,9 +164,12 @@ def retrieve_labels(courseid):
     return labels
 
 
-def check_mail(host, port, user, password, courseid):
+def check_mail(host, port, user, password, courseid, debug=0):
     '''
     Start a mail server and sync all emails once.
+
+    Set debug to anything but 0 to enable debugging. This will make sure
+    emails will keep comming in.
     '''
     # connect
     server = connect(host, port, user, password)
@@ -249,7 +252,8 @@ def check_mail(host, port, user, password, courseid):
 
     # Somehow makes you up-to-date with server
     # disable this when debugging
-    # server.quit()
+    if (debug == 0):
+        server.quit()
     return 0
 
 
