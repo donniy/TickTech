@@ -7,12 +7,7 @@
         <form class="md-layout center-display" v-on:submit.prevent="sendTicket">
             <md-card class="md-layout-item md-size-50 md-small-size-100">
                 <md-card-content>
-                    <md-avatar>
-                        <i class="material-icons">
-                            info
-                        </i>
-                            <md-tooltip md-delay="200" md-direction="right">This submit form is used for creating tickets.</md-tooltip>
-                    </md-avatar>
+
                     <md-field>
                         <label for="subject">Subject</label>
                         <md-input id="subject" v-validate="'required|max:50'" name="subject" v-model="form.subject" type="text" />
