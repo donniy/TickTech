@@ -53,7 +53,7 @@ def create_app(test_config=None):
     app.config['MAIL_USE_SSL'] = True
     app.config['MAIL_USE_TLS'] = False
     app.config['MAIL_USERNAME'] = 'tiktech.noreply@gmail.com'
-    app.config['MAIL_PASSWORD'] = 'makethehomescreengreatagain'
+    app.config['MAIL_PASSWORD'] = ''
     app.config['MAIL_DEFAULT_SENDER'] = 'ticktech.noreply@gmail.com'
     Mail(app)
 
@@ -162,8 +162,6 @@ def create_app(test_config=None):
     @socketio.on('setup-email')
     def setup_mail(data):
         emit('setup-email', {'result': 'update', 'data': "recieved data"})
-        print("recieve data")
-        print(data)
         email = data['email']
         password = data['password']
         port = data['port']
@@ -171,24 +169,19 @@ def create_app(test_config=None):
         course_id = data['course_id']
         sleeptime = 60
 
-        print("Check if mail exists")
+        thread = MailThread.exist_thread_courseid(course_id)
         if (MailThread.exist_thread_email(email)):
-            print("mail exists")
-            emit('setup-email',
-                 {'result': 'fail', 'data': 'Email already exists'})
-            return
-        else:
-            print("mail does not exists")
+            if thread is None:
+                emit('setup-email',
+                    {'result': 'fail', 'data': 'Email already exists'})
+                return
 
         try:
             test_connection = poplib.POP3_SSL(server, port)
-            print(test_connection)
             test_connection.user(email)
             test_connection.pass_(password)
             test_connection.quit()
-            print("Succesfull test connection")
         except (poplib.error_proto) as msg:
-            print("failed")
             message = msg.args[0].decode('ascii')
             emit('setup-email', {'result': 'fail', 'data': message})
             return
@@ -197,20 +190,15 @@ def create_app(test_config=None):
             emit('setup-email', {'result': 'fail', 'data': message})
             return
 
-        thread = MailThread.exist_thread_courseid(course_id)
         if (thread is None):
-            print("create new thread")
             new_thread = MailThread(sleeptime, server, port, email, password,
                                     course_id)
             new_thread.setName(course_id)
             new_thread.start()
-            print("created")
         else:
-            print("Thread already exists, update")
             thread.update(sleep_time=sleeptime, server=server, port=port,
                           email=email, password=password)
 
-        print("add database")
         course = Course.Course.query.get(course_id)
         course.course_email = email
         course.mail_password = password
@@ -220,7 +208,6 @@ def create_app(test_config=None):
             emit('setup-email', {'result': 'fail', 'data': 'database error'})
             return
 
-        print("wait for response")
         emit('setup-email', {'result': 'succes'})
         return
 

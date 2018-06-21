@@ -71,7 +71,7 @@ def populate_database_dummy_data():
                            course_email="uvapsetest@gmail.com",
                            mail_server_url="pop.gmail.com",
                            mail_port="995",
-                           mail_password="stephanandrea",
+                           mail_password="",
                            title="course 1",
                            description="Test")
 
