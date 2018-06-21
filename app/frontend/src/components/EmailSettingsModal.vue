@@ -28,7 +28,7 @@
                             </form>
                             <div class="row">
                                 <div class="col-sm-4">
-                                    <button type="submit" class="btn btn-primary" v-on:click="changeClose">
+                                    <button type="submit" class="btn btn-primary" v-on:click="newEmailSettings">
                                         {{ button.text }}
                                     </button>
                                 </div>
@@ -101,12 +101,12 @@
                 }
                 return true
             },
-            changeClose() {
+            newEmailSettings() {
                 this.error.show = false
                 this.error.text = ''
                 const path = '/api/email'
                 if (this.checkForm()) {
-                    console.log("i will now emit")
+                    console.log("i will  emit")
                     this.isLoading = true
                     this.$socket.emit('setup-email', {
                         email: this.form.email,
