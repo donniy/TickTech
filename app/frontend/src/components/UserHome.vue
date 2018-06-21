@@ -30,7 +30,7 @@
                                     <md-list-item :to="{name: (notification.ta ? 'SingleTicket' : 'StudentTicket'), params: {ticket_id: notification.ticket.id}}">
                                         <div class="md-list-item-text">
                                             <span>{{notification.ticket.title}}</span>
-                                            <span>Je krijgt geen hoger cijfer</span>
+                                            <span>{{notification.ticket.message}}</span>
                                         </div>
                                         <md-badge class="md-primary" :md-content="notification.n" />
 
@@ -70,18 +70,17 @@
         },
         methods: {
             getCourses() {
+                let courses_ta_in = Object.keys(this.$user.get().ta).length
+                if (courses_ta_in == 0) {
+                    this.courses = [];
+                    this.isTA = false;
+                    return;
+                }
                 this.status = 'getting courses'
-                this.$ajax.get('/api/courses')
-                    .then(response => {
-                        this.courses = response.data.json_data
-                        this.status = 'Retrieved data'
-                        console.log(response)
-                    })
-                    .catch(error => {
-                        console.log(error)
-                        this.status = 'failed getting courses'
-                    })
+                this.courses = [this.$user.get().ta]
+                this.isTA = true;
             },
+
             getTodos () {
                 this.$ajax.get('/api/user/notifications', response => {
                     console.log(response.data.json_data)
