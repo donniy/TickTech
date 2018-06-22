@@ -97,7 +97,7 @@ import addUsersModel from './addUsersModel.vue'
 export default {
     data () {
         return {
-            search: null,
+            search: "",
             searched: [],
             ticketSum: 0,
             tickets: [],
@@ -132,7 +132,9 @@ export default {
                 this.$router.push("/ticket/" + item)
             },
         searchOnTable () {
-            this.searched = searchByName(this.tickets, this.search)
+            if (length(this.tickets) > 0) {
+                this.searched = searchByName(this.tickets, this.search)
+            }
         },
         getTickets() {
             this.status = 'getting tickets'
