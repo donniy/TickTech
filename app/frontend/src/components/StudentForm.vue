@@ -33,11 +33,11 @@
                     </div>
 
                     <div class="padding-left-10">
-                        <p class="def-error-msg float-left" v-show="fileTooLarge">
+                        <p class="def-error-msg" v-show="fileTooLarge">
                             Too large a file detected
                         </br>
                         </p>
-                        <p class="def-error-msg float-left" v-show="fileTooMany">
+                        <p class="def-error-msg" v-show="fileTooMany">
                             Too many files detected
                         </br>
                         </p>

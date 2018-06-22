@@ -1,9 +1,9 @@
 <template>
     <div class="container">
         <div class="md-layout welcome-header">
-            <h2>Welcome back {{ $user.get().name }} :)</h2>
+            <h2>Welcome back {{ $user.get().name }}</h2>
         </div>
-        <div class="md-layout md-gutter wrapper">
+        <div class="md-layout md-gutter wrapper md-size-20 md-small-size-100">
             <div class="md-layout-item" v-if="isTA">
                 <md-content class="md-elevation-5">
                         <md-subheader>Courses</md-subheader>
@@ -25,7 +25,7 @@
                         <md-content class="md-scrollbar courses-section">
                         <md-list class="md-triple-line">
 
-                            <course v-for="ticket in tickets" v-bind:key="ticket.title" v-bind:course="ticket"></course>
+                            <ticket v-for="ticket in tickets" v-bind:key="ticket.id" v-bind:ticket="ticket"></ticket>
 
                         </md-list>
                         </md-content>
@@ -38,8 +38,8 @@
                         <md-subheader>Notifications</md-subheader>
 
                         <md-content class="md-scrollbar notification-section">
-                            <p style="padding-left: 16px;" v-if="tickets.length < 1">No notifications</p>
                             <template v-for="notification in notifications">
+                                <p style="padding-left: 16px;" v-if="tickets.length < 1">No notifications</p>
                                 <md-ripple>
                                     <md-list-item :to="{name: (notification.ta ? 'SingleTicket' : 'StudentTicket'), params: {ticket_id: notification.ticket.id}}">
                                         <div class="md-list-item-text">
@@ -72,6 +72,7 @@
 <script>
 
     import Course from './Course.vue'
+    import Ticket from './Ticket.vue'
 
     export default {
         data() {
@@ -124,9 +125,11 @@
             if (!this.$user.logged_in()) {
                 this.$router.push('/login')
             }
+            console.log(this.notification)
         },
         components: {
             'course': Course,
+            'ticket': Ticket
         }
     }
 </script>
