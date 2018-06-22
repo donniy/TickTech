@@ -1,6 +1,7 @@
 from datetime import datetime
 from flaskr import database
 from sqlalchemy_utils import UUIDType
+from config import Config
 
 db = database.db
 
@@ -72,13 +73,13 @@ class Message(db.Model):
         """
         String variant of message type.
         """
-        if self.n_type == NTFY_TYPE_MESSAGE:
+        if self.n_type == Config.NTFY_TYPE_MESSAGE:
             return 'Message'
-        elif self.n_type == NTFY_TYPE_STATUS:
+        elif self.n_type == Config.NTFY_TYPE_STATUS:
             return 'StatusMessage'
-        elif self.n_type == NTFY_TYPE_CLOSED:
+        elif self.n_type == Config.NTFY_TYPE_CLOSED:
             return 'ClosedMessage'
-        elif self.n_type == NTFY_TYPE_NEW:
+        elif self.n_type == Config.NTFY_TYPE_NEW:
             return 'NewTicketMessage'
 
     @property

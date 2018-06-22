@@ -1,5 +1,4 @@
 from email.header import decode_header
-from time import sleep
 import email
 import poplib
 import requests
@@ -24,9 +23,10 @@ def connect(host, port, user, password):
     except (poplib.error_proto) as msg:
         print(msg)
         return None
-    except socket.gaierror as msg:
-        print(msg)
-        return None
+    # what does this even do? socket is unknown
+    # except socket.gaierror as msg:
+    #     print(msg)
+    #     return None
     except OSError as msg:
         print(msg)
         return None
