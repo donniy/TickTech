@@ -120,6 +120,8 @@ def populate_database_dummy_data():
         course2.student_courses.append(user5)
         course.ta_courses.append(user1)
         course2.ta_courses.append(user2)
+        course.ta_courses.append(user4)
+        course2.ta_courses.append(user4)
     except Exception as exp:
         db.session.rollback()
         print(exp)

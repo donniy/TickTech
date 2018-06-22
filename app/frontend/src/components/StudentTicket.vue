@@ -34,7 +34,7 @@
     export default {
         data() {
             return {
-                ticket: { title: '', status: { name: '' }, course_id: '' },
+                ticket: { title: '', status: { name: '' }, course_id: '', files: []},
                 reply: '',
                 messages: [],
                 ret_url: '',

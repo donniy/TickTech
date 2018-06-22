@@ -117,7 +117,7 @@ Vue.prototype.$ajax = {
     let axios_csrf = axios.create({
       headers: hdr
     });
-    return axios_csrf.put(url, data).then(f).catch(handle_ajax_error)
+    return axios_csrf.patch(url, data).then(f).catch(handle_ajax_error)
   },
 }
 

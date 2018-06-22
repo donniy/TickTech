@@ -98,3 +98,18 @@ class Course(db.Model):
         for now a ValueError().
         """
         pass
+
+
+class CoursePlugin(db.Model):
+    """
+    Keeps track of enabled plugins for each course.
+    """
+    id = db.Column(UUIDType(binary=False), primary_key=True)
+    plugin = db.Column(db.String(255), unique=False, nullable=False)
+    active = db.Column(db.Boolean, unique=False, nullable=False, default=False)
+    course_id = db.Column(UUIDType(binary=False), db.ForeignKey(
+        'course.id'), nullable=False, default='asdf')
+
+    course = db.relationship('Course', lazy=True, backref=db.backref('plugins'))
+
+    # TODO: Add settings

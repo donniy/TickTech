@@ -20,3 +20,6 @@ def plugin_list():
 
 def get_plugin(p):
     return plugin_source.load_plugin(p)
+
+def get_plugin_name(p):
+    return get_plugin(p).display_name
