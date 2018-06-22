@@ -1,7 +1,6 @@
-import pytest
-import json
-from flaskr.database import get_db
-from flaskr.tests.utils import *
+from flaskr.tests.utils import create_course, create_user, \
+    create_ticket, link_ta_to_course, login
+import uuid
 
 
 def test_get_single_course(app, client):
@@ -52,6 +51,18 @@ def test_get_course_tickets(app, client):
     print(json_data2)
     assert len(json_data2['json_data']) == 1
     assert rv2.status == "200 OK"
+
+
+def test_get_course_tickets_empty(client):
+    """
+    Database should be empty so no tickets should be returned.
+    """
+    rv = client.get('/api/courses')
+    cid = rv.get_json()['json_data'][0]['id']
+    tickets = client.get('/api/courses/{}/tickets'.format(cid))
+    assert tickets.status == '200 OK'
+    print(tickets.get_json())
+    assert len(tickets.get_json()['json_data']) == 0
 
 
 def test_create_new_course(app, client):
