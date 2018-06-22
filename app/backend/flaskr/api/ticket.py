@@ -66,8 +66,10 @@ def retrieve_plugins(ticket_id):
     ticketObj = Ticket.query.get_or_404(ticket_id)
     # TODO: For now this returns all available plugins.
     pls = {}
-    for p in plugins.plugin_list():
-        pl = plugins.get_plugin(p)
+    for p in ticketObj.course.plugins:
+        if not p.active:
+            continue
+        pl = plugins.get_plugin(p.plugin)
         pls[pl.display_name] = pl.get_assignment_info(ticketObj.owner.id, 123)
     return Iresponse.create_response(pls, 200)
 

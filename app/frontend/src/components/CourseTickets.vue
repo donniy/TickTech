@@ -45,16 +45,7 @@
                                     <md-list>
                                         <md-subheader>Plugins</md-subheader>
 
-                                        <template v-for="(plugin, pid) in plugins">
-                                            <md-list-item>
-                                                <span class="md-list-item-text">{{plugin.name}}</span>
-                                                <md-switch v-model="plugin.active" @change="updatePluginState(pid)" />
-                                            </md-list-item>
-                                            <md-list-item @click="" v-if="plugin.active">
-                                                <md-icon>settings</md-icon>
-                                                <span class="md-list-item-text">Configure</span>
-                                            </md-list-item>
-                                        </template>
+                                        <plugin :key="pid" v-for="(plugin, pid) in plugins" :plugin="plugin" :pid="pid" />
                                     </md-list>
                                 </md-content>
                             </template>
@@ -106,6 +97,7 @@ const toLower = text => {
     import SumModal from './TicketSummary.vue'
     import EmailModal from './EmailSettingsModal.vue'
     import addUsersModel from './addUsersModel.vue'
+    import PluginsListItem from './PluginsListItem.vue'
 
     export default {
         data() {
@@ -287,6 +279,7 @@ const toLower = text => {
             'emodal': EmailModal,
             'summodal': SumModal,
             'addusers': addUsersModel,
+            'plugin': PluginsListItem,
         },
         created: function () {
             this.emailRunning()
