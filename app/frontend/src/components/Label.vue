@@ -1,3 +1,4 @@
+<!-- Label.vue implements everything label-related, such as selecting, adding and removing them. -->
 <template>
     <div>
         <div class="label">
@@ -5,11 +6,10 @@
                 <i class="material-icons"> close </i>
             </button>
 
-            <button class="label-name" v-bind:class="{'label-name-selected': isSelected}" data-toggle="tooltip" @click="clickLabel" title="Select to receive tickets from this label ">
+            <button class="label-name" v-bind:class="{'label-name-selected': isSelected}" data-toggle="tooltip" @click="clickLabel" title="Select to receive tickets from this label.">
                 <h3>{{label.label_name}}</h3>
             </button>
         </div>
-
         <modal v-if="showModal" warning="Are you sure you want to remove this label?" @yes="closeLabel()" @close="showModal = false"></modal>
     </div>
 </template>
@@ -26,27 +26,32 @@
             }
         },
         methods: {
+            // Remove the current selected label.
             closeLabel() {
                 const path = '/api/labels/' + this.label.label_id + '/close'
                 this.$ajax.post(path, response => { this.showModal = false })
                 this.$parent.getLabels()
             },
+            // Change selection of labels based on mouseclick.
             clickLabel() {
                 if (this.isSelected)
                     this.deselectLabel()
                 else
                     this.selectLabel()
             },
+            // Select current label.
             selectLabel() {
                 const path = '/api/labels/' + this.label.label_id + '/select'
                 this.$ajax.post(path, { user_id: this.$user.get().id })
                 this.isSelected = true
             },
+            // Deselect current label.
             deselectLabel() {
                 const path = '/api/labels/' + this.label.label_id + '/deselect'
                 this.$ajax.post(path, { user_id: this.$user.get().id })
                 this.isSelected = false
             },
+            // Check what labels are selected.
             checkSelected() {
                 const path = '/api/labels/' + this.label.label_id + '/selected'
                 this.$ajax.post(path, { user_id: this.$user.get().id }, response => {

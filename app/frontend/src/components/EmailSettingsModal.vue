@@ -1,3 +1,4 @@
+<!-- EmailSettingsModal.vue shows the form to add an email server to a course. -->
 <template>
     <transition name="modal">
         <div class="modal-mask">
@@ -6,23 +7,17 @@
                     <div class="modal-body">
                         <slot name="body">
                             <h1>{{warning}}</h1>
-                            <!--Student name and number  -->
                             <form @submit.prevent="handleSubmit">
                                 <div class="form-group">
                                     <input type="hidden" name="course_id" v-model="form.course_id" />
-
                                     <label for="email">Email address</label>
                                     <input id="email" class="form-control" name="email" v-model="form.email" v-validate="'required|min:1'" type="email" placeholder="email@example.com">
-
                                     <label for="category">Password</label>
                                     <input id="password" class="form-control" name="password" v-model="form.password" v-validate="'required|min:1'" type="password">
-
                                     <label for="pop">Pop3 settings</label>
                                     <input class="form-control" id="pop" name="pop" v-model="form.pop" v-validate="'required|min:1'" type="text" placeholder="pop.example.com">
-
                                     <label for="port">Port</label>
                                     <input id="port" class="form-control" name="port" v-model="form.port" v-validate="'required|min:1'" type="text" placeholder="995">
-
                                     <p for="error" class="def-error-msg subheading-middle" v-show="error.show">{{error.text}}</p>
                                 </div>
                             </form>
@@ -80,33 +75,39 @@
             };
         },
         methods: {
+            // Checks if all required information is entered correctly.
             checkForm: function () {
                 this.error.text = ''
-                if (this.form.password == "") this.error.text = ("Password required.");
-                if (this.form.pop == "") this.error.text = ("Server required.");
-                if (this.form.port == "") this.error.text = ("Port required.");
+
+                if (this.form.password == "") this.error.text = ("Password required.")
+                if (this.form.pop == "") this.error.text = ("Server required.")
+                if (this.form.port == "") this.error.text = ("Port required.")
+
                 if (this.form.email == "") {
-                    this.error.text = ("Email required.");
+                    this.error.text = ("Email required.")
                 }
                 else {
-                    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                    // Pattern matching for email address.
+                    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
                     if (!re.test(this.form.email)) {
-                        this.error.text = "Valid email required"
+                        this.error.text = "This is not a vaild email address."
                     }
 
                 }
+
                 if (this.error.text != '') {
                     this.error.show = true
                     return false
                 }
+
                 return true
             },
+            // Add the email server.
             newEmailSettings() {
                 this.error.show = false
                 this.error.text = ''
                 const path = '/api/email'
                 if (this.checkForm()) {
-                    console.log("i will  emit")
                     this.isLoading = true
                     this.$socket.emit('setup-email', {
                         email: this.form.email,
@@ -116,7 +117,6 @@
                         course_id: this.form.course_id
                     })
                 }
-                console.log("emitted")
             },
             stopThread() {
                 const path = '/api/email/stop'
@@ -153,7 +153,6 @@
                     if (response.data.json_data.running) {
                         this.button.text = "Update"
                         this.isRunning = true
-
                     }
                 }
 
@@ -164,6 +163,7 @@
             })
         },
         sockets: {
+            // Retrieve emails.
             'setup-email': function (data) {
                 if (data.result != "update") {
                     this.isLoading = false
@@ -171,19 +171,21 @@
                 else {
                     console.log(data.data)
                 }
-                console.log("recieve data")
+
+                // TODO: Double check this.
+                console.log("Receive data")
                 console.log(data)
                 console.log(data.result)
                 if (data.result == 'succes') {
-                    console.log("SUCCES")
+                    console.log("SUCCESS.")
                     this.$parent.showEmailModal = false
                 }
                 if (data.result == 'fail') {
-                    console.log('fail')
+                    console.log("FAILED.")
                     this.error.show = true
                     this.error.text = data.data
                 }
-                console.log("finished")
+                console.log("FINISHED.")
             }
         },
         components: {
