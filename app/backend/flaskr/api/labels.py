@@ -1,5 +1,4 @@
 from flaskr import database, Iresponse, request
-from flaskr.models.ticket import TicketLabel
 from flaskr.models.Label import Label
 from flaskr.models.Course import Course
 from flaskr.models.user import User

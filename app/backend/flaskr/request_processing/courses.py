@@ -28,3 +28,14 @@ def retrieve_course_tickets_request(course_id):
         return Iresponse.create_response("", 404)
 
     return Iresponse.create_response(database.serialize_list(tickets), 200)
+
+
+def single_course_request(course_id):
+    course = Course.query.filter_by(id=uuid.UUID(course_id)).first()
+    return course
+
+
+def get_tas_by_label(label_id):
+    tas = User.query.filter_by(labels=label_id).all()
+    print(tas)
+    return tas

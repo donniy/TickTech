@@ -1,20 +1,35 @@
 <template>
-	<router-link :to="base_url + ticket.id" class="list-ticket">
-		<h3>{{ticket.title}}</h3> Status: {{ticket.status.name}} - Gesteld door: {{ticket.user_id}}
-	</router-link>
+    <router-link class="ticket-single" :to="base_url + ticket.id">
+        <md-ripple>
+    	<h6>{{ticket.title}}</h6>
+        In course: {{course}}</br>
+        Status: {{ticket.status.name}} </br>
+        Time: {{ticket.timestamp}}
+    </md-ripple>
+    </router-link>
 </template>
 
 <script>
 	export default {
 		props: {
 			ticket: Object,
+            course: '',
 			base_url: {
 				type: String,
-				default: "/ticket/"
+				default: "/student/ticket/"
 			}
 		},
 		data: function () {
 			return {}
-		}
+		}, methods: {
+            getCourse() {
+                const path = '/api/courses/single/' + this.ticket.course_id
+                this.$ajax.get(path, response => {
+                    this.course = response.data.json_data['title']
+                })
+            }
+        }, mounted() {
+            this.getCourse()
+        }
 	}
 </script>

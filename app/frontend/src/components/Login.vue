@@ -1,25 +1,25 @@
 <template>
-    <section>
-        <h1>Login</h1>
+    <div>
+        <h2 class="form-header center-display">Demo login</h2>
 
-        <section>
-            <!--Student name and number  -->
-            <form v-on:submit.prevent="checkUser">
-                <div class="form-group">
+        <form class="md-layout center-display" v-on:submit.prevent="checkUser">
+            <md-card class="md-layout-item md-size-50 md-small-size-100">
+                <md-card-content>
+
+                    <md-field>
                     <label for="studentnumber">Student ID</label>
-                    <input class="form-control" id="studentid" name="studentid" v-model="form.username" v-validate="'required'" type="number"
-                        placeholder="Student ID">
+                    <md-input class="form-control" id="studentnumber" name="studentnumber" v-model="form.username" v-validate="'required'" type="number"/>
                     <div v-show="errors.has('studentid')" class="invalid-feedback">
                         {{ errors.first('studentid') }}
                     </div>
-                </div>
-
-                <button class="btn btn-primary">
-                    Submit
-                </button>
-            </form>
-        </section>
-    </section>
+                    <md-button type="submit" v-bind:disabled="errors.any()">
+                        Submit
+                    </md-button>
+                </md-field>
+            </md-card-content>
+        </md-card>
+    </form>
+    </div>
 </template>
 
 
@@ -43,25 +43,27 @@ import Router from 'vue-router';
             checkUser() {
                 this.$validator.validateAll().then((result) => {
                     if (result) {
-                        const path = '/auth'
-                        this.$ajax.post(path, {
-                            username: this.form.username,
-                            password: "JWT is cool!!!"
-                        }, response => {
-                            // TODO: Implement authentication on back-end to work with Canvas.
-                            window.$cookies.set('token', response.data.access_token)
-                            this.form.username = ''
-                            this.$ajax.get('/api/user/retrieve', response => {
-
-                                let params = this.$route.params
-                                let url = '/home'
-                                if (typeof params !== 'undefined' && typeof params.prev_url !== 'undefined' && params.prev_url !== '/')
-                                    url = params.prev_url
-                                if (this.$user.set(response.data.json_data.user))
-                                    this.$router.push(url)
-                                else
-                                    console.log("Can\'t set user.")
-                            })
+                        this.$auth.login({url: '/auth',
+                                        data: {username: this.form.username, password: "TickTech"},
+                                        success: function (response) {
+                                            this.$auth.token(null, response.data.access_token);
+                                            this.$auth.fetch({
+                                                params: {},
+                                                success: function () {
+                                                    console.log(this.$auth.user())
+                                                    this.$router.push('/home');
+                                                },
+                                                error: function (response_fetch) {
+                                                    console.error(response_fetch)
+                                                },
+                                            });
+                                        },
+                                        error: function (response) {
+                                            console.error(response)
+                                        },
+                                        rememberMe: true,
+                                        fetchUser: false,
+                                        // redirect: '/home',
                         })
                     }
                 })

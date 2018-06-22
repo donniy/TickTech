@@ -10,7 +10,7 @@
 			</div>
 			<div class="row text-center">
 				<div class="col-md-4">
-					<h4 class="service-heading">Stefan</h4>
+					<h4 class="service-heading">Stephan</h4>
 					<p class="text-muted">Mailing systems and parsing</p>
 				</div>
 				<div class="col-md-4">
@@ -65,7 +65,7 @@
 				</div>
 			</div>
 			<div class="middle-display">
-				<router-link to="/" :class="'text-uppercase scroll-button btn-arrow'">
+				<router-link to="/" :class="'button text-uppercase scroll-button btn-arrow'">
 					<span>Back to home
 						<svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 						 viewBox="-1 0 36.1 27.8" enable-background="new 0 0 36.1 25.8" xml:space="preserve">

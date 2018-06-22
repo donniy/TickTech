@@ -1,4 +1,3 @@
-// hoi
 import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
 import App from './App'
@@ -9,16 +8,26 @@ import router from './router'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import './assets/scss/style.scss'
-import axios from 'axios'
 import VueCookies from 'vue-cookies'
 import VueScrollTo from 'vue-scrollto'
+import VueMaterial from 'vue-material'
+import 'vue-material/dist/vue-material.min.css'
+import 'vue-material/dist/theme/default.css'
+import axios from 'axios'
+import VueAxios from 'vue-axios';
+import VueAuth from '@websanova/vue-auth'
+import JWTHeader from './components/jwtHeader'
 
+Vue.use(VueMaterial)
+Vue.use(VueAxios, axios);
+Vue.use(require('vue-moment'));
 Vue.use(VeeValidate);
 Vue.use(VueScrollTo);
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 Vue.use(VueSocketio, 'http://' + document.domain + ':' + location.port)
 Vue.use(VueTextareaAutosize)
+
 
 function handle_ajax_error(error) {
   console.warn(error);
@@ -44,7 +53,7 @@ Vue.prototype.$ajax = {
         data = {}
     }
 
-    let token = window.$cookies.get('token')
+    let token = window.$auth.token();
 
     if(token)
       hdr['Authorization'] = 'JWT ' + token;
@@ -57,7 +66,7 @@ Vue.prototype.$ajax = {
   post: function (url, data={}, f) {
     let hdr = {};
 
-    let token = window.$cookies.get('token')
+    let token = window.$auth.token();
 
     if(token)
       hdr['Authorization'] = 'JWT ' + token;
@@ -71,7 +80,7 @@ Vue.prototype.$ajax = {
   delete: function (url, data={}, f) {
     let hdr = {};
 
-    let token = window.$cookies.get('token')
+    let token = window.$auth.token();
 
     if(token)
       hdr['Authorization'] = 'JWT ' + token;
@@ -85,7 +94,7 @@ Vue.prototype.$ajax = {
   put: function (url, data={}, f) {
     let hdr = {};
 
-    let token = window.$cookies.get('token')
+    let token = window.$auth.token();
 
     if(token)
       hdr['Authorization'] = 'JWT ' + token;
@@ -99,7 +108,7 @@ Vue.prototype.$ajax = {
   patch: function (url, data={}, f) {
     let hdr = {};
 
-    let token = window.$cookies.get('token')
+    let token = window.$auth.token();
 
     if(token)
       hdr['Authorization'] = 'JWT ' + token;
@@ -114,74 +123,81 @@ Vue.prototype.$ajax = {
 
 Vue.prototype.$user = {
   get: () => {
-    let user_json = window.$cookies.get('user');
-
-    let user_obj = null;
-
-    try {
-      user_obj = JSON.parse(user_json);
-    } catch(e) {
-      return null;
-    }
-
-    return user_obj;
+    let usr = window.$auth.user().user;
+    return usr;
   },
 
   set: (user) => {
-    if (typeof user === 'undefined')
-      return false;
-
-    let user_json = null;
-    try {
-      user_json = JSON.stringify(user);
-      window.$cookies.set('user', user_json);
-    } catch(e) {
-      return false;
-    }
-
-    return true;
+    return window.$auth.user(user);
   },
 
   logout: function () {
-    $cookies.remove('user');
-    $cookies.remove('token');
-    router.push('/');
+    this.$auth.logout({
+      makeRequest: false,
+      success: function () {
+        $auth.token(null, '');
+      },
+      redirect: '/',
+    });
   },
 
   logged_in: () => {
-    return window.$cookies.isKey('user');
-    if(window.$cookies.get('user') !== null)
-      return 1;
-    return 0;
+    return window.$auth.check()
   },
 
   isStudent: () => {
-    if(window.$cookies.isKey('user')) {
-      let usr = window.$cookies.get('user');
-
-      return (typeof usr.student !== 'undefined') ? 1 : 0;
-    } else {
-      return 0;
-    }
+    let usr = window.$auth.user().user;
+    if(typeof usr === 'undefined')
+      return 0
+    return (typeof usr.student !== 'undefined') ? 1 : 0
   },
 
   isSupervisor: () => {
-    if(window.$cookies.isKey('user')) {
-      let usr = JSON.parse(window.$cookies.get('user'));
-
-      return (typeof usr.ta !== 'undefined') ? 1 : 0;
-    } else {
-      return 0;
-    }
+    let usr = window.$auth.user().user;
+    if(typeof usr === 'undefined')
+      return 0
+    return (typeof usr.ta !== 'undefined') ? 1 : 0
   },
+
+  isTa: () => {
+    let usr = window.$auth.user().user;
+    if(typeof usr === 'undefined')
+      return 0
+    return (typeof usr.ta !== 'undefined') ? 1 : 0
+  }
 }
 
+Vue.axios = axios
+Vue.router = router
+
+Vue.use(VueAuth, {
+  auth: JWTHeader,
+  http: require('@websanova/vue-auth/drivers/http/axios.1.x.js'),
+  router: require('@websanova/vue-auth/drivers/router/vue-router.2.x.js'),
+  token: [
+    {request: 'Authorization', response: 'Authorization', authType: 'JWT', foundIn: 'header'},
+    {request: 'access_token', response: 'access_token', authType: 'JWT', foundIn: 'response'}
+  ],
+  fetchData: {url: '/api/user/retrieve', method: 'GET', enabled: true},
+  refreshData: {url: '/api/user/retrieve', method: 'GET', enabled: true},
+  tokenDefaultName: 'access_token',
+  parseUserData: function (response) {
+    console.log(response.json_data)
+    return response.json_data
+  },
+  tokenStore: ['localStorage', 'cookie']
+});
+
+
+window.$auth = Vue.auth;
+window.Auth = VueAuth;
 window.$user = Vue.prototype.$user;
+window.$current_course_id = null;
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
   components: { App },
-  template: '<App/>'
+  template: '<App/>',
 })

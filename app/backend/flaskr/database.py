@@ -4,6 +4,7 @@ from datetime import datetime
 import os.path
 from sqlalchemy_utils import UUIDType
 import uuid
+from flaskr.config import EMAIL_FETCH_EMAIL, EMAIL_FETCH_PASSWORD
 
 db = SQLAlchemy()
 
@@ -24,8 +25,10 @@ class DatabaseInsertException(DatabaseException):
 def init_db():
     db.create_all()
     populate_database_dummy_data()
-    addTicketStatus()
-    addTicketStatus("closed")
+    addTicketStatus("Unassigned")
+    addTicketStatus("Closed")
+    addTicketStatus("Assigned but waiting for reply")
+    addTicketStatus("Receiving help")
     addTicket()
 
 
@@ -68,10 +71,10 @@ def populate_database_dummy_data():
     from flaskr.models import Course, user
     items = []
     course = Course.Course(id=uuid.uuid4(),
-                           course_email="uvapsetest@gmail.com",
+                           course_email=EMAIL_FETCH_EMAIL,
                            mail_server_url="pop.gmail.com",
                            mail_port="995",
-                           mail_password="stephanandrea",
+                           mail_password=EMAIL_FETCH_PASSWORD,
                            title="course 1",
                            description="Test")
 
@@ -96,12 +99,16 @@ def populate_database_dummy_data():
                       name="Supervisor",
                       email="super@visor.nl")
 
-    # !IMPORTANT! This is for the mail server - ask stephan
-    mail_server = user.User(id=9999999999,
-                            name="Mail server",
-                            email="Noreply@noreply.com")
+    user5 = user.User(id=111111111,
+                      name="Test test",
+                      email="test@test.nl")
 
-    items = [user1, user2, user3, mail_server, course, course2]
+    # !IMPORTANT! This is for the mail server - ask stephan
+    mail_server = user.User(id=107584259,
+                            name="Mail server",
+                            email="uvapsetest@gmail.com")
+
+    items = [user1, user2, user3, user5, mail_server, course, course2]
 
     for item in items:
         addItemSafelyToDB(item)
@@ -111,6 +118,8 @@ def populate_database_dummy_data():
         course2.supervisors.append(user4)
         course.student_courses.append(user3)
         course2.student_courses.append(user3)
+        course.student_courses.append(user5)
+        course2.student_courses.append(user5)
         course.ta_courses.append(user1)
         course2.ta_courses.append(user2)
     except Exception as exp:

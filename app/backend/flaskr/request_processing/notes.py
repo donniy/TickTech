@@ -40,12 +40,12 @@ def parse_note(message, ticket):
 
         for ta in ta_in_course:
             if str(ta.id) == user_id:
-                if ta in ticket.binded_tas:
+                if ta in ticket.bound_tas:
                     continue
-                ticket.binded_tas.append(ta)
+                ticket.bound_tas.append(ta)
                 database.db.session.commit()
 
-    print(ticket.binded_tas)
+    print(ticket.bound_tas)
 
 
 # TODO: Add checking to getting data from json.
