@@ -15,7 +15,10 @@ import uuid
 @apiBluePrint.route('/courses/single/<course_id>', methods=['GET'])
 def retreive_course(course_id):
     course = Course.query.get(course_id)
-    return Iresponse.create_response(course.serialize, 200)
+    if course:
+        return Iresponse.create_response(course.serialize, 200)
+    else:
+        return Iresponse.create_response("Course not found", 404)
 
 
 @apiBluePrint.route('/courses/<course_id>/tickets', methods=['GET'])

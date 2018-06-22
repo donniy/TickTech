@@ -2,13 +2,35 @@
 @import '_labels';
 @import '_mentioning';
 @import 'homescreen';
+@import "~vue-material/dist/theme/engine"; // Import the theme engine
+
+@include md-register-theme("default", (
+  primary: darken(#FFF,1%), // The primary color of your application
+  secondary: white, // The accent or secondary color
+  primary-variant: white,
+
+));
+
+@import "~vue-material/dist/theme/all"; // Apply the theme
 
 body {
     background-color: darken(#FFF, 2%);
 }
 
-a, a:hover, a:focus {
-    text-decoration: none;
+// Demo fixes need to edit later
+a:hover, a:focus {
+    text-decoration: none !important;
+    background: transparent !important;
+}
+a.button{
+    color: white !important;
+}
+
+a.button:hover{
+    background-color: $default-red !important;
+}
+a.breadcrumb {
+    color: $default-red !important;
 }
 
 .navbar-spacing {
@@ -33,7 +55,7 @@ h1 {
     background-position: center center;
     height: 100vh;
     position: fixed;
-    overflow: scroll;
+    overflow: auto;
     top: 0;
     left: 0;
 }
@@ -77,16 +99,14 @@ nav {
 }
 
 .active, .nav-item:hover {
-    background-color: $default-red;
-    color: white;
+    color: $default-red;
         a{
-            color:white;
+            color:$default-red;
         }
 }
 
 .nav-link:active, .nav-link:hover {
-    background-color: $default-red;
-    color: white;
+    color: $default-red;
 }
 
 
@@ -177,7 +197,7 @@ nav {
     padding-left: 0px;
     width: 95%;
     color: $text-color-lighter;
-    font-size: 1px;
+    border-top: 1px solid #aaaaaa;
     margin: 2px;
 }
 
@@ -312,11 +332,6 @@ header.masthead {
         font-size: 1.4em;
     }
 
-    h7 {
-        font-size: 1.3em;
-        padding-top: 20px !important;
-        font-weight: bold;
-    }
     p {
         font-size: 1.2em;
         color: black !important;
@@ -371,7 +386,9 @@ header.masthead {
     border: none;
     background-color: inherit;
     margin: auto;
+    font-size: 1.5em;
     padding: auto;
+    color: $default-red !important;
 
     & .breadcrumb-item {
         border: none;
@@ -382,11 +399,11 @@ header.masthead {
             border: none;
             font-weight: 600;
             transition: all 0.4s ease;
-            // transition: color 0.5s ease;
+            transition: color 0.5s ease;
+            color: $default-red !important;
 
             &:hover {
-                background-color: #bc0031;
-                color: whitesmoke;
+                color: darken($default-red, 10%);
             }
         }
     }
@@ -394,6 +411,11 @@ header.masthead {
 
 .btn {
     border-radius: 0;
+    color: white !important;
+    background-color: $default-red !important;
+}
+.btn:hover{
+    background-color: darken($default-green, 7%);
 }
 
 .btn-submit {
@@ -417,30 +439,8 @@ header.masthead {
     border-color: darken($text-color-lighter, 7%);
 }
 
-.btn-primary {
-    background-color: $default-red;
-    border-color: $default-red;
-}
-
-.btn-primary:focus,
-.btn-primary:hover {
-    background-color: darken($default-red, 5%);
-    border-color: darken($default-red, 5%);
-}
-
-.btn-primary:not(.disabled):active {
-    background-color: darken($default-red, 7%);
-    border-color: darken($default-red, 7%);
-}
-
-
 .close-button{
     float: right;
-}
-
-.middle-button{
-    // width: 10%;
-
 }
 
 .btn-primary:disabled {
@@ -464,7 +464,6 @@ header.masthead {
     overflow-x: hidden !important;
     display: block;
     box-shadow: 0 2px 4px 0 rgba(50,50,93,0.3);
-    color: $default-red;
     transition: transform 0.1s ease-in-out;
 }
 .home-scroll-courses {
@@ -589,17 +588,6 @@ a.list-ticket:hover, a.list-ticket:focus {
     margin: 15px 10px;
 }
 
-.create-button {
-    margin-bottom: 40px;
-    width: 20%;
-    background-color: $default-red;
-    position: absolute;
-    bottom: 0;
-}
-.create-button:hover {
-    background-color: darken($default-red, 7%);
-}
-
 .dropdown-button {
     background-color: darken(#FFF, 2%);
     width: 100%;
@@ -639,10 +627,6 @@ a.list-ticket:hover, a.list-ticket:focus {
         font-size: 1.5em;
         box-shadow: $light-shadow;
     }
-}
-
-hr {
-    border-color: $default-red;
 }
 
 .summary-container {
@@ -846,19 +830,6 @@ hr {
    border-bottom: 1px solid #ffffff;
 }
 
-.dashboard-button {
-    background: #FFF;
-    //display: block;
-    box-shadow: 0 2px 4px 0 rgba(50,50,93,.1);
-    margin-bottom: 1em;
-    margin-right: 1em;
-    margin-left: 1em;
-    color: $default-red;
-    transition: transform 0.1s ease-in-out;
-    height: 180px;
-    width: 180px;
-}
-
 .wrapper {
     min-height: 100vh;
 }
@@ -871,6 +842,7 @@ hr {
 .center-display {
     justify-content: center;
     text-align: center;
+    text-indent: 0px;
 }
 
 .margin-top {
@@ -878,9 +850,25 @@ hr {
 }
 
 .notification-section {
-    min-height: 40vh;
-    max-height: 40vh;
+    min-height: 50vh;
+    max-height: 50vh;
     overflow: auto;
+}
+
+.ticket-single {
+    color: $text-color-def !important;
+    padding: 5px;
+    margin-right: 7px;
+    margin-left: 7px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-size: 1em;
+    border-color: darken($text-color-def, 5%);
+    border: 1px solid;
+}
+
+.ticket-single:hover {
+    opacity: 0.7;
 }
 
 .courses-section {
@@ -895,14 +883,31 @@ hr {
 }
 
 .create-ticket-section1 {
-    margin-top: 5vh;
+    margin-top: 2vh;
 }
 
 .create-ticket-section2 {
-    min-height: 20vh;
+    min-height: 13vh;
+    max-height: 13vh;
     display:flex;
     align-items: center;
     justify-content: center;
+}
+
+.padding-bottom-0 {
+    padding-bottom: 0px!important;
+}
+
+.float-left {
+    float: left;
+}
+
+.padding-left-10 {
+    padding-left: 10px;
+}
+
+.material-icons:hover {
+    cursor: pointer;
 }
 
 .create-ticket-section:hover {

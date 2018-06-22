@@ -13,7 +13,12 @@
         props: ['message', 'user'],
         computed: {
             username: function () {
-                return this.$user.get().name
+                if (this.user) {
+                    return this.user.id == this.message.user_id ? 'You' : this.message.user_name
+                } else {
+
+                    return 'unknown'
+                }
             },
         },
         data: function () {

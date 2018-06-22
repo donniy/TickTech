@@ -25,8 +25,10 @@ class DatabaseInsertException(DatabaseException):
 def init_db():
     db.create_all()
     populate_database_dummy_data()
-    addTicketStatus()
-    addTicketStatus("closed")
+    addTicketStatus("Unassigned")
+    addTicketStatus("Closed")
+    addTicketStatus("Assigned but waiting for reply")
+    addTicketStatus("Receiving help")
     addTicket()
 
 

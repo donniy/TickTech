@@ -1,25 +1,25 @@
 <template>
-    <section>
-        <h1>Login</h1>
+    <div>
+        <h2 class="form-header center-display">Demo login</h2>
 
-        <section>
-            <!--Student name and number  -->
-            <form v-on:submit.prevent="checkUser">
-                <div class="form-group">
+        <form class="md-layout center-display" v-on:submit.prevent="checkUser">
+            <md-card class="md-layout-item md-size-50 md-small-size-100">
+                <md-card-content>
+
+                    <md-field>
                     <label for="studentnumber">Student ID</label>
-                    <input class="form-control" id="studentid" name="studentid" v-model="form.username" v-validate="'required'" type="number"
-                        placeholder="Student ID">
+                    <md-input class="form-control" id="studentnumber" name="studentnumber" v-model="form.username" v-validate="'required'" type="number"/>
                     <div v-show="errors.has('studentid')" class="invalid-feedback">
                         {{ errors.first('studentid') }}
                     </div>
-                </div>
-
-                <button class="btn btn-primary">
-                    Submit
-                </button>
-            </form>
-        </section>
-    </section>
+                    <md-button type="submit" v-bind:disabled="errors.any()">
+                        Submit
+                    </md-button>
+                </md-field>
+            </md-card-content>
+        </md-card>
+    </form>
+    </div>
 </template>
 
 

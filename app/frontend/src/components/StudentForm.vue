@@ -1,85 +1,79 @@
 <template>
-    <div>
-        <!--Student name and number  -->
-        <div class="row justify-content-around">
-            <div class="col-sm-8 col-md-6">
-                    <h2 class="form-header">Submit a question</h2>
-                <form enctype="multipart/form-data" class="material-form" v-on:submit.prevent="sendTicket">
-                    <md-avatar>
-                        <i class="material-icons">
-                            info
-                        </i>
-                            <md-tooltip md-direction="left">This page is can be used to create a ticket.
-                            </br>In order to assign the right Teaching Assistant (TA) to your
-                            </br>ticket please select the right corresponding course and label</md-tooltip>
-                        </md-avatar>
-                    <div class="form-group">
+    <div class="container">
+        <div class="navbar-spacing"></div>
+
+        <h2 class="form-header center-display">Submit a ticket</h2>
+
+        <form class="md-layout center-display" v-on:submit.prevent="sendTicket">
+            <md-card class="md-layout-item md-size-50 md-small-size-100">
+                <md-card-content>
+
+                    <md-field>
                         <label for="subject">Subject</label>
-                        <input id="subject" class="form-control" v-validate="'required|max:50'" name="subject" v-model="form.subject" type="text"
-                            placeholder="Question about...">
+                        <md-input id="subject" v-validate="'required|max:50'" name="subject" v-model="form.subject" type="text" />
                         <div v-show="errors.has('subject')" class="invalid-feedback">
                             {{ errors.first('subject') }}
                         </div>
-                    </div>
+                    </md-field>
 
-                    <div class="form-group">
+                    <md-field>
                         <label for="message">Message</label>
-                        <textarea-autosize id="message" class="form-control" name="message" v-validate="'required'" placeholder="While working at the assignment, I ran into..."
-                            v-model="form.message"></textarea-autosize>
+                        <md-textarea id="message" name="message" v-validate="'required'" v-model="form.message"></md-textarea>
                         <div v-if="errors.has('message')" class="invalid-feedback">
                             {{ errors.first('message') }}
                         </div>
-                    </div>
+                    </md-field>
+
                     <p v-on:click="addFiles()" class="file-add-text"> <i class="material-icons file-add-icon">attach_file</i> Add attachments (Max 10 MB, 5 files)</p>
                     <div class="large-12 medium-12 small-12 cell">
                         <input name="files" class="hidden-input" type="file" id="files" ref="files" multiple v-on:change="handleFilesUpload()"/>
                     </div>
-                    <div class="file-name-container medium-12 small-12 cell">
-                        <div v-for="(file, key) in files" class="file-listing">{{ file.name }} <i v-on:click="removeFile( key )" class="material-icons file-remove-icon">delete_forever</i><hr class="light-stripe"></div>
+                    <div class="medium-12 small-12 cell" style="overflow-y: hidden;">
+                        <div v-for="(file, key) in files" class="file-listing" style="width: 100%; text-align: left;">{{ file.name }} <i v-on:click="removeFile( key )" class="material-icons file-remove-icon">delete_forever</i><hr class="light-stripe"></div>
                     </div>
 
-                    <p class="def-error-msg" v-show="fileTooLarge">
-                        Too large a file detected
-                    </br>
-                    </p>
-                    <p class="def-error-msg" v-show="fileTooMany">
-                        Too many files detected
-                    </br>
-                    </p>
-                    <div class="form-group">
+                    <div class="padding-left-10">
+                        <p class="def-error-msg" v-show="fileTooLarge">
+                            Too large a file detected
+                        </br>
+                        </p>
+                        <p class="def-error-msg" v-show="fileTooMany">
+                            Too many files detected
+                        </br>
+                        </p>
+                    </div>
+
+                    <md-field>
                         <label for="course">Course</label>
-                        <select id="course" v-validate="'required'" class="form-control custom-select" v-model="form.courseid">
-                            <option  disabled value="">Please select a course</option>
-                            <option v-for="obj in categories.courses" v-bind:key="obj.id" v-bind:value="obj.id">
+                        <md-select id="course" v-validate="''" md-dense v-model="form.courseid">
+                            <md-option disabled value="">Please select a course</md-option>
+                            <md-option v-for="obj in categories.courses" v-bind:key="obj.id" v-bind:value="obj.id">
                                 {{ obj.title }}
-                            </option>
-                        </select>
+                            </md-option>
+                        </md-select>
+                    </md-field>
 
-                    </div>
-                    <div class="form-group">
+                    <md-field>
                         <label for="category">Category</label>
-                        <select id="category" v-validate="''" class="form-control custom-select" v-model="form.labelid">
-                            <option disabled value="">Label this question</option>
-                            <option v-for="option in categories.labels[form.courseid]" v-bind:key="option.label_id" v-bind:value="option.label_id">{{ option.label_name }}</option>
-                        </select>
-                        <small class="form-text">Selecting a category is optional, but can help assign your question to the right person.</small>
-                    </div>
+                        <md-select id="category" v-validate="''" md-dense v-model="form.labelid">
+                            <md-option disabled value="">Label this question</md-option>
+                            <md-option v-for="option in categories.labels[form.courseid]" v-bind:key="option.label_id" v-bind:value="option.label_id">
+                                {{ option.label_name }}
+                            </md-option>
+                        </md-select>
+                        <div class="md-helper-text">Selecting a category is optional, but can help assign your question to the right person.</div>
+                    </md-field>
 
-                    <button type="submit" class="btn btn-primary btn-block btn-lg" v-bind:disabled="errors.any()">
+                    <button type="submit" class="btn btn-primary btn-block btn-lg margin-top" v-bind:disabled="errors.any()">
                         Submit
                     </button>
 
                     <p class="def-error-msg" v-show="errors.any()">
                         Please fill out the form correctly
                     </p>
-
-                </form>
-
-            </div>
-        </div>
-
-        <infomodal v-if="showModal" @close="showModal = false">
-        </infomodal>
+                </md-card-content>
+            </md-card>
+        </form>
     </div>
 </template>
 
