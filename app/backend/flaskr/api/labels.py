@@ -1,5 +1,6 @@
 from . import apiBluePrint
-from flaskr import request, database, Iresponse
+from flaskr import database, Iresponse
+from flask import request
 from flaskr.models.Label import Label
 from flaskr.models.Course import Course
 from flaskr.models.user import User

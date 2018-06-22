@@ -16,6 +16,7 @@ from flaskr.utils import course_validation, json_validation
 from os.path import expanduser
 import base64
 import mimetypes
+from flaskr import database
 
 # Make this post with a button.
 
@@ -26,8 +27,8 @@ def close_ticket(ticket_id):
     """ Update this with a rights check."""
     try:
         ticket = Ticket.query.get(ticket_id)
-        # ticket.close
-        # db.session.commit()
+        ticket.close
+        database.db.session.commit()
         notifications.notify(current_identity.id,
                              ticket,
                              'Closed ticket',
