@@ -36,19 +36,6 @@ course_roles_lookup_table = {
 }
 
 
-class course_roles_manager(LTI_roles_manager):
-    """
-    Maps the roles the user has in this course to internal roles.
-    """
-    def __init__(self, lti_roles):
-        self.roles = []
-        for role in lti_roles.split(','):
-            map_role = self.roles_map.get(role)
-            if map_role is None:
-                continue
-            self.roles.append(map_role)
-
-
 class InvalidLTIRequest(Exception):
     pass
 
