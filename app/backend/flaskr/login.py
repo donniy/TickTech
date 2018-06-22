@@ -1,5 +1,5 @@
 from .models import user
-from flask_jwt import JWT
+from flask_jwt_extended import JWTManager
 from flaskr import Iresponse
 
 jwt = None
@@ -23,4 +23,5 @@ def identity(payload):
 def init_jwt(app=None):
     if not app:
         raise Exception('No app parameter')
-    jwt = JWT(app, authenticate, identity)
+    global jwt
+    jwt = JWTManager(app)

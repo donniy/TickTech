@@ -9,7 +9,7 @@ from flask_wtf.csrf import CSRFProtect
 import os.path
 from flaskr.models import Message, ticket, Note, Course, user, Label
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
-from flask_jwt import JWT
+from flask_jwt_extended import JWTManager
 from . import login
 import poplib
 from mail.thread import MailThread
@@ -43,6 +43,8 @@ def create_app(test_config=None):
     app.config['WTF_CSRF_CHECK_DEFAULT'] = False
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    app.config['JWT_SECRET_KEY'] = 'very-secure'
 
     # Make user logged in for 1 day.
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=86400)

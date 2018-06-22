@@ -88,16 +88,15 @@ class LTI_instance_database_helper:
         Function that ensures a user is linked to the course with the
         right role.
         """
-        roles_mapper = self.lti_instance.get_course_roles_manager()
         course = self.cache['course']
         user = self.cache['user']
-        if 'student' in roles_mapper:
+        if self.lti_instance.is_student_in_course():
             if user not in course.student_courses:
                 course.student_courses.append(user)
-        if 'teacher' in roles_mapper:
+        if self.lti_instance.is_teacher_in_course():
             if user not in course.supervisors:
                 course.supervisors.append(user)
-        if 'teachingAssistant' in roles_mapper:
+        if self.lti_instance.is_teaching_assistant_in_course():
             if user not in course.ta_courses:
                 course.ta_courses.append(user)
 
@@ -125,10 +124,11 @@ class LTI_instance:
         """
         self.params = {}
         self.database_helper = None
-        try:
+        try: # Maybe wrap this into a helper class.
             self._validate_lti_Irequest_signature(i_req)
             self._sanitize_lti_Irequest(i_req)
             self._ensure_params_exists(self.params)
+            self._map_course_roles_to_internal_roles()
         except InvalidLTIRequest:
             raise
         self.database_helper = LTI_instance_database_helper(self)
@@ -195,6 +195,9 @@ class LTI_instance:
 
     def _map_course_roles_to_internal_roles(self):
         for role in self.params['roles'].split(','):
+            internal_role = course_roles_lookup_table.get(role)
+            if internal_role is None:  # Some roles are not valuable for us.
+                continue
             if course_roles_lookup_table[role] is 'student':
                 self.params['tiktech_is_course_student'] = True
             elif course_roles_lookup_table[role] is 'teacher':
@@ -202,6 +205,23 @@ class LTI_instance:
             elif course_roles_lookup_table[role] is 'teachingAssistant':
                 self.params['tiktech_is_course_TA'] = True
 
+    def is_student_in_course(self):
+        is_student = self.params.get('tiktech_is_course_student')
+        if is_student is None:
+            return False
+        return is_student is True
+
+    def is_teaching_assistant_in_course(self):
+        is_ta = self.params.get('tiktech_is_course_TA')
+        if is_ta is None:
+            return False
+        return is_ta is True
+
+    def is_teacher_in_course(self):
+        is_teacher = self.params.get('tiktech_is_course_teacher')
+        if is_teacher is None:
+            return False
+        return is_teacher is True
 
     @property
     def course_name(self):
