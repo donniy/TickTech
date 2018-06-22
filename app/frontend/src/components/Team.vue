@@ -1,10 +1,10 @@
+<!-- Team.vue shows the amazing team of TIKTECH and their roles. -->
 <template>
 	<div>
-
 		<!-- Teampage -->
 		<section id="team" style="padding:50px !important;">
 			<div class="col-12 text-center">
-				<h3 class="section-heading text-uppercase">The people behind Tiktech:</h3>
+				<h3 class="section-heading text-uppercase">The people behind TIKTECH:</h3>
 				<hr>
 
 			</div>
@@ -47,7 +47,7 @@
 				</div>
 				<div class="col-md-4">
 					<h4 class="service-heading">Andrea</h4>
-					<p class="text-muted">Making homepages even greater and mail parsing</p>
+					<p class="text-muted">Gender diversity administrator and grammar lover</p>
 				</div>
 			</div>
 			<div class="row text-center">
