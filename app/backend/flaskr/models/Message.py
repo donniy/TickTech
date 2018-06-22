@@ -1,7 +1,7 @@
 from datetime import datetime
 from flaskr import database
 from sqlalchemy_utils import UUIDType
-from config import Config
+from flaskr.config import Config
 
 db = database.db
 

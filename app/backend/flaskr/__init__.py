@@ -13,7 +13,7 @@ from datetime import timedelta
 from flask_hashfs import FlaskHashFS
 from os.path import expanduser
 from flask_mail import Mail
-from config import Config
+from flaskr.config import Config
 
 db = database.db
 socketio = sockets.get_socketio()

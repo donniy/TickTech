@@ -2,7 +2,7 @@ from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import uuid
-from config import Config
+from flaskr.config import Config
 
 db = SQLAlchemy()
 
