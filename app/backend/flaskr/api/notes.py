@@ -1,7 +1,5 @@
 from . import apiBluePrint
-from flask import jsonify, request, escape
-from flaskr import database
-from flaskr.models.Note import *
+from flask import request
 from flaskr.request_processing import notes as rp_notes
 from flaskr import Iresponse
 

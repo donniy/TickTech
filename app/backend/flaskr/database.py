@@ -1,8 +1,6 @@
 from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-import os.path
-from sqlalchemy_utils import UUIDType
 import uuid
 from flaskr.config import EMAIL_FETCH_EMAIL, EMAIL_FETCH_PASSWORD
 

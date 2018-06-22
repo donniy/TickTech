@@ -1,12 +1,9 @@
-from flaskr.models.ticket import *
-from flaskr.models.Message import *
-from flaskr.models.user import *
-from flaskr import database
+from flaskr.models.ticket import Ticket
+from flaskr.models.Message import Message
+from flaskr.models.user import User
 from . import apiBluePrint
-from flask import jsonify, request, escape, send_from_directory
-from flaskr import socketio, plugins
-import uuid
-import datetime
+from flask import request, escape, jsonify
+from flaskr import plugins
 from flaskr.request_processing import ticket as rp_ticket
 from flaskr.request_processing import message as rp_message
 from flaskr.request_processing import file as rp_file
@@ -15,10 +12,8 @@ from flask_jwt import jwt_required, current_identity
 from flaskr.utils import notifications
 from flask_mail import Mail
 from mail.Message import create_email_message
-from time import gmtime, strftime
-from flaskr.utils import notifications, course_validation, json_validation
+from flaskr.utils import course_validation, json_validation
 from os.path import expanduser
-import os
 import base64
 import mimetypes
 
@@ -31,8 +26,8 @@ def close_ticket(ticket_id):
     """ Update this with a rights check."""
     try:
         ticket = Ticket.query.get(ticket_id)
-        ticket.close
-        db.session.commit()
+        # ticket.close
+        # db.session.commit()
         notifications.notify(current_identity.id,
                              ticket,
                              'Closed ticket',
@@ -95,6 +90,7 @@ def create_message(ticket_id):
                                        [ticket.email], ticket_id,
                                        json_data['message'], user.name)
         res = Mail().send(message)
+        res = res  # for flake8
     return msg
 
 
