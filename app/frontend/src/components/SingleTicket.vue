@@ -1,7 +1,6 @@
 <template>
     <div>
-        <md-button tag="button" class="md-primary" :to="'/course/' + ticket.course_id"> Terug naar cursus
-        </md-button>
+        <router-link :to="'/course/' + ticket.course_id " class="btn btn-primary">&laquo; Back to course</router-link>
 
         <md-speed-dial md-event="click" class="close-button" md-direction="bottom">
             <md-speed-dial-target>
@@ -59,11 +58,11 @@
                 </form>
             </div>
             <div class="col-md-4 col-sm-4 col-lg-4 col-xs-12">
-                <h2>Notities</h2>
+                <h2>Notes</h2>
                 <note v-for="note in notes" v-bind:key="note.id" v-bind:note="note"></note>
 
                 <md-button id="popoverButton-sync" class="note-add-button md-primary">
-                    Notitie toevoegen
+                    Add note
                 </md-button>
                 <b-popover ref="popoverRef" target="popoverButton-sync" triggers="click blur" placement='top'>
                     <vue-tribute :options="mentionOptions" v-on:tribute-replaced="matchFound">
@@ -71,7 +70,7 @@
 
                         </textarea>
                     </vue-tribute>
-                    <button @click="addNote" class="btn btn-primary" style="margin-top:10px">Verzenden</button>
+                    <button @click="addNote" class="btn btn-primary" style="margin-top:10px">Send</button>
                 </b-popover>
 
                 <md-content class="md-elevation-5" v-for="(data, plugin) in plugins">

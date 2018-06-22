@@ -9,7 +9,7 @@
 					<div class="intro-lead-in">Welcome to a brand new way of communication!</div>
 					<div class="intro-heading text-uppercase">Let us introduce you to TikTech</div>
 					<!-- <a href="#" v-scroll-to="'#services'" class="btn btn-primary btn-xl text-uppercase js-scroll-trigger scoll-button" >Find out more!</a> -->
-					<a href="#" v-scroll-to="'#messaging-structure'" class="text-uppercase scroll-button btn-arrow">
+					<a href="#" v-scroll-to="'#messaging-structure'" class="text-uppercase button scroll-button btn-arrow">
 						<span>Find out more!
 							<svg width="40" height="20" viewBox="-2.5 -5 75 60" preserveAspectRatio="none">
 								<path d="M0,0 l35,50 l35,-50" fill="none" stroke="white" stroke-linecap="round" stroke-width="5" />
@@ -52,7 +52,7 @@
 					</div>
 				</div>
 				<div class="middle-display">
-					<a href="#" v-scroll-to="'#services'" class="text-uppercase scroll-button btn-arrow">
+					<a href="#" v-scroll-to="'#services'" class="button text-uppercase scroll-button btn-arrow">
 						<span>Our Services!
 							<svg width="40" height="20" viewBox="-2.5 -5 75 60" preserveAspectRatio="none">
 								<path d="M0,0 l35,50 l35,-50" fill="none" stroke="white" stroke-linecap="round" stroke-width="5" />
@@ -100,7 +100,7 @@
 					</div>
 				</div>
 				<div class="middle-display">
-					<router-link to="/login" :class="'text-uppercase scroll-button btn-arrow'">
+					<router-link to="/home" :class="'button text-uppercase scroll-button btn-arrow'">
 						<span>Get Started Now!
 							<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 							 viewBox="0 0 36.1 25.8" enable-background="new 0 0 36.1 25.8" xml:space="preserve">
