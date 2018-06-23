@@ -211,7 +211,7 @@ export default {
         }
 
         const pathLabels = '/api/labels'
-        const pathCourses = '/api/courses'
+        const pathCourses = '/api/user/student_courses'
 
         this.$ajax.get(pathCourses)
             .then(response => {
