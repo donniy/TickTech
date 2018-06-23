@@ -28,7 +28,6 @@ def parse_note(message, ticket):
     If a user is mentioned we append them to the
     linked tas in the ticket.
     """
-    print("CALLED")
     mentions = re.finditer('@[0-9]+', message)
     course = Course.query.get(ticket.course_id)
     if course is None:

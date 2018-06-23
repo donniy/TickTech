@@ -1,9 +1,7 @@
 module.exports = {
 
     request: function (req, token) {
-        console.log("REQUEST")
         this.options.http._setHeaders.call(this, req, {Authorization: 'Bearer ' + token});
-        console.log("TEST")
     },
 
     response: function (res) {
