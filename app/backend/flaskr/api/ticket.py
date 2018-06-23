@@ -23,14 +23,13 @@ import os
 import base64
 import mimetypes
 
-# Make this post with a button.
-
 
 @apiBluePrint.route('/ticket/<ticket_id>/close', methods=['POST', 'PATCH'])
 @jwt_required
 def close_ticket(ticket_id):
     """ Update this with a rights check."""
-    try:
+    current_identity = get_current_user()
+    try: #WHY??
         ticket = Ticket.query.get(ticket_id)
         ticket.close
         db.session.commit()
@@ -40,7 +39,7 @@ def close_ticket(ticket_id):
                              Message.NTFY_TYPE_CLOSED)
     except Exception as e:
         raise e
-        return Iresponse.create_response(str(e), 400)
+        return Iresponse.create_response(str(e), 400) #WTF????
     return jsonify({'status': "success", 'message': 'ticket closed'})
 
 

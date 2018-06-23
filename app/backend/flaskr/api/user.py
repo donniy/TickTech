@@ -17,8 +17,6 @@ def retrieve_user_tickets():
     """
     curr_user = get_current_user()
     tickets = Ticket.query.filter_by(user_id=curr_user.id).all()
-    print("TICK")
-    print(tickets)
     return Iresponse.create_response(database.serialize_list(tickets), 200)
 
 # maybe add query parameter instead of full api route
@@ -31,6 +29,7 @@ def retrieve_active_user_tickets(user_id):
     Geeft alle ticktes van gegeven user.
     """
     # TODO: Controleer of degene die hierheen request permissies heeft.
+    current_identity = get_current_user()
     user_id = current_identity.id
     tickets = Ticket.query.filter(Ticket.user_id == user_id,
                                   Ticket.status_id != 2).all()
