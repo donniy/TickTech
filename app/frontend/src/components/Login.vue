@@ -52,7 +52,7 @@ import Router from 'vue-router';
                                               console.log(response.data.json_data);
                                               console.log(this.$auth.token())
                                               this.$auth.fetch({
-                                                  data: {'acces_token': this.$auth.token()},
+                                                  data: {},
                                                   success: function () {
                                                       console.log("USER:")
                                                       console.log(this.$auth.user())
@@ -69,7 +69,7 @@ import Router from 'vue-router';
                                         },
                                         rememberMe: true,
                                         fetchUser: false,
-                                        // redirect: '/home',
+                                        redirect: '/home',
                         })
                     }
                 })

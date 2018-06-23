@@ -11,7 +11,7 @@
                         <md-content class="md-scrollbar courses-section">
                         <md-list class="md-triple-line">
 
-                            <course v-for="course in courses" v-bind:key="course.id" v-bind:course="course"></course>
+                            <course v-for="course in ta_courses" v-bind:key="course.id" v-bind:course="course"></course>
 
                         </md-list>
                         </md-content>
@@ -77,7 +77,7 @@
     export default {
         data() {
             return {
-                courses: [],
+                ta_courses: [],
                 status: 'not set',
                 tickets: [],
                 isTA: false,
@@ -86,24 +86,25 @@
         },
         methods: {
             getTickets() {
-				this.status = 'getting tickets'
-				const path = '/api/user/' + this.$user.get().id + '/tickets'
-				this.$ajax.get(path).then(response => {
-					this.tickets = response.data.json_data
-				}).catch(error => {
-					console.log(error)
-				})
-			},
+				        this.status = 'getting tickets'
+				        const path = '/api/user/' + this.$user.get().id + '/tickets'
+				        this.$ajax.get(path).then(response => {
+					          this.tickets = response.data.json_data
+				        }).catch(error => {
+					          console.log(error)
+				        })
+			      },
             getCourses() {
-                let courses_ta_in = Object.keys(this.$user.get().ta).length
-                if (courses_ta_in == 0) {
-                    this.courses = [];
-                    this.isTA = false;
-                    return;
-                }
-                this.status = 'getting courses'
-                this.courses = [this.$user.get().ta]
-                this.isTA = true;
+                this.$ajax.get('/api/user/teachingAssistant_courses', response => {
+                    let course_ta_in = response.data.json_data
+                    if (course_ta_in.length === 0) {
+                        this.isTA = false;
+                        this.ta_courses = []
+                        return;
+                    }
+                    this.isTA = true;
+                    this.ta_courses = course_ta_in;
+                })
             },
 
             getTodos () {
@@ -113,6 +114,7 @@
                 })
             },
             created() {
+                console.log("HELLO")
                 this.status = 'created'
                 this.getCourses()
                 this.getTodos()
@@ -125,7 +127,7 @@
             if (!this.$user.logged_in()) {
                 this.$router.push('/login')
             }
-            console.log(this.notification)
+            //console.log(this.notification)
         },
         components: {
             'course': Course,

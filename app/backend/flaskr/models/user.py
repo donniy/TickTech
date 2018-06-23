@@ -1,5 +1,5 @@
 from flaskr import database, sockets
-from flaskr.models.Course import *
+from flaskr.models import Course
 from sqlalchemy_utils import UUIDType
 
 db = database.db
@@ -22,6 +22,21 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=False, nullable=True)
     labels = db.relationship("Label", secondary=association_table,
                              backref="users")
+
+    courses_user_is_student_in = db.relationship(
+        "Course", secondary=Course.student_course_linker,
+        lazy='subquery',
+        backref=db.backref('courses_user_is_student_in'))
+
+    courses_user_is_ta_in = db.relationship(
+        "Course", secondary=Course.ta_course_linker,
+        lazy='subquery',
+        backref=db.backref('courses_user_is_ta_in'))
+
+    courses_user_is_supervisor_in = db.relationship(
+        "Course", secondary=Course.supervisor_linker,
+        lazy='subquery',
+        backref=db.backref('courses_user_is_supervisor_in'))
 
     # Dit is een soort toString zoals in Java, voor het gebruiken van de
     # database in de commandline. Op die manier kan je data maken en weergeven

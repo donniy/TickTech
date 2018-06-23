@@ -1,6 +1,7 @@
 from flaskr.models.ticket import *
 from . import apiBluePrint
-from flask_jwt import jwt_required, current_identity
+from flask_jwt_extended import jwt_required
+from flaskr.jwt_wrapper import get_current_user
 from flaskr import Iresponse
 from flask import request
 from flaskr.models.user import *
@@ -9,7 +10,7 @@ from flaskr.request_processing.user import *
 
 
 @apiBluePrint.route('/user/<user_id>/tickets')
-@jwt_required()
+@jwt_required
 def retrieve_user_tickets(user_id):
     """
     Geeft alle ticktes van gegeven user.
@@ -22,7 +23,7 @@ def retrieve_user_tickets(user_id):
 
 
 @apiBluePrint.route('/user/<user_id>/tickets/active')
-@jwt_required()
+@jwt_required
 def retrieve_active_user_tickets(user_id):
     """
     Geeft alle ticktes van gegeven user.
@@ -35,7 +36,7 @@ def retrieve_active_user_tickets(user_id):
 
 
 @apiBluePrint.route('/user/notifications', methods=["GET"])
-@jwt_required()
+@jwt_required
 def unread_messages():
     """
     Retrieve all unread messages of this user.
@@ -129,20 +130,29 @@ def userid_exists():
     return Iresponse.create_response({"status": True}, 200)
 
 
-@apiBluePrint.route('/user/<user_id>/courses')
-def get_courses_from_student(user_id):
-    user = User.query.get(user_id)
-    if user is None:
+@apiBluePrint.route('/user/student_courses', methods=['GET'])
+@jwt_required
+def get_courses_user_is_student_in():
+    curr_user = get_current_user()
+    if curr_user is None:
         return Iresponse.create_response("", 404)
-    courses = user.student_courses
-    if len(courses) == 0:
+    courses = curr_user.courses_user_is_student_in
+    return Iresponse.create_response(database.serialize_list(courses), 200)
+
+@apiBluePrint.route('/user/teachingAssistant_courses', methods=['GET'])
+@jwt_required
+def get_courses_user_is_ta_in():
+    curr_user = get_current_user()
+    if curr_user is None:
         return Iresponse.create_response("", 404)
+    courses = curr_user.courses_user_is_ta_in
     return Iresponse.create_response(database.serialize_list(courses), 200)
 
 
 @apiBluePrint.route('/user/<int:user_id>')
+@jwt_required
 def get_user(user_id):
-    user = User.query.get(user_id)
+    user = get_current_user()
     if user is None:
         return Iresponse.create_response("", 404)
     return Iresponse.create_response(user.serialize, 200)
