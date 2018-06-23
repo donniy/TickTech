@@ -42,15 +42,25 @@
                     </div>
                 </div>
                 <div class="row">
-                    <b-button class="btn note-add-button btn btn-primary" button v-on:click="pushLocation('/course/' + $route.params.course_id + '/labels')">Course labels</b-button>
-                    <b-button v-if="isTA" class="btn note-add-button btn btn-primary">Add students</b-button>
-                    <b-button class="btn note-add-button btn btn-primary" @click="emailSettings" :to="''">Mail settings</b-button>
-                    <b-button v-if="isSupervisor" class="btn note-add-button btn btn-primary" :to="''">Add TAs</b-button>
+                    <p>
+                        <b-button class="btn note-add-button btn btn-primary" button v-on:click="pushLocation('/course/' + $route.params.course_id + '/labels')">Course labels</b-button>
+                    </p>
+                    <!-- Only way to know if email servers is running is by which button is displayed. Is this enough? -->
+                    <p v-if="email_running">
+                        <b-button class="btn note-add-button btn btn-primary" @click="emailSettings" :to="''">Update email fetcher</b-button>
+                        <emodal v-if="showEmailModal" warning="Configure your email fetcher" @close="showEmailModal = false">
+                        </emodal>
+                    </p>
+                    <p v-else>
+                        <b-button class="btn note-add-button btn btn-primary" @click="emailSettings" :to="''">Configure email fetcher</b-button>
+                        <emodal v-if="showEmailModal" warning="Configure your email fetcher" @close="showEmailModal = false">
+                        </emodal>
+                    </p>
 
+                    <!-- This can be removed? -->
+                    <!-- <b-button v-if="isTA" class="btn note-add-button btn btn-primary">Add students</b-button> -->
+                    <!-- <b-button v-if="isSupervisor" class="btn note-add-button btn btn-primary" :to="''">Add TAs</b-button> -->
                 </div>
-                <p v-if="email_running">EMAIL IS RUNNING</p>
-                <emodal v-if="showEmailModal" warning="Setup a fetcher to your mailinglist." @close="showEmailModal = false">
-                </emodal>
             </div>
         </transition>
         <div v-if="false" class=s ummary-sub-container>
@@ -58,15 +68,11 @@
                 v-bind:ticket="ticket" class="singleTicket">
             </summodal>
         </div>
-        <!-- TODO: Prettify. -->
-        <p v-if="email_running">EMAIL IS RUNNING</p>
-        <emodal v-if="showEmailModal" warning="Setup a fetcher to your mailinglist." @close="showEmailModal = false">
-        </emodal>
-        <addusers v-if="wantsToAddUsers" v-bind:title="'Add students to this course'" v-bind:label_message="'Students:'" v-bind:api_path="this.addStudentsPath">
 
-        </addusers>
+        <!-- This can be removed? -->
+        <!-- <addusers v-if="wantsToAddUsers" v-bind:title="'Add students to this course'" v-bind:label_message="'Students:'" v-bind:api_path="this.addStudentsPath"></addusers>
         <addusers v-if="wantsToAddTa" v-bind:title="'Add TAs to this course'" v-bind:label_message="'TAs:'" v-bind:api_path="this.addTasPath">
-        </addusers>
+        </addusers> -->
     </div>
 </template>
 
