@@ -9,14 +9,16 @@ from flaskr.utils.json_validation import *
 from flaskr.request_processing.user import *
 
 
-@apiBluePrint.route('/user/<user_id>/tickets')
+@apiBluePrint.route('/user/tickets')
 @jwt_required
-def retrieve_user_tickets(user_id):
+def retrieve_user_tickets():
     """
     Geeft alle ticktes van gegeven user.
     """
-    # TODO: Controleer of degene die hierheen request permissies heeft.
-    tickets = Ticket.query.filter_by(user_id=user_id).all()
+    curr_user = get_current_user()
+    tickets = Ticket.query.filter_by(user_id=curr_user.id).all()
+    print("TICK")
+    print(tickets)
     return Iresponse.create_response(database.serialize_list(tickets), 200)
 
 # maybe add query parameter instead of full api route
@@ -41,6 +43,7 @@ def unread_messages():
     """
     Retrieve all unread messages of this user.
     """
+    current_identity = get_current_user()
     tmp = {}
     unread = current_identity.unread
     for msg in unread:
@@ -138,6 +141,7 @@ def get_courses_user_is_student_in():
         return Iresponse.create_response("", 404)
     courses = curr_user.courses_user_is_student_in
     return Iresponse.create_response(database.serialize_list(courses), 200)
+
 
 @apiBluePrint.route('/user/teachingAssistant_courses', methods=['GET'])
 @jwt_required

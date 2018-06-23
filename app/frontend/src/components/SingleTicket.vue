@@ -263,6 +263,7 @@ export default {
                     this.noteTextArea = ""
                     this.$refs.popoverRef.$emit('close')
                     this.notes.push(response.data.json_data)
+                    // Why is this hardcoded?
                     this.bind_ta_to_ticket(this.ticket.id, 11111)
                 })
                 .catch(error => {
@@ -311,6 +312,9 @@ export default {
             console.log("found", e)
             this.noteTextArea = matchedValue
         },
+        /* This already gets done at the backend. By parsing the note message.
+         * So why does this exists??
+         */
         bind_ta_to_ticket(ticketid, taid) {
             const path = '/api/ticket/addta'
             console.log(ticketid, taid)

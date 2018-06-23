@@ -13,7 +13,6 @@ from flaskr.request_processing import ticket as rp_ticket
 from flaskr.request_processing import message as rp_message
 from flaskr.request_processing import file as rp_file
 from flaskr import Iresponse
-#from flask_jwt import jwt_required, current_identity
 from flaskr.utils import notifications
 from flask_mail import Mail
 from mail.Message import create_email_message
@@ -84,6 +83,7 @@ def create_message(ticket_id):
     if request is None:
         return Iresponse.empty_json_request()
 
+    current_identity = get_current_user()
     json_data["studentid"] = current_identity.id
 
     userId = escape(json_data["studentid"])
@@ -91,12 +91,13 @@ def create_message(ticket_id):
 
     ticket = Ticket.query.get(ticket_id)
     user = User.query.get(userId)
-
+    """
     if(ticket.user_id != user.id):
         message = create_email_message(ticket.title,
                                        [ticket.email], ticket_id,
                                        json_data['message'], user.name)
         res = Mail().send(message)
+    """
     return msg
 
 

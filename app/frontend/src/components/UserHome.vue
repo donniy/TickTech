@@ -86,8 +86,10 @@
         },
         methods: {
             getTickets() {
-				        this.status = 'getting tickets'
-				        const path = '/api/user/' + this.$user.get().id + '/tickets'
+                console.log("GETTING TICKETS")
+				        this.status = 'getting ticket'
+                console.log(this.$user.get())
+				        const path = '/api/user/tickets'
 				        this.$ajax.get(path).then(response => {
 					          this.tickets = response.data.json_data
 				        }).catch(error => {
