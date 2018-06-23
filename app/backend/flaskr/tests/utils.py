@@ -2,7 +2,7 @@ from flaskr import database
 from flaskr.models.user import *
 from flaskr.models.ticket import *
 from flaskr.models.Note import *
-
+from flaskr.models import Course
 
 def create_user(app, id):
     new_user = User()
@@ -30,7 +30,7 @@ def create_ticket(app, ticketId, userId, courseId, status=1):
 
 
 def create_course(app, courseId, tas=[], students=[]):
-    course = Course()
+    course = Course.Course()
     course.id = courseId
     course.course_email = "mail@mail.com"
     course.title = "test_title"
@@ -56,9 +56,9 @@ def link_ta_to_course(user, course):
 
 
 def login(client, userId):
-    login = client.post('/auth', json={
+    login = client.post('/api/login', json={
         'username': userId,
         'password': "random"
     })
-    token = login.get_json()
-    return 'JWT '+token['access_token']
+    json_data = login.get_json()['json_data']
+    return 'Bearer ' + json_data['access_token']
