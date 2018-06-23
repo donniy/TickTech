@@ -43,20 +43,26 @@ import Router from 'vue-router';
             checkUser() {
                 this.$validator.validateAll().then((result) => {
                     if (result) {
-                        this.$auth.login({url: '/auth',
+                        this.$auth.login({url: '/api/login',
                                         data: {username: this.form.username, password: "TickTech"},
-                                        success: function (response) {
-                                            this.$auth.token(null, response.data.access_token);
-                                            this.$auth.fetch({
-                                                params: {},
-                                                success: function () {
-                                                    console.log(this.$auth.user())
-                                                    this.$router.push('/home');
-                                                },
-                                                error: function (response_fetch) {
-                                                    console.error(response_fetch)
-                                                },
-                                            });
+                                          success: function (response) {
+                                              this.$auth.token(null,
+                                                               response.data.json_data.access_token);
+                                              console.log("TOKEN:")
+                                              console.log(response.data.json_data);
+                                              console.log(this.$auth.token())
+                                              this.$auth.fetch({
+                                                  data: {'acces_token': this.$auth.token()},
+                                                  success: function () {
+                                                      console.log("USER:")
+                                                      console.log(this.$auth.user())
+                                                      this.$router.push('/home');
+                                                  },
+                                                  error: function (response_fetch) {
+                                                      console.log("ERROR")
+                                                      console.error(response_fetch)
+                                                  },
+                                              });
                                         },
                                         error: function (response) {
                                             console.error(response)

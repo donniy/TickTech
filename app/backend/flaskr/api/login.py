@@ -1,7 +1,7 @@
 from flask import jsonify, request
 from . import apiBluePrint
 from flaskr.models import user
-from flask_jwt_extended import jwt_required, create_access_token
+from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from flaskr import Iresponse
 
 
@@ -15,13 +15,14 @@ def login():
         return Iresponse.create_response('', 403)
 
     curr_user = user.User.query.get(user_id)
-    acces_token = create_access_token(identity=curr_user.id)
+
     if not curr_user:
         return Iresponse.create_response("Invalid user", 403)
 
+    acces_token = create_access_token(identity=curr_user.id)
     return Iresponse.create_response({'status': 'success',
                                       'user': curr_user.serialize,
-                                      'acces_token': acces_token}, 200)
+                                      'access_token': acces_token}, 200)
 
 
 @apiBluePrint.route('/user/retrieve', methods=['GET'])
@@ -30,7 +31,12 @@ def retrieve_user():
     """
     Returns the user model of the current user.
     """
-    print("retrieving user: " + str(current_identity))
+    #print("retrieving user: " + str(current_identity))
+    curr_user_id = get_jwt_identity()
+    curr_user = user.User.query.get(int(curr_user_id))
+    print(curr_user.serialize)
+    return Iresponse.create_response({'user': curr_user.serialize}, 200)
+
     student, ta, usr = {}, {}, {}
     for s in current_identity.student_courses:
         student = {**student, **(s.serialize)}
