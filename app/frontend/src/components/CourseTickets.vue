@@ -11,7 +11,6 @@
                         <br />
                     </div>
                 </div>
-                <!-- Table with all tickets + information. -->
                 <div class="row">
                     <div class="col-lg-12 col-md-12 text-center">
                         <div class="row">
@@ -19,12 +18,14 @@
                                 <md-table-toolbar class="red">
                                     <h1 class="md-title">Tickets</h1>
                                     <md-field md-clearable class="md-toolbar-section-end">
-                                        <md-input placeholder="Search by title..." v-model="search" @input="searchOnTable" style="color = white; background-color = white;"
-                                        />
+                                        <label for="searchField">Search by title...</label>
+                                        <md-input id="searchField" v-model="search" @input="searchOnTable" style="color = white; background-color = white;" />
                                     </md-field>
                                 </md-table-toolbar>
 
-                                <md-table-empty-state md-label="No tickets found" :md-description="`No ticket found for this '${search}' query. Try a different search term.`">
+                                <md-table-empty-state md-label="No tickets found" v-show="this.tickets.length > 0" :md-description="`No ticket found for this '${search}' query. Try a different search term.`">
+                                </md-table-empty-state>
+                                <md-table-empty-state md-label="No tickets in this course" v-show="this.tickets.length <= 0">
                                 </md-table-empty-state>
 
                                 <md-table-row md-delay="1000" slot="md-table-row" slot-scope="{ item }" class="tickettable" v-on:click="navTicket(item.id)"
@@ -34,25 +35,25 @@
                                     <md-table-cell md-label="Status" md-sort-by="status.name">{{ item.status.name }}</md-table-cell>
                                     <md-table-cell md-label="Time" md-sort-by="timestamp">{{ item.timestamp | moment("DD/MM/YY HH:mm")}}</md-table-cell>
                                     <md-table-cell md-label="Operator" md-sort-by="binded_tas" v-if="item.binded_tas != null">{{ item.binded_tas }}</md-table-cell>
-                                    <md-table-cell md-label="Operator" md-sort-by="binded_tas" v-if="item.binded_tas == null">Unassigned</md-table-cell>
+                                    <md-table-cell md-label="Operator" md-sort-by="binded_tas" v-if="item.binded_tas == null">unassigned</md-table-cell>
                                 </md-table-row>
                             </md-table>
                         </div>
                     </div>
                 </div>
-                <!-- Configuration buttons. -->
                 <div class="row">
                     <b-button class="btn note-add-button btn btn-primary" button v-on:click="pushLocation('/course/' + $route.params.course_id + '/labels')">Course labels</b-button>
-                    <b-button class="btn note-add-button btn btn-primary" @click="emailSettings" :to="''">Mailserver settings</b-button>
-                    <b-button class="btn note-add-button btn btn-primary" :to="''">Add TA's</b-button>
-                    <b-button class="btn note-add-button btn btn-primary">Add students</b-button>
+                    <b-button v-if="isTA" class="btn note-add-button btn btn-primary">Add students</b-button>
+                    <b-button class="btn note-add-button btn btn-primary" @click="emailSettings" :to="''">Mail settings</b-button>
+                    <b-button v-if="isSupervisor" class="btn note-add-button btn btn-primary" :to="''">Add TAs</b-button>
+
                 </div>
                 <p v-if="email_running">EMAIL IS RUNNING</p>
                 <emodal v-if="showEmailModal" warning="Setup a fetcher to your mailinglist." @close="showEmailModal = false">
                 </emodal>
             </div>
         </transition>
-        <div class=s ummary-sub-container>
+        <div v-if="false" class=s ummary-sub-container>
             <summodal @close="showSum = false, ticketSum = 0" v-for="ticket in tickets" v-if="ticket.id == ticketSum" v-bind:key="ticket.id"
                 v-bind:ticket="ticket" class="singleTicket">
             </summodal>
@@ -89,7 +90,7 @@
     export default {
         data() {
             return {
-                search: null,
+                search: "",
                 searched: [],
                 ticketSum: 0,
                 tickets: [],
@@ -123,25 +124,23 @@
             navTicket(item) {
                 this.$router.push("/ticket/" + item)
             },
-            // Option to search in the table with tickets.
             searchOnTable() {
                 this.searched = searchByName(this.tickets, this.search)
             },
-            // Retrieve all tickets in current course. 
             getTickets() {
-                this.status = 'Getting tickets.'
+                this.status = 'getting tickets'
                 const path = '/api/courses/' + this.$route.params.course_id + '/tickets'
                 this.$ajax.get(path)
                     .then(response => {
                         this.tickets = response.data.json_data
                         this.searched = this.tickets
-                        this.status = 'Retrieved data.'
+                        this.status = 'Retrieved data'
                         console.log(response.data.json_data)
                         console.log(response)
                     })
                     .catch(error => {
                         console.log(error)
-                        this.status = 'Failed getting tickets.'
+                        this.status = 'failed getting tickets'
                     })
             },
             pushLocation(here) {
@@ -150,19 +149,19 @@
             emailSettings() {
                 this.showEmailModal = true
             },
-            // Updates the email server settings.
             updateEmail(form) {
-                const path = '/api/email'
                 this.showEmailModal = false
+                console.log(form)
+                const path = '/api/email'
                 this.$ajax.post(path, form, response => {
                     // TODO: Implement authentication on back-end to work with Canvas.
                     console.log(response)
                 })
             },
-            // Stops the email server.
             stopEmail(form) {
-                const path = '/api/email/stop'
                 this.showEmailModal = false
+                console.log(form)
+                const path = '/api/email/stop'
                 this.$ajax.post(path, form, response => {
                     // TODO: Implement authentication on back-end to work with Canvas.
                     console.log(response)
@@ -176,29 +175,34 @@
             },
             emailRunning: function () {
                 // Get the current email settings from server
+                // console.log("Check if email is running")
                 const path = '/api/email/' + this.$route.params.course_id + '/online'
                 this.$ajax.get(path, response => {
                     // TODO: Implement authentication on back-end to work with Canvas.
+                    // console.log("repsone email running")
+                    // console.log(response)
                     if (response.status == 201) {
-                        // TODO
-                        // console.log("RESPONSE STATUS")
+                        // console.log("Here")
                         // console.log(response.data.json_data.running)
                         // console.log(response)
                         this.email_running = response.data.json_data.running
                     }
                 })
             },
-            /* Compares the user ID to the supervisors', if there is a match,
-             the bool isSupervisor will be set to true & later used in an v-if statement. */
+            /* Function that checks if the current user is a supervisor for this course.
+             * This is used to determine the rights of a user. It checks the id of the user
+             * to the ids of the supervisors of this course. If a match is found we
+             * set the this variable of isSupervisor equal to true. That will be used
+             * in a v-if statement.
+             */
             checkIfSupervisor() {
                 let supervisors = this.course.supervisors
                 let userid = this.$user.get().id
                 let matches = supervisors.filter(supervisor => supervisor.id === userid)
                 this.isSupervisor = matches.length === 1
             },
-            // Retrieve info on current course.
             getCourseInfo() {
-                this.status = 'Getting course information.'
+                this.status = 'getting course information'
                 const path = '/api/courses/single/' + this.$route.params.course_id
                 this.$ajax.get(path)
                     .then(response => {
@@ -211,20 +215,20 @@
                     })
                     .catch(error => {
                         console.log(error)
-                        this.status = 'Failed getting course information.'
+                        this.status = 'failed getting course information'
                     })
             },
-            // Shows the menu to upload a csv file with user data.
+
+            /* Shows the menu to upload a csv file with user data. */
             addStudents() {
                 this.wantsToAddTa = false
                 this.wantsToAddUsers = this.wantsToAddUsers === false
             },
-            // Shows the menu to upload a csv file with ta data.
+            /* Shows the menu to upload a csv file with ta data. */
             addTas() {
                 this.wantsToAddUsers = false
                 this.wantsToAddTa = this.wantsToAddTa === false
             },
-            // Sort tickets on preference.
             sort_tickets(val) {
                 if (val == "Most Recent")
                     this.tickets.sort((a, b) => a.timestamp > b.timestamp)
@@ -252,7 +256,7 @@
             this.emailRunning()
         },
         watch: {
-            // whenever showModal changes, this function will run.
+            // whenever showMadel changes, this function will run
             showEmailModal: function () {
                 this.emailRunning()
             },

@@ -1,7 +1,7 @@
 <!-- SingleTicket.vue shows everything related to a ticket.  -->
 <template>
     <div>
-        <md-button tag="button" class="md-primary" :to="'/course/' + ticket.course_id"> Back to course</md-button>
+        <router-link :to="'/course/' + ticket.course_id " class="btn btn-primary">&laquo; Back to course</router-link>
         <md-speed-dial md-event="click" class="close-button" md-direction="bottom">
             <md-speed-dial-target>
                 <md-icon class="md-morph-initial">more_vert</md-icon>
@@ -38,7 +38,7 @@
                         </div>
                     </div>
                     <div>
-                        TA's:
+                        TAs:
                         <b v-for="ta in ticket.tas" v-bind:key="ta.id" v-bind:ta="ta">
                             {{ ta.name}}
                         </b>
@@ -60,7 +60,7 @@
                 <note v-for="note in notes" v-bind:key="note.id" v-bind:note="note"></note>
 
                 <md-button id="popoverButton-sync" class="note-add-button md-primary">
-                    Add a note
+                    Add a note.
                 </md-button>
                 <b-popover ref="popoverRef" target="popoverButton-sync" triggers="click blur" placement='top'>
                     <vue-tribute :options="mentionOptions" v-on:tribute-replaced="matchFound">
@@ -262,7 +262,7 @@
                     })
             },
             /*
-             * Retrieve TA's of the course and add to course_tas array. 
+             * Retrieve TAs of the course and add to course_tas array. 
              * NOTE: This can maybe stay local and course_tas can be removed from data.
              */
             getCourseTas() {
@@ -275,7 +275,7 @@
                         console.log(error)
                     })
 
-                // Build matching table for mentions. Grabs TA's in course and adds to table.
+                // Build matching table for mentions. Grabs TAs in course and adds to table.
                 function build_ta_matching_table(obj) {
                     console.log(obj.mentionOptions)
                     // Vue-tribute keeps an instance of the Optionsarray, so clear it.

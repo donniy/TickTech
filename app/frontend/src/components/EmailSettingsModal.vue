@@ -11,11 +11,11 @@
                                 <div class="form-group">
                                     <input type="hidden" name="course_id" v-model="form.course_id" />
                                     <label for="email">Email address</label>
-                                    <input id="email" class="form-control" name="email" v-model="form.email" v-validate="'required|min:1'" type="email" placeholder="email@example.com">
+                                    <input id="email" class="form-control" name="email" v-model="form.email" v-validate="'required|min:1'" type="email" placeholder="uvapsetest@gmail.com">
                                     <label for="category">Password</label>
                                     <input id="password" class="form-control" name="password" v-model="form.password" v-validate="'required|min:1'" type="password">
                                     <label for="pop">Pop3 settings</label>
-                                    <input class="form-control" id="pop" name="pop" v-model="form.pop" v-validate="'required|min:1'" type="text" placeholder="pop.example.com">
+                                    <input class="form-control" id="pop" name="pop" v-model="form.pop" v-validate="'required|min:1'" type="text" placeholder="pop.gmail.com">
                                     <label for="port">Port</label>
                                     <input id="port" class="form-control" name="port" v-model="form.port" v-validate="'required|min:1'" type="text" placeholder="995">
                                     <p for="error" class="def-error-msg subheading-middle" v-show="error.show">{{error.text}}</p>
@@ -57,9 +57,9 @@
         data: function () {
             return {
                 form: {
-                    email: "",
-                    password: "",
-                    pop: "",
+                    email: "uvapsetest@gmail.com",
+                    password: "stephanandrea",
+                    pop: "pop.gmail.com",
                     port: "995",
                     course_id: this.$route.params.course_id
                 },
@@ -72,7 +72,7 @@
                     show: false,
                     text: ""
                 }
-            };
+            }
         },
         methods: {
             // Checks if all required information is entered correctly.
@@ -242,13 +242,13 @@
     }
 
     /*
- * The following styles are auto-applied to elements with
- * transition="modal" when their visibility is toggled
- * by Vue.js.
- *
- * You can easily play with the modal transition by editing
- * these styles.
- */
+    * The following styles are auto-applied to elements with
+    * transition="modal" when their visibility is toggled
+    * by Vue.js.
+    *
+    * You can easily play with the modal transition by editing
+    * these styles.
+    */
 
     .modal-enter {
         opacity: 0;

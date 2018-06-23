@@ -2,6 +2,9 @@
 <template>
     <div>
         <router-link :to="{path: ret_url}" class="btn btn-primary back-button">&laquo; Back to overview </router-link>
+        <router-link :to="{path: ret_url}" class="btn btn-primary">&laquo; Back home</router-link>
+        </md-button>
+
         <br />
         <br />
         <h1>My ticket</h1>

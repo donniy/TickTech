@@ -36,12 +36,12 @@
                     </div>
 
                     <div class="padding-left-10">
-                        <p class="def-error-msg float-left" v-show="fileTooLarge">
-                            The files are too large.
+                        <p class="def-error-msg" v-show="fileTooLarge">
+                            Too large a file detected
                             </br>
                         </p>
-                        <p class="def-error-msg float-left" v-show="fileTooMany">
-                            There are too many files.
+                        <p class="def-error-msg" v-show="fileTooMany">
+                            Too many files detected
                             </br>
                         </p>
                     </div>

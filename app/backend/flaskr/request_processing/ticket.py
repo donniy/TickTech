@@ -88,7 +88,7 @@ def add_ta_list_to_ticket(json_data):
         for ta in ta_list:
             ticket.bound_tas.append(ta)
         return Iresponse.create_response("Success", 200)
-    return Iresponse.create_response("No Ta's found", 400)
+    return Iresponse.create_response("No TAs found", 400)
 
 
 def remove_ta_from_ticket(json_data):

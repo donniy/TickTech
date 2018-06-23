@@ -22,12 +22,12 @@
             <!-- if-else for student, supervisor (or both) and not logged in. -->
             <div v-if="(rights() & 1) === 0" class="div-inline mt-2 mt-md-0">
                 <div>
-                    <router-link to="/login" :class="'navbar-buttons'">Login</router-link>
-                    <router-link to="/register" :class="'home-right navbar-buttons'">Register</router-link>
+                    <router-link to="/login" :class="'btn btn-primary navbar-buttons'">Login</router-link>
+                    <router-link to="/register" :class="'btn btn-primary home-right navbar-buttons'">Register</router-link>
                 </div>
             </div>
             <div v-else class="div-inline mt-2 mt-md-0">
-                <button tag="button" class="'btn note-add-button btn btn-primary btn-primary home-right'" v-on:click="$auth.logout({makeRequest: false, success: function () { $auth.token(null, '') }, redirect: '/'})">Logout</button>
+                <button tag="button" style="margin-right:20px;" class="'note-add-button btn btn-primary home-right'" v-on:click="$auth.logout({makeRequest: false, success: function () { $auth.token(null, '') }, redirect: '/'})">Logout</button>
             </div>
         </ul>
     </nav>
