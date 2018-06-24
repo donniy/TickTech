@@ -69,7 +69,7 @@ import Router from 'vue-router';
                                         },
                                         rememberMe: true,
                                         fetchUser: false,
-                                        redirect: '/home',
+                                        //redirect: '/home',
                         })
                     }
                 })

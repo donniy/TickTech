@@ -97,16 +97,13 @@
 				        })
 			      },
             getCourses() {
-                this.$ajax.get('/api/user/teachingAssistant_courses', response => {
-                    let course_ta_in = response.data.json_data
-                    if (course_ta_in.length === 0) {
-                        this.isTA = false;
-                        this.ta_courses = []
-                        return;
-                    }
-                    this.isTA = true;
-                    this.ta_courses = course_ta_in;
-                })
+                this.ta_courses = this.$user.get().ta
+                if (this.ta_courses && this.ta_courses.length > 0) {
+                    this.isTA = true
+                    return;
+                }
+                this.isTA = false;
+                this.ta_courses = []
             },
 
             getTodos () {
@@ -116,7 +113,6 @@
                 })
             },
             created() {
-                console.log("HELLO")
                 this.status = 'created'
                 this.getCourses()
                 this.getTodos()

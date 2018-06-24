@@ -3,7 +3,7 @@ from . import apiBluePrint
 from flaskr.models import user, Course
 from flask_jwt_extended import jwt_required, create_access_token
 from flaskr.jwt_wrapper import get_current_user
-from flaskr import Iresponse
+from flaskr import Iresponse, database
 
 
 @apiBluePrint.route('/login', methods=['POST'])
@@ -34,12 +34,11 @@ def retrieve_user():
     """
     current_identity = get_current_user()
     student, ta, usr = {}, {}, {}
-    for s in current_identity.student_courses:
-        student = {**student, **(s.serialize)}
-    for t in current_identity.ta_courses:
-        ta = {**ta, **(t.serialize)}
+    student = database.serialize_list(current_identity.student_courses)
+    ta = database.serialize_list(current_identity.ta_courses)
 
     usr = current_identity.serialize
     usr['student'] = student
     usr['ta'] = ta
+    print(ta)
     return Iresponse.create_response({'user': usr}, 200)
