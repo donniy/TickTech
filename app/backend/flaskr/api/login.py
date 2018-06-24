@@ -1,7 +1,7 @@
 from flask import jsonify, request
 from . import apiBluePrint
 from flaskr.models import user, Course
-from flask_jwt_extended import jwt_required, create_access_token,
+from flask_jwt_extended import jwt_required, create_access_token
 from flaskr.jwt_wrapper import get_current_user
 from flaskr import Iresponse
 
