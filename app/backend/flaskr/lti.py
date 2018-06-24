@@ -124,7 +124,7 @@ class LTI_instance:
         """
         self.params = {}
         self.database_helper = None
-        try: # Maybe wrap this into a helper class.
+        try:  # Maybe wrap this into a helper class.
             self._validate_lti_Irequest_signature(i_req)
             self._sanitize_lti_Irequest(i_req)
             self._ensure_params_exists(self.params)

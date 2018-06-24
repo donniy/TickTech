@@ -29,7 +29,7 @@ import mimetypes
 def close_ticket(ticket_id):
     """ Update this with a rights check."""
     current_identity = get_current_user()
-    try: #WHY??
+    try:  # WHY??
         ticket = Ticket.query.get(ticket_id)
         ticket.close
         db.session.commit()
@@ -39,7 +39,7 @@ def close_ticket(ticket_id):
                              Message.NTFY_TYPE_CLOSED)
     except Exception as e:
         raise e
-        return Iresponse.create_response(str(e), 400) #WTF????
+        return Iresponse.create_response(str(e), 400)  # WTF????
     return jsonify({'status': "success", 'message': 'ticket closed'})
 
 

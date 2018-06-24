@@ -1,6 +1,3 @@
-
-
-
 class Irequest:
     """
     Internal request class. This is a base class so we
@@ -31,8 +28,9 @@ class Irequest:
     def transform_request_to_internal_request(self, framework_request_type):
         """
         This is the function that transforms a certrain framework request type
-        into our internal request type. This is done by extracting the following
-        data from the request encoded in the following type added to self.
+        into our internal request type. This is done by extracting the
+        following data from the request,
+        encoded in the following type added to self.
         self.headers: the headers of the request in a python dict.
         self.body: the body of the request in a mutable python dict.
         self.method: is the method of the request as a str.

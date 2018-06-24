@@ -68,7 +68,8 @@ def create_request(json_data):
 # TODO: Should check is the json_data is valid.
 def add_ta_to_ticket(json_data):
     print("CALLED this")
-    ticket = Ticket.query.filter_by(id=uuid.UUID(json_data['ticketid'])).first()
+    ticket = Ticket.query.filter_by(
+        id=uuid.UUID(json_data['ticketid'])).first()
     ta = User.query.filter_by(id=json_data['taid']).first()
 
     # Check if the ta and ticket were found and add if not already there.

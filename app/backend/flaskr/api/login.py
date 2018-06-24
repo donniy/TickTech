@@ -1,7 +1,8 @@
 from flask import jsonify, request
 from . import apiBluePrint
 from flaskr.models import user, Course
-from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
+from flask_jwt_extended import jwt_required, create_access_token,
+from flaskr.jwt_wrapper import get_current_user
 from flaskr import Iresponse
 
 
@@ -31,9 +32,8 @@ def retrieve_user():
     """
     Returns the user model of the current user.
     """
-    #print("retrieving user: " + str(current_identity))
-    curr_user_id = get_jwt_identity()
-    curr_user = user.User.query.get(int(curr_user_id))
+    # print("retrieving user: " + str(current_identity))
+    curr_user = get_current_user()
     print(curr_user.courses_user_is_ta_in)
     return Iresponse.create_response({'user': curr_user.serialize}, 200)
 

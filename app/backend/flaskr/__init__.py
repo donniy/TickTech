@@ -52,7 +52,6 @@ def create_app(test_config=None):
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-
     app.config['JWT_SECRET_KEY'] = 'very-secure'
 
     # Send email settings, for now hardcoded
@@ -64,7 +63,6 @@ def create_app(test_config=None):
     app.config['MAIL_PASSWORD'] = EMAIL_SEND_PASSWORD
     app.config['MAIL_DEFAULT_SENDER'] = EMAIL_SEND_EMAIL
     Mail(app)
-
 
     # Make user logged in for 1 day.
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=86400)

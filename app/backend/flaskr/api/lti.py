@@ -4,6 +4,7 @@ from flaskr.i_request import *
 from flaskr import lti
 from flask_jwt import JWT
 
+
 @apiBluePrint.route('lti/launch', methods=['POST'])
 def launch_lti_session():
     i_req = IrequestFlask()

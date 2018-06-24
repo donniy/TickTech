@@ -4,6 +4,7 @@ from flaskr.models.ticket import *
 from flaskr.models.Note import *
 from flaskr.models import Course
 
+
 def create_user(app, id):
     new_user = User()
     new_user.id = id
