@@ -7,6 +7,7 @@ from flask import request
 from flaskr.models.user import *
 from flaskr.utils.json_validation import *
 from flaskr.request_processing.user import *
+from sqlalchemy import and_
 
 
 @apiBluePrint.route('/user/tickets')
@@ -19,7 +20,14 @@ def retrieve_user_tickets():
     tickets = Ticket.query.filter_by(user_id=curr_user.id).all()
     return Iresponse.create_response(database.serialize_list(tickets), 200)
 
-# maybe add query parameter instead of full api route
+
+@apiBluePrint.route('/user/tickets/course/<course_id>', methods=['GET'])
+@jwt_required
+def get_user_ticket_for_course(course_id):
+    curr_user = get_current_user()
+    tickets = Ticket.query.filter(Ticket.user_id == curr_user.id,
+                                  Ticket.course_id == course_id).all()
+    return Iresponse.create_response(database.serialize_list(tickets), 200)
 
 
 @apiBluePrint.route('/user/<user_id>/tickets/active')

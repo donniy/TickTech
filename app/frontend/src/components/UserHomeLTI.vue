@@ -1,6 +1,7 @@
 <template>
-    <div class="container">
-        <div class="md-layout welcome-header">
+<!-- When in LTI -->
+    <div class="container" v-else-if="this.$lti.data.lti_session">
+      <div class="md-layout welcome-header">
             <h2>Welcome back {{ $user.get().name }}</h2>
         </div>
         <div class="md-layout md-gutter wrapper md-size-20 md-small-size-100">
@@ -57,7 +58,22 @@
 
                     </md-list>
                 </md-content>
-                <md-card md-with-hover class="md-elevation-5 md-raised md-primary create-ticket-section1" @click.native="$router.push('/ticket/submit')">
+                <!-- A TA can not create a ticket in a LTI session. -->
+                <md-card md-with-hover
+                         v-if="isTA"
+                         class="md-elevation-5 md-raised md-primary create-ticket-section1"
+                         @click.native="$router.push('/course/' + lti_course.id)">
+                    <md-ripple>
+                        <md-card-content class="create-ticket-section2">
+                            <h1 style="opacity:1;">Course overview</h1>
+                        </md-card-content>
+                    </md-ripple>
+                </md-card>
+
+                <md-card md-with-hover
+                         v-if="!isTA"
+                         class="md-elevation-5 md-raised md-primary create-ticket-section1"
+                         @click.native="$router.push('/ticket/submit')">
                     <md-ripple>
                         <md-card-content class="create-ticket-section2">
                             <h1 style="opacity:1;">Create ticket</h1>
@@ -70,64 +86,70 @@
 </template>
 
 <script>
+import Course from './Course.vue'
+import Ticket from './Ticket.vue'
 
-    import Course from './Course.vue'
-    import Ticket from './Ticket.vue'
-
-    export default {
-        data() {
-            return {
-                ta_courses: [],
-                status: 'not set',
-                tickets: [],
-                isTA: false,
-                notifications: [],
-            }
-        },
-        methods: {
-            getTickets() {
-                console.log("GETTING TICKETS")
-				        this.status = 'getting ticket'
-                console.log(this.$user.get())
-				        const path = '/api/user/tickets'
-				        this.$ajax.get(path).then(response => {
-					          this.tickets = response.data.json_data
-				        }).catch(error => {
-					          console.log(error)
-				        })
-			      },
-            getCourses() {
-                this.ta_courses = this.$user.get().ta
-                if (this.ta_courses && this.ta_courses.length > 0) {
-                    this.isTA = true
-                    return;
-                }
-                this.isTA = false;
-                this.ta_courses = []
-            },
-
-            getTodos () {
-                this.$ajax.get('/api/user/notifications', response => {
-                    console.log(response.data.json_data)
-                    this.notifications = response.data.json_data
-                })
-            },
-            created() {
-                this.status = 'created'
-                this.getCourses()
-                this.getTodos()
-                this.getTickets()
-            }
-        },
-        mounted: function () {
-            if (!this.$user.logged_in()) {
-                this.$router.push('/login')
-            }
-            this.created();
-        },
-        components: {
-            'course': Course,
-            'ticket': Ticket
+export default {
+    data() {
+        return {
+            ta_courses: [],
+            status: 'not set',
+            tickets: [],
+            isTA: false,
+            notifications: [],
+            lti_course: null,
         }
+    },
+    methods: {
+        getTickets() {
+            console.log("GETTING TICKETS")
+				    this.status = 'getting ticket'
+            console.log(this.$user.get())
+				    const path = '/api/user/tickets/course/' + this.lti_course.id
+				    this.$ajax.get(path).then(response => {
+					      this.tickets = response.data.json_data
+				    }).catch(error => {
+					      console.log(error)
+				    })
+			  },
+        getLtiCourse() {
+            let lti_data = this.$lti.data.lti_data;
+            if (lti_data['tiktech_is_course_TA']) {
+                    this.lti_course_id = lti_data['tiktech_course_id'];
+                    let courses_ta = this.$user.get().ta;
+                    for (let i = 0; i < courses_ta.length; i++) {
+                        if (courses_ta[i].id === this.lti_course_id) {
+                            this.lti_course = courses_ta[i];
+                        }
+                    }
+                    console.log(this.lti_course.id)
+                    this.isTA = true
+            } else if (lti_data['tiktech_is_course_student']) {
+                this.lti_course_id = lti_data['tiktech_course_id'];
+                let student_course = this.$user.get().student
+                for (let i = 0; i < student_course.length; i++) {
+                    if (student_course[i].id === this.lti_course_id) {
+                        this.lti_course = student_course[i];
+                    }
+                }
+            }
+        },
+        created() {
+            this.getLtiCourse();
+            this.getTickets()
+            this.status = 'created'
+        }
+    },
+    mounted: function () {
+        if (!this.$user.logged_in()) {
+            this.$router.push('/login')
+        }
+        console.log("LTI:")
+        this.created();
+    },
+    components: {
+        'course': Course,
+        'ticket': Ticket
     }
+}
 </script>

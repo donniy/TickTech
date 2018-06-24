@@ -11,6 +11,7 @@ from flask_jwt_extended.tokens import (
     encode_refresh_token, encode_access_token
 )
 
+
 @apiBluePrint.route('lti/launch', methods=['POST'])
 def launch_lti_session():
     """
@@ -35,7 +36,8 @@ def launch_lti_session():
     lti_instance.params['in_lti'] = True
     access_token = create_access_token(identity=lti_instance.params)
     # Add base url instead of hardcoded.
-    return redirect("http://localhost:5000/start_lti_instance/" + access_token, 302)
+    return redirect("http://localhost:5000/start_lti_instance/"
+                    + access_token, 302)
 
 
 @apiBluePrint.route('lti/auth_session', methods=['POST'])

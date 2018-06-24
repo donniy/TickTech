@@ -2,7 +2,7 @@
     <router-link class="ticket-single" :to="base_url + ticket.id">
         <md-ripple>
     	<h6>{{ticket.title}}</h6>
-        In course: {{course}}</br>
+        In course: {{ this.course }}</br>
         Status: {{ticket.status.name}} </br>
         Time: {{ticket.timestamp}}
     </md-ripple>
@@ -10,17 +10,18 @@
 </template>
 
 <script>
-	export default {
+export default {
 		props: {
 			ticket: Object,
-            course: '',
-			base_url: {
+ 			base_url: {
 				type: String,
 				default: "/student/ticket/"
 			}
 		},
 		data: function () {
-			return {}
+			  return {
+            course: ''
+        }
 		}, methods: {
             getCourse() {
                 const path = '/api/courses/single/' + this.ticket.course_id

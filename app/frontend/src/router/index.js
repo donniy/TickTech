@@ -13,8 +13,8 @@ const routerOptions = [
     },
     {
         path: '/home',
-        name: 'UserHome',
-        component: 'UserHome',
+        name: 'UserHomeLoader',
+        component: 'UserHomeLoader',
         meta: {
             breadcrumb: 'Home',
             auth: true
