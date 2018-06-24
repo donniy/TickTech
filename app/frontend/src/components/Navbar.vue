@@ -26,7 +26,10 @@
                 </div>
             </div>
             <div v-else class="div-inline mt-2 mt-md-0">
-                <button tag="button" style="margin-right:20px;" class="'note-add-button btn btn-primary home-right'" v-on:click="$auth.logout({makeRequest: false, success: function () { $auth.token(null, '') }, redirect: '/'})">Logout</button>
+              <button tag="button" style="margin-right:20px;"
+                      v-if="!this.$lti.in_lti"
+                      class="'note-add-button btn btn-primary home-right'"
+                      v-on:click="$auth.logout({makeRequest: false, success: function () { $auth.token(null, '') }, redirect: '/'})">Logout</button>
             </div>
         </ul>
     </nav>

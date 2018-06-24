@@ -107,6 +107,11 @@ const routerOptions = [
         },
     },
     {
+        path: '/start_lti_instance/:access_token',
+        name: 'StartLti',
+        component: 'StartLti',
+    },
+    {
         path: '*',
         component: 'NotFound',
         meta: {

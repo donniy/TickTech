@@ -67,6 +67,7 @@ class LTI_instance_database_helper:
                             description=self.lti_instance.course_description)
             if not database.addItemSafelyToDB(course):
                 pass
+        self.lti_instance.params['tiktech_course_id'] = course.id
         self.cache['course'] = course
 
     def ensure_user_exists(self):

@@ -20,7 +20,11 @@ def login():
     if not curr_user:
         return Iresponse.create_response("Invalid user", 403)
 
-    acces_token = create_access_token(identity=curr_user.id)
+    identity_wrapped = {
+        'user_id': curr_user.id,
+        'in_lti': False,
+    }
+    acces_token = create_access_token(identity=identity_wrapped)
     return Iresponse.create_response({'status': 'success',
                                       'user': curr_user.serialize,
                                       'access_token': acces_token}, 200)
@@ -40,5 +44,4 @@ def retrieve_user():
     usr = current_identity.serialize
     usr['student'] = student
     usr['ta'] = ta
-    print(ta)
     return Iresponse.create_response({'user': usr}, 200)

@@ -44,7 +44,7 @@ function handle_ajax_error(error) {
 }
 
 /* Function that adds the bearer jwt to the header.
-   This has cannot be done via vue-auth, because of our
+   This cannot be done via vue-auth, because of our
    custom $ajax wrapper.
 */
 function add_bearer(hdr) {
@@ -140,8 +140,10 @@ Vue.prototype.$user = {
     });
   },
 
-  logged_in: () => {
-    return window.$auth.check()
+    logged_in: () => {
+        console.log("ACCES")
+        console.log(window.$auth)
+        return window.$auth.check();
   },
 
   isStudent: () => {
@@ -165,6 +167,13 @@ Vue.prototype.$user = {
     return (typeof usr.ta !== 'undefined') ? 1 : 0
   }
 }
+
+Vue.prototype.$lti = {
+    data: {
+        lti_session: false,
+        lti_data: {}
+    },
+};
 
 Vue.axios = axios
 Vue.router = router
