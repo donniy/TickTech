@@ -138,7 +138,7 @@ def get_courses_user_is_student_in():
     curr_user = get_current_user()
     if curr_user is None:
         return Iresponse.create_response("", 404)
-    courses = curr_user.courses_user_is_student_in
+    courses = curr_user.student_courses
     return Iresponse.create_response(database.serialize_list(courses), 200)
 
 
@@ -148,7 +148,7 @@ def get_courses_user_is_ta_in():
     curr_user = get_current_user()
     if curr_user is None:
         return Iresponse.create_response("", 404)
-    courses = curr_user.courses_user_is_ta_in
+    courses = curr_user.ta_courses
     return Iresponse.create_response(database.serialize_list(courses), 200)
 
 

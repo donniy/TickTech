@@ -23,21 +23,6 @@ class User(db.Model):
     labels = db.relationship("Label", secondary=association_table,
                              backref="users")
 
-    courses_user_is_student_in = db.relationship(
-        "Course", secondary=Course.student_course_linker,
-        lazy='subquery',
-        backref=db.backref('courses_user_is_student_in'))
-
-    courses_user_is_ta_in = db.relationship(
-        "Course", secondary=Course.ta_course_linker,
-        lazy='subquery',
-        backref=db.backref('courses_user_is_ta_in'))
-
-    courses_user_is_supervisor_in = db.relationship(
-        "Course", secondary=Course.supervisor_linker,
-        lazy='subquery',
-        backref=db.backref('courses_user_is_supervisor_in'))
-
     # Dit is een soort toString zoals in Java, voor het gebruiken van de
     # database in de commandline. Op die manier kan je data maken en weergeven
     # zonder formulier.

@@ -32,11 +32,7 @@ def retrieve_user():
     """
     Returns the user model of the current user.
     """
-    # print("retrieving user: " + str(current_identity))
-    curr_user = get_current_user()
-    print(curr_user.courses_user_is_ta_in)
-    return Iresponse.create_response({'user': curr_user.serialize}, 200)
-
+    current_identity = get_current_user()
     student, ta, usr = {}, {}, {}
     for s in current_identity.student_courses:
         student = {**student, **(s.serialize)}
