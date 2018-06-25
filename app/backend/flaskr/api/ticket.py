@@ -29,7 +29,7 @@ import mimetypes
 def close_ticket(ticket_id):
     """ Update this with a rights check."""
     current_identity = get_current_user()
-    try:  # WHY??
+    try:
         ticket = Ticket.query.get(ticket_id)
         ticket.close
         db.session.commit()
