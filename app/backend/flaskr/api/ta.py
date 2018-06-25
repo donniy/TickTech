@@ -10,6 +10,7 @@ from flaskr.jwt_wrapper import get_current_user
 from flaskr.auth import require_ta_in_course
 from flaskr import database
 
+
 @apiBluePrint.route('/ta/<user_id>/tickets')
 def retrieve_tickets(user_id):
     user = User.query.get(user_id)

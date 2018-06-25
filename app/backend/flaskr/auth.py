@@ -4,6 +4,7 @@ from flaskr.jwt_wrapper import get_current_user
 from flaskr import Iresponse
 from flaskr.models import Course
 
+
 def require_ta_in_course(course_id):
     """
     Function that can be used as a decorator, to require
@@ -12,11 +13,13 @@ def require_ta_in_course(course_id):
     course should be given to this decorator and a valid
     jwt should be present from which the user can be extracted.
     """
+
     def decorator(func):
         """
         This decorator is required, so we can give
         a param to the require_ta_in_course decorator.
         """
+
         @wraps(func)
         def verify_ta_in_course(*args, **kwargs):
             """
@@ -30,10 +33,11 @@ def require_ta_in_course(course_id):
             - Iresponse 403: if the user is not a ta in the course.
 
             Returns on succes:
-            - Calls the decorated function, supplying the args and kwargs,
-            and added to that the course and current user.
+            - Calls the decorated function, with the following params:
+            (course, user, *args, **kwargs).
             So the decorated function should always accept atleast two params,
-            namely the course and user, in that order.
+            namely the course and user, in that order. Extra params, should come
+            after the course and user.
             """
             verify_jwt_in_request()
             curr_user = get_current_user()
@@ -44,6 +48,6 @@ def require_ta_in_course(course_id):
                 return Iresponse.create_response("Course not found", 404)
             if curr_user not in course.ta_courses:
                 return Iresponse.create_response("", 403)
-            return func(*args, **kwargs, course, curr_user)
+            return func(course, curr_user, *args, **kwargs)
         return verify_ta_in_course
     return decorator
