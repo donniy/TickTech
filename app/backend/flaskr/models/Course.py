@@ -67,7 +67,7 @@ class Course(db.Model):
 
     supervisors = db.relationship(
         "User", secondary=supervisor_linker, lazy='subquery',
-        backref=db.backref('supervisors', lazy=True))
+        backref=db.backref('supervisor_courses', lazy=True))
 
     # Dit is een soort toString zoals in Java, voor het gebruiken van de
     # database in de commandline. Op die manier kan je data maken en weergeven

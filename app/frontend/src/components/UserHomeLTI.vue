@@ -61,7 +61,7 @@
                 </md-content>
                 <!-- A TA can not create a ticket in an LTI session. -->
                 <md-card md-with-hover
-                         v-if="isTA"
+                         v-if="isTA || isTeacher"
                          class="md-elevation-5 md-raised md-primary create-ticket-section1"
                          @click.native="$router.push('/course/' + lti_course.id)">
                     <md-ripple>
@@ -72,7 +72,7 @@
                 </md-card>
 
                 <md-card md-with-hover
-                         v-if="!isTA"
+                         v-if="isStudent"
                          class="md-elevation-5 md-raised md-primary create-ticket-section1"
                          @click.native="$router.push('/ticket/submit')">
                     <md-ripple>
@@ -97,6 +97,8 @@ export default {
             status: 'not set',
             tickets: [],
             isTA: false,
+            isTeacher: false,
+            isStudent: false,
             notifications: [],
             lti_course: null,
         }
@@ -118,30 +120,35 @@ export default {
 					      console.log(error)
 				    })
 			  },
+        is_lti_course(course) {
+            return this.lti_course_id === course.id
+        },
+        /* Gets the current lti course from the user object,
+           based on the lti session.
+         */
         getLtiCourse() {
             let lti_data = this.$lti.data.lti_data;
+            this.lti_course_id = lti_data['tiktech_course_id'];
             if (this.isTA) {
-                    this.lti_course_id = lti_data['tiktech_course_id'];
-                    let courses_ta = this.$user.get().ta;
-                    for (let i = 0; i < courses_ta.length; i++) {
-                        if (courses_ta[i].id === this.lti_course_id) {
-                            this.lti_course = courses_ta[i];
-                        }
-                    }
-            } else if (lti_data['tiktech_is_course_student']) {
-                this.lti_course_id = lti_data['tiktech_course_id'];
-                let student_course = this.$user.get().student
-                for (let i = 0; i < student_course.length; i++) {
-                    if (student_course[i].id === this.lti_course_id) {
-                        this.lti_course = student_course[i];
-                    }
-                }
+                let courses_ta = this.$user.get().ta;
+                this.lti_course = courses_ta.find(this.is_lti_course);
+            } else if (this.isStudent) {
+                let student_courses = this.$user.get().student
+                this.lti_course = student_courses.find(this.is_lti_course);
+                console.log(this.lti_course)
+            } else if (this.isTeacher) {
+                let teacher_courses = this.$user.get().supervisor;
+                this.lti_course = teacher_courses.find(this.is_lti_course);
             }
         },
         determineRole() {
             let lti_data = this.$lti.data.lti_data;
             if (lti_data['tiktech_is_course_TA']) {
                 this.isTA = true;
+            } else if (lti_data['tiktech_is_course_student']) {
+                this.isStudent = true;
+            } else if (lti_data['tiktech_is_course_teacher']) {
+                this.isTeacher = true;
             }
         },
         created() {

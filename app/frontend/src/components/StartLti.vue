@@ -15,16 +15,6 @@ export default {
             const path = '/api/lti/get_lti_params';
             this.$ajax.get(path).then(response => {
                 this.$lti.data.lti_data = response.data.json_data;
-                this.$auth.fetch({
-                    data: {},
-                    success: function () {
-                        console.log(this.$auth.user())
-                        this.$router.push('/home');
-                    },
-                    error: function (response_fetch) {
-                        console.error(response_fetch)
-                    },
-                });
 
             })
         }
@@ -45,6 +35,16 @@ export default {
                 this.$auth.authenticated = true;
                 this.$lti.data.lti_session = true;
                 this.get_lti_data();
+                this.$auth.fetch({
+                    data: {},
+                    success: function () {
+                        console.log(this.$auth.user())
+                        this.$router.push('/home');
+                    },
+                    error: function (response_fetch) {
+                        console.error(response_fetch)
+                    },
+                });
             },
             error: function (response) {
                 console.error(response)
