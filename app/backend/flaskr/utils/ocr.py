@@ -16,4 +16,4 @@ def process_image(url):
 
 
 def _get_image(url):
-    return Image.open(StringIO(url))
+    return Image.open(url)

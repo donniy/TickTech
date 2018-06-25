@@ -224,14 +224,10 @@ def get_text():
     try:
         json_data = request.get_json()
         if 'address' in json_data:
-            print("good json")
             homefolder = expanduser("~")
             base = '/serverdata/'
-            location = json_data['address'].rsplit('/', 1)[0]
-            folder = homefolder + base + location
-            file = json_data['address'].rsplit('/', 1)[1]
-            full_path = folder + json_data['address']
-            print(full_path, "this path")
+            location = homefolder + base + json_data['address']
+            print("Getting from",location)
             test = ocr.process_image(full_path)
             print(test)
         return Iresponse.create_response("OK", 200)
