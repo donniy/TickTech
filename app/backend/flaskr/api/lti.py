@@ -38,7 +38,8 @@ def launch_lti_session():
     # One minutes should be secure and enough?.
     expires = datetime.timedelta(minutes=1)
     lti_instance.params['in_lti'] = True
-    access_token = create_access_token(identity=lti_instance.params, expires_delta=expires)
+    access_token = create_access_token(identity=lti_instance.params,
+                                       expires_delta=expires)
     # Add base url instead of hardcoded.
     return redirect("http://localhost:5000/start_lti_instance/"
                     + access_token, 302)
