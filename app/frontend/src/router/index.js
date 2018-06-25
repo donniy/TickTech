@@ -13,8 +13,8 @@ const routerOptions = [
     },
     {
         path: '/home',
-        name: 'UserHome',
-        component: 'UserHome',
+        name: 'UserHomeLoader',
+        component: 'UserHomeLoader',
         meta: {
             breadcrumb: 'Home',
             auth: true
@@ -105,6 +105,11 @@ const routerOptions = [
             pre: '/user/:user_id',
             auth: ['student']
         },
+    },
+    {
+        path: '/start_lti_instance/:access_token',
+        name: 'StartLti',
+        component: 'StartLti',
     },
     {
         path: '*',

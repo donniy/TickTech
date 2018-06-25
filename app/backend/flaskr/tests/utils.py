@@ -63,9 +63,9 @@ def link_ta_to_ticket(user, ticket):
 
 
 def login(client, userId):
-    login = client.post('/auth', json={
+    login = client.post('/api/login', json={
         'username': userId,
         'password': "random"
     })
-    token = login.get_json()
-    return 'Bearer '+token['access_token']
+    json_data = login.get_json()['json_data']
+    return 'Bearer ' + json_data['access_token']

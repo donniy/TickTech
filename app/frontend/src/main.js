@@ -43,75 +43,72 @@ function handle_ajax_error(error) {
   }
 }
 
+/* Function that adds the bearer jwt to the header.
+   This cannot be done via vue-auth, because of our
+   custom $ajax wrapper.
+*/
+function add_bearer(hdr) {
+    let token = window.$auth.token();
+    if (token) {
+        hdr['Authorization'] = 'Bearer ' + token;
+    }
+    return hdr;
+}
+
 //Vue.prototype.$user = null
 Vue.prototype.$ajax = {
-  get: function (url, data, f) {
-    let hdr = {};
+    get: function (url, data, f) {
+        let hdr = {};
 
-    if (typeof data == 'function') {
-        f = data
-        data = {}
-    }
+        if (typeof data == 'function') {
+            f = data
+            data = {}
+        }
 
-    let token = window.$auth.token();
+        hdr = add_bearer(hdr);
 
-    if(token)
-      hdr['Authorization'] = 'Bearer ' + token;
-
-    let axios_auth = axios.create({
-      headers: hdr
-    });
-    return axios_auth.get(url, data).then(f).catch(handle_ajax_error)
-  },
+        let axios_auth = axios.create({
+            headers: hdr
+        });
+        return axios_auth.get(url, data).then(f).catch(handle_ajax_error);
+    },
   post: function (url, data={}, f) {
     let hdr = {};
 
-    let token = window.$auth.token();
-
-    if(token)
-      hdr['Authorization'] = 'Bearer ' + token;
+    hdr = add_bearer(hdr);
 
     hdr['X-CSRFToken'] = csrf_token;
     let axios_csrf = axios.create({
       headers: hdr
     });
-    return axios_csrf.post(url, data).then(f).catch(handle_ajax_error)
+      return axios_csrf.post(url, data).then(f).catch(handle_ajax_error);
   },
   delete: function (url, data={}, f) {
     let hdr = {};
 
-    let token = window.$auth.token();
-
-    if(token)
-      hdr['Authorization'] = 'Bearer ' + token;
+    hdr = add_bearer(hdr);
 
     hdr['X-CSRFToken'] = csrf_token;
     let axios_csrf = axios.create({
       headers: hdr
     });
-    return axios_csrf.delete(url, data).then(f).catch(handle_ajax_error)
+      return axios_csrf.delete(url, data).then(f).catch(handle_ajax_error);
   },
   put: function (url, data={}, f) {
     let hdr = {};
 
-    let token = window.$auth.token();
-
-    if(token)
-      hdr['Authorization'] = 'Bearer ' + token;
+    hdr = add_bearer(hdr);
 
     hdr['X-CSRFToken'] = csrf_token;
     let axios_csrf = axios.create({
       headers: hdr
     });
-    return axios_csrf.put(url, data).then(f).catch(handle_ajax_error)
+      return axios_csrf.put(url, data).then(f).catch(handle_ajax_error);
   },
   patch: function (url, data={}, f) {
     let hdr = {};
 
-    let token = window.$auth.token();
-
-    if(token)
-      hdr['Authorization'] = 'Bearer ' + token;
+    hdr = add_bearer(hdr);
 
     hdr['X-CSRFToken'] = csrf_token;
     let axios_csrf = axios.create({
@@ -157,6 +154,13 @@ Vue.prototype.$user = {
     return $auth.check('ta');
   }
 }
+
+Vue.prototype.$lti = {
+    data: {
+        lti_session: false,
+        lti_data: {}
+    },
+};
 
 Vue.axios = axios
 Vue.router = router
