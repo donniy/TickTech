@@ -23,6 +23,9 @@
                     <div class="file-name-container-small medium-12 small-12 cell" v-if="ticket.files.length > 0">
                         <div v-for="file in ticket.files">
                              <p v-on:click="downloadFile(file.file_location, file.file_name)" class="file-listing-small"><i class="material-icons download-icon">folder</i> {{ file.file_name }}</p>
+                             <btn class="btn-primary">
+                                 Convert to text
+                             </btn>
                         </div>
                     </div>
                     <div>
@@ -210,6 +213,9 @@ export default {
                 console.log(error)
                 window.alert("File not found")
             })
+        },
+        convertFile(){
+            const path = '/api/ticket/gettext'
         },
         /* Get the ta's in this course. Will add all the ta's to the
          * course_tas array.
