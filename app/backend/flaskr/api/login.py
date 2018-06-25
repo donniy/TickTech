@@ -1,9 +1,8 @@
-from flask import jsonify, request
+from flask import request
 from . import apiBluePrint
-from flaskr.models import user
 from flask_jwt import jwt_required, current_identity
 from flaskr import Iresponse
-from flaskr.models.user import *
+from flaskr.models.user import User
 
 
 @apiBluePrint.route('/login', methods=['POST'])

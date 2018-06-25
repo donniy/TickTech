@@ -30,3 +30,4 @@ html2text==2018.1.9
 pytest
 pycodestyle
 flask_hashfs
+pluginbase

@@ -1,9 +1,4 @@
-import pytest
-import json
-from flaskr.database import get_db
-from flaskr.models.user import *
-from flaskr.models.ticket import *
-from flaskr.tests.utils import *
+from flaskr.tests.utils import create_user, login
 
 
 def test_get_courses(client):
@@ -74,35 +69,6 @@ def test_get_ticket(app, client):
     }, headers={
         'Authorization': auth
     })
-    rv = client.get('/api/courses')
-    cid = rv.get_json()['json_data'][0]['id']
-    tickets = client.get('/api/courses/{}/tickets'.format(cid))
-    print(tickets.get_json())
-    assert len(tickets.get_json()['json_data']) == 1
-    ticketid = tickets.get_json()['json_data'][0]['id']
-    assert ticketid is not None
-
-
-def test_get_ticket(app, client):
-    create_user(app, 11188936)
-    auth = login(client, 11188936)
-    rv = client.get('/api/courses')
-    cid = rv.get_json()['json_data'][0]['id']
-    # TODO: add file to request
-    file = open('file.txt', 'w')
-    file.write('Hello')
-
-    json = {'subject': 'test ticket',
-            'message': 'Test bericht',
-            'courseid': cid,
-            'labelid': ''
-            }
-
-    headers = {'Authorization': auth,
-               'Content-Type': 'multipart/form-data'
-               }
-
-    rv = client.post('/api/ticket/submit', json=json, headers=headers)
     rv = client.get('/api/courses')
     cid = rv.get_json()['json_data'][0]['id']
     tickets = client.get('/api/courses/{}/tickets'.format(cid))

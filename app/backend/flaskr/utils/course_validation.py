@@ -1,7 +1,6 @@
-from flaskr.models.Label import *
-from flaskr.models.Course import *
 from flaskr.request_processing import courses
 import re
+import uuid
 
 
 def check_course_validity(courseid, labelid):

@@ -1,9 +1,11 @@
 <template>
-    <a v-on:click="pushCourse" class="list-course">
-        <h5>{{course.title}}</h5>
-        <h6 style="font-size:0.7em; line-height:1;">{{course.name}}</h6>
-        <p style="font-size:0.8em; line-height:1;">{{course.description}}</p>
-    </a>
+    <md-list-item v-on:click="pushCourse">
+        <div class="md-list-item-text">
+            <h5>{{course.title}}</h5>
+            <h6>{{course.name}}</h6>
+            <p>{{course.description}}</p>
+        </div>
+    </md-list-item>
 </template>
 
 <script>

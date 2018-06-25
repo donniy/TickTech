@@ -1,10 +1,10 @@
 from email.header import decode_header
-from time import sleep
 import email
 import poplib
 import requests
 import base64
 import html2text
+import socket
 
 def connect(host, port, user, password):
     '''

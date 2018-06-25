@@ -1,12 +1,9 @@
-from flaskr.models.ticket import *
-from flaskr.models.Message import *
-from flaskr.models.user import *
-from flaskr import database
+from flaskr.models.ticket import Ticket
+from flaskr.models.Message import Message
+from flaskr.models.user import User
 from . import apiBluePrint
-from flask import jsonify, request, escape, send_from_directory
-from flaskr import socketio
-import uuid
-import datetime
+from flask import request, escape, jsonify
+from flaskr import plugins
 from flaskr.request_processing import ticket as rp_ticket
 from flaskr.request_processing import message as rp_message
 from flaskr.request_processing import file as rp_file
@@ -15,12 +12,11 @@ from flask_jwt import jwt_required, current_identity
 from flaskr.utils import notifications
 from flask_mail import Mail
 from mail.Message import create_email_message
-from time import gmtime, strftime
-from flaskr.utils import notifications, course_validation, json_validation
+from flaskr.utils import course_validation, json_validation
 from os.path import expanduser
-import os
 import base64
 import mimetypes
+from flaskr import database
 
 # Make this post with a button.
 
@@ -32,7 +28,7 @@ def close_ticket(ticket_id):
     try:
         ticket = Ticket.query.get(ticket_id)
         ticket.close
-        db.session.commit()
+        database.db.session.commit()
         notifications.notify(current_identity.id,
                              ticket,
                              'Closed ticket',
@@ -44,6 +40,7 @@ def close_ticket(ticket_id):
 
 
 @apiBluePrint.route('/ticket/<ticket_id>', methods=['GET'])
+@jwt_required()
 def retrieve_single_ticket(ticket_id):
     """
     Geeft een enkel ticket.
@@ -53,6 +50,22 @@ def retrieve_single_ticket(ticket_id):
     if ticketObj is None:
         return Iresponse.create_response("", 404)
     return Iresponse.create_response(ticketObj.serialize, 200)
+
+
+@apiBluePrint.route('/ticket/<ticket_id>/plugins', methods=['GET'])
+@jwt_required()
+def retrieve_plugins(ticket_id):
+    """
+    List the plugins available for this ticket.
+    """
+    print("===Retrieving plugins for ticket===")
+    ticketObj = Ticket.query.get_or_404(ticket_id)
+    # TODO: For now this returns all available plugins.
+    pls = {}
+    for p in plugins.plugin_list():
+        pl = plugins.get_plugin(p)
+        pls[pl.display_name] = pl.get_assignment_info(ticketObj.owner.id, 123)
+    return Iresponse.create_response(pls, 200)
 
 
 @apiBluePrint.route('/ticket/<ticket_id>/messages', methods=['POST'])
@@ -78,6 +91,7 @@ def create_message(ticket_id):
                                        [ticket.email], ticket_id,
                                        json_data['message'], user.name)
         res = Mail().send(message)
+        res = res  # for flake8
     return msg
 
 
@@ -88,6 +102,26 @@ def get_ticket_messages(ticket_id):
     return rp_message.retrieve_all_request(ticket_id,
                                            current_identity,
                                            read=True)
+
+
+@apiBluePrint.route('ticket/addta', methods=['POST'])
+@jwt_required()
+def add_ta_to_ticket():
+    json_data = request.get_json()
+    if json_data:
+        if json_validation.validate_json(json_data, ['taid', 'ticketid']):
+            return rp_ticket.add_ta_to_ticket(json_data)
+    return Iresponse.create_response("Invalid request", 400)
+
+
+@apiBluePrint.route('ticket/removeta', methods=['POST'])
+@jwt_required()
+def remove_ta_from_ticket():
+    json_data = request.get_json()
+    if json_data:
+        if json_validation.validate_json(json_data, ['taid', 'ticketid']):
+            return rp_ticket.remove_ta_from_ticket(json_data)
+    return Iresponse.create_response("Invalid request", 400)
 
 
 @apiBluePrint.route('/ticket/submit', methods=['POST'])

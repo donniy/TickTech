@@ -1,7 +1,6 @@
-import pytest
-import json
-from flaskr.database import get_db
-from flaskr.tests.utils import *
+from flaskr.tests.utils import create_course,   \
+    create_user, create_ticket, create_note, login
+import uuid
 
 
 def test_get_ticket_notes(app, client):

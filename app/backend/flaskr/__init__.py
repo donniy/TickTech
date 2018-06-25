@@ -1,15 +1,11 @@
 import os
 import requests
-from flask import Flask, render_template, jsonify, request
-from flask import Flask
+from flask import Flask, render_template
 from flaskr import database, sockets
-from . import models
-from datetime import datetime
 from flask_wtf.csrf import CSRFProtect
 import os.path
-from flaskr.models import Message, ticket, Note, Course, user, Label
-from flask_socketio import SocketIO, send, emit, join_room, leave_room
-from flask_jwt import JWT, jwt_required, current_identity
+from flaskr.models import Course
+from flask_socketio import emit, join_room, leave_room
 from . import login
 import poplib
 from mail.thread import MailThread
@@ -17,9 +13,7 @@ from datetime import timedelta
 from flask_hashfs import FlaskHashFS
 from os.path import expanduser
 from flask_mail import Mail
-from flaskr.config import EMAIL_SEND_EMAIL, EMAIL_SEND_PASSWORD, \
-                            EMAIL_SEND_TLS, EMAIL_SEND_SSL, EMAIL_SEND_PORT, \
-                            EMAIL_SEND_SERVER
+from flaskr.config import Config
 
 db = database.db
 socketio = sockets.get_socketio()
@@ -51,13 +45,13 @@ def create_app(test_config=None):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Send email settings, for now hardcoded
-    app.config['MAIL_SERVER'] = EMAIL_SEND_SERVER
-    app.config['MAIL_PORT'] = EMAIL_SEND_PORT
-    app.config['MAIL_USE_SSL'] = EMAIL_SEND_SSL
-    app.config['MAIL_USE_TLS'] = EMAIL_SEND_TLS
-    app.config['MAIL_USERNAME'] = EMAIL_SEND_EMAIL
-    app.config['MAIL_PASSWORD'] = EMAIL_SEND_PASSWORD
-    app.config['MAIL_DEFAULT_SENDER'] = EMAIL_SEND_EMAIL
+    app.config['MAIL_SERVER'] = Config.EMAIL_SEND_SERVER
+    app.config['MAIL_PORT'] = Config.EMAIL_SEND_PORT
+    app.config['MAIL_USE_SSL'] = Config.EMAIL_SEND_SSL
+    app.config['MAIL_USE_TLS'] = Config.EMAIL_SEND_TLS
+    app.config['MAIL_USERNAME'] = Config.EMAIL_SEND_EMAIL
+    app.config['MAIL_PASSWORD'] = Config.EMAIL_SEND_PASSWORD
+    app.config['MAIL_DEFAULT_SENDER'] = Config.EMAIL_SEND_EMAIL
     Mail(app)
 
     # Make user logged in for 1 day.
@@ -77,6 +71,7 @@ def create_app(test_config=None):
     fs.init_app(app)
 
     csrf = CSRFProtect(app)
+    csrf = csrf  # flake8
 
     db_uri = os.environ.get('DATABASE_CONNECTION')
 
