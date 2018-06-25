@@ -1,13 +1,12 @@
+<!-- SingleTicket.vue shows everything related to a ticket.  -->
 <template>
     <div>
         <router-link :to="'/course/' + ticket.course_id " class="btn btn-primary">&laquo; Back to course</router-link>
-
         <md-speed-dial md-event="click" class="close-button" md-direction="bottom">
             <md-speed-dial-target>
                 <md-icon class="md-morph-initial">more_vert</md-icon>
                 <md-icon class="md-morph-final">close</md-icon>
             </md-speed-dial-target>
-
             <md-speed-dial-content>
                 <md-button class="md-icon-button md-raised md-accent" @click="showModal = true">
                     <md-icon>lock</md-icon>
@@ -26,7 +25,7 @@
 
         <div class="row">
             <div class="col-md-8 col-sm-8 col-lg-8 col-xs-12">
-                <h2>Ticket Info</h2>
+                <h2>Ticket info</h2>
                 <div class="material-card">
                     <div>
                         <h2>{{ticket.title}}</h2>
@@ -34,25 +33,24 @@
                     </div>
                     <div class="file-name-container-small medium-12 small-12 cell" v-if="ticket.files.length > 0">
                         <div v-for="file in ticket.files">
-                            <p v-on:click="downloadFile(file.file_location, file.file_name)" class="file-listing-small"><i class="material-icons download-icon">folder</i> {{ file.file_name }}</p>
+                            <p v-on:click="downloadFile(file.file_location, file.file_name)" class="file-listing-small">
+                                <i class="material-icons download-icon">folder</i> {{ file.file_name }}</p>
                         </div>
                     </div>
                     <div>
-                        Ta's:
+                        TAs:
                         <b v-for="ta in ticket.tas" v-bind:key="ta.id" v-bind:ta="ta">
                             {{ ta.name}}
                         </b>
                     </div>
                 </div>
-
                 <message v-bind:user="{id: user_id}" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
-
                 <form v-on:submit.prevent="sendReply" class="reply-area">
                     <h4>Respond</h4>
-                    <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
+                    <textarea v-model="reply" placeholder="Write a reply..."></textarea>
                     <button class="reply-button btn btn-primary">
                         <i class="material-icons">
-                            send
+                            Send
                         </i>
                     </button>
                 </form>
@@ -62,13 +60,11 @@
                 <note v-for="note in notes" v-bind:key="note.id" v-bind:note="note"></note>
 
                 <md-button id="popoverButton-sync" class="note-add-button md-primary">
-                    Add note
+                    Add a note.
                 </md-button>
                 <b-popover ref="popoverRef" target="popoverButton-sync" triggers="click blur" placement='top'>
                     <vue-tribute :options="mentionOptions" v-on:tribute-replaced="matchFound">
-                        <textarea v-model="noteTextArea" class="form-control" id="textAreaForNotes" style="height:200px;width:250px;" placeholder="Voer uw opmerking in">
-
-                        </textarea>
+                        <textarea v-model="noteTextArea" class="form-control" id="textAreaForNotes" style="height:200px;width:250px;" placeholder="Enter a comment"></textarea>
                     </vue-tribute>
                     <button @click="addNote" class="btn btn-primary" style="margin-top:10px">Send</button>
                 </b-popover>
@@ -107,21 +103,15 @@
 </template>
 
 <script>
-
-import Message from './Message.vue'
+    import Message from './Message.vue'
     import VueTribute from 'vue-tribute'
     import Modal from './ClosePrompt.vue'
     import Note from './Note.vue'
 
 
-    /* This is an addition to the default config
-     * for tributejs.
-     * DOCS: https://github.com/zurb/tribute
-     */
+    // Addition to the def config for tributejs. https://github.com/zurb/tribute
     let defaultMention = {
-        values: [
-        ],
-
+        values: [],
         selectTemplate: function (item) {
             return '@' + item.original.id
         },
@@ -129,7 +119,6 @@ import Message from './Message.vue'
             return ta.name + ' ' + ta.id
         }
     }
-
 
     export default {
         data() {
@@ -155,6 +144,7 @@ import Message from './Message.vue'
             }
         },
         methods: {
+            // Retrieve current ticket.
             getTicket() {
                 const path = '/api/ticket/' + this.$route.params.ticket_id
                 this.$ajax.get(path)
@@ -165,12 +155,14 @@ import Message from './Message.vue'
                         console.log(error)
                     })
             },
+            // Retrieve the plugins.
             getPlugins() {
                 const path = '/api/ticket/' + this.$route.params.ticket_id + '/plugins'
                 this.$ajax.get(path, response => {
                     this.plugins = response.data.json_data
                 })
             },
+            // Retrieve all messages of this ticket.
             getMessages() {
                 const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
                 this.$ajax.get(path)
@@ -181,8 +173,8 @@ import Message from './Message.vue'
                         console.log(error)
                     })
             },
+            // Retrieve all notes of this ticket.
             getNotes() {
-                //get all notes
                 this.$ajax.get('/api/notes/' + this.$route.params.ticket_id)
                     .then(response => {
                         this.notes = response.data.json_data
@@ -192,6 +184,7 @@ import Message from './Message.vue'
                         console.log(err)
                     })
             },
+            // Send a reply on this ticket.
             sendReply() {
                 const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
                 this.$ajax.post(path, {
@@ -206,6 +199,7 @@ import Message from './Message.vue'
                         console.log(error)
                     })
             },
+            // Close the current ticket.
             closeTicket() {
                 this.showModal = false
                 const path = '/api/ticket/' + this.$route.params.ticket_id + '/close'
@@ -216,24 +210,24 @@ import Message from './Message.vue'
                     })
 
             },
-            downloadFile(key, name){
-
+            // Download the file the student uploaded.
+            downloadFile(key, name) {
                 const path = '/api/ticket/filedownload'
-                this.$ajax.post(path, {address: key})
+                this.$ajax.post(path, { address: key })
                     .then((response) => {
                         // Get data from response
-                        var byteCharacters = atob(response.data.json_data['encstring']);
+                        var byteCharacters = atob(response.data.json_data['encstring'])
                         var mimetype = response.data.json_data['mimetype']
 
                         // Convert data to bytearray and decode
-                        var byteNumbers = new Array(byteCharacters.length);
+                        var byteNumbers = new Array(byteCharacters.length)
                         for (var i = 0; i < byteCharacters.length; i++) {
-                            byteNumbers[i] = byteCharacters.charCodeAt(i);
+                            byteNumbers[i] = byteCharacters.charCodeAt(i)
                         }
-                        var byteArray = new Uint8Array(byteNumbers);
+                        var byteArray = new Uint8Array(byteNumbers)
 
                         // Generate blob and download element.
-                        var blob = new Blob([byteArray], {mimetype});
+                        var blob = new Blob([byteArray], { mimetype })
                         const url = window.URL.createObjectURL(blob)
                         const link = document.createElement('a')
 
@@ -241,7 +235,7 @@ import Message from './Message.vue'
                         link.href = url
                         link.setAttribute('download', name)
                         document.body.appendChild(link)
-                        link.click();
+                        link.click()
                         document.body.removeChild(link)
                     })
                     .catch(error => {
@@ -249,16 +243,14 @@ import Message from './Message.vue'
                         window.alert("File not found")
                     })
             },
+            // Add a super secret note to the current ticket.
             addNote() {
-                console.log(this.noteTextArea)
                 const path = '/api/notes'
                 var noteData = {
                     "ticket_id": this.$route.params.ticket_id,
                     "user_id": this.$route.params.user_id | 1,
                     "text": this.noteTextArea
                 }
-                console.log("Note")
-                console.log(this.noteTextArea)
                 this.$ajax.post(path, noteData)
                     .then(response => {
                         this.noteTextArea = ""
@@ -270,8 +262,8 @@ import Message from './Message.vue'
                         console.log(error)
                     })
             },
-            /* Get the ta's in this course. Will add all the ta's to the
-             * course_tas array.
+            /*
+             * Retrieve TAs of the course and add to course_tas array. 
              * NOTE: This can maybe stay local and course_tas can be removed from data.
              */
             getCourseTas() {
@@ -284,15 +276,11 @@ import Message from './Message.vue'
                         console.log(error)
                     })
 
-                /* Function to build the matching table for mentioning.
-                 * It grabs all ta's for this course and appends them to the
-                 * table.
-                 */
+                // Build matching table for mentions. Grabs TAs in course and adds to table.
                 function build_ta_matching_table(obj) {
                     console.log(obj.mentionOptions)
                     // Vue-tribute keeps an instance of the Optionsarray, so clear it.
-                    // Yes this is a valid way to clear out an array in JS.
-                    obj.mentionOptions.values.length = 0;
+                    obj.mentionOptions.values.length = 0
                     for (let i = 0; i < obj.course_tas.length; i++) {
                         let ta = obj.course_tas[i]
                         console.log(ta)
@@ -302,10 +290,11 @@ import Message from './Message.vue'
                 }
             },
 
-            /* This replaced the noteTextArea when a match if found. Otherwise
-           The user has to append a space after matching to include the whole match.
-           So this makes it possible to click on a match and then immediately post
-           The note.
+            /* 
+             * This replaced the noteTextArea when a match if found. Otherwise
+             * The user has to append a space after matching to include the whole match.
+             * So this makes it possible to click on a match and then immediately post
+             * The note.
              */
             matchFound(e) {
                 let matchedValue = document.getElementById("textAreaForNotes").value
@@ -324,6 +313,7 @@ import Message from './Message.vue'
                     })
             }
         },
+        // This is called when the page is loaded.
         mounted: function () {
             if (!this.$user.logged_in()) {
                 this.$router.push('/login')
@@ -349,7 +339,5 @@ import Message from './Message.vue'
             'note': Note,
             VueTribute,
         },
-        watch: {
-        }
     }
 </script>

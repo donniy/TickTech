@@ -24,3 +24,4 @@ def init_jwt(app=None):
     if not app:
         raise Exception('No app parameter')
     jwt = JWT(app, authenticate, identity)
+    jwt = jwt  # flake8

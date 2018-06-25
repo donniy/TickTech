@@ -1,15 +1,17 @@
 from flaskr import database, Iresponse
-from flask import jsonify, escape
+from flask import escape
 import uuid
-from flaskr.models.ticket import *
-from flaskr.models.user import *
+from flaskr.models.ticket import Ticket
+from flaskr.models.user import User
 from flaskr.models.Label import Label
-from flaskr.models.Message import *
+from flaskr.models.Message import Message
 from flaskr.utils import notifications
+from datetime import datetime
 
 
 def create_request(json_data):
     name = escape(json_data["name"])
+    name = name  # flake8
     studentid = escape(json_data["studentid"])
     email = escape(json_data["email"])
     subject = escape(json_data["subject"])
@@ -49,6 +51,7 @@ def create_request(json_data):
                                    ticket,
                                    message,
                                    Message.NTFY_TYPE_MESSAGE)
+        msg = msg  # flake8
     except Exception as e:
         raise e
         return Iresponse.create_response(str(e), 400)
@@ -84,11 +87,11 @@ def add_ta_list_to_ticket(json_data):
     for taid in json_data['taids']:
         ta_list.append(User.get(taid))
 
-    if ticket and length(ta_list) > 0 and None not in ta_list:
+    if ticket and len(ta_list) > 0 and None not in ta_list:
         for ta in ta_list:
             ticket.bound_tas.append(ta)
         return Iresponse.create_response("Success", 200)
-    return Iresponse.create_response("No Ta's found", 400)
+    return Iresponse.create_response("No TAs found", 400)
 
 
 def remove_ta_from_ticket(json_data):

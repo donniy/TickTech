@@ -1,7 +1,7 @@
 <template>
     <router-link class="ticket-single" :to="base_url + ticket.id">
         <md-ripple>
-    	<h6>{{ticket.title}}</h6>
+        <h6>{{ticket.title}}</h6>
         In course: {{course}}</br>
         Status: {{ticket.status.name}} </br>
         Time: {{ticket.timestamp}}
@@ -10,18 +10,18 @@
 </template>
 
 <script>
-	export default {
-		props: {
-			ticket: Object,
+    export default {
+        props: {
+            ticket: Object,
             course: '',
-			base_url: {
-				type: String,
-				default: "/student/ticket/"
-			}
-		},
-		data: function () {
-			return {}
-		}, methods: {
+            base_url: {
+                type: String,
+                default: "/student/ticket/"
+            }
+        },
+        data: function () {
+            return {}
+        }, methods: {
             getCourse() {
                 const path = '/api/courses/single/' + this.ticket.course_id
                 this.$ajax.get(path, response => {
@@ -31,5 +31,5 @@
         }, mounted() {
             this.getCourse()
         }
-	}
+    }
 </script>

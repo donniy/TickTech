@@ -1,29 +1,30 @@
+<!-- Labels.vue implements Label.vue and shows all labels of the current course. -->
 <template>
     <div>
-    <h2 class="form-header center-display">labels in {{course.title}}</h2>
-    <form class="md-layout center-display" v-on:submit.prevent="createLabel">
-        <md-card class="center-display md-layout-item md-size-50 md-small-size-100">
-            <md-card-content class="center-display">
-                <md-field class="center-display md-layout-item md-size-100">
-                    <label for="labelname">New label</label>
-                    <md-input id="labelname" name="labelname" v-validate="'required|max:50'" v-model="new_label_name"/>
-                    <md-button type="submit" v-bind:disabled="errors.any()">
-                        Submit
-                    </md-button>
-                </md-field>
-            </md-card-content>
-        </md-card>
-    </form>
-    </br>
-    <p class="md-helper-text center-display">Select labels you want to be bound to.</p>
+        <h2 class="form-header center-display">labels in {{course.title}}</h2>
+        <form class="md-layout center-display" v-on:submit.prevent="createLabel">
+            <md-card class="center-display md-layout-item md-size-50 md-small-size-100">
+                <md-card-content class="center-display">
+                    <md-field class="center-display md-layout-item md-size-100">
+                        <label for="labelname">New label</label>
+                        <md-input id="labelname" name="labelname" v-validate="'required|max:50'" v-model="new_label_name" />
+                        <md-button type="submit" v-bind:disabled="errors.any()">
+                            Submit
+                        </md-button>
+                    </md-field>
+                </md-card-content>
+            </md-card>
+        </form>
+        </br>
+        <p class="md-helper-text center-display">Select labels you want to be bound to.</p>
 
-    <div class="md-layout center-display">
-        <md-card class="center-display md-layout-item md-size-50 md-small-size-100">
-            <md-card-content>
-                <myLabel v-for="label in labels" v-bind:key="label.label_id" v-bind:label="label"></myLabel>
-            </md-card-content>
-        </md-card>
-    </div>
+        <div class="md-layout center-display">
+            <md-card class="center-display md-layout-item md-size-50 md-small-size-100">
+                <md-card-content>
+                    <myLabel v-for="label in labels" v-bind:key="label.label_id" v-bind:label="label"></myLabel>
+                </md-card-content>
+            </md-card>
+        </div>
     </div>
 </template>
 
@@ -40,18 +41,21 @@
             }
         },
         methods: {
+            // Retrieve current course.
             getCourse() {
                 const path = '/api/courses/single/' + this.$route.params.course_id
                 this.$ajax.get(path, response => {
                     this.course = response.data.json_data
                 })
             },
+            // Retrieve all labels associated with current course.
             getLabels() {
                 const path = '/api/labels/' + this.$route.params.course_id
                 this.$ajax.get(path, response => {
                     this.labels = response.data.json_data
                 })
             },
+            // Add a new label.
             createLabel() {
                 if (this.new_label_name == '') {
                     return
@@ -66,6 +70,7 @@
                 })
             }
         },
+        // This is done when the page is loaded.
         mounted: function () {
             if (!this.$user.logged_in()) {
                 this.$router.push('/login')
