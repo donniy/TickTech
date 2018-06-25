@@ -40,12 +40,10 @@ export default {
         save: function() {
             this.showModal = false
             const path = '/api/courses/' + this.$route.params.course_id + '/plugins/' + this.pid
-            console.log(this.settings)
             let tmp = {}
             for (let key of Object.keys(this.settings)) {
                 tmp[key] = this.settings[key].value
             }
-            console.log(tmp)
             this.$ajax.put(path, tmp, response => {
                 console.log(response)
             })
@@ -59,14 +57,13 @@ export default {
         get_settings: function() {
             const path = '/api/courses/' + this.$route.params.course_id + '/plugins/' + this.pid
             this.$ajax.get(path, response => {
-                console.log(response.data.json_data)
                 this.settings = response.data.json_data
             })
         },
         updatePluginState() {
             const path = '/api/courses/' + this.$route.params.course_id + '/plugins/' + this.pid
             this.$ajax.patch(path, {active: this.plugin.active}, response => {
-                console.log(response)
+                //
             })
         },
     }
