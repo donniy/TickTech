@@ -1,9 +1,6 @@
 from datetime import datetime
 from flaskr import database
 from sqlalchemy_utils import UUIDType
-import uuid
-import re
-from flask import Response, jsonify, escape
 
 db = database.db
 
@@ -105,7 +102,8 @@ class Ticket(db.Model):
 
     @property
     def close(self):
-        closed_status = TicketStatus.query.filter_by(name='closed').first()
+        # id 2 is the closed status
+        closed_status = TicketStatus.query.filter_by(id=2).first()
         if closed_status is None:
             return
         self.status_id = closed_status.id

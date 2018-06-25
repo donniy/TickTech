@@ -1,8 +1,9 @@
 from flaskr import database
-from flaskr.models.user import *
-from flaskr.models.ticket import *
-from flaskr.models.Note import *
-from flaskr.models import Course
+from flaskr.models.user import User
+from flaskr.models.ticket import Ticket
+from flaskr.models.Note import Note
+from flaskr.models.Course import Course
+from datetime import datetime
 
 
 def create_user(app, id):
@@ -15,19 +16,16 @@ def create_user(app, id):
 
 
 def create_ticket(app, ticketId, userId, courseId, status=1):
-    # ticket = Ticket(id=ticketId, user_id=userId, course_id=courseId,
-    #                 status_id=1, title="sub", email="mail@mail.com",
-    #                 timestamp=datetime.now())
-    t = Ticket()
-    t.id = ticketId
-    t.user_id = userId
-    t.course_id = courseId
-    t.status_id = status
-    t.email = "mail@mail.com"
-    t.title = "title"
-    t.timestamp = datetime.now()
-    database.addItemSafelyToDB(t)
-    return t
+    ticket = Ticket()
+    ticket.id = ticketId
+    ticket.user_id = userId
+    ticket.course_id = courseId
+    ticket.status_id = status
+    ticket.email = "mail@mail.com"
+    ticket.title = "title"
+    ticket.timestamp = datetime.now()
+    database.addItemSafelyToDB(ticket)
+    return ticket
 
 
 def create_course(app, courseId, tas=[], students=[]):
@@ -54,6 +52,14 @@ def create_note(app, noteId, ticketId, userId, text):
 
 def link_ta_to_course(user, course):
     course.ta_courses.append(user)
+
+
+def link_student_to_course(user, course):
+    course.student_courses.append(user)
+
+
+def link_ta_to_ticket(user, ticket):
+    ticket.bound_tas.append(user)
 
 
 def login(client, userId):

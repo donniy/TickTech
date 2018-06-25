@@ -7,7 +7,7 @@ get_path = partial(os.path.join, here)
 
 plugin_base = PluginBase(package='flaskr.plugins')
 plugin_source = plugin_base.make_plugin_source(
-        searchpath=[get_path('../plugins')])
+    searchpath=[get_path('../plugins')])
 
 print("Plugins installed:")
 for p in plugin_source.list_plugins():

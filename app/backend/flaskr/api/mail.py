@@ -1,15 +1,13 @@
 from . import apiBluePrint
 from flaskr.models.Course import Course
 from flaskr.models.user import User
-from flaskr import database, Iresponse
+from flaskr import Iresponse
 from flaskr.request_processing import ticket as rp_ticket
-from flaskr.request_processing import message as rp_message
 from flaskr.request_processing import file as rp_file
-from flaskr.utils import notifications, course_validation, json_validation
-from flask import escape, request, jsonify
-from flaskr.utils.json_validation import *
+from flaskr.utils import course_validation, json_validation
+from flask import escape, request
+from flaskr.utils.json_validation import validate_json
 from mail.thread import MailThread
-import poplib
 import base64
 
 

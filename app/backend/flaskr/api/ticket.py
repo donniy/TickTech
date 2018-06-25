@@ -1,14 +1,18 @@
-from flaskr.models.ticket import *
-from flaskr.models.Message import *
-from flaskr.models.user import *
-from flaskr import database
+from flaskr.models.ticket import Ticket
+from flaskr.models.Message import Message
+from flaskr.models.user import User
 from . import apiBluePrint
+<<<<<<< HEAD
 from flask import jsonify, request, escape, send_from_directory
 from flaskr import socketio, plugins
 import uuid
 import datetime
 from flask_jwt_extended import jwt_required
 from flaskr.jwt_wrapper import get_current_user
+=======
+from flask import request, escape, jsonify
+from flaskr import plugins
+>>>>>>> master
 from flaskr.request_processing import ticket as rp_ticket
 from flaskr.request_processing import message as rp_message
 from flaskr.request_processing import file as rp_file
@@ -16,12 +20,11 @@ from flaskr import Iresponse
 from flaskr.utils import notifications
 from flask_mail import Mail
 from mail.Message import create_email_message
-from time import gmtime, strftime
-from flaskr.utils import notifications, course_validation, json_validation
+from flaskr.utils import course_validation, json_validation
 from os.path import expanduser
-import os
 import base64
 import mimetypes
+from flaskr import database
 
 
 @apiBluePrint.route('/ticket/<ticket_id>/close', methods=['POST', 'PATCH'])
@@ -32,7 +35,7 @@ def close_ticket(ticket_id):
     try:
         ticket = Ticket.query.get(ticket_id)
         ticket.close
-        db.session.commit()
+        database.db.session.commit()
         notifications.notify(current_identity.id,
                              ticket,
                              'Closed ticket',
@@ -97,7 +100,11 @@ def create_message(ticket_id):
                                        [ticket.email], ticket_id,
                                        json_data['message'], user.name)
         res = Mail().send(message)
+<<<<<<< HEAD
     """
+=======
+        res = res  # for flake8
+>>>>>>> master
     return msg
 
 

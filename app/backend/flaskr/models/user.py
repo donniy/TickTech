@@ -1,5 +1,4 @@
 from flaskr import database, sockets
-from flaskr.models import Course
 from sqlalchemy_utils import UUIDType
 
 db = database.db

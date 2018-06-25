@@ -1,10 +1,8 @@
 from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-import os.path
-from sqlalchemy_utils import UUIDType
 import uuid
-from flaskr.config import EMAIL_FETCH_EMAIL, EMAIL_FETCH_PASSWORD
+from flaskr.config import Config
 
 db = SQLAlchemy()
 
@@ -71,10 +69,10 @@ def populate_database_dummy_data():
     from flaskr.models import Course, user
     items = []
     course = Course.Course(id=uuid.uuid4(),
-                           course_email=EMAIL_FETCH_EMAIL,
+                           course_email=Config.EMAIL_FETCH_EMAIL,
                            mail_server_url="pop.gmail.com",
                            mail_port="995",
-                           mail_password=EMAIL_FETCH_PASSWORD,
+                           mail_password=Config.EMAIL_FETCH_PASSWORD,
                            title="course 1",
                            description="Test")
 
