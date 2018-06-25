@@ -1,10 +1,12 @@
 from email.header import decode_header
+from flask_mail import Mail
 import email
 import poplib
 import requests
 import base64
 import html2text
 import socket
+
 
 def connect(host, port, user, password):
     '''
@@ -29,6 +31,7 @@ def connect(host, port, user, password):
         print(msg)
         return None
     return server
+
 
 def parseEmail(emailBytes):
     '''
@@ -112,31 +115,32 @@ def findUser(body, sender, address):
     name and label, if possible.
     '''
     # Create JSON to match email to user in the database.
-    # info = { 'email': address }
-    # result = requests.post(
-    #     'http://localhost:5000/api/email/user/match',
-    #     json=info)
+    info = {'email': address}
+    result = requests.post(
+        'http://localhost:5000/api/email/user/match',
+        json=info)
 
-    # # If request was succesful, try and connect mail to student id in database.
-    # if (result.status_code == 200):
-    #     json = result.json()
-    #     if (json['json_data']['succes']): #ENGELS FOUT FIX HET
-    #         studentid = json['json_data']['studentid']
-    #         if studentid is not None:
-    #             print("FOUND STUDENT ID IN DATABASE: ", studentid)
-    #             return studentid
-    
+    # If request was succesful, try and connect mail to student id in database.
+    if (result.status_code == 200):
+        json = result.json()
+        if (json['json_data']['succes']):  # ENGELS FOUT FIX HET
+            studentid = json['json_data']['studentid']
+            if studentid is not None:
+                print("FOUND STUDENT ID IN DATABASE: ", studentid)
+                return studentid
+
     # Try and find a student id in the email body.
     body = body.split()
     for words in body:
-        if words.isdigit() and len(words) > 6 and len(words) < 9: # > old ids 6 digits, new ones 8.
-            return int(words) 
-        
-        # DIT WERKT NOG NIET? 
+        # > old ids 6 digits, new ones 8.
+        if words.isdigit() and len(words) > 6 and len(words) < 9:
+            return int(words)
+
+        # DIT WERKT NOG NIET?
         #   File "/TickTech/app/backend/flaskr/utils/notifications.py", line 68, in notify
         #     'user_id':  user.id,
         # AttributeError: 'NoneType' object has no attribute 'id'
-        
+
     # Couldn't find student id with email or in body.
     print("COULD NOT FIND STUDENT ID")
     return None
@@ -158,10 +162,21 @@ def retrieveLabels(courseid):
             print("No labels available. ")
         else:
             print("Found labels: ")
-            for i in range (0, labelcount):
+            for i in range(0, labelcount):
                 print(labels[i]['label_name'], labels[i]['label_id'])
 
     return labels
+
+
+def findLabel(body, labels):
+    '''
+    Parse the body for words that might be labels (simplified).
+    '''
+    # TODO: Finish this.
+    for words in body:
+        print(words)
+    return 0
+
 
 def createTicket(subject, body, files, sender, address, courseid):
     '''
@@ -176,7 +191,8 @@ def createTicket(subject, body, files, sender, address, courseid):
     # Get all labels available for this course.
     labels = retrieveLabels(courseid)
     if (labels != []):
-        #TODO: Still hardcoded. Need to find right label in message body / from form?
+        findLabel(body, labels)
+        # TODO: Still hardcoded. Need to find right label in message body?
         labelid = labels[0]['label_id']
     else:
         labelid = ''
@@ -205,6 +221,7 @@ def createTicket(subject, body, files, sender, address, courseid):
         'http://localhost:5000/api/email/ticket/submit',
         json=newticket)
 
+    # TODO: remove this prints after debugging.
     print("Hier boven print het nog rare dingen")
 
     if (result.status_code != 201):
@@ -220,6 +237,19 @@ def createTicket(subject, body, files, sender, address, courseid):
         print("CREATED A TICKET! :)")
 
     # TODO: Send confirmation email.
+
+
+#    @app.route("/")
+def sendReplyMail(receiver, message):
+    '''
+    Basic email reply for confirming a question has been received through email,
+    and created into a ticket, or to tell them there was an issue with the email.
+    '''
+
+    msg = Message("TEST" + message + "TEST",
+                  recipients=["uvapsetest@gmail.com"])
+    mail.send(msg)
+
 
 def checkMail(host, port, user, password, courseid, debug=0):
     '''
@@ -239,7 +269,7 @@ def checkMail(host, port, user, password, courseid, debug=0):
         return 0
     else:
         print(mailcount, "new email(s) found!")
-    
+
     # Parse all new emails.
     for i in range(mailcount):
         emailBytes = b"\n".join(server.retr(i + 1)[1])
@@ -265,7 +295,7 @@ if __name__ == '__main__':
     # Retrieve courses, get current course id.
     result = requests.get('http://localhost:5000/api/courses')
 
-    #TODO: still hardcoded. Gets first course hardcoded.
+    # TODO: still hardcoded. Gets first course hardcoded.
     if (result.status_code == 200):
         courses = result.json()
         courseid = courses["json_data"][0]["id"]
@@ -274,4 +304,4 @@ if __name__ == '__main__':
 
     # Check mail for current course.
     checkMail("pop.gmail.com", "995",
-               "uvapsetest@gmail.com", "stephanandrea", courseid)
+              "uvapsetest@gmail.com", "stephanandrea", courseid)

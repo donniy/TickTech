@@ -1,5 +1,6 @@
 from flask_mail import Message
 
+
 def create_email_message(title, recipients, ticketid, body, sender):
     message = Message(title, recipients=recipients)
     message.html = (
