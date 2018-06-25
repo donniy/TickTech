@@ -1,6 +1,7 @@
 from datetime import datetime
-from flaskr import database
+from flaskr import database, plugins
 from sqlalchemy_utils import UUIDType
+from sqlalchemy.ext.mutable import MutableDict
 import uuid
 
 db = database.db
@@ -110,6 +111,32 @@ class CoursePlugin(db.Model):
     course_id = db.Column(UUIDType(binary=False), db.ForeignKey(
         'course.id'), nullable=False, default='asdf')
 
+    # Make sure changes in the pickled dict get detected so use a MutableDict.
+    settings = db.Column(MutableDict.as_mutable(db.PickleType),
+                         unique=False,
+                         nullable=True)
+
     course = db.relationship('Course', lazy=True, backref=db.backref('plugins'))
 
-    # TODO: Add settings
+    def get_settings(self):
+        """
+        Returns the settings of this plugin, along with the types and
+        descriptions of each setting.
+        """
+        p = plugins.get_plugin(self.plugin)
+        course_settings = p.course_settings
+        for setting, props in course_settings.items():
+            if self.settings and setting in self.settings:
+                print("Loading {} from settings".format(setting))
+                props['value'] = self.settings[setting]
+            else:
+                print("Cannot find {} in settings. Fallback to default".format(setting))
+                props['value'] = props['default']
+        return p.course_settings
+
+    def get_setting_values(self):
+        """
+        Returns a simple key: value pair for each setting listing only
+        the values and not all other properties of a setting.
+        """
+        return {k: v['value'] for k, v in self.get_settings().items()}

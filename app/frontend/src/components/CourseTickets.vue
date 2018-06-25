@@ -55,7 +55,7 @@
             </div>
             <div class="row">
                 <b-button class="btn note-add-button btn btn-primary" button v-on:click="pushLocation('/course/' + $route.params.course_id + '/labels')">Course labels</b-button>
-                <b-button v-if="isTA" class="btn note-add-button btn btn-primary">Add students</b-button>
+                <b-button v-if="" class="btn note-add-button btn btn-primary">Add students</b-button>
                 <b-button class="btn note-add-button btn btn-primary" @click="emailSettings" :to="''">Mail settings</b-button>
                 <b-button v-if="isSupervisor" class="btn note-add-button btn btn-primary" :to="''">Add TA's</b-button>
 
