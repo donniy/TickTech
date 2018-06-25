@@ -223,7 +223,7 @@ def download_file():
 
 
 @apiBluePrint.route('/ticket/gettext', methods=["POST"])
-@jwt_required()
+@jwt_required
 def get_text():
     """ Convert an image file to text using Optical character recognition"""
     print("lets go")
