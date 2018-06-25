@@ -29,7 +29,7 @@ def create_ticket(app, ticketId, userId, courseId, status=1):
 
 
 def create_course(app, courseId, tas=[], students=[]):
-    course = Course.Course()
+    course = Course()
     course.id = courseId
     course.course_email = "mail@mail.com"
     course.title = "test_title"
