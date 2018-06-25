@@ -4,6 +4,7 @@ from PIL import Image
 from PIL import ImageFilter
 from os.path import expanduser
 
+
 def ocr_process_image(url):
     try:
         image = Image.open(url)

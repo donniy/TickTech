@@ -43,11 +43,10 @@ def save_file_from_mail(bytes, filename, file_names):
     isOcrable = ocr.isOcrable(address.relpath)
 
     file_names.append(File(file_id=uuid.uuid4(),
-                       file_location=address.relpath,
-                       file_name=filename,
-                       is_duplicate=address.is_duplicate,
-                       is_ocrable=isOcrable))
-
+                           file_location=address.relpath,
+                           file_name=filename,
+                           is_duplicate=address.is_duplicate,
+                           is_ocrable=isOcrable))
 
     size = os.stat(expanduser("~") + '/serverdata/' + address.relpath).st_size
     if size > MAX_SIZE:
