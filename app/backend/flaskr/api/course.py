@@ -1,13 +1,13 @@
 from . import apiBluePrint
 from flask import jsonify, request, escape
-from flaskr import database, Iresponse, plugins
-from flaskr.models.Course import Course
+from flaskr import database, Iresponse, plugins, db
+from flaskr.models.Course import Course, CoursePlugin
 from flaskr.models.user import User
 from flaskr.request_processing import courses as rp_courses
 from werkzeug.utils import secure_filename
 import csv
 import os
-from flask_jwt import jwt_required
+from flask_jwt_extended import jwt_required
 import uuid
 
 
@@ -30,7 +30,7 @@ def retrieve_course_tickets(course_id):
 
 
 @apiBluePrint.route('/courses/<course_id>/plugins', methods=['GET'])
-@jwt_required()
+@jwt_required
 def retrieve_course_plugins(course_id):
     """
     Retrieve all plugin settins for this course. This means a list
@@ -51,7 +51,7 @@ def retrieve_course_plugins(course_id):
 
 
 @apiBluePrint.route('/courses/<course_id>/plugins/<plugin_id>', methods=['GET'])
-@jwt_required()
+@jwt_required
 def get_plugin_configurations(course_id, plugin_id):
     """
     Returns the configuration options for this plugin.
@@ -74,7 +74,7 @@ def get_plugin_configurations(course_id, plugin_id):
 
 
 @apiBluePrint.route('/courses/<course_id>/plugins/<plugin_id>', methods=['PUT'])
-@jwt_required()
+@jwt_required
 def update_plugin_settings(course_id, plugin_id):
     """
     Update the settings for given plugin.
@@ -113,7 +113,7 @@ def update_plugin_settings(course_id, plugin_id):
 
 
 @apiBluePrint.route('/courses/<course_id>/plugins/<plugin_id>', methods=['PATCH'])
-@jwt_required()
+@jwt_required
 def update_plugin_state(course_id, plugin_id):
     """
     Change the active state of a plugin.
