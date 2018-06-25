@@ -2,13 +2,16 @@ from flaskr.models.ticket import Ticket
 from flaskr.models.Message import Message
 from flaskr.models.user import User
 from . import apiBluePrint
+import uuid
+import datetime
+from flask_jwt_extended import jwt_required
+from flaskr.jwt_wrapper import get_current_user
 from flask import request, escape, jsonify
 from flaskr import plugins
 from flaskr.request_processing import ticket as rp_ticket
 from flaskr.request_processing import message as rp_message
 from flaskr.request_processing import file as rp_file
 from flaskr import Iresponse
-from flask_jwt import jwt_required, current_identity
 from flaskr.utils import notifications
 from flask_mail import Mail
 from mail.Message import create_email_message
@@ -18,13 +21,12 @@ import base64
 import mimetypes
 from flaskr import database
 
-# Make this post with a button.
-
 
 @apiBluePrint.route('/ticket/<ticket_id>/close', methods=['POST', 'PATCH'])
-@jwt_required()
+@jwt_required
 def close_ticket(ticket_id):
     """ Update this with a rights check."""
+    current_identity = get_current_user()
     try:
         ticket = Ticket.query.get(ticket_id)
         ticket.close
@@ -34,13 +36,14 @@ def close_ticket(ticket_id):
                              'Closed ticket',
                              Message.NTFY_TYPE_CLOSED)
     except Exception as e:
-        raise e
-        return Iresponse.create_response(str(e), 400)
+        print(e)  # LOGGING
+        return Iresponse.create_response("Error", 400)
+    # TODO: Add Iresponse.
     return jsonify({'status': "success", 'message': 'ticket closed'})
 
 
 @apiBluePrint.route('/ticket/<ticket_id>', methods=['GET'])
-@jwt_required()
+@jwt_required
 def retrieve_single_ticket(ticket_id):
     """
     Geeft een enkel ticket.
@@ -53,7 +56,7 @@ def retrieve_single_ticket(ticket_id):
 
 
 @apiBluePrint.route('/ticket/<ticket_id>/plugins', methods=['GET'])
-@jwt_required()
+@jwt_required
 def retrieve_plugins(ticket_id):
     """
     List the plugins available for this ticket.
@@ -72,7 +75,7 @@ def retrieve_plugins(ticket_id):
 
 
 @apiBluePrint.route('/ticket/<ticket_id>/messages', methods=['POST'])
-@jwt_required()
+@jwt_required
 def create_message(ticket_id):
     """
     Maak een nieuw bericht.
@@ -81,6 +84,7 @@ def create_message(ticket_id):
     if request is None:
         return Iresponse.empty_json_request()
 
+    current_identity = get_current_user()
     json_data["studentid"] = current_identity.id
 
     userId = escape(json_data["studentid"])
@@ -99,16 +103,16 @@ def create_message(ticket_id):
 
 
 @apiBluePrint.route('/ticket/<ticket_id>/messages', methods=['GET'])
-@jwt_required()
+@jwt_required
 def get_ticket_messages(ticket_id):
     # TODO: Check if user is related to ticket.
     return rp_message.retrieve_all_request(ticket_id,
-                                           current_identity,
+                                           get_current_user(),
                                            read=True)
 
 
 @apiBluePrint.route('ticket/addta', methods=['POST'])
-@jwt_required()
+@jwt_required
 def add_ta_to_ticket():
     json_data = request.get_json()
     if json_data:
@@ -118,7 +122,7 @@ def add_ta_to_ticket():
 
 
 @apiBluePrint.route('ticket/removeta', methods=['POST'])
-@jwt_required()
+@jwt_required
 def remove_ta_from_ticket():
     json_data = request.get_json()
     if json_data:
@@ -128,12 +132,12 @@ def remove_ta_from_ticket():
 
 
 @apiBluePrint.route('/ticket/submit', methods=['POST'])
-@jwt_required()
+@jwt_required
 def create_ticket():
     """
     Check ticket submission and add to database.
     """
-
+    print(request.headers)
     # Mandatory check to comply with incompatible testing.
     formdata = None
     if request.get_json():
@@ -181,6 +185,8 @@ def create_ticket():
             rp_file.remove_file(file)
         return Iresponse.create_response("Invalid Course/Label", 400)
 
+    current_identity = get_current_user()
+
     ticket_data['studentid'] = current_identity.id
     ticket_data['name'] = current_identity.name
     ticket_data['email'] = current_identity.email
@@ -196,7 +202,7 @@ def create_ticket():
 
 
 @apiBluePrint.route('/ticket/filedownload', methods=['POST'])
-@jwt_required()
+@jwt_required
 def download_file():
     """ Download a file from server (check rights in future)"""
     json_data = request.get_json()

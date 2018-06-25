@@ -216,8 +216,7 @@
             }
 
             const pathLabels = '/api/labels'
-            const pathCourses = '/api/courses'
-
+            const pathCourses = '/api/user/student_courses'
             this.$ajax.get(pathCourses)
                 .then(response => {
                     for (let i = 0; i < response.data.json_data.length; i++) {
@@ -230,36 +229,13 @@
                         this.$ajax.get(currLabelPath)
                             .then(response => {
                                 this.categories.labels[courseid] = response.data.json_data
+                                console.log("LABELS:")
                                 console.log(this.categories.labels[courseid])
                             }).catch(error => {
                                 console.log(error)
                             })
                     }
 
-                }).catch(error => {
-                    console.log(error)
-                })
-            // for (let i = 0; i < this.categories.courses.length; i++) {
-            //     //axios_csrf.get(pathLabels + '/' + this.courses[i].course_id)
-            //     console.log("HELLO")
-            //     console.log(this.categories.courses[i].course_id)
-            // }
-            this.$ajax.get(pathLabels)
-                .then(response => {
-                    console.log
-                    for (let i = 0; i < response.data.json_data.length; i++) {
-                        let elem = response.data.json_data[i]
-                        if (this.categories.labels[elem.course_id])
-                            this.categories.labels[elem.course_id].push({
-                                value: elem.name,
-                                text: elem.name
-                            })
-                        else
-                            this.categories.labels[elem.course_id] = [{
-                                value: elem.name,
-                                text: elem.name
-                            }]
-                    }
                 }).catch(error => {
                     console.log(error)
                 })

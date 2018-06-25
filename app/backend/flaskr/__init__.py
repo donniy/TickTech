@@ -4,7 +4,9 @@ from flask import Flask, render_template
 from flaskr import database, sockets
 from flask_wtf.csrf import CSRFProtect
 import os.path
-from flaskr.models import Course, Label, Message, Note, ticket, user
+from flaskr.models import Message, ticket, Note, Course, user, Label
+from flask_jwt_extended import JWTManager
+from flask_jwt import JWT, jwt_required, current_identity
 from flask_socketio import emit, join_room, leave_room
 from . import login
 import poplib
@@ -43,6 +45,8 @@ def create_app(test_config=None):
     app.config['WTF_CSRF_CHECK_DEFAULT'] = False
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    app.config['JWT_SECRET_KEY'] = 'very-secure'
 
     # Send email settings, for now hardcoded
     app.config['MAIL_SERVER'] = Config.EMAIL_SEND_SERVER

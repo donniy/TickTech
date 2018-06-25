@@ -27,7 +27,10 @@
                 </div>
             </div>
             <div v-else class="div-inline mt-2 mt-md-0">
-                <button tag="button" style="margin-right:20px;" class="'note-add-button btn btn-primary home-right'" v-on:click="$auth.logout({makeRequest: false, success: function () { $auth.token(null, '') }, redirect: '/'})">Logout</button>
+              <button tag="button" style="margin-right:20px;"
+                      v-if="!this.$lti.data.lti_session"
+                      class="'note-add-button btn btn-primary home-right'"
+                      v-on:click="$auth.logout({makeRequest: false, success: function () { $auth.token(null, '') }, redirect: '/'})">Logout</button>
             </div>
         </ul>
     </nav>
@@ -68,40 +71,40 @@
             },
             breadcrumbList: function (to) {
                 // if (this.$user.logged_in()) {
-                let matcher = this.$router.matcher.match
-                let cur_url = '/'
-                let split_string = []
-                let match = null
-                let usr = this.$user.get()
-                if (typeof usr !== 'undefined') {
-                    split_string = to.path.replace(':user_id', usr.id)
-                    if (window.$current_course_id !== null)
-                        try {
-                            split_string = split_string.replace(':course_id', window.$current_course_id)
-                        } catch (e) {
-                            console.error(e)
-                        }
-                    split_string = split_string.split('/')
-                } else {
-                    if (window.$current_course_id !== null)
-                        try {
-                            split_string = split_string.replace(':course_id', window.$current_course_id)
-                        } catch (e) {
-                            console.error(e)
-                        }
-                    split_string = to.path.split('/')
-                }
-                for (let i = 0; i < split_string.length; i++) {
-                    if (split_string[i] === '') continue
-                    match = matcher(cur_url + split_string[i])
-                    cur_url += split_string[i] + '/'
-                    if (typeof match.name !== 'undefined' && match.name !== 'Home'
-                        && match.name !== 'UserHome' && cur_url.indexOf(':course_id') === -1) {
-                        if (typeof match.meta.pre !== 'undefined')
-                            this.breadcrumbList({ path: match.meta.pre })
-                        this.path_list.push(match)
+                    let matcher = this.$router.matcher.match;
+                    let cur_url = '/';
+                    let split_string = [];
+                    let match = null;
+                    let usr = this.$user.get();
+                    if(typeof usr !== 'undefined') {
+                        split_string = to.path.replace(':user_id', usr.id)
+                        if(window.$current_course_id !== null)
+                            try {
+                                split_string = split_string.replace(':course_id', window.$current_course_id)
+                            } catch(e) {
+                                console.error(e);
+                            }
+                        split_string = split_string.split('/');
+                    } else {
+                        if(window.$current_course_id !== null)
+                            try {
+                                split_string = split_string.replace(':course_id', window.$current_course_id)
+                            } catch(e) {
+                                console.error(e);
+                            }
+                        split_string = to.path.split('/');
                     }
-                }
+                    for (let i = 0; i < split_string.length; i++) {
+                        if(split_string[i] === '') continue;
+                        match = matcher(cur_url + split_string[i]);
+                        cur_url += split_string[i] + '/';
+                        if (typeof match.name !== 'undefined' && match.name !== 'Home'
+                                && match.name !== 'UserHomeLoader' && cur_url.indexOf(':course_id') === -1) {
+                            if (typeof match.meta.pre !== 'undefined')
+                                this.breadcrumbList({ path: match.meta.pre });
+                            this.path_list.push(match);
+                        }
+                    }
                 return
             }
             // }
