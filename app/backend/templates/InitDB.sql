@@ -33,7 +33,7 @@ insert or replace into ticket values ('326b261c6d7011e8adc0fa7ae01bbebc',1020304
 insert or replace into ticket values ('526b261c6d7011e8adc0fa7ae01bbebc',87654321,'71d929a86b1311e8adc0fa7ae01bbebc',12345678,3,'pieter3@test.nl','ticketnaam3','2018-06-11 13:25:02',0);
 insert or replace into ticket values ('726b261c6d7011e8adc0fa7ae01bbebc',87654321,'51d929a86b1311e8adc0fa7ae01bbebc',12345678,1,'pieter4@test.nl','ticketnaam4','2018-06-11 13:25:02',0);
 
-/* link ta's to a ticket */
+/* link TAs to a ticket */
 insert or replace into ta_tracker values ('126b261c6d7011e8adc0fa7ae01bbebc',12345678);
 insert or replace into ta_tracker values ('326b261c6d7011e8adc0fa7ae01bbebc',12345678);
 

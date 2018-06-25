@@ -1,3 +1,4 @@
+<!-- Navbar.vue creates the navbar at the top of the site. -->
 <template>
     <nav :class="'navbar navbar-tiktech navbar-expand-md' + (transparent ? ' navbar-transparent' : '')">
         <ul class="navbar-nav mr-auto">
@@ -44,7 +45,7 @@
         data: function () {
             return {
                 path_list: []
-            };
+            }
         },
         mounted: () => {
             console.log("navbar user: " + this.$user)
@@ -59,7 +60,7 @@
                 perm |= (this.$user.isSupervisor() << 2)
                 return perm
             },
-            // Returns in which environment an user is (student: 0) (supervisor: 1)
+            // Returns in which environment a user is (student: 0) (supervisor: 1)
             environment: function () {
                 //  return 0
                 if (this.$user.studentEnvironment == 1) {
@@ -104,17 +105,15 @@
                             this.path_list.push(match);
                         }
                     }
-                    return;
-                }
+                return
+            }
             // }
         },
         watch: {
             '$route'(to, from) {
-                this.path_list = [];
+                this.path_list = []
                 this.breadcrumbList(this.$router.currentRoute)
             }
         }
-
     }
-
 </script>
