@@ -60,7 +60,7 @@
                 <md-card md-with-hover class="md-elevation-5 md-raised md-primary create-ticket-section1" @click.native="$router.push('/ticket/submit')">
                     <md-ripple>
                         <md-card-content class="create-ticket-section2">
-                            <h1 style="opacity:1;">Create ticket</h1>
+                            <p>Create ticket</p>
                         </md-card-content>
                     </md-ripple>
                 </md-card>

@@ -8,10 +8,21 @@
                     <md-card-header>
                         <h5 class="md-title message-sender">{{username}}</h5>
                     </md-card-header>
+                        <md-card-content>
+                            <p class="message-text">
+                                {{message.text}}
+                            </p>
+                        </md-card-content>
 
-                    <md-card-content>
+                        <!--<md-card-actions>
+                            <md-button>Action</md-button>
+                            <md-button>Action</md-button>
+                        </md-card-actions>-->
+                    </md-card>
+                    <!--                <div class="media-body material-card">
+                        <h5 class="mt-0 mb-1 message-sender">{{username}}</h5>
                         <p class="message-text">
-                            {{message.text}}
+                        {{message.text}}
                         </p>
                     </md-card-content>
 
@@ -61,5 +72,8 @@ export default {
     },
     mounted: function () {
     }
+<<<<<<< Updated upstream
 }
+=======
+>>>>>>> Stashed changes
 </script>
