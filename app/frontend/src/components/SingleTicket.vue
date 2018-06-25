@@ -256,19 +256,18 @@ export default {
             this.$ajax.post(path, {address: key})
             .then((response) => {
                 // Get data from response
-                const url = window.URL.createObjectURL(new Blob(response.data))
+                console.log(response.data)
+                const url = window.URL.createObjectURL(new Blob([response.data.json_data]))
                 const link = document.createElement('a')
-
-                // Ref to the link and activate download.
                 link.href = url
-                link.setAttribute('download', name)
+                link.setAttribute('download', name + '.txt')
                 document.body.appendChild(link)
-                link.click();
+                link.click()
                 document.body.removeChild(link)
             })
             .catch(error => {
                 console.log(error)
-                window.alert("File not found")
+                window.alert("Something went wrong")
             })
         },
         addNote() {

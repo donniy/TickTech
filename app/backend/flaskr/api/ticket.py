@@ -15,7 +15,7 @@ from flaskr import Iresponse
 from flaskr.utils import notifications
 from flask_mail import Mail
 from mail.Message import create_email_message
-from flaskr.utils import course_validation, json_validation
+from flaskr.utils import course_validation, json_validation, ocr
 from os.path import expanduser
 import base64
 import mimetypes
@@ -233,9 +233,8 @@ def get_text():
             homefolder = expanduser("~")
             base = '/serverdata/'
             location = homefolder + base + json_data['address']
-            print("Getting from",location)
-            test = ocr.process_image(full_path)
-            print(test)
-        return Iresponse.create_response("OK", 200)
+            text = ocr.ocr_process_image(location)
+            print(text)
+            return Iresponse.create_response(text, 200)
     except:
         return Iresponse.create_response("Bad request", 400)
