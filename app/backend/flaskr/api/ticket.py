@@ -38,8 +38,9 @@ def close_ticket(ticket_id):
                              'Closed ticket',
                              Message.NTFY_TYPE_CLOSED)
     except Exception as e:
-        raise e
-        return Iresponse.create_response(str(e), 400)  # WTF????
+        print(e)  # LOGGING
+        return Iresponse.create_response("Error", 400)
+    # TODO: Add Iresponse.
     return jsonify({'status': "success", 'message': 'ticket closed'})
 
 
