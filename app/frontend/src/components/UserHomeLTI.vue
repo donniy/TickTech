@@ -5,23 +5,23 @@
             <h2>Welcome back {{ $user.get().name }}</h2>
         </div>
         <div class="md-layout md-gutter wrapper md-size-20 md-small-size-100">
-            <div class="md-layout-item" v-if="isTA">
+          <div class="md-layout-item" v-if="!isTA">
                 <md-content class="md-elevation-5">
-                        <md-subheader>Courses</md-subheader>
+                        <md-subheader>Your tickets in this course</md-subheader>
 
                         <md-content class="md-scrollbar courses-section">
                         <md-list class="md-triple-line">
 
-                            <course v-for="course in ta_courses" v-bind:key="course.id" v-bind:course="course"></course>
+                            <ticket v-for="ticket in tickets" v-bind:key="ticket.id" v-bind:ticket="ticket"></ticket>
 
                         </md-list>
                         </md-content>
 
                 </md-content>
-            </div>
-            <div class="md-layout-item" v-if="!isTA">
+          </div>
+          <div class="md-layout-item" v-if="isTA">
                 <md-content class="md-elevation-5">
-                        <md-subheader>Tickets</md-subheader>
+                        <md-subheader>Tickets in this course, concerning you</md-subheader>
 
                         <md-content class="md-scrollbar courses-section">
                         <md-list class="md-triple-line">
@@ -33,6 +33,7 @@
 
                 </md-content>
             </div>
+
             <div class="md-layout-item">
                 <md-content class="md-elevation-5">
                     <md-list class="md-double-line padding-bottom-0">
@@ -58,7 +59,7 @@
 
                     </md-list>
                 </md-content>
-                <!-- A TA can not create a ticket in a LTI session. -->
+                <!-- A TA can not create a ticket in an LTI session. -->
                 <md-card md-with-hover
                          v-if="isTA"
                          class="md-elevation-5 md-raised md-primary create-ticket-section1"
@@ -102,9 +103,14 @@ export default {
     },
     methods: {
         getTickets() {
-            console.log("GETTING TICKETS")
+            if (this.isTA) {
+                const path = '/api/ta/courses/' + this.lti_course.id + '/tickets'
+                this.$ajax.get(path).then(response => {
+                    this.tickets = response.data.json_data
+                })
+                return;
+            }
 				    this.status = 'getting ticket'
-            console.log(this.$user.get())
 				    const path = '/api/user/tickets/course/' + this.lti_course.id
 				    this.$ajax.get(path).then(response => {
 					      this.tickets = response.data.json_data
@@ -114,7 +120,7 @@ export default {
 			  },
         getLtiCourse() {
             let lti_data = this.$lti.data.lti_data;
-            if (lti_data['tiktech_is_course_TA']) {
+            if (this.isTA) {
                     this.lti_course_id = lti_data['tiktech_course_id'];
                     let courses_ta = this.$user.get().ta;
                     for (let i = 0; i < courses_ta.length; i++) {
@@ -122,8 +128,6 @@ export default {
                             this.lti_course = courses_ta[i];
                         }
                     }
-                    console.log(this.lti_course.id)
-                    this.isTA = true
             } else if (lti_data['tiktech_is_course_student']) {
                 this.lti_course_id = lti_data['tiktech_course_id'];
                 let student_course = this.$user.get().student
@@ -134,7 +138,14 @@ export default {
                 }
             }
         },
+        determineRole() {
+            let lti_data = this.$lti.data.lti_data;
+            if (lti_data['tiktech_is_course_TA']) {
+                this.isTA = true;
+            }
+        },
         created() {
+            this.determineRole()
             this.getLtiCourse();
             this.getTickets()
             this.status = 'created'

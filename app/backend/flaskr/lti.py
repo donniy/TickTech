@@ -146,12 +146,11 @@ class LTI_instance:
             'roles',
             'lis_person_contact_email_primary',
             'lis_person_sourcedid',
-            'custom_canvas_custom_member_roles',
             'lis_person_contact_email_primary',
         ]
         for key in required_keys:
             if body.get(key) is None:
-                print(key)
+                print("Required key is missing: {}".format(key))
                 raise InvalidLTIRequest
 
     # TODO: add getting of secret key from consumerKey
