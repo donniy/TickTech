@@ -1,4 +1,3 @@
-<!-- Navbar.vue creates the navbar at the top of the site. -->
 <template>
     <nav :class="'navbar navbar-tiktech navbar-expand-md' + (transparent ? ' navbar-transparent' : '')">
         <ul class="navbar-nav mr-auto">
@@ -42,7 +41,7 @@
         data: function () {
             return {
                 path_list: []
-            }
+            };
         },
         mounted: () => {
             console.log("navbar user: " + this.$user)
@@ -57,7 +56,7 @@
                 perm |= (this.$user.isSupervisor() << 2)
                 return perm
             },
-            // Returns in which environment a user is (student: 0) (supervisor: 1)
+            // Returns in which environment an user is (student: 0) (supervisor: 1)
             environment: function () {
                 //  return 0
                 if (this.$user.studentEnvironment == 1) {
@@ -68,49 +67,51 @@
             },
             breadcrumbList: function (to) {
                 // if (this.$user.logged_in()) {
-                let matcher = this.$router.matcher.match
-                let cur_url = '/'
-                let split_string = []
-                let match = null
-                let usr = this.$user.get()
-                if (typeof usr !== 'undefined') {
-                    split_string = to.path.replace(':user_id', usr.id)
-                    if (window.$current_course_id !== null)
-                        try {
-                            split_string = split_string.replace(':course_id', window.$current_course_id)
-                        } catch (e) {
-                            console.error(e)
-                        }
-                    split_string = split_string.split('/')
-                } else {
-                    if (window.$current_course_id !== null)
-                        try {
-                            split_string = split_string.replace(':course_id', window.$current_course_id)
-                        } catch (e) {
-                            console.error(e)
-                        }
-                    split_string = to.path.split('/')
-                }
-                for (let i = 0; i < split_string.length; i++) {
-                    if (split_string[i] === '') continue
-                    match = matcher(cur_url + split_string[i])
-                    cur_url += split_string[i] + '/'
-                    if (typeof match.name !== 'undefined' && match.name !== 'Home'
-                        && match.name !== 'UserHome' && cur_url.indexOf(':course_id') === -1) {
-                        if (typeof match.meta.pre !== 'undefined')
-                            this.breadcrumbList({ path: match.meta.pre })
-                        this.path_list.push(match)
+                    let matcher = this.$router.matcher.match;
+                    let cur_url = '/';
+                    let split_string = [];
+                    let match = null;
+                    let usr = this.$user.get();
+                    if(typeof usr !== 'undefined') {
+                        split_string = to.path.replace(':user_id', usr.id)
+                        if(window.$current_course_id !== null)
+                            try {
+                                split_string = split_string.replace(':course_id', window.$current_course_id)
+                            } catch(e) {
+                                console.error(e);
+                            }
+                        split_string = split_string.split('/');
+                    } else {
+                        if(window.$current_course_id !== null)
+                            try {
+                                split_string = split_string.replace(':course_id', window.$current_course_id)
+                            } catch(e) {
+                                console.error(e);
+                            }
+                        split_string = to.path.split('/');
                     }
+                    for (let i = 0; i < split_string.length; i++) {
+                        if(split_string[i] === '') continue;
+                        match = matcher(cur_url + split_string[i]);
+                        cur_url += split_string[i] + '/';
+                        if (typeof match.name !== 'undefined' && match.name !== 'Home'
+                                && match.name !== 'UserHome' && cur_url.indexOf(':course_id') === -1) {
+                            if (typeof match.meta.pre !== 'undefined')
+                                this.breadcrumbList({ path: match.meta.pre });
+                            this.path_list.push(match);
+                        }
+                    }
+                    return;
                 }
-                return
-            }
             // }
         },
         watch: {
             '$route'(to, from) {
-                this.path_list = []
+                this.path_list = [];
                 this.breadcrumbList(this.$router.currentRoute)
             }
         }
+
     }
+
 </script>

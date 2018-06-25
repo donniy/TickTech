@@ -112,7 +112,7 @@ class Ticket(db.Model):
     def related_users(self):
         """
         Returns all users that are somehow related to this
-        ticket. That means, all TAs and the student that
+        ticket. That means, all TA's and the student that
         created this ticket.
         """
         tmp = [self.owner]
