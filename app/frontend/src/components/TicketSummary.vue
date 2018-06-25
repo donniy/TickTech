@@ -1,3 +1,4 @@
+<!-- TicketSummary.vue shows the summary of a ticket when you hover over a ticket in the table. -->
 <template>
     <transition name="modal">
         <div class="summary-container">
@@ -60,6 +61,7 @@
             }
         },
         methods: {
+            // Retrieve messages.
             getMessages() {
                 const path = '/api/ticket/' + this.ticket.id + '/messages'
                 this.$ajax.get(path)
@@ -70,6 +72,7 @@
                         console.log(error)
                     })
             },
+            // Retrieve notes.
             getNotes() {
                 this.$ajax.get('/api/notes/' + this.ticket.id)
                     .then(res => {
@@ -84,6 +87,7 @@
         beforeMount: function () {
             this.user_id = this.$user.get().id
         },
+        // This is called when the page is loaded.
         mounted: function () {
             this.getMessages()
             this.getNotes()
