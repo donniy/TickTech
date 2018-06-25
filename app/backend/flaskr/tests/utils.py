@@ -68,4 +68,4 @@ def login(client, userId):
         'password': "random"
     })
     token = login.get_json()
-    return 'JWT '+token['access_token']
+    return 'Bearer '+token['access_token']
