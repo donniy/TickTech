@@ -4,7 +4,7 @@ from flask import Flask, render_template
 from flaskr import database, sockets
 from flask_wtf.csrf import CSRFProtect
 import os.path
-from flaskr.models import Course
+from flaskr.models import Course, Label, Message, Note, ticket, user
 from flask_socketio import emit, join_room, leave_room
 from . import login
 import poplib
