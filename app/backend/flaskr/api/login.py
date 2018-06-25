@@ -50,5 +50,5 @@ def retrieve_user():
         usr['roles'].append('ta')
     if len(usr['supervisor']) >= 1:
         usr['roles'].append('supervisor')
-        
+
     return Iresponse.create_response({'user': usr}, 200)
