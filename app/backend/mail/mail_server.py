@@ -4,6 +4,7 @@ import poplib
 import requests
 import base64
 import html2text
+import socket
 
 '''
 Rabbitmqueue: Message mpass system between flask en mail server
@@ -23,10 +24,9 @@ def connect(host, port, user, password):
     except (poplib.error_proto) as msg:
         print(msg)
         return None
-    # what does this even do? socket is unknown
-    # except socket.gaierror as msg:
-    #     print(msg)
-    #     return None
+    except socket.gaierror as msg:
+        print(msg)
+        return None
     except OSError as msg:
         print(msg)
         return None
