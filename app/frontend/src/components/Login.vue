@@ -40,30 +40,32 @@ import Router from 'vue-router';
             }
         },
         methods: {
+            // Confirm the student ID.
+            // TODO: Give error message if ID is wrong - maybe pop-up window?
             checkUser() {
                 this.$validator.validateAll().then((result) => {
                     if (result) {
-                        this.$auth.login({url: '/auth',
+                        this.$auth.login({url: '/api/login',
                                         data: {username: this.form.username, password: "TickTech"},
-                                        success: function (response) {
-                                            this.$auth.token(null, response.data.access_token);
-                                            this.$auth.fetch({
-                                                params: {},
-                                                success: function () {
-                                                    console.log(this.$auth.user())
-                                                    this.$router.push('/home');
-                                                },
-                                                error: function (response_fetch) {
-                                                    console.error(response_fetch)
-                                                },
-                                            });
+                                          success: function (response) {
+                                              this.$auth.token(null,
+                                                               response.data.json_data.access_token);
+                                              this.$auth.fetch({
+                                                  data: {},
+                                                  success: function () {
+                                                      this.$router.push('/home');
+                                                  },
+                                                  error: function (response_fetch) {
+                                                      console.error(response_fetch)
+                                                  },
+                                              });
                                         },
                                         error: function (response) {
                                             console.error(response)
                                         },
                                         rememberMe: true,
                                         fetchUser: false,
-                                        // redirect: '/home',
+                                        //redirect: '/home',
                         })
                     }
                 })
@@ -80,5 +82,5 @@ import Router from 'vue-router';
     }
 </script>
 
-<style lang="scss" scoped>
-</style>
+<!-- Below necessary? -->
+<style lang="scss" scoped></style>

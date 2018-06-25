@@ -26,7 +26,10 @@
                 </div>
             </div>
             <div v-else class="div-inline mt-2 mt-md-0">
-                <button tag="button" style="margin-right:20px;" class="'note-add-button btn btn-primary home-right'" v-on:click="$auth.logout({makeRequest: false, success: function () { $auth.token(null, '') }, redirect: '/'})">Logout</button>
+              <button tag="button" style="margin-right:20px;"
+                      v-if="!this.$lti.data.lti_session"
+                      class="'note-add-button btn btn-primary home-right'"
+                      v-on:click="$auth.logout({makeRequest: false, success: function () { $auth.token(null, '') }, redirect: '/'})">Logout</button>
             </div>
         </ul>
     </nav>
@@ -95,14 +98,14 @@
                         match = matcher(cur_url + split_string[i]);
                         cur_url += split_string[i] + '/';
                         if (typeof match.name !== 'undefined' && match.name !== 'Home'
-                                && match.name !== 'UserHome' && cur_url.indexOf(':course_id') === -1) {
+                                && match.name !== 'UserHomeLoader' && cur_url.indexOf(':course_id') === -1) {
                             if (typeof match.meta.pre !== 'undefined')
                                 this.breadcrumbList({ path: match.meta.pre });
                             this.path_list.push(match);
                         }
                     }
-                    return;
-                }
+                return
+            }
             // }
         },
         watch: {
@@ -113,5 +116,4 @@
         }
 
     }
-
 </script>

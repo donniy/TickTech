@@ -9,8 +9,9 @@ def test_get_user(app, client):
     """
 
     create_user(app, 1234)
-
-    rv = client.get('/api/user/{}'.format(1234))
+    auth = login(client, 1234)
+    rv = client.get('/api/user/{}'.format(1234),
+                    headers={'Authorization': auth})
     json_data = rv.get_json()
     assert rv.status == '200 OK'
     print("call returned:")
@@ -35,7 +36,7 @@ def test_get_user_tickets(app, client):
 
     auth = login(client, 1234)
 
-    rv = client.get('/api/user/{}/tickets'.format(1234),
+    rv = client.get('/api/user/tickets',
                     headers={'Authorization': auth})
     json_data = rv.get_json()
     assert rv.status == '200 OK'
@@ -56,7 +57,7 @@ def test_get_active_student_tickets(app, client):
     auth = login(client, 1234)
     rv = client.get('/api/user/{}/tickets/active'.format(1234),
                     headers={'Authorization': auth})
-    rv2 = client.get('/api/user/{}/tickets'.format(1234),
+    rv2 = client.get('/api/user/tickets',
                      headers={'Authorization': auth})
 
     active_tickets = rv.get_json()['json_data']
@@ -69,9 +70,12 @@ def test_get_active_student_tickets(app, client):
 
 def test_get_student_courses(app, client):
     user = create_user(app, 1234)
+    auth = login(client, 1234)
     courseId = uuid.uuid4()
-    create_course(app, courseId, [], [user])
-    rv = client.get('/api/user/{}/courses'.format(1234))
+    course = create_course(app, courseId, [], [user])
+    rv = client.get('/api/user/student_courses',
+                    headers={'Authorization': auth})
+
     json_data = rv.get_json()
     print(json_data)
     assert rv.status == "200 OK"
@@ -89,8 +93,8 @@ def test_user_auth(app, client):
     create_ticket(app, id2, 1234, courseId, 2)
 
     rv = client.get('/api/user/{}/tickets/active'.format(1234))
-    rv2 = client.get('/api/user/{}/tickets'.format(1234))
-    rv3 = client.get('/api/user/{}/tickets'.format(1234),
+    rv2 = client.get('/api/user/tickets'.format(1234))
+    rv3 = client.get('/api/user/tickets'.format(1234),
                      headers={'Authorization': ""})
 
     print(rv.status)

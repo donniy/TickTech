@@ -9,6 +9,7 @@ from flaskr.utils import notifications
 from datetime import datetime
 
 
+# TODO: CHECK IF JSON IS VALID.
 def create_request(json_data):
     name = escape(json_data["name"])
     name = name  # flake8
@@ -67,9 +68,12 @@ def create_request(json_data):
     return response
 
 
+# TODO: Should check is the json_data is valid.
 def add_ta_to_ticket(json_data):
-    ticket = Ticket.query.filterby(id=uuid.UUID(json_data['ticketid'])).first()
-    ta = User.query.filterby(id=json_data['taid']).first()
+    print("CALLED this")
+    ticket = Ticket.query.filter_by(
+        id=uuid.UUID(json_data['ticketid'])).first()
+    ta = User.query.filter_by(id=json_data['taid']).first()
 
     # Check if the ta and ticket were found and add if not already there.
     if ticket and ta:
@@ -79,6 +83,7 @@ def add_ta_to_ticket(json_data):
     return Iresponse.create_response("Failure", 400)
 
 
+# TODO: CHECK IF JSON IS VALID.
 def add_ta_list_to_ticket(json_data):
     ticket = Ticket.get(uuid.UUID(json_data['ticketid']))
     ta_list = list()
@@ -94,9 +99,10 @@ def add_ta_list_to_ticket(json_data):
     return Iresponse.create_response("No Ta's found", 400)
 
 
+# TODO: CHECK IF JSON IS VALID.
 def remove_ta_from_ticket(json_data):
     ticket = Ticket.get(uuid.UUID(json_data['ticketid']))
-    ta = User.query.filterby(id=json_data['taid']).first()
+    ta = User.query.filter_by(id=json_data['taid']).first()
 
     if ticket and ta:
         if ta in ticket.bound_tas:

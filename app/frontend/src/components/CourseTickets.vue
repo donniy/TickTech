@@ -105,6 +105,7 @@
                 addTasPath: "",
                 addStudentsPath: "",
                 isSupervisor: false,
+                isTA: false,
                 course: {
                     'id': "",
                     'course_email': "",
@@ -205,6 +206,8 @@
                 this.$ajax.get(path)
                     .then(response => {
                         this.course = response.data.json_data
+                        console.log("COURSE")
+                        console.log(response.data.json_data)
                         window.$current_course_id = this.course.id
                         this.status = 'Retrieved data'
                         this.addStudentsPath = '/api/courses/' + this.course.id + '/students'
