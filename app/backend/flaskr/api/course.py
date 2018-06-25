@@ -11,7 +11,7 @@ import os
 
 @apiBluePrint.route('/courses/single/<course_id>', methods=['GET'])
 def retreive_course(course_id):
-    course = Course.Course.query.get(course_id)
+    course = Course.query.get(course_id)
     if course:
         return Iresponse.create_response(course.serialize, 200)
     else:
@@ -42,7 +42,7 @@ def create_course():
 
 @apiBluePrint.route('/courses', methods=['GET'])
 def retrieve_all_courses():
-    courses = Course.Course.query.all()
+    courses = Course.query.all()
     return Iresponse.create_response(database.serialize_list(courses), 200)
 
 
@@ -62,7 +62,7 @@ def retrieve_all_courses():
 
 @apiBluePrint.route('/courses/<course_id>/tas', methods=['GET'])
 def get_course_tas(course_id):
-    course = Course.Course.query.get(course_id)
+    course = Course.query.get(course_id)
     if course is None:
         return Iresponse.create_response("", 404)
     tas = course.ta_courses
@@ -71,7 +71,7 @@ def get_course_tas(course_id):
 
 @apiBluePrint.route('/courses/<course_id>/students', methods=['GET'])
 def get_course_students(course_id):
-    course = Course.Course.query.get(course_id)
+    course = Course.query.get(course_id)
     print(course_id)
     if course is None:
         return Iresponse.create_response("", 404)
