@@ -36,8 +36,8 @@ def require_ta_in_course(course_id):
             - Calls the decorated function, with the following params:
             (course, user, *args, **kwargs).
             So the decorated function should always accept atleast two params,
-            namely the course and user, in that order. Extra params, should come
-            after the course and user.
+            namely the course and user, in that order.
+            Extra params, should come after the course and user.
             """
             verify_jwt_in_request()
             curr_user = get_current_user()
