@@ -42,7 +42,7 @@
                 </div>
                 <div class="row">
                     <b-button class="btn note-add-button btn btn-primary" button v-on:click="pushLocation('/course/' + $route.params.course_id + '/labels')">Course labels</b-button>
-                    <b-button v-if="isTA" class="btn note-add-button btn btn-primary">Add students</b-button>
+                    <b-button v-if="$user.isTa()" class="btn note-add-button btn btn-primary">Add students</b-button>
                     <b-button class="btn note-add-button btn btn-primary" @click="emailSettings" :to="''">Mail settings</b-button>
                     <b-button v-if="isSupervisor" class="btn note-add-button btn btn-primary" :to="''">Add TA's</b-button>
 
@@ -133,7 +133,6 @@
                         this.tickets = response.data.json_data
                         this.searched = this.tickets
                         this.status = 'Retrieved data'
-                        console.log(response.data.json_data)
                         console.log(response)
                     })
                     .catch(error => {
@@ -169,7 +168,7 @@
                 this.status = 'created'
                 this.getCourseInfo()
                 this.getTickets()
-                this.getLabels()
+                // this.getLabels()
             },
             emailRunning: function () {
                 // Get the current email settings from server

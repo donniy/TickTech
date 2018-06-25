@@ -5,12 +5,14 @@
         <br />
         <br />
         <h1>My ticket</h1>
-        <div class="material-card">
-            <h2>{{ticket.title}}</h2>
-            Status: {{ticket.status.name}}
+        <div class="md-card media-body md-theme-default">
+            <div class="md-card-content">
+                <h2>{{ticket.title}}</h2>
+                Status: {{ticket.status.name}}
+            </div>
         </br>
         <div class="file-name-container-small medium-12 small-12 cell" v-if="ticket.files.length > 0">
-            <div v-for="file in ticket.files">
+            <div v-for="(file, key) in ticket.files" v-bind:key="key">
                  <p v-on:click="downloadFile(file.file_location, file.file_name)" class="file-listing-small"><i class="material-icons download-icon">folder</i> {{ file.file_name }}</p>
             </div>
         </div>
@@ -35,7 +37,7 @@
     export default {
         data() {
             return {
-                ticket: { title: '', status: { name: '' }, course_id: '' },
+                ticket: { title: '', status: { name: '' }, course_id: '', files: [] },
                 reply: '',
                 messages: [],
                 ret_url: '',

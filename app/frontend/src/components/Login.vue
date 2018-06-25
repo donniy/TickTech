@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="$auth.ready()">
         <h2 class="form-header center-display">Demo login</h2>
 
         <form class="md-layout center-display" v-on:submit.prevent="checkUser">
@@ -43,38 +43,15 @@ import Router from 'vue-router';
             checkUser() {
                 this.$validator.validateAll().then((result) => {
                     if (result) {
-                        this.$auth.login({url: '/auth',
-                                        data: {username: this.form.username, password: "TickTech"},
-                                        success: function (response) {
-                                            this.$auth.token(null, response.data.access_token);
-                                            this.$auth.fetch({
-                                                params: {},
-                                                success: function () {
-                                                    console.log(this.$auth.user())
-                                                    this.$router.push('/home');
-                                                },
-                                                error: function (response_fetch) {
-                                                    console.error(response_fetch)
-                                                },
-                                            });
-                                        },
-                                        error: function (response) {
-                                            console.error(response)
-                                        },
-                                        rememberMe: true,
-                                        fetchUser: false,
-                                        // redirect: '/home',
-                        })
+                        this.$auth.login({data: {username: this.form.username, password: "TickTech"}});
+                        }
                     }
-                })
+                )
             }
         },
         mounted() {
             if (this.$user.logged_in()) {
                 this.$router.back()
-            } else {
-                window.$cookies.remove('token')
-                window.$cookies.remove('user')
             }
         }
     }

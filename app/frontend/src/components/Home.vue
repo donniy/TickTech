@@ -120,4 +120,11 @@
 
 <script>
 
+export default {
+	mounted: function () {
+		if (this.$auth.ready() && this.$auth.check())
+			this.$router.push('/home');
+	}
+}
+
 </script>
