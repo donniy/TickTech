@@ -237,5 +237,5 @@ def get_text():
                 return Iresponse.create_response(text, 200)
             else:
                 return Iresponse.create_response("Bad request", 400)
-    except:
+    except IOError:
         return Iresponse.create_response("Bad request", 400)
