@@ -7,6 +7,7 @@ from flaskr.models import user
 from flask_jwt_extended import (
     jwt_required, create_access_token, get_jwt_identity)
 from flaskr.jwt_wrapper import get_current_user, lti_session_required
+import datetime
 from flask_jwt_extended.tokens import (
     encode_refresh_token, encode_access_token
 )
@@ -18,7 +19,9 @@ def launch_lti_session():
     Function that get called by canvas to launch an lti request.
     From here we create an access token that will be used.
     We encode the lti session inside the jwt and set
-    that we are in an lti session.
+    that we are in an lti session. The token we give
+    is only valid for one minute, this is because we
+    supply it in the route of the redirect.
     """
     i_req = IrequestFlask()
     i_req.transform_request_to_internal_request(request)
@@ -27,14 +30,15 @@ def launch_lti_session():
     except lti.InvalidLTIRequest:
         return "Invalid LTI request, check your key and secret."
 
-    print(lti_instance.params)
     user_id = lti_instance.user_id
     curr_user = user.User.query.get(user_id)
     if curr_user is None:
         return Iresponse.create_repsonse("Invalid user", 403)
 
+    # One minutes should be secure and enough?.
+    expires = datetime.timedelta(minutes=1)
     lti_instance.params['in_lti'] = True
-    access_token = create_access_token(identity=lti_instance.params)
+    access_token = create_access_token(identity=lti_instance.params, expires_delta=expires)
     # Add base url instead of hardcoded.
     return redirect("http://localhost:5000/start_lti_instance/"
                     + access_token, 302)
