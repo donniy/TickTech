@@ -15,20 +15,6 @@ export default {
             const path = '/api/lti/get_lti_params';
             this.$ajax.get(path).then(response => {
                 this.$lti.data.lti_data = response.data.json_data;
-            })
-        }
-    },
-    mounted: function () {
-        console.log(this.$route.params.access_token)
-        this.$auth.login({
-            url: '/api/lti/auth_session',
-            headers: {Authorization: 'Bearer ' + this.$route.params.access_token},
-            success: function (response) {
-                this.$auth.token(null,
-                                 this.$route.params.access_token);
-                this.$auth.authenticated = true;
-                this.$lti.data.lti_session = true;
-                this.get_lti_data();
                 this.$auth.fetch({
                     data: {},
                     success: function () {
@@ -39,6 +25,26 @@ export default {
                         console.error(response_fetch)
                     },
                 });
+
+            })
+        }
+    },
+    mounted: function () {
+        this.$auth.login({
+            url: '/api/lti/auth_session',
+            headers: {Authorization: 'Bearer ' + this.$route.params.access_token},
+            success: function (response) {
+                if (response.data.json_data.access_token) {
+                    this.$auth.token(null,
+                                     response.data.json_data.access_token);
+                }
+                else {
+                    this.$auth.authenticated = false;
+                    this.$router.push('/login');
+                }
+                this.$auth.authenticated = true;
+                this.$lti.data.lti_session = true;
+                this.get_lti_data();
             },
             error: function (response) {
                 console.error(response)
