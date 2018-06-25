@@ -1,3 +1,5 @@
+<template>
+</template>
 <script>
 /*
 Function that start an lti session. It gets an acess token from the
@@ -17,11 +19,13 @@ export default {
         }
     },
     mounted: function () {
+        console.log("HELLO THERE KENOBI")
         console.log(this.$route.params.access_token)
         this.$auth.login({
             url: '/api/lti/auth_session',
             headers: {Authorization: 'Bearer ' + this.$route.params.access_token},
             success: function (response) {
+                console.log("HELLO")
                 this.$auth.token(null,
                                  this.$route.params.access_token);
                 this.$auth.authenticated = true;
