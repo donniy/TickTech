@@ -226,7 +226,6 @@ def download_file():
 @jwt_required
 def get_text():
     """ Convert an image file to text using Optical character recognition"""
-    print("lets go")
     try:
         json_data = request.get_json()
         if 'address' in json_data:
@@ -234,7 +233,9 @@ def get_text():
             base = '/serverdata/'
             location = homefolder + base + json_data['address']
             text = ocr.ocr_process_image(location)
-            print(text)
-            return Iresponse.create_response(text, 200)
+            if text:
+                return Iresponse.create_response(text, 200)
+            else:
+                return Iresponse.create_response("Bad request", 400)
     except:
         return Iresponse.create_response("Bad request", 400)

@@ -34,7 +34,7 @@
                     </div>
                     <div class="file-name-container-small medium-12 small-12 cell" v-if="ticket.files.length > 0">
                         <div v-for="file in ticket.files">
-                            <md-button v-on:click="downloadOcrFile(file.file_location, file.file_name)" style="float:right;" class="md-dense md-primary">OCR</md-button>
+                            <md-button v-if="file.is_ocrable" v-on:click="downloadOcrFile(file.file_location, file.file_name)" style="float:right;" class="md-dense md-primary">OCR</md-button>
                             <p v-on:click="downloadFile(file.file_location, file.file_name)" style="float:right"class="file-listing-small"><i class="material-icons download-icon">folder</i> {{ file.file_name }}</p>
 
                         </div>
@@ -143,7 +143,8 @@ export default {
                     name: ''
                 },
                 course_id: '',
-                tas: []
+                tas: [],
+                files: []
             },
             reply: '',
             messages: [],
@@ -253,6 +254,7 @@ export default {
         downloadOcrFile(key, name){
 
             const path = '/api/ticket/gettext'
+
             this.$ajax.post(path, {address: key})
             .then((response) => {
                 // Get data from response
@@ -267,7 +269,7 @@ export default {
             })
             .catch(error => {
                 console.log(error)
-                window.alert("Something went wrong")
+                window.alert("Whoops! We were unable to read anything useful here...")
             })
         },
         addNote() {

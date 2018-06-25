@@ -194,6 +194,7 @@ class File(db.Model):
     file_name = db.Column(db.Text, unique=False, nullable=False)
     file_id = db.Column(UUIDType(binary=False), primary_key=True)
     is_duplicate = db.Column(db.Boolean, default=False, nullable=False)
+    is_ocrable = db.Column(db.Boolean, default=False, nullable=False)
 
     @property
     def serialize(self):
@@ -204,7 +205,8 @@ class File(db.Model):
         return {
             'file_location': self.file_location,
             'file_name': self.file_name,
-            'is_duplicate': self.is_duplicate
+            'is_duplicate': self.is_duplicate,
+            'is_ocrable': self.is_ocrable
         }
 
     @property
