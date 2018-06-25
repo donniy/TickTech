@@ -1,9 +1,6 @@
-from flaskr import jsonify
-from flaskr.models.ticket import Ticket
 from . import apiBluePrint
 from flaskr import database
-from flaskr.models.Course import *
-from flaskr.models.user import *
+from flaskr.models.user import User
 from flaskr import Iresponse
 
 

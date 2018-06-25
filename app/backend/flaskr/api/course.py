@@ -1,9 +1,8 @@
-from flaskr.models.ticket import *
 from . import apiBluePrint
-from flask import jsonify, request, escape
+from flask import request
 from flaskr import database, Iresponse
-from flaskr.models.Course import *
-from flaskr.models.user import *
+from flaskr.models.Course import Course
+from flaskr.models.user import User
 from flaskr.request_processing import courses as rp_courses
 from werkzeug.utils import secure_filename
 import csv

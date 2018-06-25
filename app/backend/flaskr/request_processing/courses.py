@@ -1,8 +1,9 @@
 from flaskr import database, Iresponse
-from flask import jsonify, escape
+from flask import escape
 import uuid
-from flaskr.models.Course import *
-from flaskr.models.ticket import *
+from flaskr.models.Course import Course
+from flaskr.models.ticket import Ticket
+from flaskr.models.user import User
 
 
 def create_request(jsonData):
