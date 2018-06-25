@@ -46,7 +46,7 @@ def unread_messages():
         if str(msg.ticket_id) not in tmp:
             ticket_id = str(msg.ticket_id)
             tmp[ticket_id] = {'ticket': msg.ticket.serialize, 'n': 0}
-            if current_identity in msg.ticket.binded_tas:
+            if current_identity in msg.ticket.bound_tas:
                 tmp[ticket_id]['ta'] = True
             else:
                 tmp[ticket_id]['ta'] = False

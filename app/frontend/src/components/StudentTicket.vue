@@ -1,6 +1,7 @@
 <template>
     <div>
-        <router-link :to="{path: ret_url}" class="btn btn-primary back-button">&laquo; Terug naar overzicht</router-link>
+        <router-link :to="{path: ret_url}" class="btn btn-primary">&laquo; Back home</router-link>
+        </md-button>
         <br />
         <br />
         <h1>My ticket</h1>
@@ -102,16 +103,28 @@
                 const path = '/api/ticket/filedownload'
                 this.$ajax.post(path, {address: key})
                 .then((response) => {
-                    // console.log(response.data)
+                    // Get data from response
+                    var byteCharacters = atob(response.data.json_data['encstring']);
+                    var mimetype = response.data.json_data['mimetype']
 
-                    var mime_type = response.headers['content-type']
-                    var data = new Blob([response.data], {mime_type})
-                    const link = document.createElement('a');
-                    data = window.URL.createObjectURL(data)
-                    link.setAttribute("href", data)
-                    link.setAttribute('download', name);
-                    document.body.appendChild(link);
+                    // Convert data to bytearray and decode
+                    var byteNumbers = new Array(byteCharacters.length);
+                    for (var i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    var byteArray = new Uint8Array(byteNumbers);
+
+                    // Generate blob and download element.
+                    var blob = new Blob([byteArray], {mimetype});
+                    const url = window.URL.createObjectURL(blob)
+                    const link = document.createElement('a')
+
+                    // Ref to the link and activate download.
+                    link.href = url
+                    link.setAttribute('download', name)
+                    document.body.appendChild(link)
                     link.click();
+                    document.body.removeChild(link)
                 })
                 .catch(error => {
                     console.log(error)

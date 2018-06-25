@@ -1,7 +1,6 @@
 from datetime import datetime
 from flaskr import database
 from sqlalchemy_utils import UUIDType
-import uuid
 
 db = database.db
 

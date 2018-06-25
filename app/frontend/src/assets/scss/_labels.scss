@@ -40,11 +40,16 @@
     box-shadow: 0 2px 4px 0 rgba(50,50,93,.1);
     margin-bottom: 10px;
 }
+.label_selected {
+    text-align: left !important;
+    left: 10px;
+    padding-top: 10px;;
+    position:absolute
+}
 .label-name {
     cursor: pointer;
     width: calc(100% - 45px);
     word-break: break-all;
-    text-align: left;
     border: none;
     background-color: inherit;
     padding: 14px 28px;

@@ -1,9 +1,8 @@
 from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-import os.path
-from sqlalchemy_utils import UUIDType
 import uuid
+from flaskr.config import Config
 
 db = SQLAlchemy()
 
@@ -24,8 +23,10 @@ class DatabaseInsertException(DatabaseException):
 def init_db():
     db.create_all()
     populate_database_dummy_data()
-    addTicketStatus()
-    addTicketStatus("closed")
+    addTicketStatus("Unassigned")
+    addTicketStatus("Closed")
+    addTicketStatus("Assigned but waiting for reply")
+    addTicketStatus("Receiving help")
     addTicket()
 
 
@@ -68,10 +69,10 @@ def populate_database_dummy_data():
     from flaskr.models import Course, user
     items = []
     course = Course.Course(id=uuid.uuid4(),
-                           course_email="uvapsetest@gmail.com",
+                           course_email=Config.EMAIL_FETCH_EMAIL,
                            mail_server_url="pop.gmail.com",
                            mail_port="995",
-                           mail_password="stephanandrea",
+                           mail_password=Config.EMAIL_FETCH_PASSWORD,
                            title="course 1",
                            description="Test")
 
@@ -101,9 +102,9 @@ def populate_database_dummy_data():
                       email="test@test.nl")
 
     # !IMPORTANT! This is for the mail server - ask stephan
-    mail_server = user.User(id=9999999999,
+    mail_server = user.User(id=107584259,
                             name="Mail server",
-                            email="Noreply@noreply.com")
+                            email="uvapsetest@gmail.com")
 
     items = [user1, user2, user3, user5, mail_server, course, course2]
 

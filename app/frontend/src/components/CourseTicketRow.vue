@@ -4,6 +4,7 @@
         style="cursor:pointer;"
         class="singleTicket">
         <th>{{ticket.title}}</th>
+        <td>{{ticket.label.label_name}}</td>
         <td>{{ticket.user_id}}</td>
         <td>{{ticket.status.name}}</td>
         <td>{{ticket.timestamp}}</td>

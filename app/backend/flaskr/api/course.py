@@ -1,9 +1,8 @@
-from flaskr.models.ticket import *
 from . import apiBluePrint
-from flask import jsonify, request, escape
+from flask import request
 from flaskr import database, Iresponse
-from flaskr.models.Course import *
-from flaskr.models.user import *
+from flaskr.models.Course import Course
+from flaskr.models.user import User
 from flaskr.request_processing import courses as rp_courses
 from werkzeug.utils import secure_filename
 import csv
@@ -13,7 +12,10 @@ import os
 @apiBluePrint.route('/courses/single/<course_id>', methods=['GET'])
 def retreive_course(course_id):
     course = Course.query.get(course_id)
-    return Iresponse.create_response(course.serialize, 200)
+    if course:
+        return Iresponse.create_response(course.serialize, 200)
+    else:
+        return Iresponse.create_response("Course not found", 404)
 
 
 @apiBluePrint.route('/courses/<course_id>/tickets', methods=['GET'])

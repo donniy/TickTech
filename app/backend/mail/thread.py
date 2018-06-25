@@ -1,7 +1,6 @@
 from threading import Thread
 from mail.mail_server import check_mail
 from time import sleep
-import requests
 
 
 class MailThread(Thread):
@@ -61,6 +60,11 @@ class MailThread(Thread):
         print("Stopping thread:", self.getName())
         self.running = False
         threads.remove(self)
+
+    def force_fetch(self):
+        print("Checking", self.email + ". On thread " + self.getName())
+        check_mail(self.server, self.port, self.email,
+                   self.password, self.course_id)
 
     def update(self, sleep_time=None, server=None,
                port=None, email=None, password=None):

@@ -1,8 +1,9 @@
 from flaskr import database, Iresponse
-from flask import jsonify, escape
+from flask import escape
 import uuid
-from flaskr.models.Course import *
-from flaskr.models.ticket import *
+from flaskr.models.Course import Course
+from flaskr.models.ticket import Ticket
+from flaskr.models.user import User
 
 
 def create_request(jsonData):
@@ -33,3 +34,9 @@ def retrieve_course_tickets_request(course_id):
 def single_course_request(course_id):
     course = Course.query.filter_by(id=uuid.UUID(course_id)).first()
     return course
+
+
+def get_tas_by_label(label_id):
+    tas = User.query.filter_by(labels=label_id).all()
+    print(tas)
+    return tas

@@ -1,9 +1,9 @@
-from flaskr import database, Iresponse, request
-from flaskr.models.ticket import TicketLabel
+from . import apiBluePrint
+from flaskr import database, Iresponse
+from flask import request
 from flaskr.models.Label import Label
 from flaskr.models.Course import Course
 from flaskr.models.user import User
-from . import apiBluePrint
 from flaskr.utils.json_validation import validate_json
 import uuid
 

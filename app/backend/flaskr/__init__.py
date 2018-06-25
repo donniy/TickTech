@@ -1,22 +1,19 @@
 import os
 import requests
-from flask import Flask, render_template, jsonify, request
-from flask import Flask
+from flask import Flask, render_template
 from flaskr import database, sockets
-from . import models
-from datetime import datetime
 from flask_wtf.csrf import CSRFProtect
 import os.path
-from flaskr.models import Message, ticket, Note, Course, user, Label
-from flask_socketio import SocketIO, send, emit, join_room, leave_room
-from flask_jwt import JWT, jwt_required, current_identity
+from flaskr.models import Course
+from flask_socketio import emit, join_room, leave_room
 from . import login
 import poplib
 from mail.thread import MailThread
 from datetime import timedelta
 from flask_hashfs import FlaskHashFS
 from os.path import expanduser
-
+from flask_mail import Mail
+from flaskr.config import Config
 
 db = database.db
 socketio = sockets.get_socketio()
@@ -47,6 +44,16 @@ def create_app(test_config=None):
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+    # Send email settings, for now hardcoded
+    app.config['MAIL_SERVER'] = Config.EMAIL_SEND_SERVER
+    app.config['MAIL_PORT'] = Config.EMAIL_SEND_PORT
+    app.config['MAIL_USE_SSL'] = Config.EMAIL_SEND_SSL
+    app.config['MAIL_USE_TLS'] = Config.EMAIL_SEND_TLS
+    app.config['MAIL_USERNAME'] = Config.EMAIL_SEND_EMAIL
+    app.config['MAIL_PASSWORD'] = Config.EMAIL_SEND_PASSWORD
+    app.config['MAIL_DEFAULT_SENDER'] = Config.EMAIL_SEND_EMAIL
+    Mail(app)
+
     # Make user logged in for 1 day.
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=86400)
 
@@ -64,6 +71,7 @@ def create_app(test_config=None):
     fs.init_app(app)
 
     csrf = CSRFProtect(app)
+    csrf = csrf  # flake8
 
     db_uri = os.environ.get('DATABASE_CONNECTION')
 
@@ -152,8 +160,6 @@ def create_app(test_config=None):
     @socketio.on('setup-email')
     def setup_mail(data):
         emit('setup-email', {'result': 'update', 'data': "recieved data"})
-        print("recieve data")
-        print(data)
         email = data['email']
         password = data['password']
         port = data['port']
@@ -161,24 +167,19 @@ def create_app(test_config=None):
         course_id = data['course_id']
         sleeptime = 60
 
-        print("Check if mail exists")
+        thread = MailThread.exist_thread_courseid(course_id)
         if (MailThread.exist_thread_email(email)):
-            print("mail exists")
-            emit('setup-email',
-                 {'result': 'fail', 'data': 'Email already exists'})
-            return
-        else:
-            print("mail does not exists")
+            if thread is None:
+                emit('setup-email',
+                     {'result': 'fail', 'data': 'Email already exists'})
+                return
 
         try:
             test_connection = poplib.POP3_SSL(server, port)
-            print(test_connection)
             test_connection.user(email)
             test_connection.pass_(password)
             test_connection.quit()
-            print("Succesfull test connection")
         except (poplib.error_proto) as msg:
-            print("failed")
             message = msg.args[0].decode('ascii')
             emit('setup-email', {'result': 'fail', 'data': message})
             return
@@ -187,19 +188,15 @@ def create_app(test_config=None):
             emit('setup-email', {'result': 'fail', 'data': message})
             return
 
-        thread = MailThread.exist_thread_courseid(course_id)
         if (thread is None):
-            print("create new thread")
             new_thread = MailThread(sleeptime, server, port, email, password,
                                     course_id)
             new_thread.setName(course_id)
             new_thread.start()
-            print("created")
         else:
-            print("Thread already exists, update")
-            update_thread(thread, sleeptime, server, port, email, password)
+            thread.update(sleep_time=sleeptime, server=server, port=port,
+                          email=email, password=password)
 
-        print("add database")
         course = Course.Course.query.get(course_id)
         course.course_email = email
         course.mail_password = password
@@ -209,7 +206,6 @@ def create_app(test_config=None):
             emit('setup-email', {'result': 'fail', 'data': 'database error'})
             return
 
-        print("wait for response")
         emit('setup-email', {'result': 'succes'})
         return
 

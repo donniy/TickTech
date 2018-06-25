@@ -1,25 +1,14 @@
 from datetime import datetime
 from flaskr import database
 from sqlalchemy_utils import UUIDType
-import uuid
-import re
-from flask import Response, jsonify, escape
 
 db = database.db
 
-binded_tas_helper = db.Table(
+bound_tas_helper = db.Table(
     'ta_tracker',
     db.Column('ticket_id', UUIDType(binary=False),
               db.ForeignKey('ticket.id'), primary_key=True),
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'),
-              primary_key=True)
-)
-
-labels_helper = db.Table(
-    'labels',
-    db.Column('label_id', db.Integer,
-              db.ForeignKey('ticket_label.id'), primary_key=True),
-    db.Column('ticket_id', db.Integer, db.ForeignKey('ticket.id'),
               primary_key=True)
 )
 
@@ -50,6 +39,12 @@ class Ticket(db.Model):
     title = db.Column(db.String(255), unique=False, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
+    label_id = db.Column(
+        UUIDType(binary=False), db.ForeignKey('label.label_id'), unique=False,
+        nullable=True)
+
+    label = db.relationship('Label', backref=db.backref('tickets', lazy=True))
+
     # Dit is hoe je een relatie maakt. ticket.status geeft een TicketStatus
     # object met de status van dit ticket. backref betekent: maak een veld
     # 'tickets' op TicketStatus wat een lijst met alle tickets met die status
@@ -58,8 +53,8 @@ class Ticket(db.Model):
     # status = db.relationship(
     #     'TicketStatus', backref=db.backref('tickets', lazy=False))
 
-    binded_tas = db.relationship(
-        "User", secondary=binded_tas_helper, lazy='subquery',
+    bound_tas = db.relationship(
+        "User", secondary=bound_tas_helper, lazy='subquery',
         backref=db.backref('ta_tickets', lazy=True)
     )
 
@@ -70,11 +65,6 @@ class Ticket(db.Model):
     # Many to many relationship
     files = db.relationship(
         "File", secondary=ticket_files_helper, lazy='subquery',
-        backref=db.backref('tickets', lazy=True))
-
-    # Many to many relationship
-    labels = db.relationship(
-        "TicketLabel", secondary=labels_helper, lazy='subquery',
         backref=db.backref('tickets', lazy=True))
 
     # Dit is een soort toString zoals in Java, voor het gebruiken van de
@@ -91,6 +81,11 @@ class Ticket(db.Model):
         if self.ta_id is None:
             self.ta_id = "null"
 
+        if self.label_id is None:
+            serialized_label = {}
+        else:
+            serialized_label = self.label.serialize
+
         return {
             'id': self.id,
             'user_id': self.user_id,
@@ -100,14 +95,15 @@ class Ticket(db.Model):
             'title': self.title,
             'timestamp': self.timestamp,
             'status': self.ticket_status.serialize,
-            'labels': database.serialize_list(self.labels),
-            'tas': database.serialize_list(self.binded_tas),
+            'label': serialized_label,
+            'tas': database.serialize_list(self.bound_tas),
             'files': database.serialize_list(self.files)
         }
 
     @property
     def close(self):
-        closed_status = TicketStatus.query.filter_by(name='closed').first()
+        # id 2 is the closed status
+        closed_status = TicketStatus.query.filter_by(id=2).first()
         if closed_status is None:
             return
         self.status_id = closed_status.id
@@ -120,7 +116,7 @@ class Ticket(db.Model):
         created this ticket.
         """
         tmp = [self.owner]
-        tmp.extend(self.binded_tas)
+        tmp.extend(self.bound_tas)
         return set(tmp)
 
     def __eq__(self, other):

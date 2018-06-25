@@ -1,6 +1,7 @@
-from flaskr.models.Message import *
-from flaskr.models.user import *
+from flaskr.models.Message import Message
+from flaskr.models.user import User
 from flaskr import socketio
+from flaskr import database
 
 
 def notify(sender_id, ticket, text, n_type, initial=False):

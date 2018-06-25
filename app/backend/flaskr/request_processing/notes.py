@@ -1,9 +1,9 @@
 from flaskr import database, Iresponse
-from flask import jsonify, escape
+from flask import escape
 import uuid
-from flaskr.models.Note import *
+from flaskr.models.Note import Note
 from flaskr.models.ticket import Ticket
-from flaskr.models.Course import *
+from flaskr.models.Course import Course
 from datetime import datetime
 import re
 
@@ -40,12 +40,12 @@ def parse_note(message, ticket):
 
         for ta in ta_in_course:
             if str(ta.id) == user_id:
-                if ta in ticket.binded_tas:
+                if ta in ticket.bound_tas:
                     continue
-                ticket.binded_tas.append(ta)
+                ticket.bound_tas.append(ta)
                 database.db.session.commit()
 
-    print(ticket.binded_tas)
+    print(ticket.bound_tas)
 
 
 # TODO: Add checking to getting data from json.
@@ -53,7 +53,6 @@ def create_request(jsonData):
     """
     Process the request to create a node.
     """
-    response_body = {}
     ticket_id = escape(jsonData["ticket_id"])
     user_id = escape(jsonData["user_id"])
     message = escape(jsonData["text"])
@@ -85,8 +84,8 @@ def delete_request(note_id):
     if note is None:
         return Iresponse.create_response("", 404)
     try:
-        db.session.delete(note)
-        db.session.commit()
+        database.db.session.delete(note)
+        database.db.session.commit()
     except Exception:
         print("LOG: Deleting error")
         return Iresponse.internal_server_error()

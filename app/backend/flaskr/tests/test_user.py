@@ -1,7 +1,6 @@
-import pytest
-import json
-from flaskr.database import get_db
-from flaskr.tests.utils import *
+from flaskr.tests.utils import create_user, create_course, \
+    create_ticket, login
+import uuid
 
 
 def test_get_user(app, client):
@@ -71,7 +70,7 @@ def test_get_active_student_tickets(app, client):
 def test_get_student_courses(app, client):
     user = create_user(app, 1234)
     courseId = uuid.uuid4()
-    course = create_course(app, courseId, [], [user])
+    create_course(app, courseId, [], [user])
     rv = client.get('/api/user/{}/courses'.format(1234))
     json_data = rv.get_json()
     print(json_data)
@@ -89,7 +88,6 @@ def test_user_auth(app, client):
     create_ticket(app, id1, 1234, courseId, 1)
     create_ticket(app, id2, 1234, courseId, 2)
 
-    auth = login(client, 1234)
     rv = client.get('/api/user/{}/tickets/active'.format(1234))
     rv2 = client.get('/api/user/{}/tickets'.format(1234))
     rv3 = client.get('/api/user/{}/tickets'.format(1234),

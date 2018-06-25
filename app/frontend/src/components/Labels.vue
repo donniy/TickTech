@@ -1,19 +1,29 @@
 <template>
     <div>
+    <h2 class="form-header center-display">labels in {{course.title}}</h2>
+    <form class="md-layout center-display" v-on:submit.prevent="createLabel">
+        <md-card class="center-display md-layout-item md-size-50 md-small-size-100">
+            <md-card-content class="center-display">
+                <md-field class="center-display md-layout-item md-size-100">
+                    <label for="labelname">New label</label>
+                    <md-input id="labelname" name="labelname" v-validate="'required|max:50'" v-model="new_label_name"/>
+                    <md-button type="submit" v-bind:disabled="errors.any()">
+                        Submit
+                    </md-button>
+                </md-field>
+            </md-card-content>
+        </md-card>
+    </form>
+    </br>
+    <p class="md-helper-text center-display">Select labels you want to be bound to.</p>
 
-        <div>
-            <h1>{{course.title}} labels</h1>
-
-            <div class="addLabelWrapper">
-                <input v-model="new_label_name" class="addLabelInput" />
-                <button v-on:click="createLabel" class="labelbutton btn">Add label</button>
-            </div>
-        </div>
-
-
-        <div class="labelContainer">
-            <myLabel v-for="label in labels" v-bind:key="label.label_id" v-bind:label="label"></myLabel>
-        </div>
+    <div class="md-layout center-display">
+        <md-card class="center-display md-layout-item md-size-50 md-small-size-100">
+            <md-card-content>
+                <myLabel v-for="label in labels" v-bind:key="label.label_id" v-bind:label="label"></myLabel>
+            </md-card-content>
+        </md-card>
+    </div>
     </div>
 </template>
 
@@ -43,6 +53,9 @@
                 })
             },
             createLabel() {
+                if (this.new_label_name == '') {
+                    return
+                }
                 const path = '/api/labels/' + this.$route.params.course_id
                 this.$ajax.post(path, {
                     name: this.new_label_name
