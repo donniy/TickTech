@@ -34,7 +34,9 @@
                     </div>
                     <div class="file-name-container-small medium-12 small-12 cell" v-if="ticket.files.length > 0">
                         <div v-for="file in ticket.files">
-                            <p v-on:click="downloadFile(file.file_location, file.file_name)" class="file-listing-small"><i class="material-icons download-icon">folder</i> {{ file.file_name }}</p>
+                            <md-button v-on:click="downloadOcrFile(file.file_location, file.file_name)" style="float:right;" class="md-dense md-primary">OCR</md-button>
+                            <p v-on:click="downloadFile(file.file_location, file.file_name)" style="float:right"class="file-listing-small"><i class="material-icons download-icon">folder</i> {{ file.file_name }}</p>
+
                         </div>
                     </div>
                     <div>
@@ -234,6 +236,27 @@ export default {
                 // Generate blob and download element.
                 var blob = new Blob([byteArray], {mimetype});
                 const url = window.URL.createObjectURL(blob)
+                const link = document.createElement('a')
+
+                // Ref to the link and activate download.
+                link.href = url
+                link.setAttribute('download', name)
+                document.body.appendChild(link)
+                link.click();
+                document.body.removeChild(link)
+            })
+            .catch(error => {
+                console.log(error)
+                window.alert("File not found")
+            })
+        },
+        downloadOcrFile(key, name){
+
+            const path = '/api/ticket/gettext'
+            this.$ajax.post(path, {address: key})
+            .then((response) => {
+                // Get data from response
+                const url = window.URL.createObjectURL(new Blob(response.data))
                 const link = document.createElement('a')
 
                 // Ref to the link and activate download.

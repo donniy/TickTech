@@ -41,7 +41,4 @@ Werkzeug==0.14.1
 WTForms==2.2
 requests==2.18.4
 html2text==2018.1.9
-pytest
-pycodestyle
-flask_hashfs
 pluginbase
