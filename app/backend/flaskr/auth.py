@@ -96,7 +96,10 @@ def require_role(roles):
             if type(roles) != list:
                 return Iresponse.create_response("", 500)
             if not c_ta and not c_stud and not c_super:
-                return Iresponse.create_response("User doesn\'t have a correct role.", 403)
+                return Iresponse.create_response(
+                    "User doesn\'t have a correct role.",
+                    403
+                )
 
             return fn(*args, **kwargs)
         return verify_roles

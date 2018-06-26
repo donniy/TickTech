@@ -1,5 +1,5 @@
-from flaskr.tests.utils import create_user, login, create_course, create_ticket,\
-                                link_ta_to_course, link_student_to_course
+from flaskr.tests.utils import create_user, login, create_course,\
+                create_ticket, link_ta_to_course, link_student_to_course
 from flaskr.models.Course import Course
 import uuid
 
