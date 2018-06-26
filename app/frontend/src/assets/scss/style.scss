@@ -168,6 +168,11 @@ nav {
     margin-bottom: 5px;
 }
 
+.student-ticket-wrapper{
+    margin: 0 auto !important; // Needs to happen in order to center
+    width:80%;
+}
+
 .download-icon{
     vertical-align: text-bottom;
 }
@@ -176,7 +181,7 @@ nav {
     cursor: pointer;
     margin-bottom: 0px;
     padding-bottom: 0px;
-    padding-left: 10px;
+    float: right;
     color: $text-color-def;
 }
 .file-listing-small:hover {
@@ -552,13 +557,45 @@ a.list-ticket:hover, a.list-ticket:focus {
     margin-top: 1em;
 }
 
+.message-container {
+    margin-top: 1em;
+    background-color: rgba(255,255,255,.3) !important;
+}
+
+.message-reply-container {
+    margin-top: 1em;
+    margin-bottom: 2em;
+    background-color: rgba(255,255,255,.8) !important;
+}
+
+.plugin-container {
+    margin-bottom: 2em;
+}
+
+.note-title {
+    margin-top: 1.4em;
+}
+
+.remove-note {
+    position:sticky;
+    margin-top: -10px !important;
+    margin-right: -15px !important;
+    width: 20px !important;
+    padding-left: 0px !important;
+    float: right;
+    background-color: rgba(255, 255, 255, 0);
+
+}
+.remove-note:hover {
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
 .message {
     h4 {
         color: $default-red;
         font-size: 1rem;
         font-weight: bold;
-        margin-left: 1em;
-        margin-right: 1em;
     }
 
     h5 {
@@ -584,10 +621,6 @@ a.list-ticket:hover, a.list-ticket:focus {
     }
 }
 
-.note-add-button {
-    margin: 15px 10px;
-}
-
 .dropdown-button {
     background-color: darken(#FFF, 2%);
     width: 100%;
@@ -604,7 +637,7 @@ a.list-ticket:hover, a.list-ticket:focus {
 .reply-area {
     width: 100%;
     bottom: 1em;
-    display: block;
+    display: fixed;
     margin-top: 2em;
 }
 
@@ -619,13 +652,14 @@ a.list-ticket:hover, a.list-ticket:focus {
     }
 
     .reply-button {
-        height: 4rem;
-        margin-bottom: 20px;
-        width: 4rem;
+        height: 3rem;
+        margin-bottom: 10px;
+        width: 3rem;
         text-align: center;
-        line-height: 4rem;
+        line-height: 3rem;
         font-size: 1.5em;
         box-shadow: $light-shadow;
+
     }
 }
 
@@ -738,10 +772,6 @@ a.list-ticket:hover, a.list-ticket:focus {
     font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     text-align: center;
     vertical-align: middle;
-}
-
-.course-main-container {
-
 }
 
 .subbox {
@@ -917,4 +947,53 @@ hr {
 .fixedlocation {
     position: fixed;
     float: right;
+}
+
+.ocrbutton {
+    width: 10%;
+    padding-bottom: 5px;
+    text-align: center;
+    float: right;
+}
+
+.ocrbutton:hover {
+    text-decoration: underline;
+    color: $default-red;
+    cursor: pointer;
+    background-color: darken(white, 5%);
+}
+
+.loading {
+  position: fixed;
+  z-index: 999;
+  height: 2em;
+  width: 2em;
+  overflow: show;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+/* Transparent Overlay */
+.loading:before {
+  content: '';
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.3);
+}
+
+/* :not(:required) hides these rules from IE9 and below */
+.loading:not(:required) {
+  /* hide "loading..." text */
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
 }

@@ -1,10 +1,10 @@
 <!-- Note.vue adds, shows, and removes secret notes to a ticket, only viewable for TAs.  -->
 <template>
     <div v-if="exists" class="material-card note">
-        <md-button class="removeLabel" @click="showModal = true">
+        <md-button v-if="note.user_id == this.user.id" class="md-icon-button remove-note" @click="showModal = true">
             <i class="material-icons"> close </i>
         </md-button>
-        <h4> {{note.user_id}}: </h4>
+        <h5> {{this.user.name}}: </h5>
         <p> {{note.text}} </p>
 
         <md-dialog :md-active.sync="showModal">
@@ -27,6 +27,7 @@
             return {
                 showModal: false,
                 exists: true,
+                user: ''
             }
         },
         methods: {
@@ -38,10 +39,20 @@
                     })
                 this.exists = false
                 this.$parent.getNotes()
+            },
+            getUser() {
+                const path = '/api/user/' + this.note.user_id
+                this.$ajax.get(path)
+                    .then(response => {
+                        this.user = response.data.json_data
+                    })
             }
         },
         components: {
             'modal': Modal
+        },
+        mounted: function() {
+            this.getUser()
         }
     }
 </script>
