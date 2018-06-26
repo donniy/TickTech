@@ -1,4 +1,3 @@
-<!-- CourseTickets.vue shows the table with all tickets in a course. -->
 <template>
     <div class="course-container">
         <transition name="custom-classes-transition" enter-active-class="animated tada" leave-active-class="animated bounceOutRight">
@@ -60,25 +59,15 @@
                     </div>
                 </div>
                 <div class="row">
-                    <p>
-                        <b-button class="btn note-add-button btn btn-primary" button v-on:click="pushLocation('/course/' + $route.params.course_id + '/labels')">Course labels</b-button>
-                    </p>
-                    <!-- Only way to know if email servers is running is by which button is displayed. Is this enough? -->
-                    <p v-if="email_running">
-                        <b-button class="btn note-add-button btn btn-primary" @click="emailSettings" :to="''">Update email fetcher</b-button>
-                        <emodal v-if="showEmailModal" warning="Configure your email fetcher" @close="showEmailModal = false">
-                        </emodal>
-                    </p>
-                    <p v-else>
-                        <b-button class="btn note-add-button btn btn-primary" @click="emailSettings" :to="''">Configure email fetcher</b-button>
-                        <emodal v-if="showEmailModal" warning="Configure your email fetcher" @close="showEmailModal = false">
-                        </emodal>
-                    </p>
+                    <b-button class="btn note-add-button btn btn-primary" button v-on:click="pushLocation('/course/' + $route.params.course_id + '/labels')">Course labels</b-button>
+                    <b-button v-if="isTA" class="btn note-add-button btn btn-primary">Add students</b-button>
+                    <b-button class="btn note-add-button btn btn-primary" @click="emailSettings" :to="''">Mail settings</b-button>
+                    <b-button v-if="isSupervisor" class="btn note-add-button btn btn-primary" :to="''">Add TA's</b-button>
 
-                    <!-- This can be removed? -->
-                    <!-- <b-button v-if="isTA" class="btn note-add-button btn btn-primary">Add students</b-button> -->
-                    <!-- <b-button v-if="isSupervisor" class="btn note-add-button btn btn-primary" :to="''">Add TAs</b-button> -->
                 </div>
+                <p v-if="email_running">EMAIL IS RUNNING</p>
+                <emodal v-if="showEmailModal" warning="Setup a fetcher to your mailinglist." @close="showEmailModal = false">
+                </emodal>
             </div>
         </transition>
         <div v-if="false" class=s ummary-sub-container>
@@ -86,11 +75,14 @@
                 v-bind:ticket="ticket" class="singleTicket">
             </summodal>
         </div>
+        <p v-if="email_running">EMAIL IS RUNNING</p>
+        <emodal v-if="showEmailModal" warning="Setup a fetcher to your mailinglist." @close="showEmailModal = false">
+        </emodal>
+        <addusers v-if="wantsToAddUsers" v-bind:title="'Add students to this course'" v-bind:label_message="'Students:'" v-bind:api_path="this.addStudentsPath">
 
-        <!-- This can be removed? -->
-        <!-- <addusers v-if="wantsToAddUsers" v-bind:title="'Add students to this course'" v-bind:label_message="'Students:'" v-bind:api_path="this.addStudentsPath"></addusers>
+        </addusers>
         <addusers v-if="wantsToAddTa" v-bind:title="'Add TAs to this course'" v-bind:label_message="'TAs:'" v-bind:api_path="this.addTasPath">
-        </addusers> -->
+        </addusers>
     </div>
 </template>
 
@@ -221,7 +213,7 @@
              * in a v-if statement.
              */
             checkIfSupervisor() {
-                let supervisors = this.course.supervisors
+                let supervisors = this.course.supervisors;
                 let userid = this.$user.get().id
                 let matches = supervisors.filter(supervisor => supervisor.id === userid)
                 this.isSupervisor = matches.length === 1
@@ -235,7 +227,7 @@
                         console.log("COURSE")
                         console.log(response.data.json_data)
                         window.$current_course_id = this.course.id
-                        this.status = 'Retrieved data.'
+                        this.status = 'Retrieved data'
                         this.addStudentsPath = '/api/courses/' + this.course.id + '/students'
                         this.addTasPath = '/api/courses/' + this.course.id + '/tas'
                         this.checkIfSupervisor()
@@ -272,7 +264,7 @@
             if (!this.$user.logged_in()) {
                 this.$router.push('/login')
             }
-            this.created()
+            this.created();
         },
         beforemount() {
             this.searched = this.tickets
