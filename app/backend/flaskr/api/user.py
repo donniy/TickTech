@@ -13,7 +13,7 @@ from flaskr.utils.json_validation import validate_json
 @jwt_required
 def retrieve_user_tickets():
     """
-    Geeft alle ticktes van gegeven user.
+    Returns all the tickets of the user.
     """
     curr_user = get_current_user()
     tickets = Ticket.query.filter_by(user_id=curr_user.id).all()
@@ -23,6 +23,10 @@ def retrieve_user_tickets():
 @apiBluePrint.route('/user/tickets/course/<course_id>', methods=['GET'])
 @jwt_required
 def get_user_ticket_for_course(course_id):
+    """
+    Function that gets all the tickets of a user in the course with
+    id: <course_id>
+    """
     curr_user = get_current_user()
     tickets = Ticket.query.filter(Ticket.user_id == curr_user.id,
                                   Ticket.course_id == course_id).all()
@@ -33,7 +37,7 @@ def get_user_ticket_for_course(course_id):
 @jwt_required
 def retrieve_active_user_tickets(user_id):
     """
-    Geeft alle ticktes van gegeven user.
+    Gets all the active tickets of a user with id: <user_id>
     """
     # TODO: Controleer of degene die hierheen request permissies heeft.
     current_identity = get_current_user()
@@ -118,7 +122,9 @@ def register_user():
 
 @apiBluePrint.route('/user/exists', methods=["POST"])
 def user_exists():
-
+    """
+    Function that checks if a user email already exists.
+    """
     json_data = request.get_json()
     if not validate_json(json_data, ["email"]):
         return Iresponse.empty_json_request()
@@ -133,7 +139,9 @@ def user_exists():
 
 @apiBluePrint.route('/user/idexists', methods=["POST"])
 def userid_exists():
-
+    """
+    Function that checks if the id of a user already exists.
+    """
     json_data = request.get_json()
     if not validate_json(json_data, ["studentid"]):
         return Iresponse.empty_json_request()
