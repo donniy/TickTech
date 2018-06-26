@@ -95,8 +95,8 @@ def addItemSafelyToDB(item, func=None):
         db.session.rollback()
         return False
     return True
-
 # End functions for insertion for database.
+
 
 # These are from the InitDB sql file. Can insert dummy data here.
 def populate_database_dummy_data():
@@ -164,7 +164,6 @@ def populate_database_dummy_data():
 
     print(course.student_courses)
     print(course.ta_courses)
-
 
 
 # Just for testing
