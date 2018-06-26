@@ -206,7 +206,7 @@ def createTicket(subject, body, files, sender, address, courseid):
     # Add attachments to tickets (works for img & text - STEPHAN??)
     attachments = {}
     for name, bytes in files:
-        attachments[name] = base64.b64encode(bytes)
+        attachments[name] = base64.b64encode(bytes).decode("utf-8")
     newticket['files'] = attachments
 
     # TODO: fix printing in FLASKR terminal
@@ -285,8 +285,8 @@ def checkMail(host, port, user, password, courseid, debug=0):
             createTicket(subject, body, files, sender, address, courseid)
 
     # Update with server, disable this when debugging.
-    # if (debug == 0):
-        # server.quit()
+    if (debug == 0):
+        server.quit()
     return 0
 
 
