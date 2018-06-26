@@ -43,6 +43,37 @@ def retrieve_active_user_tickets(user_id):
     return Iresponse.create_response(database.serialize_list(tickets), 200)
 
 
+@apiBluePrint.route('/user/getlevels', methods=["GET"])
+@jwt_required
+def retrieve_user_leveldata():
+    """
+    Geeft level en xp van ingelogde user.
+    """
+    # TODO: Controleer of degene die hierheen request permissies heeft.
+    current_identity = get_current_user()
+    user_id = current_identity.id
+    user = User.query.get(user_id)
+    response = {}
+    response['level'] = level = user.level
+    response['experience'] = user.experience
+    return Iresponse.create_response(response, 200)
+
+
+@apiBluePrint.route('/user/getsinglelevel/<user_id>', methods=["GET"])
+@jwt_required
+def retrieve_single_userlevel(user_id):
+    """
+    Geeft level van gegeven user.
+    """
+    # TODO: Controleer of degene die hierheen request permissies heeft.
+    user = User.query.get(user_id)
+    if user:
+        response = {}
+        response['level'] = level = user.level
+        return Iresponse.create_response(response, 200)
+    return Iresponse.create_response("", 400)
+
+
 @apiBluePrint.route('/user/notifications', methods=["GET"])
 @jwt_required
 def unread_messages():

@@ -3,6 +3,9 @@ from flaskr.models.ticket import Ticket
 from flask import escape
 import flaskr.utils.notifications as notifications
 from flaskr.models.Message import Message
+from flaskr.models.Course import Course
+from flaskr.models.user import *
+from flaskr.request_processing import levels
 
 
 def create_request(jsonData, ticket_id):
@@ -27,6 +30,13 @@ def create_request(jsonData, ticket_id):
                                             text,
                                             Message.NTFY_TYPE_MESSAGE)
         notification = notification  # flake8
+
+        # Add experience if its a ta who is commenting.
+        user = User.query.get(user_id)
+        course = Course.query.get(ticket.course_id)
+        if user in course.ta_courses:
+            level_up = levels.add_experience(levels.EXP_FOR_RESPONSE, user_id)
+            levels.notify_level_change(user_id, ticket, level_up)
     except Exception as e:
         return Iresponse.create_response(str(e), 400)
 

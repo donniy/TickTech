@@ -21,6 +21,8 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=False, nullable=True)
     labels = db.relationship("Label", secondary=association_table,
                              backref="users")
+    experience = db.Column(db.Integer, nullable=False, default=1)
+    level = db.Column(db.Integer, nullable=False, default=1)
 
     # Dit is een soort toString zoals in Java, voor het gebruiken van de
     # database in de commandline. Op die manier kan je data maken en weergeven
