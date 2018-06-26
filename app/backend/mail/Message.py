@@ -13,10 +13,11 @@ def createEmailMessage(title, recipients, ticketid, body, sender):
     return message
 
 
+# DIT OOK NOG
 def createdTicketEmail(title, recipients, ticketid, body):
     message = Message(
         subject="TIKTECH Confirmation. Received your question: " + title, recipients=recipients)
-    message.html = ('<body> We received your e-mail and created a matching ticket on TIKTECH.
+    message.html = ('<body> We received your e-mail and created a matching ticket on TIKTECH.' + 
                     '.<br /> Check it out ' +
                     '<a href="http://localhost:5000/ticket/' + ticketid +
                     '">here</a>.<br /> This is an automatically generated e-mail.' +
@@ -25,7 +26,8 @@ def createdTicketEmail(title, recipients, ticketid, body):
     return message
 
 
-def ticketErrorEmail(title, recipients, ticketid, body):
+# DIT FAALT
+def ticketErrorEmail(title, recipients, body):
     message = Message(
         subject="TIKTECH error. We could not process: " + title, recipients=recipients)
     message.html = ('<body> We received your e-mail, but received an error while processing.' + 

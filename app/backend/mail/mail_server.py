@@ -1,5 +1,6 @@
 from email.header import decode_header
 from flask_mail import Mail
+from mail.Message import ticketErrorEmail
 import email
 import poplib
 import requests
@@ -182,11 +183,18 @@ def createTicket(subject, body, files, sender, address, courseid):
     Create a ticket from the acquired information from an email.
     Note: New tickets will only be displayed after refreshing the page.
     '''
-    # validate user
+    # Find student in database or by email parsing.
     studentid = findUser(body, sender, address)
+
+    # If not found, send automatic reply that an error occurred.
     if studentid is None:
-        # TODO: Send automatic reply that an error occurred, please contact mailing list.
-        studentid = 123123123
+        print("SENDING ERROR")
+        print(subject, address, body)
+        message = ticketErrorEmail(subject, address, body)
+        print("BLA BLA ")
+        res = Mail().send(message)
+        res = res  # for flake8
+        return
 
     # Get all labels available for this course.
     labels = retrieveLabels(courseid)
