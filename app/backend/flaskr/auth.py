@@ -51,3 +51,50 @@ def require_ta_in_course(course_id):
             return func(course, curr_user, *args, **kwargs)
         return verify_ta_in_course
     return decorator
+
+
+def require_role(roles):
+    def wrapper(fn):
+        """
+        Function that can be used as a decorator, to require
+        that an api path can only be accessed if the user
+        is a ta in the specified course. The course_id of the
+        course should be given to this decorator and a valid
+        jwt should be present from which the user can be extracted.
+        """
+        @wraps(fn)
+        def verify_roles(*args, **kwargs):
+            """
+            Function that verifies that an user is a ta in the specified
+            course. This function required that the course_id is specified
+            in the decorator.
+
+            Returns on failure:
+            - Iresponse 400: if the user can not be extracted from the jwt.
+            - Iresponse 404: if the course can not be found.
+            - Iresponse 403: if the user is not a ta in the course.
+
+            Returns on succes:
+            - Calls the decorated function, with the following params:
+            (course, user, *args, **kwargs).
+            So the decorated function should always accept atleast two params,
+            namely the course and user, in that order.
+            Extra params, should come after the course and user.
+            """
+            verify_jwt_in_request()
+            curr_user = get_current_user()
+
+            c_ta = 'ta' in roles and not len(curr_user.ta_courses)
+            c_stud = 'student' in roles and not len(curr_user.student_courses)
+            c_super = 'supervisor' in roles and not len(curr_user.supervisors)
+
+            if curr_user is None:
+                return Iresponse.create_response("", 400)
+            if type(roles) != list:
+                return Iresponse.create_response("", 500)
+            if c_ta or c_stud or c_super:
+                return Iresponse.create_response("User doesn\'t have a correct role.", 403)
+
+            return fn(*args, **kwargs)
+        return verify_roles
+    return wrapper

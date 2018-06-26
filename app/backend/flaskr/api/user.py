@@ -7,6 +7,7 @@ from flask import request, escape
 from flaskr.models.user import User
 from flaskr.request_processing.user import validate_userdata
 from flaskr.utils.json_validation import validate_json
+from flaskr.auth import require_role
 
 
 @apiBluePrint.route('/user/tickets')
@@ -15,6 +16,7 @@ def retrieve_user_tickets():
     """
     Geeft alle ticktes van gegeven user.
     """
+
     curr_user = get_current_user()
     tickets = Ticket.query.filter_by(user_id=curr_user.id).all()
     return Iresponse.create_response(database.serialize_list(tickets), 200)
@@ -140,7 +142,7 @@ def userid_exists():
 
 
 @apiBluePrint.route('/user/student_courses', methods=['GET'])
-@jwt_required
+@require_role(['student'])
 def get_courses_user_is_student_in():
     curr_user = get_current_user()
     if curr_user is None:
@@ -150,7 +152,7 @@ def get_courses_user_is_student_in():
 
 
 @apiBluePrint.route('/user/teachingAssistant_courses', methods=['GET'])
-@jwt_required
+@require_role(['ta'])
 def get_courses_user_is_ta_in():
     curr_user = get_current_user()
     if curr_user is None:

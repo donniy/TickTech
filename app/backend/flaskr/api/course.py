@@ -4,12 +4,15 @@ from flaskr import database, Iresponse
 from flaskr.models.Course import Course
 from flaskr.models.user import User
 from flaskr.request_processing import courses as rp_courses
+from flaskr.auth import require_role
+from flask_jwt_extended import jwt_required
 from werkzeug.utils import secure_filename
 import csv
 import os
 
 
 @apiBluePrint.route('/courses/single/<course_id>', methods=['GET'])
+@jwt_required
 def retreive_course(course_id):
     course = Course.query.get(course_id)
     if course:
@@ -19,6 +22,7 @@ def retreive_course(course_id):
 
 
 @apiBluePrint.route('/courses/<course_id>/tickets', methods=['GET'])
+@require_role(['supervisor', 'ta'])
 def retrieve_course_tickets(course_id):
     """
     Geeft alle ticktes over gegeven course.
@@ -28,6 +32,7 @@ def retrieve_course_tickets(course_id):
 
 
 @apiBluePrint.route('/courses', methods=['POST'])
+@require_role(['supervisor'])
 def create_course():
     """
     Check ticket submission and add to database.
@@ -41,6 +46,7 @@ def create_course():
 
 
 @apiBluePrint.route('/courses', methods=['GET'])
+@jwt_required
 def retrieve_all_courses():
     courses = Course.query.all()
     return Iresponse.create_response(database.serialize_list(courses), 200)
@@ -61,6 +67,7 @@ def retrieve_all_courses():
 
 
 @apiBluePrint.route('/courses/<course_id>/tas', methods=['GET'])
+@jwt_required
 def get_course_tas(course_id):
     course = Course.query.get(course_id)
     if course is None:
@@ -70,6 +77,7 @@ def get_course_tas(course_id):
 
 
 @apiBluePrint.route('/courses/<course_id>/students', methods=['GET'])
+@require_role(['supervisor', 'ta'])
 def get_course_students(course_id):
     course = Course.query.get(course_id)
     print(course_id)
@@ -82,6 +90,7 @@ def get_course_students(course_id):
 
 
 @apiBluePrint.route('/courses/<course_id>/tas', methods=['POST'])
+@require_role(['supervisor'])
 def add_tas_to_course(course_id):
     if request.files == '':
         return Iresponse.empty_json_request()
@@ -120,6 +129,7 @@ def read_tas_csv(filename, course_id):
 
 
 @apiBluePrint.route('/courses/<course_id>/students', methods=['POST'])
+@require_role(['supervisor'])
 def add_students_to_course(course_id):
     if request.files == '':
         return Iresponse.empty_json_request()
