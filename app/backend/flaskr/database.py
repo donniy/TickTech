@@ -7,19 +7,6 @@ from flaskr.config import Config
 db = SQLAlchemy()
 
 
-class DatabaseException(Exception):
-
-    def __init__(self, debug_message):
-        self.debug_message = debug_message
-
-
-class DatabaseInsertException(DatabaseException):
-
-    def __init__(self, debug_message):
-        super().__init__(debug_message)
-        self.response_message = ""
-
-
 def init_db():
     db.create_all()
     populate_database_dummy_data()
@@ -56,6 +43,7 @@ def log_database_error(err, func=None):
     guaranteed to exist.
     """
     import sys
+    print("-" * 36 + "database" + "-" * 36)
     print("Error when adding an item to the database")
     print("The error is:")
     print(err)
@@ -64,7 +52,8 @@ def log_database_error(err, func=None):
         print(func.__name__)
         print("This function can be found in the module:")
         print(func.__module__)
-        print()
+    print("-" * 80)
+    print()
 
 
 def commitSafelyToDB(func=None):
@@ -115,7 +104,7 @@ def populate_database_dummy_data():
                            title="course 1",
                            description="Test")
 
-    course2 = Course.Course(id=1,
+    course2 = Course.Course(id=uuid.uuid4(),
                             course_email="testie@test.com",
                             title="course 2",
                             description="Test")
@@ -161,10 +150,11 @@ def populate_database_dummy_data():
         course2.ta_courses.append(user2)
     except Exception as exp:
         db.session.rollback()
-        print(exp)
+        log_database_error(exp, populate_database_dummy_data)
 
     print(course.student_courses)
     print(course.ta_courses)
+
 
 
 # Just for testing
@@ -173,7 +163,7 @@ def addTicketStatus(name="Needs help"):
     ts = ticket.TicketStatus()
     ts.name = name
     try:
-        addItemSafelyToDB(ts)
+        addItemSafelyToDB(ts, addTicketStatus)
     except Exception as e:
         print(e)
 
@@ -186,7 +176,7 @@ def addTicketLabel(ticked_id=uuid.uuid4(), course_id=uuid.uuid4(),
     tl.course_id = course_id
     tl.name = name
     try:
-        addItemSafelyToDB(tl)
+        addItemSafelyToDB(tl, addTicketLabel)
     except Exception as e:
         print(e)
 
@@ -204,8 +194,8 @@ def addTicket(user_id=1, email="test@email.com", course_id=uuid.uuid4(),
     t.status_id = 10000
     t.title = title
     t.timestamp = timestamp
-    t.label_id = 1
+    t.label_id = uuid.uuid4()
     try:
-        addItemSafelyToDB(t)
+        addItemSafelyToDB(t, addTicket)
     except DatabaseInsertException as exp:
         print(exp.response_message)
