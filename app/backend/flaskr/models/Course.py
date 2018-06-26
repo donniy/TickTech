@@ -89,12 +89,3 @@ class Course(db.Model):
             'tas': [ta.serialize for ta in self.ta_courses],
             'supervisors': [suvi.serialize for suvi in self.supervisors]
         }
-
-    @property
-    def checkValid(self):
-        """
-        Checks if an object is valid to insert into a database. So all
-        fields that should be set, are set. If a value is not set, throw
-        for now a ValueError().
-        """
-        pass

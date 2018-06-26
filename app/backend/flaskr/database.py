@@ -8,6 +8,11 @@ db = SQLAlchemy()
 
 
 def init_db():
+    """
+    Function that initializes the database.
+    Moslty just creating the database, but
+    if debugging, also populating the database.
+    """
     db.create_all()
     populate_database_dummy_data()
     addTicketStatus("Unassigned")
@@ -78,8 +83,9 @@ def commitSafelyToDB(func=None):
 # to the database.
 def addItemSafelyToDB(item, func=None):
     """
-    Add the item to the db by checking
-    if the item is valid. The error can be logged.
+    Adds an item to the database.
+    If an error happened, we log the error and rollback
+    the session. On error we return True, else False.
     """
     try:
         db.session.add(item)
@@ -94,6 +100,10 @@ def addItemSafelyToDB(item, func=None):
 
 # These are from the InitDB sql file. Can insert dummy data here.
 def populate_database_dummy_data():
+    """
+    This is a function that can be used to populate the database
+    with some dummy data. So only be used in debugging.
+    """
     from flaskr.models import Course, user
     items = []
     course = Course.Course(id=uuid.uuid4(),
