@@ -47,16 +47,6 @@
                     </div>
 
                     <md-field>
-                        <label for="course">Course</label>
-                        <md-select id="course" v-validate="''" md-dense v-model="form.courseid">
-                            <md-option disabled value="">Please select a course</md-option>
-                            <md-option v-for="obj in categories.courses" v-bind:key="obj.id" v-bind:value="obj.id">
-                                {{ obj.title }}
-                            </md-option>
-                        </md-select>
-                    </md-field>
-
-                    <md-field>
                         <label for="category">Category</label>
                         <md-select id="category" v-validate="''" md-dense v-model="form.labelid">
                             <md-option disabled value="">Label this question</md-option>
