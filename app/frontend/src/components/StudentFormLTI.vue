@@ -50,7 +50,7 @@
                         <label for="category">Category</label>
                         <md-select id="category" v-validate="''" md-dense v-model="form.labelid">
                             <md-option disabled value="">Label this question</md-option>
-                            <md-option v-for="option in categories.labels[form.courseid]" v-bind:key="option.label_id" v-bind:value="option.label_id">
+                            <md-option v-for="option in labels" v-bind:key="option.label_id" v-bind:value="option.label_id">
                                 {{ option.label_name }}
                             </md-option>
                         </md-select>
@@ -73,164 +73,143 @@
 <script>
 
 
-    import VeeValidate from 'vee-validate'
+import VeeValidate from 'vee-validate'
 
-    let maxFiles = 6
-    let maxFileSize = 10000000 // == 10MB
+let maxFiles = 6
+let maxFileSize = 10000000 // == 10MB
 
-    export default {
-        data() {
-            return {
-                form: {
-                    message: "",
-                    courseid: "",
-                    labelid: "",
-                    subject: "",
-                },
-                files: [],
-                categories: {
-                    courses: [],
-                    labels: {}
-                },
-                fileTooLarge: false,
-                fileTooMany: false,
-            }
-        },
-        computed: {
-            options: function (event) {
-                return categories.labels[form.courseid]
-            }
-        },
-        methods: {
-            // Upload the supplied files.
-            handleFilesUpload() {
-                if (this.fileTooMany || this.fileTooLarge) {
-                    return
-                }
-
-                let uploadedFiles = this.$refs.files.files
-                if (uploadedFiles.length >= maxFiles) {
-                    this.fileTooMany = true
-                } else {
-                    this.fileTooMany = false
-                }
-
-                // Adds the uploaded file to the files array
-                let largeFileFound = false
-                for (var i = 0; i < uploadedFiles.length; i++) {
-                    if (uploadedFiles[i].size > maxFileSize) {
-                        this.fileTooLarge = true
-                        largeFileFound = true
-                    }
-                    this.files.push(uploadedFiles[i])
-                }
-                if (!largeFileFound) {
-                    this.fileTooLarge = false
-                }
+export default {
+    data() {
+        return {
+            form: {
+                message: "",
+                labelid: "",
+                subject: "",
             },
-            // Removes the supplied files.
-            removeFile(key) {
-                this.files.splice(key, 1)
-
-                // Recheck the amount of files
-                if (this.files.length >= maxFiles) {
-                    this.fileTooMany = true
-                } else {
-                    this.fileTooMany = false
-                }
-
-                // Check the size of the files
-                let largeFileFound = false
-                for (var i = 0; i < this.files.length; i++) {
-                    if (this.files[i].size > maxFileSize) {
-                        this.fileTooLarge = true
-                        largeFileFound = true
-                    }
-                }
-
-                if (!largeFileFound) {
-                    this.fileTooLarge = false
-                }
-
-            },
-            // Adds supplied files.
-            addFiles() {
-                if (!this.fileTooMany && !this.fileTooLarge) {
-                    this.$refs.files.click()
-                }
-            },
-            // Check if all required boxes are filled correctly.
-            sendTicket() {
-                this.$validator.validateAll().then((result) => {
-                    if (result) {
-                        let formData = new FormData()
-
-                        // Add the uploaded files to the files array
-                        for (var i = 0; i < this.files.length; i++) {
-                            let file = this.files[i]
-                            formData.append('files[' + i + ']', file)
-                        }
-
-                        // Add the rest of the form to the formdata
-                        formData.append('message', this.form.message)
-                        formData.append('courseid', this.form.courseid)
-                        formData.append('labelid', this.form.labelid)
-                        formData.append('subject', this.form.subject)
-
-                        const path = '/api/ticket/submit'
-                        this.$ajax.post(path, formData, {
-                            headers: {
-                                'Content-Type': 'multipart/form-data'
-                            }
-                        })
-                            .then(response => {
-                                console.log(response)
-                                this.$router.push({
-                                    name: 'StudentTicket',
-                                    params: {
-                                        ticket_id: response.data.json_data.ticketid
-                                    }
-                                })
-                                this.form = ""
-
-                            }).catch((error) => {
-                                window.alert("Something went wrong...")
-                            })
-                    }
-                })
-
-            }
-        },
-        mounted() {
-            if (!this.$user.logged_in()) {
-                this.$router.push('/login')
-            }
-
-            const pathLabels = '/api/labels'
-            const pathCourses = '/api/user/student_courses'
-            this.$ajax.get(pathCourses)
-                .then(response => {
-                    for (let i = 0; i < response.data.json_data.length; i++) {
-                        let dataObj = response.data.json_data[i]
-                        this.categories.courses.push(dataObj)
-                    }
-                    for (let i = 0; i < this.categories.courses.length; i++) {
-                        let courseid = this.categories.courses[i].id
-                        let currLabelPath = pathLabels + '/' + courseid
-                        this.$ajax.get(currLabelPath)
-                            .then(response => {
-                                this.categories.labels[courseid] = response.data.json_data
-                                console.log("LABELS:")
-                                console.log(this.categories.labels[courseid])
-                            }).catch(error => {
-                                console.log(error)
-                            })
-                    }
-
-                }).catch(error => {
-                    console.log(error)
-                })
+            files: [],
+            labels: [],
+            courseid: "",
+            fileTooLarge: false,
+            fileTooMany: false,
         }
+    },
+    methods: {
+        // Upload the supplied files.
+        handleFilesUpload() {
+            if (this.fileTooMany || this.fileTooLarge) {
+                return
+            }
+
+            let uploadedFiles = this.$refs.files.files
+            if (uploadedFiles.length >= maxFiles) {
+                this.fileTooMany = true
+            } else {
+                this.fileTooMany = false
+            }
+
+            // Adds the uploaded file to the files array
+            let largeFileFound = false
+            for (var i = 0; i < uploadedFiles.length; i++) {
+                if (uploadedFiles[i].size > maxFileSize) {
+                    this.fileTooLarge = true
+                    largeFileFound = true
+                }
+                this.files.push(uploadedFiles[i])
+            }
+            if (!largeFileFound) {
+                this.fileTooLarge = false
+            }
+        },
+        // Removes the supplied files.
+        removeFile(key) {
+            this.files.splice(key, 1)
+
+            // Recheck the amount of files
+            if (this.files.length >= maxFiles) {
+                this.fileTooMany = true
+            } else {
+                this.fileTooMany = false
+            }
+
+            // Check the size of the files
+            let largeFileFound = false
+            for (var i = 0; i < this.files.length; i++) {
+                if (this.files[i].size > maxFileSize) {
+                    this.fileTooLarge = true
+                    largeFileFound = true
+                }
+            }
+
+            if (!largeFileFound) {
+                this.fileTooLarge = false
+            }
+
+        },
+        // Adds supplied files.
+        addFiles() {
+            if (!this.fileTooMany && !this.fileTooLarge) {
+                this.$refs.files.click()
+            }
+        },
+        // Check if all required boxes are filled correctly.
+        sendTicket() {
+            this.$validator.validateAll().then((result) => {
+                if (result) {
+                    let formData = new FormData()
+
+                    // Add the uploaded files to the files array
+                    for (var i = 0; i < this.files.length; i++) {
+                        let file = this.files[i]
+                        formData.append('files[' + i + ']', file)
+                    }
+
+                    // Add the rest of the form to the formdata
+                    formData.append('message', this.form.message)
+                    formData.append('courseid', this.courseid)
+                    formData.append('labelid', this.form.labelid)
+                    formData.append('subject', this.form.subject)
+
+                    const path = '/api/ticket/submit'
+                    this.$ajax.post(path, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    })
+                        .then(response => {
+                            console.log(response)
+                            this.$router.push({
+                                name: 'StudentTicket',
+                                params: {
+                                    ticket_id: response.data.json_data.ticketid
+                                }
+                            })
+                            this.form = ""
+
+                        }).catch((error) => {
+                            window.alert("Something went wrong...")
+                        })
+                }
+            })
+
+        },
+
+        get_course_labels() {
+            const pathLabels = '/api/labels/' + this.courseid;
+            this.$ajax.get(pathLabels)
+                .then(response => {
+                    this.labels = response.data.json_data;
+                }).catch(error => {
+
+                })
+        },
+    },
+    mounted() {
+        if (!this.$user.logged_in()) {
+            this.$router.push('/login')
+        }
+        this.courseid = this.$lti.data.lti_data['tiktech_course_id'];
+        this.get_course_labels();
     }
+}
 
 </script>

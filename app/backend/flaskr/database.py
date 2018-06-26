@@ -45,9 +45,49 @@ def json_list(l):
     return jsonify(json_list=serialize_list(l))
 
 
+def log_database_error(err, func=None):
+    """
+    Function that logs the database error.
+    This functions prints the database error to stdout
+    and if a function is specified, the name of the functions
+    and the module where the function is found
+    will be printed to stdout.
+    __getframe is not used, because it is not
+    guaranteed to exist.
+    """
+    import sys
+    print("Error when adding an item to the database")
+    print("The error is:")
+    print(err)
+    if func is not None:
+        print("The name of the caller is:")
+        print(func.__name__)
+        print("This function can be found in the module:")
+        print(func.__module__)
+        print()
+
+
+def commitSafelyToDB(func=None):
+    """
+    Function that commits the current database.
+    If an error is found we log the error
+    and the session will be rolled back,
+    so the commit has not taken place.
+    Returns True if the commit was succesful
+    False if not.
+    """
+    try:
+        db.session.commit()
+    except Exception as err:
+        log_database_error(err, func)
+        db.session.rollback()
+        return False
+    return True
+
+
 # Use these functions if you want to add items to
 # to the database.
-def addItemSafelyToDB(item):
+def addItemSafelyToDB(item, func=None):
     """
     Add the item to the db by checking
     if the item is valid. The error can be logged.
@@ -56,11 +96,10 @@ def addItemSafelyToDB(item):
         db.session.add(item)
         db.session.commit()
     except Exception as err:
-        print("Logging database error: {0}".format(err))
+        log_database_error(err, func)
         db.session.rollback()
         return False
     return True
-
 
 # End functions for insertion for database.
 
@@ -76,7 +115,7 @@ def populate_database_dummy_data():
                            title="course 1",
                            description="Test")
 
-    course2 = Course.Course(id=uuid.uuid4(),
+    course2 = Course.Course(id=1,
                             course_email="testie@test.com",
                             title="course 2",
                             description="Test")
@@ -109,7 +148,7 @@ def populate_database_dummy_data():
     items = [user1, user2, user3, user5, mail_server, course, course2]
 
     for item in items:
-        addItemSafelyToDB(item)
+        addItemSafelyToDB(item, populate_database_dummy_data)
 
     try:
         course.supervisors.append(user4)
