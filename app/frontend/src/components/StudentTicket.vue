@@ -14,6 +14,7 @@
                 <h4>Subject: {{ticket.title}}</h4>
                 <p>Status: {{ticket.status.name}}</p>
                 Uploaded files:
+                <p v-show="ticket.files.length == 0">No files</p>
                 <md-card v-if="ticket.files.length > 0" v-for="file in ticket.files" v-bind:key="file.id">
                     <div class="file-listing-small" style="width:100%" v-on:click="downloadFile(file.file_location, file.file_name)">
                         <i class="material-icons download-icon">folder</i> {{ file.file_name }}

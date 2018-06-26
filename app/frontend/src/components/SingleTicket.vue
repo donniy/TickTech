@@ -1,7 +1,7 @@
 <template>
 <div>
-	<div style="visibility:hidden;" class="loading">
-		<md-progress-spinnerclass="md-accent" md-mode="indeterminate"></md-progress-spinner>
+	<div id="loading-icon" class="loading">
+		<md-progress-spinner class="md-accent" md-mode="indeterminate"></md-progress-spinner>
 	</div>
 	<div class="md-layout md-gutter">
 
@@ -32,7 +32,9 @@
         </b>
 					<b v-if="ticket.tas.length < 1">No one assigned yet</b>
 					<br/><br/> Uploaded files (Click OCR to turn photos into text):
-					<div class="md-layout md-gutter"v-if="ticket.files.length > 0" v-for="file in ticket.files" v-bind:key="file.id">
+                    <p v-show="ticket.files.length == 0">No files</p>
+                    <md-card-content>
+					<div class="md-layout md-gutter" v-if="ticket.files.length > 0" v-for="file in ticket.files" v-bind:key="file.id">
 						<div class="md-size-80 md-layout-item file-listing-small" v-on:click="downloadFile(file.file_location, file.file_name)">
 							<i class="material-icons download-icon">folder</i> {{ file.file_name }}
 						</div>
@@ -40,6 +42,7 @@
                             OCR
                         </div>
 					</div>
+                </md-card-content>
 				</md-card-content>
 			</md-card>
 			<md-card class="md-layout-item message-container">
@@ -281,17 +284,21 @@ export default {
 
             const path = '/api/ticket/gettext'
 
+            document.getElementById('loading-icon').style.visibility = "visible"
+
             this.$ajax.post(path, {address: key})
             .then((response) => {
                 // Get data from response
                 console.log(response.data)
                 const url = window.URL.createObjectURL(new Blob([response.data.json_data]))
                 const link = document.createElement('a')
+                document.getElementById('loading-icon').style.visibility = "hidden"
                 link.href = url
                 link.setAttribute('download', name + '.txt')
                 document.body.appendChild(link)
                 link.click()
                 document.body.removeChild(link)
+
             })
             .catch(error => {
                 console.log(error)
