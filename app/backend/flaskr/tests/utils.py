@@ -52,10 +52,17 @@ def create_note(app, noteId, ticketId, userId, text):
 
 def link_ta_to_course(user, course):
     course.ta_courses.append(user)
+    database.db.session.commit()
 
 
 def link_student_to_course(user, course):
     course.student_courses.append(user)
+    database.db.session.commit()
+
+
+def link_supervisor_to_course(user, course):
+    course.supervisors.append(user)
+    database.db.session.commit()
 
 
 def link_ta_to_ticket(user, ticket):

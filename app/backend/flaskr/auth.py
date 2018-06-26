@@ -84,15 +84,18 @@ def require_role(roles):
             verify_jwt_in_request()
             curr_user = get_current_user()
 
-            c_ta = 'ta' in roles and not len(curr_user.ta_courses)
-            c_stud = 'student' in roles and not len(curr_user.student_courses)
-            c_super = 'supervisor' in roles and not len(curr_user.supervisors)
+            c_ta = 'ta' in roles
+            c_ta &= len(curr_user.ta_courses) > 0
+            c_stud = 'student' in roles
+            c_stud &= len(curr_user.student_courses) > 0
+            c_super = 'supervisor' in roles
+            c_super &= len(curr_user.supervisors) > 0
 
             if curr_user is None:
                 return Iresponse.create_response("", 400)
             if type(roles) != list:
                 return Iresponse.create_response("", 500)
-            if c_ta or c_stud or c_super:
+            if not c_ta and not c_stud and not c_super:
                 return Iresponse.create_response("User doesn\'t have a correct role.", 403)
 
             return fn(*args, **kwargs)

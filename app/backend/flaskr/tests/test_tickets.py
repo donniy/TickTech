@@ -1,4 +1,6 @@
-from flaskr.tests.utils import create_user, login, create_course, create_ticket
+from flaskr.tests.utils import create_user, login, create_course, create_ticket,\
+                                link_ta_to_course, link_student_to_course
+from flaskr.models.Course import Course
 import uuid
 
 
@@ -6,13 +8,19 @@ def test_insert_ticket(app, client):
     """
     Insert a new ticket.
     """
-    userId = 11188936
-    create_user(app, userId)
+    userId = 12345
+    usr = create_user(app, userId)
+    c = create_course(app, uuid.uuid4())
+
+    link_ta_to_course(usr, c)
+
     auth = login(client, userId)
     rv = client.get('/api/courses', headers={
         'Authorization': auth
     })
     cid = rv.get_json()['json_data'][0]['id']
+    c = Course.query.get(cid)
+    link_student_to_course(usr, c)
     print("course: {}".format(cid))
 
     rv = client.post('/api/ticket/submit', json={
@@ -30,10 +38,15 @@ def test_insert_ticket(app, client):
 
 def test_get_ticket(app, client):
     userId = 11188936
-    create_user(app, userId)
+    usr = create_user(app, userId)
+    crs = create_course(app, uuid.uuid4())
+    link_ta_to_course(usr, crs)
     auth = login(client, userId)
-    rv = client.get('/api/courses')
+    rv = client.get('/api/courses',
+                    headers={'Authorization': auth})
     cid = rv.get_json()['json_data'][0]['id']
+    c = Course.query.get(cid)
+    link_student_to_course(usr, c)
     rv = client.post('/api/ticket/submit', json={
         'subject': 'test ticket',
         'message': 'Test bericht',
@@ -42,9 +55,11 @@ def test_get_ticket(app, client):
     }, headers={
         'Authorization': auth
     })
-    rv = client.get('/api/courses')
+    rv = client.get('/api/courses',
+                    headers={'Authorization': auth})
     cid = rv.get_json()['json_data'][0]['id']
-    tickets = client.get('/api/courses/{}/tickets'.format(cid))
+    tickets = client.get('/api/courses/{}/tickets'.format(cid),
+                         headers={'Authorization': auth})
     print(tickets.get_json())
     assert len(tickets.get_json()['json_data']) == 1
     ticketid = tickets.get_json()['json_data'][0]['id']
@@ -56,10 +71,12 @@ def test_close_ticket(app, client):
         Close a ticket
     """
     userId = 1234
-    create_user(app, userId)
+    usr = create_user(app, userId)
 
     courseId = uuid.uuid4()
-    create_course(app, courseId)
+    c = create_course(app, courseId)
+
+    link_ta_to_course(usr, c)
 
     ticketId1 = uuid.uuid4()
     ticketId2 = uuid.uuid4()
@@ -76,10 +93,12 @@ def test_close_ticket(app, client):
     assert rv.status == "200 OK"
     print(json_data)
 
-    rv2 = client.get('/api/courses/{}/tickets'.format(courseId))
+    rv2 = client.get('/api/courses/{}/tickets'.format(courseId),
+                     headers={'Authorization': auth})
     json_data2 = rv2.get_json()
 
     accepted = False
+    print(json_data2['json_data'])
     for x in json_data2['json_data']:
         if(x['id'] == str(ticketId1) and x['status']['id'] == 2):
             accepted = True
