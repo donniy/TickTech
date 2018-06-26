@@ -175,7 +175,7 @@ Vue.use(VueAuth, {
   ],
   fetchData: {url: '/api/user/retrieve', method: 'GET', enabled: true},
   refreshData: {url: '/api/user/retrieve', method: 'GET', enabled: true},
-  loginData: {url: '/auth', fetchUser: true},
+  loginData: {url: '/api/login', fetchUser: true},
   tokenDefaultName: 'access_token',
   parseUserData: function (data) {
     console.log(data.json_data.user)

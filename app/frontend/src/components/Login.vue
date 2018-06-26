@@ -48,6 +48,9 @@
                         this.$auth.login({data: {
                             username: this.form.username,
                             password: "TickTech"
+                            },
+                            error: function (resp) {
+                                console.error(resp);
                             }
                         });
                     }
