@@ -1,5 +1,4 @@
 <template>
-<!-- When in LTI -->
     <div class="container" v-else-if="this.$lti.data.lti_session">
       <div class="md-layout welcome-header">
             <h2>Welcome back {{ $user.get().name }}</h2>
@@ -141,7 +140,9 @@ export default {
             })
         },
 
-        // Retrieve notifications.
+        /* Get the notifications for for this lti course,
+           for the current user.
+         */
         getTodos() {
             this.$ajax.get(
                 '/api/user/notifications?course_id='

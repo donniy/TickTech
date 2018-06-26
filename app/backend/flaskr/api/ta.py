@@ -10,6 +10,9 @@ from flaskr import database
 
 @apiBluePrint.route('/ta/<user_id>/tickets')
 def retrieve_tickets(user_id):
+    """
+    Function that returns all the tickets of a ta.
+    """
     user = User.query.get(user_id)
     if user is None:
         return Iresponse.create_response("", 404)
@@ -23,6 +26,10 @@ def retrieve_tickets(user_id):
 
 @apiBluePrint.route('/ta/<user_id>/courses')
 def get_all_courses_for_ta(user_id):
+    """
+    Function that returns all the courses a user
+    is ta in.
+    """
     user = User.query.get(user_id)
     if user is None:
         return Iresponse.create_response("", 404)

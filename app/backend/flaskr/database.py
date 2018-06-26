@@ -61,6 +61,22 @@ def log_database_error(err, func=None):
     print()
 
 
+def deleteSafelyFromDB(item, func=None):
+    """
+    Function that deletes an item safely from the db.
+    If the deletion gives an error, we rollback the session
+    and log the database error.
+    """
+    try:
+        db.session.delete(item)
+        db.session.commit()
+    except Exception as err:
+        log_database_error(err, func)
+        db.session.rollback()
+        return False
+    return True
+
+
 def commitSafelyToDB(func=None):
     """
     Function that commits the current database.
@@ -79,8 +95,6 @@ def commitSafelyToDB(func=None):
     return True
 
 
-# Use these functions if you want to add items to
-# to the database.
 def addItemSafelyToDB(item, func=None):
     """
     Adds an item to the database.
@@ -95,7 +109,6 @@ def addItemSafelyToDB(item, func=None):
         db.session.rollback()
         return False
     return True
-# End functions for insertion for database.
 
 
 # These are from the InitDB sql file. Can insert dummy data here.

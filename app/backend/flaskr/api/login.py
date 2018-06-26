@@ -9,7 +9,9 @@ from flaskr import Iresponse, database
 @apiBluePrint.route('/login', methods=['POST'])
 def login():
     """
-    Kijk of de login gegevens in POST correct zijn/communiceer met Canvas.
+    Function that checks if a user has the right credentials.
+    If the user has the right credentials, it will be given a
+    JWT.
     """
     user_id = request.json.get('username')
     if not user_id:
