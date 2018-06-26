@@ -226,7 +226,12 @@
                         this.status = 'failed getting course information'
                     })
             },
-
+            getLabels() {
+                const path = '/api/labels/' + this.$route.params.course_id
+                this.$ajax.get(path, response => {
+                    this.labels = response.data.json_data
+                })
+            },
             /* Shows the menu to upload a csv file with user data. */
             addStudents() {
                 this.wantsToAddTa = false
