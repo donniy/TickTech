@@ -64,20 +64,20 @@ def parseEmail(emailBytes):
 
             # # TODO: fix ATTACHMENTS
             # # If not html or plain text, check if it's some kind of file.
-            # # else:
-            # data = part.get_payload(decode=True)
-            # ctype_split = ctype.split('/')
-            # # print("splitted", ctype_split)
-            # try:
-            #     if (ctype_split[0] == 'text' or ctype_split[0] == 'image'):
-            #         # print("Attachment text")
-            #         # print("Found:", ctype_split[1])
-            #         attachments.append((part.get_filename(),
-            #                             data))
-            #         files[part.get_filename()] = data
-            # except IndexError:
-            #     print("Something wrong with MIMI type;",
-            #           ctype, ctype_split)
+            else:
+                data = part.get_payload(decode=True)
+                ctype_split = ctype.split('/')
+                # print("splitted", ctype_split)
+                try:
+                    if (ctype_split[0] == 'text' or ctype_split[0] == 'image'):
+                        # print("Attachment text")
+                        # print("Found:", ctype_split[1])
+                        attachments.append((part.get_filename(),
+                                            data))
+                        files[part.get_filename()] = data
+                except IndexError:
+                    print("Something wrong with MIMI type;",
+                          ctype, ctype_split)
     else:
         # Emails are always multipart?
         if (parsedEmail.get_content_type() == 'text/plain'):
