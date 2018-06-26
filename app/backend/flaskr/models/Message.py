@@ -94,7 +94,6 @@ class Message(db.Model):
         elif self.n_type == Config.NTFY_LVLS_DWN:
             return 'LevelsDownMessage'
 
-
     @property
     def checkValid(self):
         """

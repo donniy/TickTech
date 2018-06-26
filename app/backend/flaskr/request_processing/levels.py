@@ -13,6 +13,7 @@ EXP_FOR_RESPONSE = 150
 EXP_FOR_NOTE = 30
 EXP_FOR_CLOSE = 80
 
+
 def equate(xp):
     xp_max = xp + 300
     factor = xp / 7.0
