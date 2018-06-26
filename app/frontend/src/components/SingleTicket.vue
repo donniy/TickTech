@@ -1,110 +1,134 @@
 <template>
-    <div>
-        <router-link :to="'/course/' + ticket.course_id " class="btn btn-primary">&laquo; Back to course</router-link>
+<div>
+	<div id="loading-icon" class="loading">
+		<md-progress-spinner class="md-accent" md-mode="indeterminate"></md-progress-spinner>
+	</div>
+	<div class="md-layout md-gutter">
 
-        <md-speed-dial md-event="click" class="close-button" md-direction="bottom">
-            <md-speed-dial-target>
-                <md-icon class="md-morph-initial">more_vert</md-icon>
-                <md-icon class="md-morph-final">close</md-icon>
-            </md-speed-dial-target>
+		<div class="md-layout-item md-size-65 md-small-size-100">
+			<div class="md-gutter">
+				<div class="md-size-20">
+					<router-link :to="'/course/' + ticket.course_id " class="btn btn-primary">&laquo; Back to course</router-link>
+				</div>
+				<div class="md-size-80 center-display">
+					<h3 class="">Ticket info</h3>
+				</div>
+			</div>
 
-            <md-speed-dial-content>
-                <md-button class="md-icon-button md-raised md-accent" @click="showModal = true">
-                    <md-icon>lock</md-icon>
-                    <md-tooltip md-direction="left">Close ticket</md-tooltip>
-                </md-button>
-                <md-button class="md-icon-button md-raised md-accent" @click="">
-                    <md-icon>delete</md-icon>
-                    <md-tooltip md-direction="left">Delete ticket</md-tooltip>
-                </md-button>
-            </md-speed-dial-content>
-        </md-speed-dial>
-
-        <modal v-if="showModal" warning="Are you sure you want to close this ticket?" @yes="closeTicket()" @close="showModal = false"></modal>
-        <br />
-        <br />
-
-        <div class="row">
-            <div class="col-md-8 col-sm-8 col-lg-8 col-xs-12">
-                <h2>Ticket Info</h2>
-                <div class="material-card">
-                    <div>
-                        <h2>{{ticket.title}}</h2>
-                        Status: {{ticket.status.name}}
-                    </div>
-                    <div class="file-name-container-small medium-12 small-12 cell" v-if="ticket.files.length > 0">
-                        <div v-for="file in ticket.files">
-                            <md-button v-if="file.is_ocrable" v-on:click="downloadOcrFile(file.file_location, file.file_name)" style="float:right;" class="md-dense md-primary">OCR</md-button>
-                            <p v-on:click="downloadFile(file.file_location, file.file_name)" style="float:right"class="file-listing-small"><i class="material-icons download-icon">folder</i> {{ file.file_name }}</p>
-
+            <md-dialog :md-active.sync="showModal">
+            <md-dialog-title>Do you want to close this ticket?</md-dialog-title>
+            <md-dialog-actions>
+                <md-button class="md-primary" @click="showModal = false">No I don't</md-button>
+                <md-button class="md-primary" @click="closeTicket()">Yes, close it!</md-button>
+            </md-dialog-actions>
+            </md-dialog>
+			<md-card class="md-layout">
+				<md-card-content class="md-layout-item md-size-100">
+					<h4>Subject: {{ticket.title}}</h4>
+					<p>Status: {{ticket.status.name}}</p>
+					TAs:
+					<b v-for="ta in ticket.tas" v-bind:key="ta.id" v-bind:ta="ta">
+            {{ ta.name}}
+        </b>
+					<b v-if="ticket.tas.length < 1">No one assigned yet</b>
+					<br/><br/> Uploaded files (Click OCR to turn photos into text):
+                    <p v-show="ticket.files.length == 0">No files</p>
+                    <md-card-content>
+					<div class="md-layout md-gutter" v-if="ticket.files.length > 0" v-for="file in ticket.files" v-bind:key="file.id">
+						<div class="md-size-80 md-layout-item file-listing-small" v-on:click="downloadFile(file.file_location, file.file_name)">
+							<i class="material-icons download-icon">folder</i> {{ file.file_name }}
+						</div>
+                        <div v-if="file.is_ocrable"class="md-size-10 md-layout-item ocrbutton" v-on:click="downloadOcrFile(file.file_location, file.file_name)">
+                            OCR
                         </div>
-                    </div>
-                    <div>
-                        Ta's:
-                        <b v-for="ta in ticket.tas" v-bind:key="ta.id" v-bind:ta="ta">
-                            {{ ta.name}}
-                        </b>
-                    </div>
+					</div>
+                </md-card-content>
+				</md-card-content>
+			</md-card>
+			<md-card class="md-layout-item message-container">
+				<div>
+					<md-card-content>
+						<message v-bind:user="{id: user_id}" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
+					</md-card-content>
+				</div>
+			</md-card>
+
+			<md-card class="md-layout-item message-reply-container">
+				<div>
+					<md-card-content>
+						<form v-on:submit.prevent="sendReply">
+							<md-field>
+								<label>Respond</label>
+								<md-textarea name="replyfield" v-validate="'required'" v-model="reply"></md-textarea>
+							</md-field>
+							<button class="btn btn-primary">Submit reply</button>
+						</form>
+					</md-card-content>
+				</div>
+			</md-card>
+		</div>
+		<div class="md-layout-item md-size-30 md-medium-size-50">
+			<h3 class="note-title">Notes</h3>
+			<note v-for="note in notes" v-bind:key="note.id" v-bind:note="note"></note>
+
+			<md-button id="popoverButton-sync" class="center-display md-primary">
+				Add a note.
+			</md-button>
+			<b-popover ref="popoverRef" target="popoverButton-sync" triggers="click blur" placement='top'>
+				<vue-tribute :options="mentionOptions" v-on:tribute-replaced="matchFound">
+					<textarea name="notefield" v-validate="'required'" v-model="noteTextArea" class="form-control" id="textAreaForNotes" style="height:200px;width:250px;" placeholder="Enter a comment"></textarea>
+				</vue-tribute>
+				<button @click="addNote" class="btn btn-primary" style="margin-top:10px">Send</button>
+			</b-popover>
+
+			<md-content class="md-elevation-2 plugin-container" v-bind:key="plugin.id" v-for="(data, plugin) in plugins">
+				<md-card-header>
+					<div class="md-title">
+						{{plugin}}
+					</div>
+				</md-card-header>
+				<md-list>
+					<template v-for="(value, key) in data">
+                <md-subheader>
+                    {{key}}
+                </md-subheader>
+                <md-list-item v-if="value.type === 'url'" target="__blank" :href="value.value">
+                    {{value.value}}
+                </md-list-item>
+                <div style="padding: 4px 16px; display: inline-block" v-else-if="value.type === 'text'">
+                    {{value.value}}
                 </div>
+                <md-list-item v-else-if="value.type === 'grade'">
+                    <md-badge class="md-avatar-icon md-primary" :md-content="value.value" />
+                </md-list-item>
 
-                <message v-bind:user="{id: user_id}" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
-
-                <form v-on:submit.prevent="sendReply" class="reply-area">
-                    <h4>Respond</h4>
-                    <textarea v-model="reply" placeholder="Schrijf een reactie..."></textarea>
-                    <button class="reply-button btn btn-primary">
-                        <i class="material-icons">
-                            send
-                        </i>
-                    </button>
-                </form>
-            </div>
-            <div class="col-md-4 col-sm-4 col-lg-4 col-xs-12">
-                <h2>Notes</h2>
-                <note v-for="note in notes" v-bind:key="note.id" v-bind:note="note"></note>
-
-                <md-button id="popoverButton-sync" class="note-add-button md-primary">
-                    Add note
-                </md-button>
-                <b-popover ref="popoverRef" target="popoverButton-sync" triggers="click blur" placement='top'>
-                    <vue-tribute :options="mentionOptions" v-on:tribute-replaced="matchFound">
-                        <textarea v-model="noteTextArea" class="form-control" id="textAreaForNotes" style="height:200px;width:250px;" placeholder="Voer uw opmerking in">
-
-                        </textarea>
-                    </vue-tribute>
-                    <button @click="addNote" class="btn btn-primary" style="margin-top:10px">Send</button>
-                </b-popover>
-
-                <md-content class="md-elevation-5" v-for="(data, plugin) in plugins">
-                    <md-card-header>
-                        <div class="md-title">
-                            {{plugin}}
-                        </div>
-                    </md-card-header>
-                    <md-list>
-                        <template v-for="(value, key) in data">
-                            <md-subheader>
-                                {{key}}
-                            </md-subheader>
-                            <md-list-item v-if="value.type === 'url'" target="__blank" :href="value.value">
-                                {{value.value}}
-                            </md-list-item>
-                            <div style="padding: 4px 16px; display: inline-block" v-else-if="value.type === 'text'">
-                                {{value.value}}
-                            </div>
-                            <md-list-item v-else-if="value.type === 'grade'">
-                                <md-badge class="md-avatar-icon md-primary" :md-content="value.value" />
-                                </md-list-item>
-
-                                <md-list-item v-else>
-                                    {{value.value}}
-                                </md-list-item>
-                        </template>
-                            </md-list>
-                    </md-content>
-            </div>
+                <md-list-item v-else>
+                    {{value.value}}
+                </md-list-item>
+            </template>
+				</md-list>
+			</md-content>
+		</div>
+        <div class="md-layout-item md-size-5">
+            <md-speed-dial md-event="click" class="close-button" md-direction="bottom">
+                <md-speed-dial-target>
+                    <md-icon class="md-morph-initial">more_vert</md-icon>
+                    <md-icon class="md-morph-final">close</md-icon>
+                </md-speed-dial-target>
+                <md-speed-dial-content>
+                    <md-button class="md-icon-button md-raised md-accent" @click="showModal = true">
+                        <md-icon>lock</md-icon>
+                        <md-tooltip md-direction="left">Close ticket</md-tooltip>
+                    </md-button>
+                    <md-button class="md-icon-button md-raised md-accent" @click="">
+                        <md-icon>delete</md-icon>
+                        <md-tooltip md-direction="left">Delete ticket</md-tooltip>
+                    </md-button>
+                </md-speed-dial-content>
+            </md-speed-dial>
         </div>
-    </div>
+	</div>
+</div>
 </template>
 
 <script>
@@ -196,10 +220,14 @@ export default {
         },
         sendReply() {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
-            this.$ajax.post(path, {
-                message: this.reply,
-                user_id: this.user_id
-            })
+            let reply = this.reply
+            this.reply = ''
+            if (reply.length > 0) {
+
+                this.$ajax.post(path, {
+                    message: reply,
+                    user_id: this.user_id
+                })
                 .then(response => {
                     this.reply = ''
                     this.getMessages()
@@ -207,6 +235,7 @@ export default {
                 .catch(error => {
                     console.log(error)
                 })
+            }
         },
         closeTicket() {
             this.showModal = false
@@ -255,17 +284,21 @@ export default {
 
             const path = '/api/ticket/gettext'
 
+            document.getElementById('loading-icon').style.visibility = "visible"
+
             this.$ajax.post(path, {address: key})
             .then((response) => {
                 // Get data from response
                 console.log(response.data)
                 const url = window.URL.createObjectURL(new Blob([response.data.json_data]))
                 const link = document.createElement('a')
+                document.getElementById('loading-icon').style.visibility = "hidden"
                 link.href = url
                 link.setAttribute('download', name + '.txt')
                 document.body.appendChild(link)
                 link.click()
                 document.body.removeChild(link)
+
             })
             .catch(error => {
                 console.log(error)
@@ -277,7 +310,7 @@ export default {
             const path = '/api/notes'
             var noteData = {
                 "ticket_id": this.$route.params.ticket_id,
-                "user_id": this.$route.params.user_id | 1,
+                "user_id": this.$user.get().id,
                 "text": this.noteTextArea
             }
             console.log("Note")
@@ -287,7 +320,6 @@ export default {
                     this.noteTextArea = ""
                     this.$refs.popoverRef.$emit('close')
                     this.notes.push(response.data.json_data)
-                    this.bind_ta_to_ticket(this.ticket.id, 11111)
                 })
                 .catch(error => {
                     console.log(error)

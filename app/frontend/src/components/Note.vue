@@ -1,11 +1,10 @@
 <template>
     <div v-if="exists" class="material-card note">
-        <md-button class="removeLabel" @click="showModal = true">
+        <md-button v-if="note.user_id == this.user.id" class="md-icon-button remove-note" @click="showModal = true">
             <i class="material-icons"> close </i>
         </md-button>
-
-    	<h4> {{note.user_id}}: </h4>
-    	<p> {{note.text}} </p>
+        <h5> {{this.user.name}}: </h5>
+        <p> {{note.text}} </p>
 
         <md-dialog  :md-active.sync="showModal">
             <md-dialog-title>Do you want to remove this note?</md-dialog-title>
@@ -27,21 +26,32 @@
     		return {
     			showModal: false,
                 exists: true,
-    		}
-    	},
-    	methods: {
-    		closeNote() {
-				const path = '/api/notes/' + this.note.id + '/close'
-				this.$ajax.post(path)
-				.then(response => {
-					this.showModal = false
-				})
+                user: ''
+            }
+        },
+        methods: {
+            closeNote() {
+                const path = '/api/notes/' + this.note.id + '/close'
+                this.$ajax.post(path)
+                    .then(response => {
+                        this.showModal = false
+                    })
                 this.exists = false
-    			this.$parent.getNotes()
-    		}
-    	},
-    	components: {
-    		'modal': Modal
-    	}
+                this.$parent.getNotes()
+            },
+            getUser() {
+                const path = '/api/user/' + this.note.user_id
+                this.$ajax.get(path)
+                    .then(response => {
+                        this.user = response.data.json_data
+                    })
+            }
+        },
+        components: {
+            'modal': Modal
+        },
+        mounted: function() {
+            this.getUser()
+        }
     }
 </script>

@@ -17,7 +17,7 @@
 
                     <md-field>
                         <label for="message">Message</label>
-                        <md-textarea id="message" name="message" v-validate="'required'" v-model="form.message"></md-textarea>
+                        <md-textarea md-autogrow id="message" name="message" v-validate="'required'" v-model="form.message"></md-textarea>
                         <div v-if="errors.has('message')" class="invalid-feedback">
                             {{ errors.first('message') }}
                         </div>
