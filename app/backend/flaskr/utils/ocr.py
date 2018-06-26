@@ -8,7 +8,6 @@ from os.path import expanduser
 def ocr_process_image(url):
     try:
         image = Image.open(url)
-        image.filter(ImageFilter.SHARPEN)
         return pytesseract.image_to_string(image, lang='eng')
     except IOError:
         return None
