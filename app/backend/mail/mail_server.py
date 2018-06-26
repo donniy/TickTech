@@ -47,45 +47,8 @@ def parseEmail(emailBytes):
     else:
         subject = subjectParsed[0][0]
 
-    # Get body of email.
-    body = ''
-    html = ''
-    files = {}
-    attachments = []
-
-    # Add all text and html to the final body.
-    if parsedEmail.is_multipart():
-        for part in parsedEmail.walk():
-            ctype = part.get_content_type()
-            if (ctype == 'text/plain'):
-                body += str(part.get_payload())
-            elif ctype == "text/html":
-                html += str(part.get_payload())
-
-            # # TODO: fix ATTACHMENTS
-            # # If not html or plain text, check if it's some kind of file.
-            else:
-                data = part.get_payload(decode=True)
-                ctype_split = ctype.split('/')
-                # print("splitted", ctype_split)
-                try:
-                    if (ctype_split[0] == 'text' or ctype_split[0] == 'image'):
-                        # print("Attachment text")
-                        # print("Found:", ctype_split[1])
-                        attachments.append((part.get_filename(),
-                                            data))
-                        files[part.get_filename()] = data
-                except IndexError:
-                    print("Something wrong with MIMI type;",
-                          ctype, ctype_split)
-    else:
-        # Emails are always multipart?
-        if (parsedEmail.get_content_type() == 'text/plain'):
-            body += str(parsedEmail.get_payload())
-        elif parsedEmail.get_content_type() == "text/html":
-            html += str(part.get_payload())
-        else:
-            print("Could not parse email. It was neither multipart nor plain.")
+    # Parse the body of the email.
+    body, html, attachments, files = parseBody(parsedEmail)
 
     # Transform html to text and add it to body.
     if body == '':
@@ -109,6 +72,44 @@ def parseEmail(emailBytes):
     return subject, body, attachments, name[0], address[0]
 
 
+def parseBody(parsedEmail):
+    body = ''
+    html = ''
+    attachments = []
+    files = {}
+
+    # Add all text and html to the final body.
+    if parsedEmail.is_multipart():
+        for part in parsedEmail.walk():
+            ctype = part.get_content_type()
+            if (ctype == 'text/plain'):
+                body += str(part.get_payload())
+            elif ctype == "text/html":
+                html += str(part.get_payload())
+            # If not html or plain text, check if it's some kind of file.
+            else:
+                data = part.get_payload(decode=True)
+                ctype_split = ctype.split('/')
+                try:
+                    if (ctype_split[0] == 'text' or ctype_split[0] == 'image'):
+                        attachments.append((part.get_filename(),
+                                            data))
+                        files[part.get_filename()] = data
+                except IndexError:
+                    print("Something wrong with MIMI type;",
+                          ctype, ctype_split)
+    else:
+        # Emails are always multipart?
+        if (parsedEmail.get_content_type() == 'text/plain'):
+            body += str(parsedEmail.get_payload())
+        elif parsedEmail.get_content_type() == "text/html":
+            html += str(part.get_payload())
+        else:
+            print("Could not parse email. It was neither multipart nor plain.")
+
+    return body, html, attachments, files
+
+
 def findUser(body, sender, address):
     '''
     Parses a given email body in string format. Returns the student id,
@@ -129,9 +130,9 @@ def findUser(body, sender, address):
                 return studentid
 
     # Try and find a student id in the email body.
+    # > old student ids are 6 digits long, new ones are 8.
     body = body.split()
     for words in body:
-        # > old ids 6 digits, new ones 8.
         if words.isdigit() and len(words) > 6 and len(words) < 9:
             return int(words)
 
@@ -179,6 +180,7 @@ def findLabel(body, labels):
 def createTicket(subject, body, files, sender, address, courseid):
     '''
     Create a ticket from the acquired information from an email.
+    Note: New tickets will only be displayed after refreshing the page.
     '''
     # validate user
     studentid = findUser(body, sender, address)
@@ -209,16 +211,10 @@ def createTicket(subject, body, files, sender, address, courseid):
         attachments[name] = base64.b64encode(bytes).decode("utf-8")
     newticket['files'] = attachments
 
-    # TODO: fix printing in FLASKR terminal
-    print("Hier onder print het nog rare dingen")
-
     # Add the ticket to the database.
     result = requests.post(
         'http://localhost:5000/api/email/ticket/submit',
         json=newticket)
-
-    # TODO: remove this prints after debugging.
-    print("Hier boven print het nog rare dingen")
 
     if (result.status_code != 201):
         print("Something went wrong creating a new ticket from an email.")
@@ -229,9 +225,6 @@ def createTicket(subject, body, files, sender, address, courseid):
         print("Course ID: ", courseid)
         print("Label ID: ", labelid)
         print("Body: " + body)
-    else:
-        print("CREATED A TICKET! :)")
-
     # sendReplyMail(address,
     #               "Dear " + sender + ", \n
     #               "We have received your email and ")

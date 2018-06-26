@@ -42,7 +42,6 @@ class MailThread(Thread):
         # notify somehow
 
         while (self.running):
-            print("-------", self.course_id, " COURSE !!")
             print("Checking", self.email + ". On thread " + self.getName())
             checkMail(self.server, self.port, self.email,
                       self.password, self.course_id)
@@ -56,7 +55,6 @@ class MailThread(Thread):
         '''
         Stop Thread
         '''
-        print("Stopping thread:", self.getName())
         self.running = False
         threads.remove(self)
 
