@@ -42,13 +42,14 @@ class MailThread(Thread):
         # notify somehow
 
         while (self.running):
+            print("-------", self.course_id, " COURSE !!")
             print("Checking", self.email + ". On thread " + self.getName())
             checkMail(self.server, self.port, self.email,
-                       self.password, self.course_id)
+                      self.password, self.course_id)
             print("Sleeping for ", self.sleep_time, " seconds.")
             sleep(self.sleep_time)
-        
-        print("Stopped fetching mail on thread: ", self.getName(), 
+
+        print("Stopped fetching mail on thread: ", self.getName(),
               " email: ", self.email)
 
     def stop(self):
@@ -62,7 +63,7 @@ class MailThread(Thread):
     def force_fetch(self):
         print("Checking", self.email + ". On thread " + self.getName())
         checkMail(self.server, self.port, self.email,
-                   self.password, self.course_id)
+                  self.password, self.course_id)
 
     def update(self, sleep_time=None, server=None,
                port=None, email=None, password=None):

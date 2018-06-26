@@ -65,19 +65,19 @@ def parseEmail(emailBytes):
             # # TODO: fix ATTACHMENTS
             # # If not html or plain text, check if it's some kind of file.
             # # else:
-            # data = part.get_payload(decode=True)
-            # ctype_split = ctype.split('/')
-            # # print("splitted", ctype_split)
-            # try:
-            #     if (ctype_split[0] == 'text' or ctype_split[0] == 'image'):
-            #         # print("Attachment text")
-            #         # print("Found:", ctype_split[1])
-            #         attachments.append((part.get_filename(),
-            #                             data))
-            #         files[part.get_filename()] = data
-            # except IndexError:
-            #     print("Something wrong with MIMI type;",
-            #           ctype, ctype_split)
+            data = part.get_payload(decode=True)
+            ctype_split = ctype.split('/')
+            # print("splitted", ctype_split)
+            try:
+                if (ctype_split[0] == 'text' or ctype_split[0] == 'image'):
+                    # print("Attachment text")
+                    # print("Found:", ctype_split[1])
+                    attachments.append((part.get_filename(),
+                                        data))
+                    files[part.get_filename()] = data
+            except IndexError:
+                print("Something wrong with MIMI type;",
+                      ctype, ctype_split)
     else:
         # Emails are always multipart?
         if (parsedEmail.get_content_type() == 'text/plain'):
@@ -126,7 +126,6 @@ def findUser(body, sender, address):
         if (json['json_data']['succes']):  # ENGELS FOUT FIX HET
             studentid = json['json_data']['studentid']
             if studentid is not None:
-                print("FOUND STUDENT ID IN DATABASE: ", studentid)
                 return studentid
 
     # Try and find a student id in the email body.
@@ -160,6 +159,7 @@ def retrieveLabels(courseid):
     return labels
 
 
+# TODO: Labels wordt weer many to many in de backend, dus dit moet weer aangepast worden.
 def findLabel(body, labels):
     '''
     Parse the body for words that might be labels (simplified, accepting first found).
@@ -168,9 +168,6 @@ def findLabel(body, labels):
     result = []
 
     labelcount = len(labels)
-    if (labelcount == 0):
-        return ''
-
     for words in body:
         for i in range(0, labelcount):
             if words in labels[i]['label_name']:
@@ -293,11 +290,11 @@ def checkMail(host, port, user, password, courseid, debug=0):
     return 0
 
 
+# For debugging. Can be removed later (we use thread.py).
 if __name__ == '__main__':
     # Retrieve courses, get current course id.
     result = requests.get('http://localhost:5000/api/courses')
 
-    # TODO: still hardcoded. Gets first course hardcoded.
     if (result.status_code == 200):
         courses = result.json()
         courseid = courses["json_data"][0]["id"]

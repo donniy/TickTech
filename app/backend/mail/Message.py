@@ -11,3 +11,8 @@ def create_email_message(title, recipients, ticketid, body, sender):
         '</body>'
     )
     return message
+
+# Metadata toevoegen aan een email om replies aan een ticket hangen.
+# Parsen op ticket id in subject
+# (Welk ticket reply je op? - dat moet een message worden, niet een nieuw ticket)
+# Kijk of de user bij de ticket hoort
