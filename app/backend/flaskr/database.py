@@ -165,7 +165,7 @@ def addTicket(user_id=1, email="test@email.com", course_id=uuid.uuid4(),
     t.status_id = 10000
     t.title = title
     t.timestamp = timestamp
-    t.label_id = 1
+    t.label_id = uuid.uuid4()
     try:
         addItemSafelyToDB(t)
     except DatabaseInsertException as exp:
