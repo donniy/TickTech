@@ -62,22 +62,22 @@ def parseEmail(emailBytes):
             elif ctype == "text/html":
                 html += str(part.get_payload())
 
-            # TODO: fix ATTACHMENTS
-            # If not html or plain text, check if it's some kind of file.
-            # else:
-            #     data = part.get_payload(decode=True)
-            #     ctype_split = ctype.split('/')
-            #     # print("splitted", ctype_split)
-            #     try:
-            #         if (ctype_split[0] == 'text' or ctype_split[0] == 'image'):
-            #             # print("Attachment text")
-            #             # print("Found:", ctype_split[1])
-            #             attachments.append((part.get_filename(),
-            #                                 data))
-            #             files[part.get_filename()] = data
-            #     except IndexError:
-            #         print("Something wrong with MIMI type;",
-            #               ctype, ctype_split)
+            # # TODO: fix ATTACHMENTS
+            # # If not html or plain text, check if it's some kind of file.
+            # # else:
+            # data = part.get_payload(decode=True)
+            # ctype_split = ctype.split('/')
+            # # print("splitted", ctype_split)
+            # try:
+            #     if (ctype_split[0] == 'text' or ctype_split[0] == 'image'):
+            #         # print("Attachment text")
+            #         # print("Found:", ctype_split[1])
+            #         attachments.append((part.get_filename(),
+            #                             data))
+            #         files[part.get_filename()] = data
+            # except IndexError:
+            #     print("Something wrong with MIMI type;",
+            #           ctype, ctype_split)
     else:
         # Emails are always multipart?
         if (parsedEmail.get_content_type() == 'text/plain'):
@@ -142,7 +142,7 @@ def findUser(body, sender, address):
         # AttributeError: 'NoneType' object has no attribute 'id'
 
     # Couldn't find student id with email or in body.
-    print("COULD NOT FIND STUDENT ID")
+    print("COULD NOT FIND STUDENT ID. :(")
     return None
 
 
@@ -152,30 +152,31 @@ def retrieveLabels(courseid):
     '''
     labels = []
     result = requests.get('http://localhost:5000/api/labels/' + courseid)
+
     if (result.status_code == 200):
         data = result.json()
         labels = data['json_data']
-
-        # For testing: can be removed later.
-        labelcount = len(labels)
-        if (labelcount == 0):
-            print("No labels available. ")
-        else:
-            print("Found labels: ")
-            for i in range(0, labelcount):
-                print(labels[i]['label_name'], labels[i]['label_id'])
 
     return labels
 
 
 def findLabel(body, labels):
     '''
-    Parse the body for words that might be labels (simplified).
+    Parse the body for words that might be labels (simplified, accepting first found).
     '''
-    # TODO: Finish this.
+    body = body.split()
+    result = []
+
+    labelcount = len(labels)
+    if (labelcount == 0):
+        return ''
+
     for words in body:
-        print(words)
-    return 0
+        for i in range(0, labelcount):
+            if words in labels[i]['label_name']:
+                return labels[i]['label_id']
+
+    return ''
 
 
 def createTicket(subject, body, files, sender, address, courseid):
@@ -191,9 +192,7 @@ def createTicket(subject, body, files, sender, address, courseid):
     # Get all labels available for this course.
     labels = retrieveLabels(courseid)
     if (labels != []):
-        findLabel(body, labels)
-        # TODO: Still hardcoded. Need to find right label in message body?
-        labelid = labels[0]['label_id']
+        labelid = findLabel(body, labels)
     else:
         labelid = ''
 
