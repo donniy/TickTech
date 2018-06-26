@@ -14,7 +14,7 @@ from flaskr.request_processing import file as rp_file
 from flaskr import Iresponse
 from flaskr.utils import notifications
 from flask_mail import Mail
-from mail.Message import create_email_message
+from mail.Message import createEmailMessage
 from flaskr.utils import course_validation, json_validation, ocr
 from os.path import expanduser
 import base64
