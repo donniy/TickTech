@@ -14,7 +14,7 @@ from flaskr.request_processing import file as rp_file
 from flaskr import Iresponse
 from flaskr.utils import notifications
 from flask_mail import Mail
-from mail.Message import create_email_message
+from mail.Message import createEmailMessage
 from flaskr.utils import course_validation, json_validation
 from os.path import expanduser
 import base64
@@ -91,7 +91,7 @@ def create_message(ticket_id):
     user = User.query.get(userId)
 
     if(ticket.user_id != user.id):
-        message = create_email_message(ticket.title,
+        message = createEmailMessage(ticket.title,
                                        [ticket.email], ticket_id,
                                        json_data['message'], user.name)
         res = Mail().send(message)
