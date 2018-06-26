@@ -1,4 +1,3 @@
-<!-- Note.vue adds, shows, and removes secret notes to a ticket, only viewable for TAs.  -->
 <template>
     <div v-if="exists" class="material-card note">
         <md-button v-if="note.user_id == this.user.id" class="md-icon-button remove-note" @click="showModal = true">
@@ -7,7 +6,7 @@
         <h5> {{this.user.name}}: </h5>
         <p> {{note.text}} </p>
 
-        <md-dialog :md-active.sync="showModal">
+        <md-dialog  :md-active.sync="showModal">
             <md-dialog-title>Do you want to remove this note?</md-dialog-title>
             <md-dialog-actions>
                 <md-button class="md-primary" @click="showModal = false">Nope</md-button>
@@ -22,10 +21,10 @@
     import Modal from './ClosePrompt.vue'
 
     export default {
-        props: ['note'],
-        data: function () {
-            return {
-                showModal: false,
+    	props: ['note'],
+    	data: function() {
+    		return {
+    			showModal: false,
                 exists: true,
                 user: ''
             }

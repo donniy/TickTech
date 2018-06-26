@@ -1,4 +1,3 @@
-<!-- Message.vue shows the messages of a ticket. -->
 <template>
     <div class="md-layout-item md-size-100" >
         <template v-if="message.type == 0">
@@ -23,7 +22,7 @@
         </template>
         <template v-else-if="message.type == 2">
             <div class="notification notification-closed">
-                {{username}} closed this ticket.
+                {{username}} closed this ticket
             </div>
         </template>
         <template v-else>
@@ -35,22 +34,22 @@
 </template>
 
 <script>
-    export default {
-        props: ['message', 'user'],
-        computed: {
-            username: function () {
-                if (this.user) {
-                    return this.user.id == this.message.user_id ? 'You' : this.message.user_name
-                } else {
+export default {
+    props: ['message', 'user'],
+    computed: {
+        username: function () {
+            if (this.user) {
+                return this.user.id == this.message.user_id ? 'You' : this.message.user_name
+            } else {
 
-                    return 'unknown'
-                }
-            },
+                return 'unknown'
+            }
         },
-        data: function () {
-            return {}
-        },
-        mounted: function () {
-        }
+    },
+    data: function() {
+        return {};
+    },
+    mounted: function () {
     }
+}
 </script>

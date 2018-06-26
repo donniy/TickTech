@@ -1,4 +1,3 @@
-<!-- StudentTicket.vue shows a ticket from the student perspective. -->
 <template>
 <div class="student-ticket-wrapper md-layout md-gutter">
 	<div class="md-layout-item">
@@ -49,163 +48,138 @@
 </template>
 
 <script>
-import Message from './Message.vue'
-import VueCookies from 'vue-cookies'
-import VeeValidate from 'vee-validate'
+    import Message from './Message.vue'
+    import VueCookies from 'vue-cookies'
 
 
-export default {
-	data() {
-		return {
-			ticket: {
-				title: '',
-				status: {
-					name: ''
-				},
-				course_id: ''
-			},
-			reply: '',
-			messages: [],
-			ret_url: '',
-			user: this.$user.get()
-		}
-	},
-	methods: {
-		// Retrieve a ticket.
-		getTicket() {
-			const path = '/api/ticket/' + this.$route.params.ticket_id
-			this.$ajax.get(path)
-				.then(response => {
-					this.ticket = response.data.json_data
-				})
-				.catch(error => {
-					console.log(error)
-				})
-		},
-		// Retrieve the replies.
-		getMessages() {
-			const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
-			this.$ajax.get(path)
-				.then(response => {
-					this.messages = response.data.json_data
-				})
-				.catch(error => {
-					console.log(error)
-				})
-		},
-		// Sent a reply.
-		sendReply() {
-			const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
-			console.log(this.user)
-			this.$ajax.post(path, {
-					message: this.reply,
-					user_id: this.user
-				})
-				.then(response => {
-					this.reply = ''
-				})
-				.catch(error => {
-					console.log(error)
-				})
-		},
-		// Creates a Blob object
-		b64toBlob(b64Data, contentType, sliceSize) {
-			contentType = contentType || ''
-			sliceSize = sliceSize || 512
+    export default {
+        data() {
+            return {
+                ticket: { title: '', status: { name: '' }, course_id: '' },
+                reply: '',
+                messages: [],
+                ret_url: '',
+                user: this.$user.get()
+            }
+        },
+        methods: {
+            getTicket() {
+                const path = '/api/ticket/' + this.$route.params.ticket_id
+                this.$ajax.get(path)
+                    .then(response => {
+                        this.ticket = response.data.json_data
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            },
+            getMessages() {
+                const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
+                this.$ajax.get(path)
+                    .then(response => {
+                        this.messages = response.data.json_data
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            },
+            sendReply() {
+                const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
+                console.log(this.user)
+                this.$ajax.post(path, { message: this.reply, user_id: this.user })
+                    .then(response => {
+                        this.reply = ''
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            }, b64toBlob(b64Data, contentType, sliceSize) {
+                  contentType = contentType || '';
+                  sliceSize = sliceSize || 512;
 
-			var byteCharacters = atob(b64Data)
-			console.log(byteCharacters)
+                  var byteCharacters = atob(b64Data);
+                  console.log(byteCharacters)
 
-			var byteArrays = []
+                  var byteArrays = [];
 
-			for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-				var slice = byteCharacters.slice(offset, offset + sliceSize)
+                  for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+                      var slice = byteCharacters.slice(offset, offset + sliceSize);
 
-				var byteNumbers = new Array(slice.length)
-				for (var i = 0; i < slice.length; i++) {
-					byteNumbers[i] = slice.charCodeAt(i)
-				}
+                      var byteNumbers = new Array(slice.length);
+                      for (var i = 0; i < slice.length; i++) {
+                          byteNumbers[i] = slice.charCodeAt(i);
+                      }
 
-				var byteArray = new Uint8Array(byteNumbers)
+                      var byteArray = new Uint8Array(byteNumbers);
 
-				byteArrays.push(byteArray)
-			}
+                      byteArrays.push(byteArray);
+                  }
 
-			var blob = new Blob(byteArrays, {
-				type: contentType
-			})
-			return blob
-		},
-		// Download the submitted files.
-		downloadFile(key, name) {
-			const path = '/api/ticket/filedownload'
-			this.$ajax.post(path, {
-					address: key
-				})
-				.then((response) => {
-					// Get data from response
-					var byteCharacters = atob(response.data.json_data['encstring'])
-					var mimetype = response.data.json_data['mimetype']
+                  var blob = new Blob(byteArrays, {type: contentType});
+                  return blob;
+            },
+            downloadFile(key, name){
 
-					// Convert data to bytearray and decode
-					var byteNumbers = new Array(byteCharacters.length)
-					for (var i = 0; i < byteCharacters.length; i++) {
-						byteNumbers[i] = byteCharacters.charCodeAt(i)
-					}
-					var byteArray = new Uint8Array(byteNumbers)
+                const path = '/api/ticket/filedownload'
+                this.$ajax.post(path, {address: key})
+                .then((response) => {
+                    // Get data from response
+                    var byteCharacters = atob(response.data.json_data['encstring']);
+                    var mimetype = response.data.json_data['mimetype']
 
-					// Generate blob and download element.
-					var blob = new Blob([byteArray], {
-						mimetype
-					})
-					const url = window.URL.createObjectURL(blob)
-					const link = document.createElement('a')
+                    // Convert data to bytearray and decode
+                    var byteNumbers = new Array(byteCharacters.length);
+                    for (var i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    var byteArray = new Uint8Array(byteNumbers);
 
-					// Ref to the link and activate download.
-					link.href = url
-					link.setAttribute('download', name)
-					document.body.appendChild(link)
-					link.click()
-					document.body.removeChild(link)
-				})
-				.catch(error => {
-					console.log(error)
-					window.alert("File not found")
-				})
-		}
-	},
-	// Call this function when the page is loaded.
-	mounted: function() {
-		if (!this.$user.logged_in()) {
-			this.$router.push('/login')
-		}
-		this.user = this.$user.get()
-		this.ret_url = '/home'
-		this.getTicket()
-		this.getMessages()
-		this.$socket.emit('join-room', {
-			room: 'ticket-messages-' + this.$route.params.ticket_id
-		})
-	},
-	beforeRouteLeave: function(to, from, next) {
-		this.$socket.emit('leave-room', {
-			room: 'ticket-messages-' + this.$route.params.ticket_id
-		})
-		next()
-	},
-	components: {
-		'message': Message,
-	},
-	sockets: {
-		connect: function() {
-			console.log("Socket connection!")
-		},
-		messageAdded: function(data) {
-			console.log("Message added!")
-			console.log(data)
-			this.messages.push(data)
-			document.body.scrollTop = document.body.scrollHeight
-		}
-	},
-}
+                    // Generate blob and download element.
+                    var blob = new Blob([byteArray], {mimetype});
+                    const url = window.URL.createObjectURL(blob)
+                    const link = document.createElement('a')
+
+                    // Ref to the link and activate download.
+                    link.href = url
+                    link.setAttribute('download', name)
+                    document.body.appendChild(link)
+                    link.click();
+                    document.body.removeChild(link)
+                })
+                .catch(error => {
+                    console.log(error)
+                    window.alert("File not found")
+                })
+            }
+        },
+        mounted: function () {
+            if (!this.$user.logged_in()) {
+                this.$router.push('/login')
+            }
+            this.user = this.$user.get()
+            this.ret_url = '/home'
+            this.getTicket()
+            this.getMessages()
+            this.$socket.emit('join-room', { room: 'ticket-messages-' + this.$route.params.ticket_id })
+        },
+        beforeRouteLeave: function (to, from, next) {
+            this.$socket.emit('leave-room', { room: 'ticket-messages-' + this.$route.params.ticket_id })
+            next()
+        },
+        components: {
+            'message': Message,
+        },
+        sockets: {
+            connect: function () {
+                console.log("Socket connection!")
+            },
+            messageAdded: function (data) {
+                console.log("Message added!")
+                console.log(data)
+                this.messages.push(data)
+                document.body.scrollTop = document.body.scrollHeight
+            }
+        },
+    }
+
 </script>

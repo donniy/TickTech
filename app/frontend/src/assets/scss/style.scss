@@ -153,6 +153,7 @@ nav {
 
 .file-name-container {
     line-height: 1.1em;
+    width: 80%;
     box-shadow: $medium-shadow;
     font-size: 1.1em;
     border-color: lighten(#bc0031, 5%);
@@ -175,6 +176,11 @@ nav {
 
 .download-icon{
     vertical-align: text-bottom;
+}
+
+.file-ocr-button {
+    width: 10%;
+    padding-bottom: 15px !important;
 }
 
 .file-listing-small {
