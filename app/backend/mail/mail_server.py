@@ -236,19 +236,22 @@ def createTicket(subject, body, files, sender, address, courseid):
     else:
         print("CREATED A TICKET! :)")
 
+    # sendReplyMail(address,
+    #               "Dear " + sender + ", \n
+    #               "We have received your email and ")
     # TODO: Send confirmation email.
 
 
 #    @app.route("/")
-def sendReplyMail(receiver, message):
-    '''
-    Basic email reply for confirming a question has been received through email,
-    and created into a ticket, or to tell them there was an issue with the email.
-    '''
+# def sendReplyMail(receiver, message):
+#     '''
+#     Basic email reply for confirming a question has been received through email,
+#     and created into a ticket, or to tell them there was an issue with the email.
+#     '''
 
-    msg = Message("TEST" + message + "TEST",
-                  recipients=["uvapsetest@gmail.com"])
-    mail.send(msg)
+#     msg = Message("TEST" + message + "TEST",
+#                   recipients=["uvapsetest@gmail.com"])
+#     mail.send(msg)
 
 
 def checkMail(host, port, user, password, courseid, debug=0):

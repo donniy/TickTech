@@ -10,6 +10,7 @@ class Irequest:
     In other functions and to extract enformation from the request
     easily. This is mostly done for LTI at the moment.
     """
+
     def __init__(self):
         """
         @params headers: the headers of the request in a python dict.
@@ -19,10 +20,10 @@ class Irequest:
         Below the types are displayed for the params, this typing must
         be followed.
         """
-        self.headers: dict[str, str]
-        self.body: dict[str, str]
-        self.method: str
-        self.url: str
+        self.headers = dict[str, str]
+        self.body = dict[str, str]
+        self.method = str
+        self.url = str
 
     # TODO: Maybe add an execption to this function.
     def transform_request_to_internal_request(self, framework_request_type):
