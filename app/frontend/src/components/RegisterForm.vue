@@ -1,4 +1,3 @@
-<!-- RegisterForm.vue creates the form to register as user. -->
 <template>
     <div>
         <div>
@@ -17,7 +16,7 @@
                                 type="text" placeholder="Student ID">
                         </div>
                         <p class="def-error-msg" v-show="this.idstatus">
-                            This student id is already taken.
+                            This student id is taken.
                         </p>
 
                         <div class="form-group">
@@ -26,7 +25,7 @@
                                 type="text" placeholder="Email address">
                         </div>
                         <p class="def-error-msg" v-show="this.emailstatus">
-                            This email address is already taken.
+                            This email address is taken.
                         </p>
 
                         <div class="form-group">
@@ -100,14 +99,14 @@
 
             }
         }, methods: {
-            // Checks if all required elements are filled correctly.
             Register() {
                 this.$validator.validateAll().then((result) => {
                     if (result) {
-                        const path = '/api/user/register'
+                        const path = '/api/user/register';
                         this.$ajax.post(path, this.form, response => {
+                            console.log(response);
                             if (response.data.json_data["status"] == false) {
-                                window.alert("Student id or email is already taken!")
+                                window.alert("Student id or email already taken!")
                                 return
                             } else {
                                 logUserIn()
@@ -115,26 +114,22 @@
                         })
                     }
                 })
-                // Checks email address availability.
             }, checkEmailAvailability() {
                 const path = '/api/user/exists'
                 this.$ajax.post(path, { email: this.form.email }, response => {
-                    this.emailstatus = response.data.json_data.status
+                    this.emailstatus = response.data.json_data.status;
                     console.log(this.emailstatus)
 
                 })
-                // Checks student ID availability.
             }, checkIDAvailability() {
-                const path = '/api/user/idexists'
+                const path = '/api/user/idexists';
                 this.$ajax.post(path, { studentid: this.form.studentid }, response => {
-                    this.idstatus = response.data.json_data.status
+                    this.idstatus = response.data.json_data.status;
                     console.log(this.idstatus)
 
                 })
-                // Checks if passwords match.
             }, checkPswConfirmation() {
                 this.pswstatus = (this.form.password === this.form.password_confirmation) || this.form.password === ""
-                // Log user in on success.
             }, logUserIn() {
                 const path = '/auth'
                 this.$ajax.post(path, {
@@ -142,15 +137,15 @@
                     password: "JWT is cool!!!"
                 }, response => {
                     // TODO: Implement authentication on backend work with Canvas.
-                    window.$cookies.set('token', response.data.access_token)
-                    console.log(response)
+                    window.$cookies.set('token', response.data.access_token);
+                    console.log(response);
                     this.$ajax.get('/api/user/retrieve', response => {
                         if (this.$user.set(response.data.user))
-                            this.$router.replace('/')
+                            this.$router.replace('/');
                         else
-                            console.log("Can\'t set user.")
-                    })
-                })
+                            console.log("Can\'t set user.");
+                    });
+                });
             }
         }, computed: {
             checkErrors() {

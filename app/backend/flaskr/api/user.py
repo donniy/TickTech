@@ -1,13 +1,12 @@
-from flaskr.models.ticket import *
+from flaskr.models.ticket import Ticket
 from . import apiBluePrint
 from flask_jwt_extended import jwt_required
 from flaskr.jwt_wrapper import get_current_user
-from flaskr import Iresponse
-from flask import request
-from flaskr.models.user import *
-from flaskr.utils.json_validation import *
-from flaskr.request_processing.user import *
-from sqlalchemy import and_
+from flaskr import Iresponse, database
+from flask import request, escape
+from flaskr.models.user import User
+from flaskr.request_processing.user import validate_userdata
+from flaskr.utils.json_validation import validate_json
 
 
 @apiBluePrint.route('/user/tickets')

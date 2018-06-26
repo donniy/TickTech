@@ -104,7 +104,7 @@ class Ticket(db.Model):
     def related_users(self):
         """
         Returns all users that are somehow related to this
-        ticket. That means, all TAs and the student that
+        ticket. That means, all TA's and the student that
         created this ticket.
         """
         tmp = [self.owner]
@@ -182,6 +182,7 @@ class File(db.Model):
     file_name = db.Column(db.Text, unique=False, nullable=False)
     file_id = db.Column(UUIDType(binary=False), primary_key=True)
     is_duplicate = db.Column(db.Boolean, default=False, nullable=False)
+    is_ocrable = db.Column(db.Boolean, default=False, nullable=False)
 
     @property
     def serialize(self):
@@ -192,5 +193,6 @@ class File(db.Model):
         return {
             'file_location': self.file_location,
             'file_name': self.file_name,
-            'is_duplicate': self.is_duplicate
+            'is_duplicate': self.is_duplicate,
+            'is_ocrable': self.is_ocrable
         }
