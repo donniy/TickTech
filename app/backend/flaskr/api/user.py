@@ -48,12 +48,20 @@ def retrieve_active_user_tickets(user_id):
 def unread_messages():
     """
     Retrieve all unread messages of this user.
+    If in the url the param course_id is specified
+    only the unread messages with a course_id matching
+    the specified course_id will be returned.
     """
+    specified_course = request.args.get('course_id')
     current_identity = get_current_user()
     tmp = {}
     unread = current_identity.unread
     for msg in unread:
         if str(msg.ticket_id) not in tmp:
+            if specified_course is not None:
+                tick = Ticket.query.filter_by(id=msg.ticket_id).first()
+                if str(tick.course_id) != str(specified_course):
+                    continue
             ticket_id = str(msg.ticket_id)
             tmp[ticket_id] = {'ticket': msg.ticket.serialize, 'n': 0}
             if current_identity in msg.ticket.bound_tas:
@@ -61,7 +69,6 @@ def unread_messages():
             else:
                 tmp[ticket_id]['ta'] = False
         tmp[ticket_id]['n'] += 1
-
     return Iresponse.create_response(tmp, 200)
 
 

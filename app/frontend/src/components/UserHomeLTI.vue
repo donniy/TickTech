@@ -143,10 +143,13 @@ export default {
 
         // Retrieve notifications.
         getTodos() {
-            this.$ajax.get('/api/user/notifications', response => {
-                console.log(response.data.json_data)
-                this.notifications = response.data.json_data
-            })
+            this.$ajax.get(
+                '/api/user/notifications?course_id='
+                    + this.lti_course_id,
+                response => {
+                    console.log(response.data.json_data)
+                    this.notifications = response.data.json_data
+                })
         },
 
         /* Gets the current lti course from the user object,
