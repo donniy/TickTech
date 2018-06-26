@@ -130,14 +130,13 @@ def findUser(body, sender, address):
             if studentid is not None:
                 return studentid
 
-    # Try and find a student id in the email body.
-    # > old student ids are 6 digits long, new ones are 8.
+    # Parse for studentd ids: Old student ids are 6 digits long, new ones are 8.
     body = body.split()
     for words in body:
         if words.isdigit() and len(words) > 6 and len(words) < 9:
             return int(words)
 
-        # DIT WERKT NOG NIET?
+        # TODO: DIT WERKT NOG NIET?
         #   File "/TickTech/app/backend/flaskr/utils/notifications.py", line 68, in notify
         #     'user_id':  user.id,
         # AttributeError: 'NoneType' object has no attribute 'id'
@@ -161,7 +160,7 @@ def retrieveLabels(courseid):
     return labels
 
 
-# TODO: Labels wordt weer many to many in de backend, dus dit moet weer aangepast worden.
+# TODO: Labels wordt weer many to many in de backend via Ravi, dus dit moet weer aangepast worden straks.
 def findLabel(body, labels):
     '''
     Parse the body for words that might be labels (simplified, accepting first found).
@@ -177,6 +176,22 @@ def findLabel(body, labels):
 
     return ''
 
+def createReply(subject, body, files, sender, address, courseid):
+    '''
+    Create a reply to a ticket from the acquired information from an email.
+    '''
+    # TODO: Finish this functione.
+    # # Find original ticket with subject / meta data? 
+    
+    # # Create a new reply.
+    # newmessage = {}
+
+    # # Add the reply to the database.
+    # result = requests.post(SOMETHING, json=newmessage)
+
+    # if (result.status_code != 201):
+    # replyErrorMail()
+
 
 def createTicket(subject, body, files, sender, address, courseid):
     '''
@@ -191,10 +206,18 @@ def createTicket(subject, body, files, sender, address, courseid):
         print("SENDING ERROR")
         print(subject, address, body)
         message = ticketErrorEmail(subject, address, body)
-        print("BLA BLA ")
         res = Mail().send(message)
         res = res  # for flake8
         return
+
+    #   # TODO: Check if an email is a reply or a new email.
+    #     # if "Re: " in subject:
+    #     # Check the body for meta data? Ticket id in titel/body?
+    #     # Check if user corresponds with original ticket
+    #     createReply(subject, body, files, sender, address, courseid)
+    #     else
+    #         replyErrorMail(title, recipients, TODO TICKETID, body)
+    #     return
 
     # Get all labels available for this course.
     labels = retrieveLabels(courseid)
@@ -213,7 +236,7 @@ def createTicket(subject, body, files, sender, address, courseid):
         'labelid': labelid
     }
 
-    # Add attachments to tickets (works for img & text - STEPHAN??)
+    # Add attachments to tickets.
     attachments = {}
     for name, bytes in files:
         attachments[name] = base64.b64encode(bytes).decode("utf-8")
@@ -225,6 +248,7 @@ def createTicket(subject, body, files, sender, address, courseid):
         json=newticket)
 
     if (result.status_code != 201):
+        #ticketErrorEmail()
         print("Something went wrong creating a new ticket from an email.")
         print("******")
         print("Sender: " + str(sender) + "\nStudentid: " +
@@ -233,23 +257,12 @@ def createTicket(subject, body, files, sender, address, courseid):
         print("Course ID: ", courseid)
         print("Label ID: ", labelid)
         print("Body: " + body)
-    # sendReplyMail(address,
-    #               "Dear " + sender + ", \n
-    #               "We have received your email and ")
+
     # TODO: Send confirmation email.
-
-
-#    @app.route("/")
-# def sendReplyMail(receiver, message):
-#     '''
-#     Basic email reply for confirming a question has been received through email,
-#     and created into a ticket, or to tell them there was an issue with the email.
-#     '''
-
-#     msg = Message("TEST" + message + "TEST",
-#                   recipients=["uvapsetest@gmail.com"])
-#     mail.send(msg)
-
+    # createdTicketEmail(subject, address, TODO TICKETID, body)
+    # res = Mail().send(message)
+    # res = res  # for flake8
+    # return
 
 def checkMail(host, port, user, password, courseid, debug=0):
     '''
