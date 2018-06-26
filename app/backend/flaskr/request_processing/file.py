@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_hashfs import FlaskHashFS
 from os.path import expanduser
+from flaskr.models.ticket import File
 import os
 import uuid
 import io
