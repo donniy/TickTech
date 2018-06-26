@@ -16,7 +16,24 @@
                         <div class="row">
                             <md-table v-model="searched" md-sort="name" md-sort-order="asc" md-card md-fixed-header class="white">
                                 <md-table-toolbar class="red">
-                                    <h1 class="md-title">Tickets</h1>
+
+                                    <div class="col-lg-3 col-md-3 text-center">
+                                        <select class="form-control custom-select" v-model="label_filter">
+                                            <option>Any label</option>
+                                            <option v-for="option in labels">{{option.label_name}}</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-lg-3 col-md-3 text-center">
+                                        <select class="form-control custom-select" v-model="status_filter">
+                                            <option>Any status</option>
+                                            <option>Unassigned</option>
+                                            <option>Closed</option>
+                                            <option>Assigned but waiting for reply</option>
+                                            <option>Receiving help</option>
+                                        </select>
+                                    </div>
+
                                     <md-field md-clearable class="md-toolbar-section-end">
                                         <label for="searchField">Search by title...</label>
                                         <md-input id="searchField" v-model="search" @input="searchOnTable" style="color = white; background-color = white;" />
@@ -31,6 +48,7 @@
                                 <md-table-row md-delay="1000" slot="md-table-row" slot-scope="{ item }" class="tickettable" v-on:click="navTicket(item.id)"
                                     v-on:mouseover="showTicket(item.id)" v-bind:class="{'md-table-cell':true, 'activated':(item.id === ticketSum)}">
                                     <md-table-cell md-label="Title" md-sort-by="title" md-numeric>{{ item.title }}</md-table-cell>
+                                    <md-table-cell md-label="Label" md-sort-by="label.label_name" md-numeric>{{ item.label.label_name }}</md-table-cell>
                                     <md-table-cell md-label="Name" md-sort-by="user_id">{{ item.user_id }}</md-table-cell>
                                     <md-table-cell md-label="Status" md-sort-by="status.name">{{ item.status.name }}</md-table-cell>
                                     <md-table-cell md-label="Time" md-sort-by="timestamp">{{ item.timestamp | moment("DD/MM/YY HH:mm")}}</md-table-cell>
@@ -103,8 +121,8 @@
                 labels: [],
                 showSum: false,
                 status: 'not set',
-                label_filter: 'All',
-                status_filter: 'All',
+                label_filter: 'Any label',
+                status_filter: 'Any status',
                 sort_filter: "Most Recent",
                 showEmailModal: false,
                 email_running: false,
@@ -243,13 +261,11 @@
                 this.wantsToAddUsers = false
                 this.wantsToAddTa = this.wantsToAddTa === false
             },
-            sort_tickets(val) {
-                if (val == "Most Recent")
-                    this.tickets.sort((a, b) => a.timestamp > b.timestamp)
-                else if (val == "Least Recent")
-                    this.tickets.sort((a, b) => a.timestamp < b.timestamp)
-                else if (val == "Created by")
-                    this.tickets.sort((a, b) => a.user_id > b.user_id)
+            filter_tickets() {
+                this.searched = this.tickets.filter(ticket => {
+                                    return (ticket.label.label_name == this.label_filter || this.label_filter == "Any label")
+                                    && (ticket.status.name == this.status_filter || this.status_filter == "Any status")
+                })
             }
         },
         mounted: function () {
@@ -274,8 +290,11 @@
             showEmailModal: function () {
                 this.emailRunning()
             },
-            sort_filter: function (val) {
-                this.sort_tickets(val)
+            label_filter: function() {
+                this.filter_tickets()
+            },
+            status_filter: function() {
+                this.filter_tickets()
             }
         }
     }
