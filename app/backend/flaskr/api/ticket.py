@@ -14,8 +14,8 @@ from flaskr.request_processing import file as rp_file
 from flaskr import Iresponse
 from flaskr.utils import notifications
 from flask_mail import Mail
-from mail.Message import createEmailMessage
-from flaskr.utils import course_validation, json_validation
+from mail.Message import create_email_message
+from flaskr.utils import course_validation, json_validation, ocr
 from os.path import expanduser
 import base64
 import mimetypes
@@ -220,3 +220,22 @@ def download_file():
                                              'mimetype': fileType}, 200)
     else:
         return Iresponse.create_response("No address", 404)
+
+
+@apiBluePrint.route('/ticket/gettext', methods=["POST"])
+@jwt_required
+def get_text():
+    """ Convert an image file to text using Optical character recognition"""
+    try:
+        json_data = request.get_json()
+        if 'address' in json_data:
+            homefolder = expanduser("~")
+            base = '/serverdata/'
+            location = homefolder + base + json_data['address']
+            text = ocr.ocr_process_image(location)
+            if text:
+                return Iresponse.create_response(text, 200)
+            else:
+                return Iresponse.create_response("Bad request", 400)
+    except IOError:
+        return Iresponse.create_response("Bad request", 400)

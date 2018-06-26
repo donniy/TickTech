@@ -1,7 +1,8 @@
 from flask import Flask
 from flask_hashfs import FlaskHashFS
 from os.path import expanduser
-from flaskr.models.ticket import File
+from flaskr.models.ticket import *
+from flaskr.utils import ocr
 import os
 import uuid
 import io
@@ -18,10 +19,13 @@ def save_file(file, file_names):
 
     extension = '.' + file.filename.rsplit('.', 1)[1].lower()
     address = fs.put(file, extension=extension)
+    isOcrable = ocr.isOcrable(address.relpath)
+
     file_names.append(File(file_id=uuid.uuid4(),
                            file_location=address.relpath,
                            file_name=file.filename,
-                           is_duplicate=address.is_duplicate))
+                           is_duplicate=address.is_duplicate,
+                           is_ocrable=isOcrable))
 
     size = os.stat(expanduser("~") + '/serverdata/' + address.relpath).st_size
     if size > MAX_SIZE:
@@ -36,10 +40,13 @@ def save_file_from_mail(bytes, filename, file_names):
     file = io.BytesIO(bytes)
     extension = '.' + filename.rsplit('.', 1)[1].lower()
     address = fs.put(file, extension=extension)
+    isOcrable = ocr.isOcrable(address.relpath)
+
     file_names.append(File(file_id=uuid.uuid4(),
                            file_location=address.relpath,
                            file_name=filename,
-                           is_duplicate=address.is_duplicate))
+                           is_duplicate=address.is_duplicate,
+                           is_ocrable=isOcrable))
 
     size = os.stat(expanduser("~") + '/serverdata/' + address.relpath).st_size
     if size > MAX_SIZE:

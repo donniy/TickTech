@@ -33,3 +33,4 @@ pytest
 pycodestyle
 flask_hashfs
 pluginbase
+tesseract
