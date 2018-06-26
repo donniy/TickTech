@@ -4,7 +4,9 @@ from flaskr import database, Iresponse
 from flaskr.models.Course import Course
 from flaskr.models.user import User
 from flaskr.request_processing import courses as rp_courses
+from flaskr.auth import require_ta_rights_in_course
 from werkzeug.utils import secure_filename
+from flaskr.models import ticket
 import csv
 import os
 
@@ -25,6 +27,22 @@ def retrieve_course_tickets(course_id):
     """
     # TODO: Controleer of degene die hierheen request permissies heeft.
     return rp_courses.retrieve_course_tickets_request(course_id)
+
+
+@apiBluePrint.route('/courses/<course_id>/tickets/unassigned', methods=['GET'])
+def get_unassigned_course_tickets(course_id):
+
+    @require_ta_rights_in_course(course_id)
+    def get_unassigned_tickets_inner(curr_course, curr_user):
+        tickets = ticket.Ticket.query.filter_by(course_id=curr_course.id).all()
+        status = ticket.TicketStatus.query.filter_by(name="Unassigned").first()
+        unassign_tickets = list(filter(
+            lambda ticket: ticket.status_id == status.id, tickets))
+        print(unassign_tickets)
+        return Iresponse.create_response(
+            database.serialize_list(unassign_tickets), 200)
+
+    return get_unassigned_tickets_inner()
 
 
 @apiBluePrint.route('/courses', methods=['POST'])

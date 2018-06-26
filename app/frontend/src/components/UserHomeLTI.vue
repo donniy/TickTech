@@ -66,7 +66,8 @@
                          @click.native="$router.push('/course/' + lti_course.id)">
                     <md-ripple>
                         <md-card-content class="create-ticket-section2">
-                            <h1 style="opacity:1;">Course overview</h1>
+                          <h1 style="opacity:1;">Course overview</h1>
+                          <md-badge v-bind:md-content="this.unassigned"> </md-badge>
                         </md-card-content>
                     </md-ripple>
                 </md-card>
@@ -101,11 +102,15 @@ export default {
             isStudent: false,
             notifications: [],
             lti_course: null,
+            unassigned: 0,
         }
     },
     methods: {
+        /* Function that gets the ticket for this lti course.
+           The api call depends on the role of the user.
+         */
         getTickets() {
-            if (this.isTA) {
+            if (this.isTA || this.isTeacher) {
                 const path = '/api/ta/courses/' + this.lti_course.id + '/tickets'
                 this.$ajax.get(path).then(response => {
                     this.tickets = response.data.json_data
@@ -120,9 +125,30 @@ export default {
 					      console.log(error)
 				    })
 			  },
+
+        /* Helper function to check if course is the current lti course. */
         is_lti_course(course) {
             return this.lti_course_id === course.id
         },
+
+        /* Function that gets the unassigned tickets in this course.
+           Is used to show a badge with updates for the course overview.
+         */
+        getCourseUnassignedTickets() {
+            const path = '/api/courses/' + this.lti_course_id + '/tickets/unassigned';
+            this.$ajax.get(path).then(response => {
+                this.unassigned = response.data.json_data.length
+            })
+        },
+
+        // Retrieve notifications.
+        getTodos() {
+            this.$ajax.get('/api/user/notifications', response => {
+                console.log(response.data.json_data)
+                this.notifications = response.data.json_data
+            })
+        },
+
         /* Gets the current lti course from the user object,
            based on the lti session.
          */
@@ -132,6 +158,7 @@ export default {
             if (this.isTA) {
                 let courses_ta = this.$user.get().ta;
                 this.lti_course = courses_ta.find(this.is_lti_course);
+                this.getCourseUnassignedTickets();
             } else if (this.isStudent) {
                 let student_courses = this.$user.get().student
                 this.lti_course = student_courses.find(this.is_lti_course);
@@ -139,8 +166,13 @@ export default {
             } else if (this.isTeacher) {
                 let teacher_courses = this.$user.get().supervisor;
                 this.lti_course = teacher_courses.find(this.is_lti_course);
+                this.getCourseUnassignedTickets();
             }
         },
+
+        /* Function that determines the role of a user.
+           The ui of the site gets adapted to the role.
+         */
         determineRole() {
             let lti_data = this.$lti.data.lti_data;
             if (lti_data['tiktech_is_course_TA']) {
@@ -151,10 +183,12 @@ export default {
                 this.isTeacher = true;
             }
         },
+
         created() {
             this.determineRole()
             this.getLtiCourse();
             this.getTickets()
+            this.getTodos();
             this.status = 'created'
         }
     },
@@ -162,7 +196,6 @@ export default {
         if (!this.$user.logged_in()) {
             this.$router.push('/login')
         }
-        console.log("LTI:")
         this.created();
     },
     components: {
