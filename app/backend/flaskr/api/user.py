@@ -13,7 +13,7 @@ from flaskr.utils.json_validation import validate_json
 @jwt_required
 def retrieve_user_tickets():
     """
-    Geeft alle ticktes van gegeven user.
+    Returns all the tickets of the user.
     """
     curr_user = get_current_user()
     tickets = Ticket.query.filter_by(user_id=curr_user.id).all()
@@ -23,6 +23,10 @@ def retrieve_user_tickets():
 @apiBluePrint.route('/user/tickets/course/<course_id>', methods=['GET'])
 @jwt_required
 def get_user_ticket_for_course(course_id):
+    """
+    Function that gets all the tickets of a user in the course with
+    id: <course_id>
+    """
     curr_user = get_current_user()
     tickets = Ticket.query.filter(Ticket.user_id == curr_user.id,
                                   Ticket.course_id == course_id).all()
@@ -33,7 +37,7 @@ def get_user_ticket_for_course(course_id):
 @jwt_required
 def retrieve_active_user_tickets(user_id):
     """
-    Geeft alle ticktes van gegeven user.
+    Gets all the active tickets of a user with id: <user_id>
     """
     # TODO: Controleer of degene die hierheen request permissies heeft.
     current_identity = get_current_user()
@@ -43,17 +47,56 @@ def retrieve_active_user_tickets(user_id):
     return Iresponse.create_response(database.serialize_list(tickets), 200)
 
 
+@apiBluePrint.route('/user/getlevels', methods=["GET"])
+@jwt_required
+def retrieve_user_leveldata():
+    """
+    Geeft level en xp van ingelogde user.
+    """
+    # TODO: Controleer of degene die hierheen request permissies heeft.
+    current_identity = get_current_user()
+    user_id = current_identity.id
+    user = User.query.get(user_id)
+    response = {}
+    response['level'] = level = user.level
+    response['experience'] = user.experience
+    return Iresponse.create_response(response, 200)
+
+
+@apiBluePrint.route('/user/getsinglelevel/<user_id>', methods=["GET"])
+@jwt_required
+def retrieve_single_userlevel(user_id):
+    """
+    Geeft level van gegeven user.
+    """
+    # TODO: Controleer of degene die hierheen request permissies heeft.
+    user = User.query.get(user_id)
+    if user:
+        response = {}
+        response['level'] = level = user.level
+        return Iresponse.create_response(response, 200)
+    return Iresponse.create_response("", 400)
+
+
 @apiBluePrint.route('/user/notifications', methods=["GET"])
 @jwt_required
 def unread_messages():
     """
     Retrieve all unread messages of this user.
+    If in the url the param course_id is specified
+    only the unread messages with a course_id matching
+    the specified course_id will be returned.
     """
+    specified_course = request.args.get('course_id')
     current_identity = get_current_user()
     tmp = {}
     unread = current_identity.unread
     for msg in unread:
         if str(msg.ticket_id) not in tmp:
+            if specified_course is not None:
+                tick = Ticket.query.filter_by(id=msg.ticket_id).first()
+                if str(tick.course_id) != str(specified_course):
+                    continue
             ticket_id = str(msg.ticket_id)
             tmp[ticket_id] = {'ticket': msg.ticket.serialize, 'n': 0}
             if current_identity in msg.ticket.bound_tas:
@@ -61,7 +104,6 @@ def unread_messages():
             else:
                 tmp[ticket_id]['ta'] = False
         tmp[ticket_id]['n'] += 1
-
     return Iresponse.create_response(tmp, 200)
 
 
@@ -111,7 +153,9 @@ def register_user():
 
 @apiBluePrint.route('/user/exists', methods=["POST"])
 def user_exists():
-
+    """
+    Function that checks if a user email already exists.
+    """
     json_data = request.get_json()
     if not validate_json(json_data, ["email"]):
         return Iresponse.empty_json_request()
@@ -126,7 +170,9 @@ def user_exists():
 
 @apiBluePrint.route('/user/idexists', methods=["POST"])
 def userid_exists():
-
+    """
+    Function that checks if the id of a user already exists.
+    """
     json_data = request.get_json()
     if not validate_json(json_data, ["studentid"]):
         return Iresponse.empty_json_request()

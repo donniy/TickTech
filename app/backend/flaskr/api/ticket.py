@@ -6,7 +6,7 @@ import uuid
 import datetime
 from flask_jwt_extended import jwt_required
 from flaskr.jwt_wrapper import get_current_user
-from flask import request, escape, jsonify
+from flask import request, escape, jsonify, current_app
 from flaskr import plugins
 from flaskr.request_processing import ticket as rp_ticket
 from flaskr.request_processing import message as rp_message
@@ -15,7 +15,7 @@ from flaskr import Iresponse
 from flaskr.utils import notifications
 from flask_mail import Mail
 from mail.Message import create_email_message
-from flaskr.utils import course_validation, json_validation
+from flaskr.utils import course_validation, json_validation, ocr
 from os.path import expanduser
 import base64
 import mimetypes
@@ -59,6 +59,25 @@ def assign_ticket(ticket_id):
         return Iresponse.create_response("Error", 400)
     # TODO: Add Iresponse.
     return jsonify({'status': "success", 'message': 'ticket assigned'})
+
+@apiBluePrint.route('/ticket/<ticket_id>/help', methods=['POST', 'PATCH'])
+@jwt_required
+def help_ticket(ticket_id):
+    """ Update this with a rights check."""
+    current_identity = get_current_user()
+    try:
+        ticket = Ticket.query.get(ticket_id)
+        ticket.help
+        database.db.session.commit()
+        notifications.notify(current_identity.id,
+                             ticket,
+                             'Helping ticket',
+                             Message.NTFY_TYPE_CLOSED)
+    except Exception as e:
+        print(e)  # LOGGING
+        return Iresponse.create_response("Error", 400)
+    # TODO: Add Iresponse.
+    return jsonify({'status': "success", 'message': 'ticket helping'})
 
 @apiBluePrint.route('/ticket/<ticket_id>', methods=['GET'])
 @jwt_required
@@ -112,8 +131,9 @@ def create_message(ticket_id):
         message = create_email_message(ticket.title,
                                        [ticket.email], ticket_id,
                                        json_data['message'], user.name)
-        res = Mail().send(message)
-        res = res  # for flake8
+        if current_app.config['SEND_MAIL_ON_MESSAGE']:
+            res = Mail().send(message)
+            res = res  # for flake8
     return msg
 
 
@@ -238,3 +258,22 @@ def download_file():
                                              'mimetype': fileType}, 200)
     else:
         return Iresponse.create_response("No address", 404)
+
+
+@apiBluePrint.route('/ticket/gettext', methods=["POST"])
+@jwt_required
+def get_text():
+    """ Convert an image file to text using Optical character recognition"""
+    try:
+        json_data = request.get_json()
+        if 'address' in json_data:
+            homefolder = expanduser("~")
+            base = '/serverdata/'
+            location = homefolder + base + json_data['address']
+            text = ocr.ocr_process_image(location)
+            if text:
+                return Iresponse.create_response(text, 200)
+            else:
+                return Iresponse.create_response("Bad request", 400)
+    except IOError:
+        return Iresponse.create_response("Bad request", 400)

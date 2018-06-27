@@ -116,6 +116,13 @@ class Ticket(db.Model):
             return
         self.status_id = assign_status.id
 
+    @property
+    def help(self):
+        # id 4 is the helping status
+        help_status = TicketStatus.query.filter_by(id=4).first()
+        if help_status is None:
+            return
+        self.status_id = help_status.id
 
     @property
     def related_users(self):
@@ -145,7 +152,7 @@ class TicketStatus(db.Model):
     Pre-defined statuses:
     1.  Unassigned
     2.  Closed
-    3.  Assigned
+    3.  Assigned but waiting for reply
     4.  Receiving help
 
     Use numbers for comparison instead of text comparison

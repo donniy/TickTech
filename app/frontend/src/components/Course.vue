@@ -1,4 +1,3 @@
-<!-- Course.vue shows a single course. -->
 <template>
     <md-list-item v-on:click="pushCourse">
         <div class="md-list-item-text">

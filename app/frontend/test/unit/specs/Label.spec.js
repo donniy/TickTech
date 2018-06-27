@@ -1,14 +1,14 @@
 import { shallowMount, mount } from '@vue/test-utils'
 import Label from '../../../src/components/Label.vue'
 
-const factory = (values = {}) => {
-    return mount(Label, {
-        propsData: { ...values  },
-        methods: {
-            checkSelected: function () {return}
-        }
-    })
-}
+// const factory = (values = {}) => {
+//     return mount(Label, {
+//         propsData: { ...values  },
+//         methods: {
+//             checkSelected: function () {return}
+//         }
+//     })
+// }
 
 // describe('Label.vue', () => {
 //     it('sets the correct default data', () => {

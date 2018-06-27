@@ -1,6 +1,7 @@
 from flaskr import database, Iresponse
 from flask import escape
 import uuid
+from flaskr.request_processing import levels
 from flaskr.models.ticket import Ticket
 from flaskr.models.user import User
 from flaskr.models.Label import Label
@@ -43,6 +44,8 @@ def create_request(json_data):
 
     for ta in bound_tas:
         ticket.bound_tas.append(ta)
+        level_up = levels.add_experience(levels.EXP_FOR_ASSING, ta.id)
+        levels.notify_level_change(ta.id, None, level_up)
 
     if not database.addItemSafelyToDB(ticket):
         return Iresponse.internal_server_error()
@@ -70,7 +73,6 @@ def create_request(json_data):
 
 # TODO: Should check is the json_data is valid.
 def add_ta_to_ticket(json_data):
-    print("CALLED this")
     ticket = Ticket.query.filter_by(
         id=uuid.UUID(json_data['ticketid'])).first()
     ta = User.query.filter_by(id=json_data['taid']).first()
@@ -79,7 +81,8 @@ def add_ta_to_ticket(json_data):
     if ticket and ta:
         if ta not in ticket.bound_tas:
             ticket.bound_tas.append(ta)
-            ticket.status_id = (3, "Assigned")
+            level_up = levels.add_experience(levels.EXP_FOR_ASSING, ta.id)
+            levels.notify_level_change(ta.id, None, level_up)
         return Iresponse.create_response("Success", 200)
     return Iresponse.create_response("Failure", 400)
 
@@ -92,13 +95,15 @@ def add_ta_list_to_ticket(json_data):
     # Retrieve all users and add them to a list.
     for taid in json_data['taids']:
         ta_list.append(User.get(taid))
+        level_up = levels.add_experience(levels.EXP_FOR_ASSING, taid)
+        levels.notify_level_change(taid, None, level_up)
 
     if ticket and len(ta_list) > 0 and None not in ta_list:
         for ta in ta_list:
             ticket.bound_tas.append(ta)
             ticket.status_id = 3
         return Iresponse.create_response("Success", 200)
-    return Iresponse.create_response("No TAs found", 400)
+    return Iresponse.create_response("No Ta's found", 400)
 
 
 # TODO: CHECK IF JSON IS VALID.
@@ -108,7 +113,6 @@ def remove_ta_from_ticket(json_data):
 
     if ticket and ta:
         if ta in ticket.bound_tas:
-            print("found ta in ticket")
             ticket.bound_tas.remove(ta)
             return Iresponse.create_response("Success", 200)
     return Iresponse.create_response("Failure", 400)
@@ -117,6 +121,5 @@ def remove_ta_from_ticket(json_data):
 def get_label_tas(label):
     if label:
         tas_by_label = label.users
-        print(tas_by_label)
         return tas_by_label
     return None

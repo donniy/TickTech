@@ -1,4 +1,7 @@
-from flaskr.tests.utils import create_user, login
+from flaskr.tests.utils import (
+    create_user, login, create_course
+)
+import uuid
 
 
 def test_get_courses(client):
@@ -11,13 +14,16 @@ def test_get_courses(client):
     assert len(json_data['json_data']) > 0
 
 
-def test_get_tickets(client):
+def test_get_tickets(app, client):
     """
     Database should be empty so no tickets should be returned.
     """
-    rv = client.get('/api/courses')
-    cid = rv.get_json()['json_data'][0]['id']
-    tickets = client.get('/api/courses/{}/tickets'.format(cid))
+    user = create_user(app, 1234)
+    auth = login(client, user.id)
+    course = create_course(app, courseId=uuid.uuid4(), tas=[user])
+    tickets = client.get('/api/courses/{}/tickets'.format(course.id),
+                         headers={'Authorization': auth})
+
     assert tickets.status == '200 OK'
     print(tickets.get_json())
     assert len(tickets.get_json()['json_data']) == 0
@@ -57,21 +63,22 @@ def test_insert_ticket(app, client):
 
 
 def test_get_ticket(app, client):
-    create_user(app, 11188936)
+    user = create_user(app, 11188936)
     auth = login(client, 11188936)
-    rv = client.get('/api/courses')
-    cid = rv.get_json()['json_data'][0]['id']
+    course = create_course(app, uuid.uuid4(), tas=[user])
     rv = client.post('/api/ticket/submit', json={
         'subject': 'test ticket',
         'message': 'Test bericht',
-        'courseid': cid,
+        'courseid': course.id,
         'labelid': ''
     }, headers={
         'Authorization': auth
     })
-    rv = client.get('/api/courses')
-    cid = rv.get_json()['json_data'][0]['id']
-    tickets = client.get('/api/courses/{}/tickets'.format(cid))
+    tickets = client.get('/api/courses/{}/tickets'.format(course.id),
+                         headers={
+                             'Authorization': auth
+                         })
+
     print(tickets.get_json())
     assert len(tickets.get_json()['json_data']) == 1
     ticketid = tickets.get_json()['json_data'][0]['id']
