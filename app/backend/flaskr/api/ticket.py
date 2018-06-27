@@ -20,6 +20,7 @@ from os.path import expanduser
 import base64
 import mimetypes
 from flaskr import database
+from flaskr.auth import require_role
 
 
 @apiBluePrint.route('/ticket/<ticket_id>/close', methods=['POST', 'PATCH'])
@@ -56,7 +57,7 @@ def retrieve_single_ticket(ticket_id):
 
 
 @apiBluePrint.route('/ticket/<ticket_id>/plugins', methods=['GET'])
-@jwt_required
+@require_role(['ta', 'supervisor'])
 def retrieve_plugins(ticket_id):
     """
     List the plugins available for this ticket.
@@ -110,7 +111,7 @@ def get_ticket_messages(ticket_id):
 
 
 @apiBluePrint.route('ticket/addta', methods=['POST'])
-@jwt_required
+@require_role(['ta', 'supervisor'])
 def add_ta_to_ticket():
     json_data = request.get_json()
     if json_data:
@@ -120,7 +121,7 @@ def add_ta_to_ticket():
 
 
 @apiBluePrint.route('ticket/removeta', methods=['POST'])
-@jwt_required
+@require_role(['ta', 'supervisor'])
 def remove_ta_from_ticket():
     json_data = request.get_json()
     if json_data:
@@ -130,7 +131,7 @@ def remove_ta_from_ticket():
 
 
 @apiBluePrint.route('/ticket/submit', methods=['POST'])
-@jwt_required
+@require_role(['student'])
 def create_ticket():
     """
     Check ticket submission and add to database.
