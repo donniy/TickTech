@@ -13,9 +13,9 @@ import base64
 
 @apiBluePrint.route('/email/user/match', methods=["POST"])
 def mail_match_on_mail():
-    '''
+    """
     Try to match incomming email on email-address.
-    '''
+    """
     # Check data
     json_data = request.get_json()
     if not validate_json(json_data, ["email"]):
@@ -87,7 +87,7 @@ def create_email_ticket():
 @apiBluePrint.route('/email/<course_id>/settings', methods=['GET'])
 def retrieve_current_mail_settings(course_id):
     """
-    Geef email instelling van course.
+    Give mail settings of course.
     """
     course = Course.query.get(course_id)
     if course is None:

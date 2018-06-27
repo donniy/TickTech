@@ -68,10 +68,10 @@ def create_course():
 
 
 @apiBluePrint.route('/courses', methods=['GET'])
+def retrieve_all_courses():
     """
     Retrieve all courses from database.
     """
-def retrieve_all_courses():
     courses = Course.query.all()
     return Iresponse.create_response(database.serialize_list(courses), 200)
 
@@ -118,10 +118,10 @@ def get_course_students(course_id):
 
 
 @apiBluePrint.route('/courses/<course_id>/tas', methods=['POST'])
+def add_tas_to_course(course_id):
     """
     Add new teaching assistants to course.
     """
-def add_tas_to_course(course_id):
     if request.files == '':
         return Iresponse.empty_json_request()
     for f_id in request.files:
@@ -164,10 +164,10 @@ def read_tas_csv(filename, course_id):
 
 
 @apiBluePrint.route('/courses/<course_id>/students', methods=['POST'])
+def add_students_to_course(course_id):
     """
     Add students to course.
     """
-def add_students_to_course(course_id):
     if request.files == '':
         return Iresponse.empty_json_request()
 

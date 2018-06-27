@@ -11,7 +11,7 @@ from flaskr import database
 @apiBluePrint.route('/ta/<user_id>/tickets')
 def retrieve_tickets(user_id):
     """
-    Function that returns all the tickets of a ta.
+    Function that returns all the tickets of a teaching assistant.
     """
     user = User.query.get(user_id)
     if user is None:
@@ -28,7 +28,7 @@ def retrieve_tickets(user_id):
 def get_all_courses_for_ta(user_id):
     """
     Function that returns all the courses a user
-    is ta in.
+    is a teaching assistant in.
     """
     user = User.query.get(user_id)
     if user is None:
@@ -45,15 +45,15 @@ def get_ta_tickets_from_course_for_user(course_id):
     """
     Function that gets the tickets that are bound to
     the current user in a course. The user should have
-    ta rights in this course.
+    teaching assistant rights in this course.
     """
     @require_ta_rights_in_course(course_id)
     def get_tickets_inner(curr_course, curr_user):
         """
         Function that gets the ticket. This function is decorated.
-        The decorator checks if a jwt is valid and
-        if the user is an ta in the course. This is an inner function
-        so we have access to the course_id in the decorator.
+        The decorator checks if a jwt is valid and if the user is
+        a teaching assistant in the course. This is an inner
+        function so we have access to the course_id in the decorator.
         """
         ta_tickets = curr_user.ta_tickets
         tickets = list(filter(

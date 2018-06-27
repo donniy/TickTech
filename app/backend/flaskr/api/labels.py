@@ -69,11 +69,11 @@ def create_labels(course_id):
 
 
 @apiBluePrint.route('/labels/<label_id>/select', methods=['POST'])
+def selectLabel(label_id):
     """
     Select a label as teaching assistant to get notifications when new tickets
     are added with selected label.
     """
-def selectLabel(label_id):
     json_data = request.get_json()
 
     if not validate_json(json_data, ["user_id"]):
@@ -89,10 +89,10 @@ def selectLabel(label_id):
 
 
 @apiBluePrint.route('/labels/<label_id>/deselect', methods=['POST'])
+def deselectLabel(label_id):
     """
     Remove label selected as teaching assistant.
     """
-def deselectLabel(label_id):
     json_data = request.get_json()
 
     if not validate_json(json_data, ["user_id"]):
@@ -108,10 +108,10 @@ def deselectLabel(label_id):
 
 
 @apiBluePrint.route('/labels/<label_id>/selected', methods=['POST'])
+def labelSelected(label_id):
     """
     Return a boolean for selected labels.
     """
-def labelSelected(label_id):
     json_data = request.get_json()
 
     if not validate_json(json_data, ["user_id"]):
