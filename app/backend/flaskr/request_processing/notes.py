@@ -62,6 +62,12 @@ def create_request(jsonData):
     if message == '':
         response_body['message'] = "empty message"
 
+    if ticket_id == '':
+        response_body['ticket_id'] = "No ticket id has been supplied"
+
+    if user_id == '':
+        response_body['user_id'] = "No user id has been supplieds"
+
     ticket = Ticket.query.get(ticket_id)
     if ticket is None:
         response_body['ticket'] = "No ticket exists with this id"
