@@ -40,13 +40,6 @@ class User(db.Model):
             'email': self.email,
         }
 
-    @property
-    def checkValid(self):
-        """
-        Niet nodig.
-        """
-        pass
-
     def notify(self, notification):
         """
         Sends a message to this user in a private websocket.

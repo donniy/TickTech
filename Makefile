@@ -25,6 +25,9 @@ validate-backend:
 	python3 -m pycodestyle app/backend
 
 test-frontend:
-	npm run test --prefix app/frontend
+	. venv/bin/activate; \
+	cd app/backend/flaskr; \
+	python3 -m pytest
+	# npm run test --prefix app/frontend
 
-test: 	test-frontend test-backend validate-backend
+test: 	test-backend validate-backend
