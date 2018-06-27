@@ -24,7 +24,11 @@ ticket_files_helper = db.Table(
 class Ticket(db.Model):
 
     """
-    Een ticket.
+    This is the class that specifies the model for a ticket.
+    A ticket is created when a user has a question. The ticket
+    will then own multiple entities, like notes and messages.
+    The ticket is a container class for a question.
+
     """
     id = db.Column(UUIDType(binary=False), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -45,14 +49,6 @@ class Ticket(db.Model):
 
     label = db.relationship('Label', backref=db.backref('tickets', lazy=True))
 
-    # Dit is hoe je een relatie maakt. ticket.status geeft een TicketStatus
-    # object met de status van dit ticket. backref betekent: maak een veld
-    # 'tickets' op TicketStatus wat een lijst met alle tickets met die status
-    # teruggeeft.
-
-    # status = db.relationship(
-    #     'TicketStatus', backref=db.backref('tickets', lazy=False))
-
     bound_tas = db.relationship(
         "User", secondary=bound_tas_helper, lazy='subquery',
         backref=db.backref('ta_tickets', lazy=True)
@@ -67,16 +63,17 @@ class Ticket(db.Model):
         "File", secondary=ticket_files_helper, lazy='subquery',
         backref=db.backref('tickets', lazy=True))
 
-    # Dit is een soort toString zoals in Java, voor het gebruiken van de
-    # database in de commandline. Op die manier kan je data maken en weergeven
-    # zonder formulier.
+
     def __repr__(self):
         return '<Ticket {}>'.format(self.title)
 
     @property
     def serialize(self):
         """
-        Ticket can be unassigned, so ta_id can be None.
+        Ticket can be unassigned, so teaching assistant id can be None.
+        Transforms the object into a json object.
+        This will be used at the front-end, so dont include
+        sensitive information in the json object.
         """
         if self.ta_id is None:
             self.ta_id = "null"
@@ -110,7 +107,7 @@ class Ticket(db.Model):
 
     @property
     def assign(self):
-        # id 3 is the assigned status
+        # ID 3 is the assigned status.
         assign_status = TicketStatus.query.filter_by(id=3).first()
         if assign_status is None:
             return
@@ -128,7 +125,7 @@ class Ticket(db.Model):
     def related_users(self):
         """
         Returns all users that are somehow related to this
-        ticket. That means, all TAs and the student that
+        ticket. That means, all teaching assistants and the student that
         created this ticket.
         """
         tmp = [self.owner]
@@ -166,6 +163,11 @@ class TicketStatus(db.Model):
 
     @property
     def serialize(self):
+        """
+        Transforms the object into a json object.
+        This will be used at the front-end, so dont include
+        sensitive information in the json object.
+        """
         return {
             'id': self.id,
             'name': self.name
@@ -179,7 +181,7 @@ class TicketStatus(db.Model):
 class TicketLabel(db.Model):
 
     """
-    Label van een ticket, die in kan worden gesteld.
+    Label on a ticket.
     """
     id = db.Column(db.Integer, primary_key=True)
     ticket_id = db.Column(UUIDType(binary=False), unique=False, nullable=True)
@@ -188,6 +190,11 @@ class TicketLabel(db.Model):
 
     @property
     def serialize(self):
+        """
+        Transforms the object into a json object.
+        This will be used at the front-end, so dont include
+        sensitive information in the json object.
+        """
         return {
             'id': self.id,
             'course_id': self.course_id,
@@ -201,7 +208,7 @@ class TicketLabel(db.Model):
 
 class File(db.Model):
     """
-    Een File.
+    A File.
     """
 
     __tablename__ = 'files'
@@ -214,8 +221,9 @@ class File(db.Model):
     @property
     def serialize(self):
         """
-        Zet de message om in json. Dit is alles wat de front-end kan zien,
-        dus zorg dat er geen gevoelige info in zit.
+        Transforms the object into a json object.
+        This will be used at the front-end, so dont include
+        sensitive information in the json object.
         """
         return {
             'file_location': self.file_location,

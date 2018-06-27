@@ -95,7 +95,7 @@
 			</md-button>
 			<b-popover ref="popoverRef" target="popoverButton-sync" triggers="click blur" placement='top'>
 				<vue-tribute :options="mentionOptions" v-on:tribute-replaced="matchFound">
-					<textarea autofocus name="notefield" v-validate="'required'" v-model="noteTextArea" class="form-control" id="textAreaForNotes" style="height:200px;width:250px;" placeholder="Enter a comment"></textarea>
+					<textarea autofocus name="notefield" v-model="noteTextArea" class="form-control" id="textAreaForNotes" style="height:200px;width:250px;" placeholder="Enter a comment"></textarea>
 				</vue-tribute>
 				<button @click="addNote" class="btn btn-primary" style="margin-top:10px">Send</button>
 			</b-popover>
@@ -308,22 +308,32 @@ export default {
             })
         },
         addNote() {
-            console.log(this.noteTextArea)
-            const path = '/api/notes'
-            var noteData = {
-                "ticket_id": this.$route.params.ticket_id,
-                "user_id": this.$user.get().id,
-                "text": this.noteTextArea
+            if (this.noteTextArea.length > 0) {
+                console.log(this.noteTextArea)
+                const path = '/api/notes'
+                var noteData = {
+                    "ticket_id": this.$route.params.ticket_id,
+                    "user_id": this.$user.get().id,
+                    "text": this.noteTextArea
+                }
+                console.log("Note")
+                console.log(this.noteTextArea)
+                this.$ajax.post(path, noteData)
+                    .then(response => {
+                        this.noteTextArea = ""
+                        this.$refs.popoverRef.$emit('close')
+                        this.notes.push(response.data.json_data)
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
             }
-            console.log("Note")
-            console.log(this.noteTextArea)
+
             this.$ajax.post(path, noteData)
                 .then(response => {
                     this.noteTextArea = ""
                     this.$refs.popoverRef.$emit('close')
                     this.notes.push(response.data.json_data)
-                    // TODO: not hardcoding ta
-                    this.bind_ta_to_ticket(this.ticket.id, 11111)
                 })
                 .catch(error => {
                     console.log(error)

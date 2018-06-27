@@ -29,7 +29,7 @@
                         <input name="files" class="hidden-input" type="file" id="files" ref="files" multiple v-on:change="handleFilesUpload()" />
                     </div>
                     <div class="medium-12 small-12 cell" style="overflow-y: hidden;">
-                        <div v-for="(file, key) in files" class="file-listing" style="width: 100%; text-align: left;">{{ file.name }}
+                        <div v-for="(file, key) in files" v-bind:key="key" class="file-listing" style="width: 100%; text-align: left;">{{ file.name }}
                             <i v-on:click="removeFile( key )" class="material-icons file-remove-icon">delete_forever</i>
                             <hr class="light-stripe">
                         </div>
@@ -38,11 +38,11 @@
                     <div class="padding-left-10">
                         <p class="def-error-msg" v-show="fileTooLarge">
                             Too large a file detected
-                            </br>
+                            <br />
                         </p>
                         <p class="def-error-msg" v-show="fileTooMany">
                             Too many files detected
-                            </br>
+                            <br />
                         </p>
                     </div>
 
@@ -107,7 +107,7 @@
             }
         },
         computed: {
-            options: function (event) {
+            options: function(event) {
                 return categories.labels[form.courseid]
             }
         },
@@ -118,8 +118,8 @@
                     return
                 }
 
-                let uploadedFiles = this.$refs.files.files
-                if (uploadedFiles.length >= maxFiles) {
+                let uploadedFiles = this.$refs.files.files;
+                if (typeof uploadedFiles !== 'undefined' && uploadedFiles.length >= maxFiles) {
                     this.fileTooMany = true
                 } else {
                     this.fileTooMany = false
@@ -127,12 +127,14 @@
 
                 // Adds the uploaded file to the files array
                 let largeFileFound = false
-                for (var i = 0; i < uploadedFiles.length; i++) {
-                    if (uploadedFiles[i].size > maxFileSize) {
-                        this.fileTooLarge = true
-                        largeFileFound = true
+                if (typeof uploadedFiles !== 'undefined') {
+                    for( var i = 0; i < uploadedFiles.length; i++ ){
+                        if (uploadedFiles[i].size > maxFileSize) {
+                            this.fileTooLarge = true
+                            largeFileFound = true
+                        }
+                        this.files.push( uploadedFiles[i] );
                     }
-                    this.files.push(uploadedFiles[i])
                 }
                 if (!largeFileFound) {
                     this.fileTooLarge = false
@@ -220,22 +222,25 @@
             const pathCourses = '/api/user/student_courses'
             this.$ajax.get(pathCourses)
                 .then(response => {
-                    for (let i = 0; i < response.data.json_data.length; i++) {
-                        let dataObj = response.data.json_data[i]
-                        this.categories.courses.push(dataObj)
+                    if (typeof response.data.json_data !== 'undefined') {
+                        for (let i = 0; i < response.data.json_data.length; i++) {
+                            let dataObj = response.data.json_data[i]
+                            this.categories.courses.push(dataObj)
+                        }
                     }
+                if (typeof this.categories.courses !== 'undefined') {
                     for (let i = 0; i < this.categories.courses.length; i++) {
                         let courseid = this.categories.courses[i].id
                         let currLabelPath = pathLabels + '/' + courseid
                         this.$ajax.get(currLabelPath)
                             .then(response => {
                                 this.categories.labels[courseid] = response.data.json_data
-                                console.log("LABELS:")
                                 console.log(this.categories.labels[courseid])
                             }).catch(error => {
                                 console.log(error)
                             })
-                    }
+                      }
+                  }
 
                 }).catch(error => {
                     console.log(error)

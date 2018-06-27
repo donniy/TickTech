@@ -13,7 +13,7 @@ association_table = db.Table('association', db.Model.metadata,
 
 class User(db.Model):
     """
-    Een user.
+    A user.
     """
     __tablename__ = "user"
     id = db.Column(db.Integer, nullable=False, primary_key=True)  # student ID
@@ -24,17 +24,20 @@ class User(db.Model):
     experience = db.Column(db.Integer, nullable=False, default=1)
     level = db.Column(db.Integer, nullable=False, default=1)
 
-    # Dit is een soort toString zoals in Java, voor het gebruiken van de
-    # database in de commandline. Op die manier kan je data maken en weergeven
-    # zonder formulier.
     def __repr__(self):
+        """
+        Function that will state how the object is
+        displayed when printed to the console.
+        Like a toString() method in Java.
+        """
         return '<User {}>'.format(self.name)
 
     @property
     def serialize(self):
         """
-        Zet de user om in json. Dit is alles wat de frontend kan zien,
-        dus zorg dat er geen gevoelige info in zit.
+        Transforms the object into a json object.
+        This will be used at the front-end, so dont include
+        sensitive information in the json object.
         """
         return {
             'name': self.name,

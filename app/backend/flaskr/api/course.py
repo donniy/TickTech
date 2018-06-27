@@ -4,6 +4,8 @@ from flaskr import database, Iresponse
 from flaskr.models.Course import Course
 from flaskr.models.user import User
 from flaskr.request_processing import courses as rp_courses
+from flaskr.auth import require_role
+from flask_jwt_extended import jwt_required
 from flaskr.auth import require_ta_rights_in_course
 from werkzeug.utils import secure_filename
 from flaskr.models import ticket
@@ -12,6 +14,7 @@ import os
 
 
 @apiBluePrint.route('/courses/single/<course_id>', methods=['GET'])
+@jwt_required
 def retreive_course(course_id):
     """
     Function that returns information about a specific course.
@@ -24,11 +27,12 @@ def retreive_course(course_id):
 
 
 @apiBluePrint.route('/courses/<course_id>/tickets', methods=['GET'])
+@require_role(['supervisor', 'ta'])
 def retrieve_course_tickets(course_id):
     """
     Function that returns all tickets of a the given course.
+    TODO: Controle if user has permissions.
     """
-    # TODO: Controleer of degene die hierheen request permissies heeft.
     return rp_courses.retrieve_course_tickets_request(course_id)
 
 
@@ -55,6 +59,7 @@ def get_unassigned_course_tickets(course_id):
 
 
 @apiBluePrint.route('/courses', methods=['POST'])
+@require_role(['supervisor'])
 def create_course():
     """
     Check ticket submission and add to database.
@@ -68,7 +73,11 @@ def create_course():
 
 
 @apiBluePrint.route('/courses', methods=['GET'])
+@jwt_required
 def retrieve_all_courses():
+    """
+    Retrieve all courses from database.
+    """
     courses = Course.query.all()
     return Iresponse.create_response(database.serialize_list(courses), 200)
 
@@ -88,6 +97,7 @@ def retrieve_all_courses():
 
 
 @apiBluePrint.route('/courses/<course_id>/tas', methods=['GET'])
+@jwt_required
 def get_course_tas(course_id):
     """
     Return all the tas in a course.
@@ -100,6 +110,7 @@ def get_course_tas(course_id):
 
 
 @apiBluePrint.route('/courses/<course_id>/students', methods=['GET'])
+@require_role(['supervisor', 'ta'])
 def get_course_students(course_id):
     """
     Returns all the students in a course.
@@ -115,7 +126,11 @@ def get_course_students(course_id):
 
 
 @apiBluePrint.route('/courses/<course_id>/tas', methods=['POST'])
+@require_role(['supervisor'])
 def add_tas_to_course(course_id):
+    """
+    Add new teaching assistants to course.
+    """
     if request.files == '':
         return Iresponse.empty_json_request()
     for f_id in request.files:
@@ -130,6 +145,9 @@ def add_tas_to_course(course_id):
 
 
 def read_tas_csv(filename, course_id):
+    """
+    Add teaching assistants from uploaded file.
+    """
     f = open(filename, 'r')
     reader = csv.reader(f, delimiter=',')
     course = Course.query.get(course_id)
@@ -155,7 +173,11 @@ def read_tas_csv(filename, course_id):
 
 
 @apiBluePrint.route('/courses/<course_id>/students', methods=['POST'])
+@require_role(['supervisor'])
 def add_students_to_course(course_id):
+    """
+    Add students to course.
+    """
     if request.files == '':
         return Iresponse.empty_json_request()
 
