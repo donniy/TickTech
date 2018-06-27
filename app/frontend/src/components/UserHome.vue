@@ -83,14 +83,14 @@
         methods: {
             // Retrieve tickets.
             getTickets() {
-				        this.status = 'getting ticket'
-				        const path = '/api/user/tickets'
-				        this.$ajax.get(path).then(response => {
-					          this.tickets = response.data.json_data
-				        }).catch(error => {
-					          console.log(error)
-				        })
-			      },
+                        this.status = 'getting ticket'
+                        const path = '/api/user/tickets'
+                        this.$ajax.get(path).then(response => {
+                              this.tickets = response.data.json_data
+                        }).catch(error => {
+                              console.log(error)
+                        })
+                  },
             getCourses() {
                 this.ta_courses = this.$user.get().ta
                 if (this.ta_courses && this.ta_courses.length > 0) {
