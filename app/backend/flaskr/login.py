@@ -7,7 +7,7 @@ jwt = None
 
 def authenticate(username, password):
     """
-    Check if the login credentials in post are 
+    Check if the login credentials in post are
     in line with Canvas requirements
     """
     usr = user.User.query.filter_by(id=username).first()
