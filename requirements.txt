@@ -25,7 +25,6 @@ Jinja2==2.10
 MarkupSafe==1.0
 more-itertools==4.2.0
 numpy==1.14.5
-oauth2==1.5.211
 opencv-python==3.4.1.15
 Pillow==5.1.0
 pluggy==0.6.0
@@ -46,3 +45,12 @@ tesseract==0.1.3
 urllib3==1.22
 Werkzeug==0.14.1
 WTForms==2.2
+git+https://github.com/i-kiwamu/python3-oauth2.git
+requests==2.18.4
+html2text==2018.1.9
+Flask-JWT-Extended==3.10.0
+pytest
+pycodestyle
+flask_hashfs
+pluginbase
+
