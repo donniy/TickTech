@@ -28,9 +28,8 @@ def remove_label(label_id):
 def retrieve_labels(course_id):
     """
     Returns all labels of given course.
+    TODO: Controle if user has permissions.
     """
-    print("Getting label. ")
-    # TODO: Controleer of degene die hierheen request permissies heeft.
     course = Course.query.get(course_id)
     if course is None:
         return Iresponse.create_response("", 404)
@@ -43,7 +42,6 @@ def create_labels(course_id):
     """
     Adds a label to a course.
     """
-
     data = request.get_json()
     if data is None:
         return Iresponse.create_response("", 404)
@@ -71,6 +69,10 @@ def create_labels(course_id):
 
 
 @apiBluePrint.route('/labels/<label_id>/select', methods=['POST'])
+    """
+    Select a label as teaching assistant to get notifications when new tickets
+    are added with selected label.
+    """
 def selectLabel(label_id):
     json_data = request.get_json()
 
@@ -87,6 +89,9 @@ def selectLabel(label_id):
 
 
 @apiBluePrint.route('/labels/<label_id>/deselect', methods=['POST'])
+    """
+    Remove label selected as teaching assistant.
+    """
 def deselectLabel(label_id):
     json_data = request.get_json()
 
@@ -103,6 +108,9 @@ def deselectLabel(label_id):
 
 
 @apiBluePrint.route('/labels/<label_id>/selected', methods=['POST'])
+    """
+    Return a boolean for selected labels.
+    """
 def labelSelected(label_id):
     json_data = request.get_json()
 
