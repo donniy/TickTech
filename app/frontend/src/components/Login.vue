@@ -83,7 +83,12 @@ import Router from 'vue-router';
             this.path = this.$route.query.test
             console.log(this.path)
             if (this.$user.logged_in()) {
-                this.$router.back()
+                if (this.path){
+                    this.$router.push('/student/ticket/' + this.path);
+                }
+                else{                    
+                    this.$router.back()
+                }
             } else {
                 window.$cookies.remove('token')
                 window.$cookies.remove('user')
