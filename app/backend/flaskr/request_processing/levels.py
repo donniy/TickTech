@@ -5,6 +5,7 @@ from flaskr.models.Message import Message
 from flaskr.models.ticket import Ticket
 from flaskr.models.Course import Course
 from flaskr.utils import notifications
+import datetime
 
 
 EXP_FOR_ASSING = 20
@@ -41,6 +42,10 @@ def xp_to_level(xp):
 
 def add_experience(experience, user_id):
     user = User.query.get(user_id)
+    weekno = datetime.datetime.today().weekday()
+
+    if weekno >= 5:
+        experience *= 2
 
     if not user:
         return None

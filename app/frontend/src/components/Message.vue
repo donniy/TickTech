@@ -6,7 +6,7 @@
                 />
                 <md-card class="media-body">
                     <md-card-header>
-                        <h5 class="md-title message-sender">{{username}} - {{rank}}</h5>
+                        <h5 class="md-title message-sender">{{username}} <p class="ranktext">{{rank}}</p></h5>
                     </md-card-header>
 
                     <md-card-content>
@@ -25,7 +25,7 @@
                 {{username}} closed this ticket
             </div>
         </template>
-        <template v-else-if="message.type != 7 && message.type != 6">
+        <template v-else-if="message.type == 4 || message.type == 5">
             <div class="md-subhead">
                 <p class="center-display">{{username}} {{message.text}}</p>
             </div>
@@ -46,7 +46,6 @@ export default {
             if (this.user) {
                 return this.user.id == this.message.user_id ? 'You' : this.message.user_name
             } else {
-
                 return 'unknown'
             }
         },
@@ -63,7 +62,7 @@ export default {
                 } else if (this.level < 23) {
                     return "Advanced'st TA (" + this.level + ")"
                 } else if (this.level < 28) {
-                    return "Advanced'st've(" + this.level + ")"
+                    return "Advanced'st've TA (" + this.level + ")"
                 } else if (this.level < 30) {
                     return "Powerfull TA (" + this.level + ")"
                 } else if (this.level < 38) {
@@ -96,7 +95,7 @@ export default {
     },
     methods: {
         getLevel() {
-            const path = '/api/user/getsinglelevel/' + this.user.id
+            const path = '/api/user/getsinglelevel/' + this.message.user_id
 			this.$ajax.get(path).then(response => {
 				this.level = response.data.json_data['level']
                 console.log(this.level)

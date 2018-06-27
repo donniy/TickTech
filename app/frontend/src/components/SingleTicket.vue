@@ -5,7 +5,7 @@
 	</div>
 	<div class="md-layout md-gutter">
 
-		<div class="md-layout-item md-size-65 md-small-size-100">
+		<div class="md-layout-item md-size-70 md-small-size-60">
 			<div class="md-gutter">
 				<div class="md-size-20">
 					<router-link :to="'/course/' + ticket.course_id " class="btn btn-primary">&laquo; Back to course</router-link>
@@ -24,8 +24,27 @@
             </md-dialog>
 			<md-card class="md-layout">
 				<md-card-content class="md-layout-item md-size-100">
+					<div>
+			            <md-speed-dial md-event="click" class="close-button" md-direction="bottom">
+			                <md-speed-dial-target>
+			                    <md-icon class="md-morph-initial">more_vert</md-icon>
+			                    <md-icon class="md-morph-final">close</md-icon>
+			                </md-speed-dial-target>
+			                <md-speed-dial-content>
+			                    <md-button class="md-icon-button md-raised md-accent" @click="showModal = true">
+			                        <md-icon>lock</md-icon>
+			                        <md-tooltip md-direction="left">Close ticket</md-tooltip>
+			                    </md-button>
+			                    <md-button class="md-icon-button md-raised md-accent" @click="">
+			                        <md-icon>delete</md-icon>
+			                        <md-tooltip md-direction="left">Delete ticket</md-tooltip>
+			                    </md-button>
+			                </md-speed-dial-content>
+			            </md-speed-dial>
+			        </div>
 					<h4>Subject: {{ticket.title}}</h4>
-					<p>Status: {{ticket.status.name}}</p>
+					Response email: <b>{{ticket.email}}</b><br/>
+					Status: {{ticket.status.name}}<br/>
 					TAs:
 					<b v-for="ta in ticket.tas" v-bind:key="ta.id" v-bind:ta="ta">
             {{ ta.name}}
@@ -48,7 +67,7 @@
 			<md-card class="md-layout-item message-container">
 				<div>
 					<md-card-content>
-						<message v-bind:user="{id: message.user_id}" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
+						<message v-bind:user="{id: user_id}" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
 					</md-card-content>
 				</div>
 			</md-card>
@@ -67,7 +86,7 @@
 				</div>
 			</md-card>
 		</div>
-		<div class="md-layout-item md-size-30 md-medium-size-50">
+		<div class="md-layout-item md-size-30 md-small-size-40">
 			<h3 class="note-title">Notes</h3>
 			<note v-for="note in notes" v-bind:key="note.id" v-bind:note="note"></note>
 
@@ -109,24 +128,7 @@
 				</md-list>
 			</md-content>
 		</div>
-        <div class="md-layout-item md-size-5">
-            <md-speed-dial md-event="click" class="close-button" md-direction="bottom">
-                <md-speed-dial-target>
-                    <md-icon class="md-morph-initial">more_vert</md-icon>
-                    <md-icon class="md-morph-final">close</md-icon>
-                </md-speed-dial-target>
-                <md-speed-dial-content>
-                    <md-button class="md-icon-button md-raised md-accent" @click="showModal = true">
-                        <md-icon>lock</md-icon>
-                        <md-tooltip md-direction="left">Close ticket</md-tooltip>
-                    </md-button>
-                    <md-button class="md-icon-button md-raised md-accent" @click="">
-                        <md-icon>delete</md-icon>
-                        <md-tooltip md-direction="left">Delete ticket</md-tooltip>
-                    </md-button>
-                </md-speed-dial-content>
-            </md-speed-dial>
-        </div>
+
 	</div>
 </div>
 </template>

@@ -969,6 +969,11 @@ hr {
     background-color: darken(white, 5%);
 }
 
+.ranktext {
+    font-size: 0.5em;
+    color: $text-color-lighter;
+}
+
 .loading {
   position: fixed;
   z-index: 999;
