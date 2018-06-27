@@ -14,12 +14,14 @@ from flaskr.request_processing import file as rp_file
 from flaskr import Iresponse
 from flaskr.utils import notifications
 from flask_mail import Mail
-from mail.Message import create_email_message
+from mail.Message import createEmailMessage
 from flaskr.utils import course_validation, json_validation, ocr
 from os.path import expanduser
 import base64
 import mimetypes
 from flaskr import database
+from threading import Thread
+from flask import current_app
 from flaskr.auth import require_role
 
 
@@ -44,46 +46,6 @@ def close_ticket(ticket_id):
         return Iresponse.create_response("Error", 400)
     # TODO: Add Iresponse.
     return jsonify({'status': "success", 'message': 'ticket closed'})
-
-
-@apiBluePrint.route('/ticket/<ticket_id>/assign', methods=['POST', 'PATCH'])
-@jwt_required
-def assign_ticket(ticket_id):
-    """ Update this with a rights check."""
-    current_identity = get_current_user()
-    try:
-        ticket = Ticket.query.get(ticket_id)
-        ticket.assign
-        database.db.session.commit()
-        notifications.notify(current_identity.id,
-                             ticket,
-                             'Assigned ticket',
-                             Message.NTFY_TYPE_CLOSED)
-    except Exception as e:
-        print(e)  # LOGGING
-        return Iresponse.create_response("Error", 400)
-    # TODO: Add Iresponse.
-    return jsonify({'status': "success", 'message': 'ticket assigned'})
-
-
-@apiBluePrint.route('/ticket/<ticket_id>/help', methods=['POST', 'PATCH'])
-@jwt_required
-def help_ticket(ticket_id):
-    """ Update this with a rights check."""
-    current_identity = get_current_user()
-    try:
-        ticket = Ticket.query.get(ticket_id)
-        ticket.help
-        database.db.session.commit()
-        notifications.notify(current_identity.id,
-                             ticket,
-                             'Helping ticket',
-                             Message.NTFY_TYPE_CLOSED)
-    except Exception as e:
-        print(e)  # LOGGING
-        return Iresponse.create_response("Error", 400)
-    # TODO: Add Iresponse.
-    return jsonify({'status': "success", 'message': 'ticket helping'})
 
 
 @apiBluePrint.route('/ticket/<ticket_id>', methods=['GET'])
@@ -135,13 +97,22 @@ def create_message(ticket_id):
     user = User.query.get(userId)
 
     if(ticket.user_id != user.id):
-        message = create_email_message(ticket.title,
-                                       [ticket.email], ticket_id,
-                                       json_data['message'], user.name)
+        message = createEmailMessage(ticket.title,
+                                     [ticket.email], ticket_id,
+                                     json_data['message'], user.name)
         if current_app.config['SEND_MAIL_ON_MESSAGE']:
-            res = Mail().send(message)
-            res = res  # for flake8
+            print("send email")
+            app = current_app._get_current_object()
+            thr = Thread(target=send_async_email, args=[message, app])
+            thr.start()
     return msg
+
+
+def send_async_email(message, app):
+    with app.app_context():
+        print("SENDED EMAIL")
+        res = Mail().send(message)
+        print(res)
 
 
 @apiBluePrint.route('/ticket/<ticket_id>/messages', methods=['GET'])
@@ -270,7 +241,7 @@ def download_file():
         fileType, fileEncoding = mimetypes.guess_type(full_path)
 
         if folder and file:
-            fp = open(folder+'/'+file, 'br').read()
+            fp = open(folder + '/' + file, 'br').read()
             encoded = base64.b64encode(fp).decode("utf-8")
             return Iresponse.create_response({'encstring': str(encoded),
                                              'mimetype': fileType}, 200)

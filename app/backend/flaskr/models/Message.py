@@ -31,6 +31,7 @@ class Message(db.Model):
     NTFY_LVLS_UP = 5
     NTFY_LVL_DWN = 6
     NTFY_LVLS_DWN = 7
+    NTFY_ASSIGNED = 8
 
     id = db.Column(db.Integer, primary_key=True)
     ticket_id = db.Column(UUIDType(binary=False), db.ForeignKey('ticket.id'),
