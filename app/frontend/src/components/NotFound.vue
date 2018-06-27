@@ -19,7 +19,7 @@ export default {
     mounted: function () {
         if (this.$router.currentRoute.path === '/403')
             setTimeout(() => {
-                this.$router.go(-2);
+                this.$router.go(-1);
             }, this.timeout);
     }
 }
