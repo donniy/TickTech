@@ -82,6 +82,7 @@
 
 <script>
 
+
     import VeeValidate from 'vee-validate'
 
     let maxFiles = 6

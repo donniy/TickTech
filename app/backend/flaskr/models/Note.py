@@ -8,7 +8,8 @@ db = database.db
 class Note(db.Model):
 
     """
-    Een notitie.
+    This is the class that specifies the model for the Note.
+    A note is a way of communicating between TAs on a ticket.
     """
     id = db.Column(UUIDType(binary=False), primary_key=True)
 
@@ -40,12 +41,3 @@ class Note(db.Model):
             'text': self.text,
             'timestamp': self.timestamp
         }
-
-    @property
-    def checkValid(self):
-        """
-        Checks if an object is valid to insert into a database. So all
-        fields that should be set, are set. If a value is not set, throw
-        for now a ValueError().
-        """
-        pass

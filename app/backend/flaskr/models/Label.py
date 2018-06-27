@@ -25,7 +25,3 @@ class Label(db.Model):
             'label_id': self.label_id,
             'label_name': self.label_name,
         }
-
-    @property
-    def checkValid(self):
-        pass
