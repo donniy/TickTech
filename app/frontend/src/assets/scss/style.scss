@@ -886,8 +886,8 @@ hr {
 }
 
 .notification-section {
-    min-height: 50vh;
-    max-height: 50vh;
+    min-height: 35vh;
+    max-height: 35vh;
     overflow: auto;
 }
 
@@ -967,6 +967,11 @@ hr {
     color: $default-red;
     cursor: pointer;
     background-color: darken(white, 5%);
+}
+
+.ranktext {
+    font-size: 0.5em;
+    color: $text-color-lighter;
 }
 
 .loading {

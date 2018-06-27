@@ -27,6 +27,10 @@ class Message(db.Model):
     NTFY_TYPE_STATUS = 1
     NTFY_TYPE_CLOSED = 2
     NTFY_TYPE_NEW = 3
+    NTFY_LVL_UP = 4
+    NTFY_LVLS_UP = 5
+    NTFY_LVL_DWN = 6
+    NTFY_LVLS_DWN = 7
 
     id = db.Column(db.Integer, primary_key=True)
     ticket_id = db.Column(UUIDType(binary=False), db.ForeignKey('ticket.id'),
@@ -85,6 +89,14 @@ class Message(db.Model):
             return 'ClosedMessage'
         elif self.n_type == Config.NTFY_TYPE_NEW:
             return 'NewTicketMessage'
+        elif self.n_type == Config.NTFY_LVL_UP:
+            return 'LevelUpMessage'
+        elif self.n_type == Config.NTFY_LVLS_UP:
+            return 'LevelsUpMessage'
+        elif self.n_type == Config.NTFY_LVL_DWN:
+            return 'LevelDownMessage'
+        elif self.n_type == Config.NTFY_LVLS_DWN:
+            return 'LevelsDownMessage'
 
     def __eq__(self, other):
         """
