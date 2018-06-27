@@ -125,7 +125,6 @@ def requestStudentID(result):
             return studentid
 
 
-
 def findUser(body, sender, address):
     '''
     Parses a given email body in string format. Returns the student id,
@@ -317,14 +316,12 @@ def checkMail(host, port, user, password, courseid, debug=1):
         emailBytes = b"\n".join(server.retr(i + 1)[1])
         subject, body, files, sender, address = parseEmail(emailBytes)
 
-        # Check for success
         if (subject is None or body is None or sender is None):
             print("Error parsing email.")
-            print("subject", subject)
-            print("body", body)
-            print("sender", sender)
+            print("Found subject:", subject)
+            print("Found body:", body)
+            print("Found sender:", sender)
         else:
-            # Create a ticket with acquired information.
             createTicket(subject, body, files, sender, address, courseid)
 
     # Update with server, disable this when debugging.
