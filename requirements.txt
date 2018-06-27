@@ -49,8 +49,3 @@ git+https://github.com/i-kiwamu/python3-oauth2.git
 requests==2.18.4
 html2text==2018.1.9
 Flask-JWT-Extended==3.10.0
-pytest
-pycodestyle
-flask_hashfs
-pluginbase
-
