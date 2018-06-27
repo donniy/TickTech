@@ -24,7 +24,10 @@ ticket_files_helper = db.Table(
 class Ticket(db.Model):
 
     """
-    Een ticket.
+    This is the class that specifies the model for a ticket.
+    A ticket is created when a user has a question. The ticket
+    will then own multiple entities, like notes and messages.
+    The ticket is a container class for a question.
     """
     id = db.Column(UUIDType(binary=False), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -45,14 +48,6 @@ class Ticket(db.Model):
 
     label = db.relationship('Label', backref=db.backref('tickets', lazy=True))
 
-    # Dit is hoe je een relatie maakt. ticket.status geeft een TicketStatus
-    # object met de status van dit ticket. backref betekent: maak een veld
-    # 'tickets' op TicketStatus wat een lijst met alle tickets met die status
-    # teruggeeft.
-
-    # status = db.relationship(
-    #     'TicketStatus', backref=db.backref('tickets', lazy=False))
-
     bound_tas = db.relationship(
         "User", secondary=bound_tas_helper, lazy='subquery',
         backref=db.backref('ta_tickets', lazy=True)
@@ -67,9 +62,6 @@ class Ticket(db.Model):
         "File", secondary=ticket_files_helper, lazy='subquery',
         backref=db.backref('tickets', lazy=True))
 
-    # Dit is een soort toString zoals in Java, voor het gebruiken van de
-    # database in de commandline. Op die manier kan je data maken en weergeven
-    # zonder formulier.
     def __repr__(self):
         return '<Ticket {}>'.format(self.title)
 
@@ -112,7 +104,7 @@ class Ticket(db.Model):
     def related_users(self):
         """
         Returns all users that are somehow related to this
-        ticket. That means, all TAs and the student that
+        ticket. That means, all TA's and the student that
         created this ticket.
         """
         tmp = [self.owner]
@@ -131,7 +123,7 @@ class Ticket(db.Model):
 class TicketStatus(db.Model):
 
     """
-    De status van een ticket die kan worden ingesteld.
+    The status of a ticket.
 
     Pre-defined statuses:
     1.  Unassigned
@@ -163,7 +155,7 @@ class TicketStatus(db.Model):
 class TicketLabel(db.Model):
 
     """
-    Label van een ticket, die in kan worden gesteld.
+    Label of a ticket, that can be set.
     """
     id = db.Column(db.Integer, primary_key=True)
     ticket_id = db.Column(UUIDType(binary=False), unique=False, nullable=True)
@@ -178,10 +170,6 @@ class TicketLabel(db.Model):
             'name': self.name
         }
 
-    @property
-    def checkValid(self):
-        pass
-
 
 class File(db.Model):
     """
@@ -194,6 +182,7 @@ class File(db.Model):
     file_name = db.Column(db.Text, unique=False, nullable=False)
     file_id = db.Column(UUIDType(binary=False), primary_key=True)
     is_duplicate = db.Column(db.Boolean, default=False, nullable=False)
+    is_ocrable = db.Column(db.Boolean, default=False, nullable=False)
 
     @property
     def serialize(self):
@@ -204,9 +193,6 @@ class File(db.Model):
         return {
             'file_location': self.file_location,
             'file_name': self.file_name,
-            'is_duplicate': self.is_duplicate
+            'is_duplicate': self.is_duplicate,
+            'is_ocrable': self.is_ocrable
         }
-
-    @property
-    def checkValid(self):
-        pass

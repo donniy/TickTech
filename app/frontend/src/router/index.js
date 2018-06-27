@@ -41,9 +41,9 @@ const routerOptions = [
         },
     },
     {
-        path: '/ticket/submit/',
-        name: 'SubmitTicket',
-        component: 'StudentForm',
+        path: '/ticket/submit',
+        name: 'StudentFormLoader',
+        component: 'StudentFormLoader',
         meta: {
             breadcrumb: 'Create Ticket',
             pre: '/home',

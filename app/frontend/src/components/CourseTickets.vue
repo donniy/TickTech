@@ -1,4 +1,3 @@
-<!-- CourseTickets.vue shows the table with all tickets in a course. -->
 <template>
     <div class="course-container">
         <transition name="custom-classes-transition" enter-active-class="animated tada" leave-active-class="animated bounceOutRight">
@@ -16,10 +15,27 @@
                         <div class="row">
                             <md-table v-model="searched" md-sort="name" md-sort-order="asc" md-card md-fixed-header class="white">
                                 <md-table-toolbar class="red">
-                                    <h1 class="md-title">Tickets</h1>
+
+                                    <div class="col-lg-3 col-md-3 text-center">
+                                        <select class="form-control custom-select" v-model="label_filter">
+                                            <option>Any label</option>
+                                            <option v-for="option in labels">{{option.label_name}}</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-lg-3 col-md-3 text-center">
+                                        <select class="form-control custom-select" v-model="status_filter">
+                                            <option>Any status</option>
+                                            <option>Unassigned</option>
+                                            <option>Closed</option>
+                                            <option>Assigned but waiting for reply</option>
+                                            <option>Receiving help</option>
+                                        </select>
+                                    </div>
+
                                     <md-field md-clearable class="md-toolbar-section-end">
                                         <label for="searchField">Search by title...</label>
-                                        <md-input id="searchField" v-model="search" @input="searchOnTable" style="color = white; background-color = white;" />
+                                        <md-input autofocus id="searchField" v-model="search" @input="searchOnTable" style="color = white; background-color = white;" />
                                     </md-field>
                                 </md-table-toolbar>
 
@@ -31,6 +47,7 @@
                                 <md-table-row md-delay="1000" slot="md-table-row" slot-scope="{ item }" class="tickettable" v-on:click="navTicket(item.id)"
                                     v-on:mouseover="showTicket(item.id)" v-bind:class="{'md-table-cell':true, 'activated':(item.id === ticketSum)}">
                                     <md-table-cell md-label="Title" md-sort-by="title" md-numeric>{{ item.title }}</md-table-cell>
+                                    <md-table-cell md-label="Label" md-sort-by="label.label_name" md-numeric>{{ item.label.label_name }}</md-table-cell>
                                     <md-table-cell md-label="Name" md-sort-by="user_id">{{ item.user_id }}</md-table-cell>
                                     <md-table-cell md-label="Status" md-sort-by="status.name">{{ item.status.name }}</md-table-cell>
                                     <md-table-cell md-label="Time" md-sort-by="timestamp">{{ item.timestamp | moment("DD/MM/YY HH:mm")}}</md-table-cell>
@@ -42,25 +59,15 @@
                     </div>
                 </div>
                 <div class="row">
-                    <p>
-                        <b-button class="btn note-add-button btn btn-primary" button v-on:click="pushLocation('/course/' + $route.params.course_id + '/labels')">Course labels</b-button>
-                    </p>
-                    <!-- Only way to know if email servers is running is by which button is displayed. Is this enough? -->
-                    <p v-if="email_running">
-                        <b-button class="btn note-add-button btn btn-primary" @click="emailSettings" :to="''">Update email fetcher</b-button>
-                        <emodal v-if="showEmailModal" warning="Configure your email fetcher" @close="showEmailModal = false">
-                        </emodal>
-                    </p>
-                    <p v-else>
-                        <b-button class="btn note-add-button btn btn-primary" @click="emailSettings" :to="''">Configure email fetcher</b-button>
-                        <emodal v-if="showEmailModal" warning="Configure your email fetcher" @close="showEmailModal = false">
-                        </emodal>
-                    </p>
+                    <b-button class="btn note-add-button btn btn-primary" button v-on:click="pushLocation('/course/' + $route.params.course_id + '/labels')">Course labels</b-button>
+                    <b-button v-if="isTA" class="btn note-add-button btn btn-primary">Add students</b-button>
+                    <b-button class="btn note-add-button btn btn-primary" @click="emailSettings" :to="''">Mail settings</b-button>
+                    <b-button v-if="isSupervisor" class="btn note-add-button btn btn-primary" :to="''">Add TA's</b-button>
 
-                    <!-- This can be removed? -->
-                    <!-- <b-button v-if="$user.isTa" class="btn note-add-button btn btn-primary">Add students</b-button> -->
-                    <!-- <b-button v-if="isSupervisor" class="btn note-add-button btn btn-primary" :to="''">Add TAs</b-button> -->
                 </div>
+                <p v-if="email_running">EMAIL IS RUNNING</p>
+                <emodal v-if="showEmailModal" warning="Setup a fetcher to your mailinglist." @close="showEmailModal = false">
+                </emodal>
             </div>
         </transition>
         <div v-if="false" class=s ummary-sub-container>
@@ -68,11 +75,14 @@
                 v-bind:ticket="ticket" class="singleTicket">
             </summodal>
         </div>
+        <p v-if="email_running">EMAIL IS RUNNING</p>
+        <emodal v-if="showEmailModal" warning="Setup a fetcher to your mailinglist." @close="showEmailModal = false">
+        </emodal>
+        <addusers v-if="wantsToAddUsers" v-bind:title="'Add students to this course'" v-bind:label_message="'Students:'" v-bind:api_path="this.addStudentsPath">
 
-        <!-- This can be removed? -->
-        <!-- <addusers v-if="wantsToAddUsers" v-bind:title="'Add students to this course'" v-bind:label_message="'Students:'" v-bind:api_path="this.addStudentsPath"></addusers>
+        </addusers>
         <addusers v-if="wantsToAddTa" v-bind:title="'Add TAs to this course'" v-bind:label_message="'TAs:'" v-bind:api_path="this.addTasPath">
-        </addusers> -->
+        </addusers>
     </div>
 </template>
 
@@ -103,8 +113,8 @@
                 labels: [],
                 showSum: false,
                 status: 'not set',
-                label_filter: 'All',
-                status_filter: 'All',
+                label_filter: 'Any label',
+                status_filter: 'Any status',
                 sort_filter: "Most Recent",
                 showEmailModal: false,
                 email_running: false,
@@ -142,6 +152,7 @@
                         this.tickets = response.data.json_data
                         this.searched = this.tickets
                         this.status = 'Retrieved data'
+                        console.log(response.data.json_data)
                         console.log(response)
                     })
                     .catch(error => {
@@ -177,7 +188,7 @@
                 this.status = 'created'
                 this.getCourseInfo()
                 this.getTickets()
-                // this.getLabels()
+                this.getLabels()
             },
             emailRunning: function () {
                 // Get the current email settings from server
@@ -202,7 +213,7 @@
              * in a v-if statement.
              */
             checkIfSupervisor() {
-                let supervisors = this.course.supervisors
+                let supervisors = this.course.supervisors;
                 let userid = this.$user.get().id
                 let matches = supervisors.filter(supervisor => supervisor.id === userid)
                 this.isSupervisor = matches.length === 1
@@ -216,7 +227,7 @@
                         console.log("COURSE")
                         console.log(response.data.json_data)
                         window.$current_course_id = this.course.id
-                        this.status = 'Retrieved data.'
+                        this.status = 'Retrieved data'
                         this.addStudentsPath = '/api/courses/' + this.course.id + '/students'
                         this.addTasPath = '/api/courses/' + this.course.id + '/tas'
                         this.checkIfSupervisor()
@@ -242,20 +253,18 @@
                 this.wantsToAddUsers = false
                 this.wantsToAddTa = this.wantsToAddTa === false
             },
-            sort_tickets(val) {
-                if (val == "Most Recent")
-                    this.tickets.sort((a, b) => a.timestamp > b.timestamp)
-                else if (val == "Least Recent")
-                    this.tickets.sort((a, b) => a.timestamp < b.timestamp)
-                else if (val == "Created by")
-                    this.tickets.sort((a, b) => a.user_id > b.user_id)
+            filter_tickets() {
+                this.searched = this.tickets.filter(ticket => {
+                                    return (ticket.label.label_name == this.label_filter || this.label_filter == "Any label")
+                                    && (ticket.status.name == this.status_filter || this.status_filter == "Any status")
+                })
             }
         },
         mounted: function () {
             if (!this.$user.logged_in()) {
                 this.$router.push('/login')
             }
-            this.created()
+            this.created();
         },
         beforemount() {
             this.searched = this.tickets
@@ -273,8 +282,11 @@
             showEmailModal: function () {
                 this.emailRunning()
             },
-            sort_filter: function (val) {
-                this.sort_tickets(val)
+            label_filter: function() {
+                this.filter_tickets()
+            },
+            status_filter: function() {
+                this.filter_tickets()
             }
         }
     }

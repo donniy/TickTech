@@ -6,7 +6,7 @@ import uuid
 import datetime
 from flask_jwt_extended import jwt_required
 from flaskr.jwt_wrapper import get_current_user
-from flask import request, escape, jsonify
+from flask import request, escape, jsonify, current_app
 from flaskr import plugins
 from flaskr.request_processing import ticket as rp_ticket
 from flaskr.request_processing import message as rp_message
@@ -15,11 +15,12 @@ from flaskr import Iresponse
 from flaskr.utils import notifications
 from flask_mail import Mail
 from mail.Message import create_email_message
-from flaskr.utils import course_validation, json_validation
+from flaskr.utils import course_validation, json_validation, ocr
 from os.path import expanduser
 import base64
 import mimetypes
 from flaskr import database
+from flaskr.auth import require_role
 
 
 @apiBluePrint.route('/ticket/<ticket_id>/close', methods=['POST', 'PATCH'])
@@ -56,7 +57,7 @@ def retrieve_single_ticket(ticket_id):
 
 
 @apiBluePrint.route('/ticket/<ticket_id>/plugins', methods=['GET'])
-@jwt_required
+@require_role(['ta', 'supervisor'])
 def retrieve_plugins(ticket_id):
     """
     List the plugins available for this ticket.
@@ -94,8 +95,9 @@ def create_message(ticket_id):
         message = create_email_message(ticket.title,
                                        [ticket.email], ticket_id,
                                        json_data['message'], user.name)
-        res = Mail().send(message)
-        res = res  # for flake8
+        if current_app.config['SEND_MAIL_ON_MESSAGE']:
+            res = Mail().send(message)
+            res = res  # for flake8
     return msg
 
 
@@ -109,7 +111,7 @@ def get_ticket_messages(ticket_id):
 
 
 @apiBluePrint.route('ticket/addta', methods=['POST'])
-@jwt_required
+@require_role(['ta', 'supervisor'])
 def add_ta_to_ticket():
     json_data = request.get_json()
     if json_data:
@@ -119,7 +121,7 @@ def add_ta_to_ticket():
 
 
 @apiBluePrint.route('ticket/removeta', methods=['POST'])
-@jwt_required
+@require_role(['ta', 'supervisor'])
 def remove_ta_from_ticket():
     json_data = request.get_json()
     if json_data:
@@ -129,7 +131,7 @@ def remove_ta_from_ticket():
 
 
 @apiBluePrint.route('/ticket/submit', methods=['POST'])
-@jwt_required
+@require_role(['student'])
 def create_ticket():
     """
     Check ticket submission and add to database.
@@ -220,3 +222,22 @@ def download_file():
                                              'mimetype': fileType}, 200)
     else:
         return Iresponse.create_response("No address", 404)
+
+
+@apiBluePrint.route('/ticket/gettext', methods=["POST"])
+@jwt_required
+def get_text():
+    """ Convert an image file to text using Optical character recognition"""
+    try:
+        json_data = request.get_json()
+        if 'address' in json_data:
+            homefolder = expanduser("~")
+            base = '/serverdata/'
+            location = homefolder + base + json_data['address']
+            text = ocr.ocr_process_image(location)
+            if text:
+                return Iresponse.create_response(text, 200)
+            else:
+                return Iresponse.create_response("Bad request", 400)
+    except IOError:
+        return Iresponse.create_response("Bad request", 400)

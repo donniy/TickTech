@@ -24,7 +24,4 @@ validate-backend:
 	. venv/bin/activate; \
 	python3 -m pycodestyle app/backend
 
-test-frontend:
-	npm run test --prefix app/frontend
-
-test: 	test-frontend test-backend validate-backend
+test: 	test-backend validate-backend
