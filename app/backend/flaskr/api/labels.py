@@ -136,7 +136,18 @@ def update_plugin(label_id, plugin_id):
     """
     Change the assignment id of this plugin for this label.
     """
-    pass
+    label = Label.query.get_or_404(label_id)
+    plugin = label.get_plugin(plugin_id)
+    if not plugin:
+        return Iresponse.create_response({"error": "plugin not found"}, 200)
+    plugin.assignment_id = request.get_json()['assignment_id']
+    try:
+        db = database.get_db()
+        db.session.commit()
+        return Iresponse.create_response({"status": "success"}, 200)
+    except Exception as e:
+        print(e)
+        return Iresponse.create_response({"status": "failure"}, 500)
 
 
 @apiBluePrint.route('/labels/<label_id>/plugins/<plugin_id>', methods=['DELETE'])
