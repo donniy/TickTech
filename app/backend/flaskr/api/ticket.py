@@ -41,6 +41,24 @@ def close_ticket(ticket_id):
     # TODO: Add Iresponse.
     return jsonify({'status': "success", 'message': 'ticket closed'})
 
+@apiBluePrint.route('/ticket/<ticket_id>/assign', methods=['POST', 'PATCH'])
+@jwt_required
+def assign_ticket(ticket_id):
+    """ Update this with a rights check."""
+    current_identity = get_current_user()
+    try:
+        ticket = Ticket.query.get(ticket_id)
+        ticket.assign
+        database.db.session.commit()
+        notifications.notify(current_identity.id,
+                             ticket,
+                             'Assigned ticket',
+                             Message.NTFY_TYPE_CLOSED)
+    except Exception as e:
+        print(e)  # LOGGING
+        return Iresponse.create_response("Error", 400)
+    # TODO: Add Iresponse.
+    return jsonify({'status': "success", 'message': 'ticket assigned'})
 
 @apiBluePrint.route('/ticket/<ticket_id>', methods=['GET'])
 @jwt_required

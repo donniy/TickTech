@@ -79,6 +79,7 @@ def add_ta_to_ticket(json_data):
     if ticket and ta:
         if ta not in ticket.bound_tas:
             ticket.bound_tas.append(ta)
+            ticket.status_id = (3, "Assigned")
         return Iresponse.create_response("Success", 200)
     return Iresponse.create_response("Failure", 400)
 
@@ -95,6 +96,7 @@ def add_ta_list_to_ticket(json_data):
     if ticket and len(ta_list) > 0 and None not in ta_list:
         for ta in ta_list:
             ticket.bound_tas.append(ta)
+            ticket.status_id = 3
         return Iresponse.create_response("Success", 200)
     return Iresponse.create_response("No TAs found", 400)
 

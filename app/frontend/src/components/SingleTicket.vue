@@ -306,11 +306,23 @@
                 this.$ajax.post(path, { 'ticketid': ticketid, 'taid': taid })
                     .then(response => {
                         console.log("Succes")
+                        this.assign_ticket()
                         this.ticket.tas[length(this.ticket.tas)] = taid
                     }).catch(error => {
                         console.log(error)
                     })
-            }
+            },
+            assign_ticket() {
+                console.log("ticket assigned")
+                const path = '/api/ticket/' + this.$route.params.ticket_id + '/assign'
+                this.$ajax.post(path)
+                    .then(response => {
+                        // TODO: Iets van een notificatie ofzo? '234 closed this ticket'? iig niet meer hardcoden "closed"
+                        console.log("ticket assigned")
+                        this.ticket.status.name = "Assigned"
+                    })
+
+            },
         },
         // This is called when the page is loaded.
         mounted: function () {
