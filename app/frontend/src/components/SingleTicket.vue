@@ -233,6 +233,7 @@ export default {
                 .then(response => {
                     this.reply = ''
                     this.getMessages()
+                    this.help_ticket()
                 })
                 .catch(error => {
                     console.log(error)
@@ -245,7 +246,7 @@ export default {
             this.$ajax.post(path)
                 .then(response => {
                     // TODO: Iets van een notificatie ofzo? '234 closed this ticket'? iig niet meer hardcoden "closed"
-                    this.ticket.status.name = "closed"
+                    this.ticket.status.name = "Closed"
                 })
 
         },
@@ -269,7 +270,6 @@ export default {
                 var blob = new Blob([byteArray], {mimetype});
                 const url = window.URL.createObjectURL(blob)
                 const link = document.createElement('a')
-
                 // Ref to the link and activate download.
                 link.href = url
                 link.setAttribute('download', name)
@@ -328,6 +328,16 @@ export default {
                         console.log(error)
                     })
             }
+
+            this.$ajax.post(path, noteData)
+                .then(response => {
+                    this.noteTextArea = ""
+                    this.$refs.popoverRef.$emit('close')
+                    this.notes.push(response.data.json_data)
+                })
+                .catch(error => {
+                    console.log(error)
+                })
         },
         /* Get the ta's in this course. Will add all the ta's to the
          * course_tas array.
@@ -374,13 +384,34 @@ export default {
         bind_ta_to_ticket(ticketid, taid) {
             const path = '/api/ticket/addta'
             console.log(ticketid, taid)
-            this.$ajax.post(path, {'ticketid': ticketid, 'taid': taid})
-            .then(response => {
-                console.log("Succes")
-                this.ticket.tas[length(this.ticket.tas)] = taid
-            }).catch(error => {
-                console.log(error)
-            })
+            this.$ajax.post(path, { 'ticketid': ticketid, 'taid': taid })
+                .then(response => {
+                    console.log("Succes")
+                    this.assign_ticket()
+                    this.ticket.tas[length(this.ticket.tas)] = taid
+                }).catch(error => {
+                    console.log(error)
+                })
+        },
+        assign_ticket() {
+            console.log("ticket assigned")
+            const path = '/api/ticket/' + this.$route.params.ticket_id + '/assign'
+            this.$ajax.post(path)
+                .then(response => {
+                    // TODO: Iets van een notificatie ofzo? '234 closed this ticket'? iig niet meer hardcoden "closed"
+                    console.log("ticket assigned")
+                    this.ticket.status.name = "Assigned"
+                })
+        },
+        help_ticket() {
+            console.log("ticket received help")
+            const path = '/api/ticket/' + this.$route.params.ticket_id + '/help'
+            this.$ajax.post(path)
+                .then(response => {
+                    // TODO: Iets van een notificatie ofzo? '234 closed this ticket'? iig niet meer hardcoden "closed"
+                    console.log("ticket received help")
+                    this.ticket.status.name = "Receiving help"
+                })
         }
     },
     mounted: function () {

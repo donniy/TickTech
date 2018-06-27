@@ -83,7 +83,6 @@ def add_ta_to_ticket(json_data):
             ticket.bound_tas.append(ta)
             level_up = levels.add_experience(levels.EXP_FOR_ASSING, ta.id)
             levels.notify_level_change(ta.id, None, level_up)
-
         return Iresponse.create_response("Success", 200)
     return Iresponse.create_response("Failure", 400)
 
@@ -102,6 +101,7 @@ def add_ta_list_to_ticket(json_data):
     if ticket and len(ta_list) > 0 and None not in ta_list:
         for ta in ta_list:
             ticket.bound_tas.append(ta)
+            ticket.status_id = 3
         return Iresponse.create_response("Success", 200)
     return Iresponse.create_response("No Ta's found", 400)
 
