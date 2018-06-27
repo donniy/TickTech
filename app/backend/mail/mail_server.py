@@ -1,4 +1,6 @@
 from email.header import decode_header
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
 import email
 import poplib
 import requests
@@ -60,8 +62,8 @@ def parseEmail(emailBytes):
     else:
         sender = sender_parsed[0][0]
 
-    # Sender is of format "Firstname Lastname <email@email.com>".
-    # Or sender is email@email.com
+    # Sender is either of the format "Firstname Lastname <email@email.com>"
+    # or just plain email@email.com.
     try:
         name = sender.split("<")
         address = name[1].split(">")
@@ -111,53 +113,55 @@ def parseBody(parsedEmail):
     return body, html, attachments, files
 
 
+def requestStudentID(result):
+    '''
+    Helper function to send json request to retrieve information from the database.
+    Returns studentid on success, None on failure.
+    '''
+    if (result.status_code == 200):
+        json = result.json()
+        if (json['json_data']['success']):
+            studentid = json['json_data']['studentid']
+            return studentid
+
+
+
 def findUser(body, sender, address):
     '''
     Parses a given email body in string format. Returns the student id,
     name and label, if possible.
     '''
-    # Create JSON to match email to user in the database.
-    # info = {'email': address}
-    # result = requests.post(
-    #     'http://localhost:5000/api/email/user/match/email',
-    #     json=info)
-    #
+    # Check if the email is in the database.
+    info = {'email': address}
+    result = requests.post(
+        'http://localhost:5000/api/email/user/match/email',
+        json=info)
+    
     # If request was succesful, try and connect mail to student id in database.
-    # if (result.status_code == 200):
-    #     json = result.json()
-    # if (json['json_data']['success']):  # ENGELS FOUT FIX HET
-    #         studentid = json['json_data']['studentid']
-    #         if studentid is not None:
-    #             return studentid
+    if (requestStudentID(result) != None):
+        return requestStudentID(result)
 
-    # Parse for studentd ids: Old student ids are 6 digits long, new ones are 8.
+    # Parse for studentd ids: Old ids are 6 digits long, new ones are 8.
     body = body.split()
     studentid = None
     for words in body:
         if words.isdigit() and len(words) > 6 and len(words) < 9:
             studentid = int(words)
 
+    # Check if the student id is in the database.
     info = {'studentid': studentid}
     result = requests.post(
         'http://localhost:5000/api/email/user/match/studentid',
         json=info)
 
-    # If request was succesful, try and connect mail to student id in database.
-    if (result.status_code == 200):
-        json = result.json()
-        if (json['json_data']['success']):  # ENGELS FOUT FIX HET
-            studentid = json['json_data']['studentid']
-            if studentid is not None:
-                return studentid
+    # Either return the student ID or None if not found.
+    return requestStudentID(result)
 
-    # Couldn't find student id with email or in body.
-    print("COULD NOT FIND STUDENT ID. :(")
-    return None
 
 
 def retrieveLabels(courseid):
     '''
-    Retrieve all available labels of a course from the server.
+    Helper function to retrieve all available labels of a course from the server.
     '''
     labels = []
     result = requests.get('http://localhost:5000/api/labels/' + courseid)
@@ -169,22 +173,33 @@ def retrieveLabels(courseid):
     return labels
 
 
-# TODO: Labels wordt weer many to many in de backend via Ravi, dus dit
-# moet weer aangepast worden straks.
+# TODO: Labels will be many to many in thebackend (Ravi), so this is outdated.
 def findLabel(body, labels):
     '''
-    Parse the body for words that might be labels (simplified, accepting first found).
+    Parse the body for words that might be labels. Using the fuzzywuzzy module,
+    a score will be calculated on the match of a substring. 
+    The best match will be returned.
     '''
-    body = body.split()
-    result = []
-
+    # Put all labels in a list.
     labelcount = len(labels)
-    for words in body:
-        for i in range(0, labelcount):
-            if words in labels[i]['label_name']:
-                return labels[i]['label_id']
+    result = []
+    for i in range(0, labelcount):
+        result.append(labels[i]['label_name'])
 
-    return ''
+    bestScore = 0
+    bestLabel = None
+
+    # Find the best match between labels and the body of the e-mail.
+    for i in range (0, labelcount):
+        currentScore = fuzz.ratio(result[i], body)
+        if (currentScore > 1):
+            if (currentScore > bestScore):
+                bestScore = currentScore
+                bestLabel = labels[i]
+
+    print("HIERR")
+    print(bestLabel['label_name'], bestLabel['label_id'])
+    return bestLabel['label_id']
 
 
 def createReply(subject, body, files, sender, address, courseid):
