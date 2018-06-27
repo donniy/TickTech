@@ -79,7 +79,7 @@ def parseEmail(emailBytes):
 
 def parseBody(parsedEmail):
     '''
-    Parses the body of an email. 
+    Parses the body of an email.
     Returns the body and optional attachments on success.
     '''
     body = ''
@@ -182,7 +182,7 @@ def findUser(body, sender, address):
     result = requests.post(
         'http://localhost:5000/api/email/user/match/email',
         json=info)
-    
+
     # If request was succesful, try and connect mail to student id in database.
     if (requestStudentID(result) != None):
         return requestStudentID(result)
@@ -294,7 +294,7 @@ def createTicket(subject, body, files, sender, address, courseid):
     # return
 
 
-def checkMail(host, port, user, password, courseid, debug=1):
+def checkMail(host, port, user, password, courseid, debug=0):
     '''
     Start a mail server and sync all emails once.
     Set debug to anything but 0 to enable debugging. This will make sure
