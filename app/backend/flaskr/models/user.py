@@ -19,9 +19,9 @@ class User(db.Model):
     id = db.Column(db.Integer, nullable=False, primary_key=True)  # student ID
     name = db.Column(db.String(120), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=False, nullable=True)
+    password = db.Column(db.String(120), unique=False, nullable=False)
     labels = db.relationship("Label", secondary=association_table,
                              backref="users")
-    password = db.Column(db.String(120), unique=False, nullable=False)
     experience = db.Column(db.Integer, nullable=False, default=1)
     level = db.Column(db.Integer, nullable=False, default=1)
 
