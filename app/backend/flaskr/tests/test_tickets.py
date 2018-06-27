@@ -37,7 +37,8 @@ def test_get_ticket(app, client):
     userId = 11188936
     usr = create_user(app, userId)
     auth = login(client, userId)
-    c = create_course(app, uuid.uuid4(), tas=[usr], students=[usr], supervisors=[usr])
+    c = create_course(app, uuid.uuid4(), tas=[usr],
+                      students=[usr], supervisors=[usr])
     rv = client.get('/api/courses',
                     headers={'Authorization': auth})
     cid = c.id
