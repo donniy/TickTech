@@ -232,8 +232,8 @@ export default {
                 })
                 .then(response => {
                     this.reply = ''
-                    this.getMessages()
-                    this.help_ticket()
+                    this.bind_ta_to_ticket(this.ticket.id, this.$user.get().id)
+					this.getMessages()
                 })
                 .catch(error => {
                     console.log(error)
@@ -316,8 +316,6 @@ export default {
                     "user_id": this.$user.get().id,
                     "text": this.noteTextArea
                 }
-                console.log("Note")
-                console.log(this.noteTextArea)
                 this.$ajax.post(path, noteData)
                     .then(response => {
                         this.noteTextArea = ""
@@ -383,36 +381,19 @@ export default {
         },
         bind_ta_to_ticket(ticketid, taid) {
             const path = '/api/ticket/addta'
-            console.log(ticketid, taid)
             this.$ajax.post(path, { 'ticketid': ticketid, 'taid': taid })
                 .then(response => {
-                    console.log("Succes")
-                    this.assign_ticket()
-                    this.ticket.tas[length(this.ticket.tas)] = taid
+                    console.log("OK",response)
+					if (response.status == 200) {
+						this.ticket.tas.push(response.data.json_data['ta'])
+						this.ticket.status.name = response.data.json_data['status']
+					} else {
+						this.ticket.status.name = "Assigned"
+					}
                 }).catch(error => {
                     console.log(error)
                 })
         },
-        assign_ticket() {
-            console.log("ticket assigned")
-            const path = '/api/ticket/' + this.$route.params.ticket_id + '/assign'
-            this.$ajax.post(path)
-                .then(response => {
-                    // TODO: Iets van een notificatie ofzo? '234 closed this ticket'? iig niet meer hardcoden "closed"
-                    console.log("ticket assigned")
-                    this.ticket.status.name = "Assigned"
-                })
-        },
-        help_ticket() {
-            console.log("ticket received help")
-            const path = '/api/ticket/' + this.$route.params.ticket_id + '/help'
-            this.$ajax.post(path)
-                .then(response => {
-                    // TODO: Iets van een notificatie ofzo? '234 closed this ticket'? iig niet meer hardcoden "closed"
-                    console.log("ticket received help")
-                    this.ticket.status.name = "Receiving help"
-                })
-        }
     },
     mounted: function () {
         if (!this.$user.logged_in()) {

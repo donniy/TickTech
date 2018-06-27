@@ -30,6 +30,11 @@
                 <p class="center-display">{{username}} {{message.text}}</p>
             </div>
         </template>
+        <template v-else-if="message.type == 8">
+            <div class="md-subhead">
+                <p class="center-display">{{username}} got assigned this ticket.</p>
+            </div>
+        </template>
     </div>
 </template>
 

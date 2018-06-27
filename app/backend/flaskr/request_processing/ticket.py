@@ -2,7 +2,7 @@ from flaskr import database, Iresponse
 from flask import escape
 import uuid
 from flaskr.request_processing import levels
-from flaskr.models.ticket import Ticket
+from flaskr.models.ticket import Ticket, TicketStatus
 from flaskr.models.user import User
 from flaskr.models.Label import Label
 from flaskr.models.Message import Message
@@ -79,31 +79,19 @@ def add_ta_to_ticket(json_data):
 
     # Check if the ta and ticket were found and add if not already there.
     if ticket and ta:
+        print("ticket:\n\n",ticket.serialize)
         if ta not in ticket.bound_tas:
             ticket.bound_tas.append(ta)
+            ticket.status_id = 4
+            print("ticket:\n\n",ticket.serialize)
+            database.db.session.commit()
             level_up = levels.add_experience(levels.EXP_FOR_ASSING, ta.id)
-            levels.notify_level_change(ta.id, None, level_up)
-        return Iresponse.create_response("Success", 200)
+            levels.notify_level_change(ta.id, ticket, level_up)
+            return Iresponse.create_response({'ta': ta.serialize,
+                                             'status': "Assigned"},
+                                             200)
+        return Iresponse.create_response({'status':"OK"}, 201)
     return Iresponse.create_response("Failure", 400)
-
-
-# TODO: CHECK IF JSON IS VALID.
-def add_ta_list_to_ticket(json_data):
-    ticket = Ticket.get(uuid.UUID(json_data['ticketid']))
-    ta_list = list()
-
-    # Retrieve all users and add them to a list.
-    for taid in json_data['taids']:
-        ta_list.append(User.get(taid))
-        level_up = levels.add_experience(levels.EXP_FOR_ASSING, taid)
-        levels.notify_level_change(taid, None, level_up)
-
-    if ticket and len(ta_list) > 0 and None not in ta_list:
-        for ta in ta_list:
-            ticket.bound_tas.append(ta)
-            ticket.status_id = 3
-        return Iresponse.create_response("Success", 200)
-    return Iresponse.create_response("No Ta's found", 400)
 
 
 # TODO: CHECK IF JSON IS VALID.
@@ -123,3 +111,10 @@ def get_label_tas(label):
         tas_by_label = label.users
         return tas_by_label
     return None
+
+
+def close_ticket(ticket):
+    if ticket:
+        ticket.status_id = 2
+        database.db.session.commit()
+        return "Closed"
