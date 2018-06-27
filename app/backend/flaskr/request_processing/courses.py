@@ -32,7 +32,7 @@ def retrieve_course_tickets_request(course_id):
     Function that handle the request that retrieves
     the tickets of a course. In order to be able
     to get the tickets, a user needs to have atleast
-    ta rights in the course.
+    teaching assistant rights in the course.
     """
 
     @require_ta_rights_in_course(course_id)
