@@ -147,7 +147,7 @@ def retrieveLabels(courseid):
 def findLabel(body, labels):
     '''
     Parse the body for words that might be labels. Using the fuzzywuzzy module,
-    a score will be calculated on the match of a substring. 
+    a score will be calculated on the match of a substring.
     The best match will be returned.
     '''
     # Put all labels in a list.

@@ -8,7 +8,7 @@ def createEmailMessage(title, recipients, ticketid, body, sender):
     message.html = (
         '<body>You got a new reply to your question from ' + sender +
         '.<br /> Check out your ' +
-        '<a href="http://localhost:5000/ticket/' + ticketid +
+        '<a href="http://localhost:5000/login?test=' + ticketid +
         '">ticket</a> at TIKTECH.<br /> ' +
         '<hr><br />' + body + '</body>'
     )
@@ -24,7 +24,7 @@ def createdTicketEmail(title, recipients, ticketid, body):
         subject="TIKTECH Confirmation:" + title + ". Ticket ID: " +  ticketid, recipients=recipients)
     message.html = ('<body> We received your e-mail and created a matching ticket on TIKTECH.' +
                     '.<br /> Check it out ' +
-                    '<a href="http://localhost:5000/ticket/' + ticketid +
+                    '<a href="http://localhost:5000/login?test=' + ticketid +
                     '">here</a>.<br /> This is an automatically generated e-mail.' +
                     'Please do not reply here. <hr><br /> Your e-mail:' + body + '</body>'
                     )
@@ -57,7 +57,7 @@ def replyErrorEmail(title, recipients, ticketid, body):
     message.html = ('<body> We received your e-mail, but encountered an' +
                     'error while processing.<br /> ' +
                     'Please resent it or visit your original' +
-                    '<a href="http://localhost:5000/ticket/' + ticketid +
+                    '<a href="http://localhost:5000/login?test=' + ticketid +
                     '">ticket</a> and reply there.<br />' +
                     'Please do not reply to this e-mail.' +
                     'Your original e-mail:' + body + '</body>'
