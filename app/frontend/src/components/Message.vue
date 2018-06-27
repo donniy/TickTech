@@ -1,50 +1,28 @@
-<!-- Message.vue shows the messages of a ticket. -->
 <template>
-    <div>
+    <div class="md-layout-item md-size-100" >
         <template v-if="message.type == 0">
             <div :class="'media message' + (user.id == message.user_id ? ' text-right pl-0 pr-1' : ' pr-0 pl-1')">
-                <img v-if="message.user_id != user.id" class="mr-3 rounded-circle" :src="'https://via.placeholder.com/64x64/FFFFFF/BC0031?text=' + username.match(/\b(\w)/g).join('')"
+                <img v-if="message.user_id != user.id" class="md-elevation-5 mr-3 rounded-circle" :src="'https://via.placeholder.com/64x64/FFFFFF/BC0031?text=' + username.match(/\b(\w)/g).join('')"
                 />
                 <md-card class="media-body">
                     <md-card-header>
                         <h5 class="md-title message-sender">{{username}}</h5>
                     </md-card-header>
-                        <md-card-content>
-                            <p class="message-text">
-                                {{message.text}}
-                            </p>
-                        </md-card-content>
 
-                        <!--<md-card-actions>
-                            <md-button>Action</md-button>
-                            <md-button>Action</md-button>
-                        </md-card-actions>-->
-                    </md-card>
-                    <!--                <div class="media-body material-card">
-                        <h5 class="mt-0 mb-1 message-sender">{{username}}</h5>
+                    <md-card-content>
                         <p class="message-text">
-                        {{message.text}}
+                            {{message.text}}
                         </p>
                     </md-card-content>
-
-                    <!--<md-card-actions>
-                        <md-button>Action</md-button>
-                        <md-button>Action</md-button>
-                    </md-card-actions>-->
                 </md-card>
-                <!--                <div class="media-body material-card">
-                    <h5 class="mt-0 mb-1 message-sender">{{username}}</h5>
-                    <p class="message-text">
-                    {{message.text}}
-                    </p>
-                </div> -->
-                <img v-if="message.user_id == user.id" class="ml-3 rounded-circle" :src="'https://via.placeholder.com/64x64/FFFFFF/BC0031?text=' + username.match(/\b(\w)/g).join('')"
+
+                <img v-if="message.user_id == user.id" class="md-elevation-5 ml-3 rounded-circle" :src="'https://via.placeholder.com/64x64/FFFFFF/BC0031?text=' + username.match(/\b(\w)/g).join('')"
                 />
             </div>
         </template>
         <template v-else-if="message.type == 2">
             <div class="notification notification-closed">
-                {{username}} closed this ticket.
+                {{username}} closed this ticket
             </div>
         </template>
         <template v-else>
@@ -68,8 +46,8 @@ export default {
             }
         },
     },
-    data: function () {
-        return {}
+    data: function() {
+        return {};
     },
     mounted: function () {
     }

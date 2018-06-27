@@ -2,9 +2,35 @@
 @import '_labels';
 @import '_mentioning';
 @import 'homescreen';
+@import "~vue-material/dist/theme/engine"; // Import the theme engine
+
+@include md-register-theme("default", (
+  primary: darken(#FFF,1%), // The primary color of your application
+  secondary: white, // The accent or secondary color
+  primary-variant: white,
+
+));
+
+@import "~vue-material/dist/theme/all"; // Apply the theme
 
 body {
     background-color: darken(#FFF, 2%);
+}
+
+// Demo fixes need to edit later
+a:hover, a:focus {
+    text-decoration: none !important;
+    background: transparent !important;
+}
+a.button{
+    color: white !important;
+}
+
+a.button:hover{
+    background-color: $default-red !important;
+}
+a.breadcrumb {
+    color: $default-red !important;
 }
 
 .navbar-spacing {
@@ -29,7 +55,7 @@ h1 {
     background-position: center center;
     height: 100vh;
     position: fixed;
-    overflow: scroll;
+    overflow: auto;
     top: 0;
     left: 0;
 }
@@ -73,16 +99,14 @@ nav {
 }
 
 .active, .nav-item:hover {
-    background-color: $default-red;
-    color: white;
+    color: $default-red;
         a{
-            color:white;
+            color:$default-red;
         }
 }
 
 .nav-link:active, .nav-link:hover {
-    background-color: $default-red;
-    color: white;
+    color: $default-red;
 }
 
 
@@ -129,6 +153,7 @@ nav {
 
 .file-name-container {
     line-height: 1.1em;
+    width: 80%;
     box-shadow: $medium-shadow;
     font-size: 1.1em;
     border-color: lighten(#bc0031, 5%);
@@ -144,15 +169,25 @@ nav {
     margin-bottom: 5px;
 }
 
+.student-ticket-wrapper{
+    margin: 0 auto !important; // Needs to happen in order to center
+    width:80%;
+}
+
 .download-icon{
     vertical-align: text-bottom;
+}
+
+.file-ocr-button {
+    width: 10%;
+    padding-bottom: 15px !important;
 }
 
 .file-listing-small {
     cursor: pointer;
     margin-bottom: 0px;
     padding-bottom: 0px;
-    padding-left: 10px;
+    float: right;
     color: $text-color-def;
 }
 .file-listing-small:hover {
@@ -173,7 +208,7 @@ nav {
     padding-left: 0px;
     width: 95%;
     color: $text-color-lighter;
-    font-size: 1px;
+    border-top: 1px solid #aaaaaa;
     margin: 2px;
 }
 
@@ -308,11 +343,6 @@ header.masthead {
         font-size: 1.4em;
     }
 
-    h7 {
-        font-size: 1.3em;
-        padding-top: 20px !important;
-        font-weight: bold;
-    }
     p {
         font-size: 1.2em;
         color: black !important;
@@ -367,7 +397,9 @@ header.masthead {
     border: none;
     background-color: inherit;
     margin: auto;
+    font-size: 1.5em;
     padding: auto;
+    color: $default-red !important;
 
     & .breadcrumb-item {
         border: none;
@@ -376,17 +408,13 @@ header.masthead {
         & > .breadcrumb-link {
             background-color: inherit;
             border: none;
-            font-size: 1.3em;
             font-weight: 600;
             transition: all 0.4s ease;
-            // transition: color 0.5s ease;
+            transition: color 0.5s ease;
+            color: $default-red !important;
 
             &:hover {
-                // background-color: #bc0031;
-                // color: whitesmoke;
-                text-decoration: none;
-                border-bottom: 3px solid;
-                border-bottom-color: var(--md-theme-default-accent);
+                color: darken($default-red, 10%);
             }
         }
     }
@@ -394,6 +422,11 @@ header.masthead {
 
 .btn {
     border-radius: 0;
+    color: white !important;
+    background-color: $default-red !important;
+}
+.btn:hover{
+    background-color: darken($default-green, 7%);
 }
 
 .btn-submit {
@@ -417,30 +450,8 @@ header.masthead {
     border-color: darken($text-color-lighter, 7%);
 }
 
-.btn-primary {
-    background-color: $default-red;
-    border-color: $default-red;
-}
-
-.btn-primary:focus,
-.btn-primary:hover {
-    background-color: darken($default-red, 5%);
-    border-color: darken($default-red, 5%);
-}
-
-.btn-primary:not(.disabled):active {
-    background-color: darken($default-red, 7%);
-    border-color: darken($default-red, 7%);
-}
-
-
 .close-button{
     float: right;
-}
-
-.middle-button{
-    // width: 10%;
-
 }
 
 .btn-primary:disabled {
@@ -464,7 +475,6 @@ header.masthead {
     overflow-x: hidden !important;
     display: block;
     box-shadow: 0 2px 4px 0 rgba(50,50,93,0.3);
-    color: $default-red;
     transition: transform 0.1s ease-in-out;
 }
 .home-scroll-courses {
@@ -531,53 +541,6 @@ div.homescreen-container {
     box-shadow: 0 2px 4px 0 rgba(50,50,93,.1);
 }
 
-.message > .md-card {
-    margin-right: unset;
-}
-
-.md-card {
-    width: 75%;
-    max-width: 75%;
-    overflow-wrap: break-word;
-    
-    & .md-card-content {
-        text-align: left;
-        max-width: inherit;
-        width: fit-content;
-    }
-
-    & .md-card.header {
-        width: fit-content;
-        margin-left: auto;
-    }
-}
-
-.box-centerh {
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.full-width {
-    width: 100%;
-    max-width: 100%;
-    min-width: 100%;
-}
-
-div.create-ticket-section2.md-card-content {
-    vertical-align: middle;
-    width: 100%;
-
-    & > p {
-        text-align: center;
-        line-height: 1em;
-        font-size: 2em;
-        letter-spacing: 0px;
-        font-weight: 600;
-        margin: 0;
-        padding: 0;
-    }
-}
-
 a.list-ticket {
     text-decoration: none;
 }
@@ -596,23 +559,49 @@ a.list-ticket:hover, a.list-ticket:focus {
     padding: 1em;
 }
 
-.message-right {
-    text-align: right;
-    margin-left: auto;
-    margin-right: auto;
+.message {
+    margin-top: 1em;
+}
+
+.message-container {
+    margin-top: 1em;
+    background-color: rgba(255,255,255,.3) !important;
+}
+
+.message-reply-container {
+    margin-top: 1em;
+    margin-bottom: 2em;
+    background-color: rgba(255,255,255,.8) !important;
+}
+
+.plugin-container {
+    margin-bottom: 2em;
+}
+
+.note-title {
+    margin-top: 1.4em;
+}
+
+.remove-note {
+    position:sticky;
+    margin-top: -10px !important;
+    margin-right: -15px !important;
+    width: 20px !important;
+    padding-left: 0px !important;
+    float: right;
+    background-color: rgba(255, 255, 255, 0);
+
+}
+.remove-note:hover {
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.5);
 }
 
 .message {
-    margin-top: 1em;
-    margin-left: auto;
-    margin-right: auto;
-
     h4 {
         color: $default-red;
         font-size: 1rem;
         font-weight: bold;
-        margin-left: 1em;
-        margin-right: 1em;
     }
 
     h5 {
@@ -638,21 +627,6 @@ a.list-ticket:hover, a.list-ticket:focus {
     }
 }
 
-.note-add-button {
-    margin: 15px 10px;
-}
-
-.create-button {
-    margin-bottom: 40px;
-    width: 20%;
-    background-color: $default-red;
-    position: absolute;
-    bottom: 0;
-}
-.create-button:hover {
-    background-color: darken($default-red, 7%);
-}
-
 .dropdown-button {
     background-color: darken(#FFF, 2%);
     width: 100%;
@@ -669,7 +643,7 @@ a.list-ticket:hover, a.list-ticket:focus {
 .reply-area {
     width: 100%;
     bottom: 1em;
-    display: block;
+    display: fixed;
     margin-top: 2em;
 }
 
@@ -684,34 +658,25 @@ a.list-ticket:hover, a.list-ticket:focus {
     }
 
     .reply-button {
-        height: 4rem;
-        margin-bottom: 20px;
-        width: 4rem;
+        height: 3rem;
+        margin-bottom: 10px;
+        width: 3rem;
         text-align: center;
-        line-height: 4rem;
+        line-height: 3rem;
         font-size: 1.5em;
         box-shadow: $light-shadow;
+
     }
 }
 
-hr {
-    border-color: $default-red;
-}
-
 .summary-container {
-
-}
-.summary-container {
-  margin: 0px auto;
   position: fixed;
-  width: 80%;
-  height: 40%;
-  bottom: 0%;
-  z-index: 1;
+  //position: relative;
+  width: 25%;
+  height: 100%;
+  top: 12%;
   -webkit-transition: opacity 0.1s ease-in-out;
-  left: 50%;
   padding-bottom: 10px;
-  margin-left: -40%;
 }
 
 .summary-header{
@@ -739,7 +704,7 @@ hr {
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
   transition: all .3s ease-out;
   font-family: Helvetica, Arial, sans-serif;
-  height: 100%;
+  height: 85%;
 }
 .summary-tab {
     position: relative;
@@ -768,27 +733,26 @@ hr {
 }
 
 .summary-tab{
-  width: 40%;
+  width: 100%;
   float: left;
 
 }
 .summary-tab-notes{
-  width: 25%;
-  float: left;
+  width: 100%;
+  height: 30%;
 }
 .summary-tab-original {
-    width: 35%;
-    float: left;
+    width: 100%;
+    height: 20%;
 }
 
-.middle {
-    border-left: 1px solid $default-red;
-    border-right: 1px solid $default-red;
+.summary-tab-middle {
+    height: 50%;
 }
 
 .summary-content {
-    height: 80%;
-    padding: 10px;
+  height: 80%;
+  padding: 10px;
   width: 100%;
   overflow: auto;
 }
@@ -816,18 +780,56 @@ hr {
     vertical-align: middle;
 }
 
+.subbox {
+    float: left;
+    width: 70%;
+    margin-left: -5%;
+    padding-left: -10%;
+}
+.summary-sub-container {
+    float: right;
+    top: 10%;
+    padding-left: 1%;
+    width: 30%;
+}
 .sum {
 
   width: auto;
   word-wrap: break-word;
 }
 
+.white {
+        background-color: #F2F2F2
+}
+
+.red {
+    background-color: $default-red;
+    color: white;
+}
 .sum-original {
 
   padding: 10px;
   word-wrap: break-word;
 }
 
+.md-table {
+    min-width: 55em;
+    max-width: 60em;
+}
+
+.tickettable:hover {
+    background-color: lightgrey !important;
+    color: black !important;
+    cursor: pointer;
+}
+
+.md-input {
+    color: white;
+}
+.activated {
+    background-color: lightgrey !important;
+    color: black !important;
+}
 footer {
     a {
         color: white !important;
@@ -864,19 +866,6 @@ hr {
    border-bottom: 1px solid #ffffff;
 }
 
-.dashboard-button {
-    background: #FFF;
-    //display: block;
-    box-shadow: 0 2px 4px 0 rgba(50,50,93,.1);
-    margin-bottom: 1em;
-    margin-right: 1em;
-    margin-left: 1em;
-    color: $default-red;
-    transition: transform 0.1s ease-in-out;
-    height: 180px;
-    width: 180px;
-}
-
 .wrapper {
     min-height: 100vh;
 }
@@ -889,6 +878,7 @@ hr {
 .center-display {
     justify-content: center;
     text-align: center;
+    text-indent: 0px;
 }
 
 .margin-top {
@@ -896,9 +886,25 @@ hr {
 }
 
 .notification-section {
-    min-height: 40vh;
-    max-height: 40vh;
+    min-height: 50vh;
+    max-height: 50vh;
     overflow: auto;
+}
+
+.ticket-single {
+    color: $text-color-def !important;
+    padding: 5px;
+    margin-right: 7px;
+    margin-left: 7px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-size: 1em;
+    border-color: darken($text-color-def, 5%);
+    border: 1px solid;
+}
+
+.ticket-single:hover {
+    opacity: 0.7;
 }
 
 .courses-section {
@@ -913,19 +919,31 @@ hr {
 }
 
 .create-ticket-section1 {
-    margin: auto;
-    // margin-top: 5vh;
     margin-top: 2vh;
-    bottom: 0;
-    width: 100%;
-    max-width: 100%;
 }
 
 .create-ticket-section2 {
-    min-height: 20vh;
+    min-height: 13vh;
+    max-height: 13vh;
     display:flex;
     align-items: center;
     justify-content: center;
+}
+
+.padding-bottom-0 {
+    padding-bottom: 0px!important;
+}
+
+.float-left {
+    float: left;
+}
+
+.padding-left-10 {
+    padding-left: 10px;
+}
+
+.material-icons:hover {
+    cursor: pointer;
 }
 
 .create-ticket-section:hover {
@@ -935,4 +953,54 @@ hr {
 .fixedlocation {
     position: fixed;
     float: right;
+}
+
+.ocrbutton {
+    width: 10%;
+    padding-bottom: 5px;
+    text-align: center;
+    float: right;
+}
+
+.ocrbutton:hover {
+    text-decoration: underline;
+    color: $default-red;
+    cursor: pointer;
+    background-color: darken(white, 5%);
+}
+
+.loading {
+  position: fixed;
+  z-index: 999;
+  height: 2em;
+  width: 2em;
+  overflow: show;
+  margin: auto;
+  visibility: hidden;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+/* Transparent Overlay */
+.loading:before {
+  content: '';
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.3);
+}
+
+/* :not(:required) hides these rules from IE9 and below */
+.loading:not(:required) {
+  /* hide "loading..." text */
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
 }

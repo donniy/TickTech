@@ -1,4 +1,3 @@
-<!-- This shows when user tried to load an nonexisting page. -->
 <template>
     <div>
         <h1 v-if="$router.currentRoute.path === '/403'">
@@ -6,7 +5,7 @@
             <br />
             You will be redirected back in {{this.timeout / 1000}} seconds.
         </h1>
-        <h1 v-else>404 - Page not found. :( </h1>
+        <h1 v-else>404 - Page not found. </h1>
     </div>
 </template>
 

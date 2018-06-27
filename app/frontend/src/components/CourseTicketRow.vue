@@ -1,5 +1,8 @@
 <template>
-    <tr v-on:mouseover="showTicket" v-on:click="navTicket" style="cursor:pointer;" class="singleTicket">
+    <tr v-on:mouseover="showTicket"
+        v-on:click="navTicket"
+        style="cursor:pointer;"
+        class="singleTicket">
         <th>{{ticket.title}}</th>
         <td>{{ticket.label.label_name}}</td>
         <td>{{ticket.user_id}}</td>
@@ -10,25 +13,25 @@
 
 <script>
 
-    export default {
-        props: {
-            ticket: Object,
-            base_url: {
-                type: String,
-                default: "/ticket/"
-            }
+export default {
+    props: {
+        ticket: Object,
+        base_url: {
+            type: String,
+            default: "/ticket/"
+        }
+    },
+    data: function () {
+        return { }
+    },
+    methods: {
+        showTicket () {
+            this.$parent.showSum = true
+            this.$parent.ticketSum = this.ticket.id
         },
-        data: function () {
-            return {}
-        },
-        methods: {
-            showTicket() {
-                this.$parent.showSum = true
-                this.$parent.ticketSum = this.ticket.id
-            },
-            navTicket() {
-                this.$router.push("/ticket/" + this.ticket.id)
-            }
-        },
-    }
+        navTicket () {
+            this.$router.push("/ticket/" + this.ticket.id)
+        }
+    },
+}
 </script>

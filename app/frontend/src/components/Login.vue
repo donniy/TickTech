@@ -1,33 +1,33 @@
-<!-- Login.vue shows the login page for a user, TODO: currently only asks for a student id (no password or anything). -->
 <template>
     <div v-if="$auth.ready()">
         <h2 class="form-header center-display">Demo login</h2>
+
         <form class="md-layout center-display" v-on:submit.prevent="checkUser">
             <md-card class="md-layout-item md-size-50 md-small-size-100">
                 <md-card-content>
+
                     <md-field>
-                        <label for="studentnumber">Student ID</label>
-                        <md-input class="form-control" id="studentnumber" name="studentnumber" v-model="form.username" v-validate="'required'" type="number"
-                        />
-                        <div v-show="errors.has('studentid')" class="invalid-feedback">
-                            {{ errors.first('studentid') }}
-                        </div>
-                        <md-button type="submit" v-bind:disabled="errors.any()">
-                            Submit
-                        </md-button>
-                    </md-field>
-                </md-card-content>
-            </md-card>
-        </form>
+                    <label for="studentnumber">Student ID</label>
+                    <md-input class="form-control" id="studentnumber" name="studentnumber" v-model="form.username" v-validate="'required'" type="number"/>
+                    <div v-show="errors.has('studentid')" class="invalid-feedback">
+                        {{ errors.first('studentid') }}
+                    </div>
+                    <md-button type="submit" v-bind:disabled="errors.any()">
+                        Submit
+                    </md-button>
+                </md-field>
+            </md-card-content>
+        </md-card>
+    </form>
     </div>
 </template>
 
 
 <script>
-    import Vue from 'vue'
-    import VeeValidate from 'vee-validate'
-    import VueCookies from 'vue-cookies'
-    import Router from 'vue-router'
+import Vue from 'vue';
+import VeeValidate from 'vee-validate';
+import VueCookies from 'vue-cookies';
+import Router from 'vue-router';
 
     Vue.use(VueCookies)
 
