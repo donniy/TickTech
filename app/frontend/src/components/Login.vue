@@ -36,6 +36,7 @@ import Router from 'vue-router';
             return {
                 form: {
                     username: '',
+                    path: null,
                 }
             }
         },
@@ -53,7 +54,14 @@ import Router from 'vue-router';
                                               this.$auth.fetch({
                                                   data: {},
                                                   success: function () {
-                                                      this.$router.push('/home');
+                                                      if (this.path){
+                                                          console.log("jeej")
+                                                          this.$router.push('/student/ticket/' + this.path);
+                                                      }
+                                                      else{
+                                                          console.log("Boe")
+                                                          this.$router.push('/home');
+                                                      }
                                                   },
                                                   error: function (response_fetch) {
                                                       console.error(response_fetch)
@@ -72,6 +80,8 @@ import Router from 'vue-router';
             }
         },
         mounted() {
+            this.path = this.$route.query.test
+            console.log(this.path)
             if (this.$user.logged_in()) {
                 this.$router.back()
             } else {
