@@ -30,22 +30,26 @@ def test_insert_ticket(app, client):
 
 def test_get_ticket(app, client):
     userId = 11188936
+    userId2 = 11037383
     create_user(app, userId)
+    user = create_user(app, userId2)
+    courseid = uuid.uuid4()
+    course = create_course(app, courseid, tas=[user])
     auth = login(client, userId)
-    rv = client.get('/api/courses')
-    cid = rv.get_json()['json_data'][0]['id']
+    auth2 = login(client, userId2)
     rv = client.post('/api/ticket/submit', json={
         'subject': 'test ticket',
         'message': 'Test bericht',
-        'courseid': cid,
+        'courseid': courseid,
         'labelid': ''
     }, headers={
         'Authorization': auth
     })
-    rv = client.get('/api/courses')
-    cid = rv.get_json()['json_data'][0]['id']
-    tickets = client.get('/api/courses/{}/tickets'.format(cid))
-    print(tickets.get_json())
+    tickets = client.get('/api/courses/{}/tickets'.format(courseid),
+                         headers={
+                             'Authorization': auth2
+                         })
+
     assert len(tickets.get_json()['json_data']) == 1
     ticketid = tickets.get_json()['json_data'][0]['id']
     assert ticketid is not None
@@ -56,10 +60,10 @@ def test_close_ticket(app, client):
         Close a ticket
     """
     userId = 1234
-    create_user(app, userId)
+    user = create_user(app, userId)
 
     courseId = uuid.uuid4()
-    create_course(app, courseId)
+    create_course(app, courseId, tas=[user])
 
     ticketId1 = uuid.uuid4()
     ticketId2 = uuid.uuid4()
@@ -76,7 +80,9 @@ def test_close_ticket(app, client):
     assert rv.status == "200 OK"
     print(json_data)
 
-    rv2 = client.get('/api/courses/{}/tickets'.format(courseId))
+    rv2 = client.get('/api/courses/{}/tickets'.format(courseId),
+                     headers={'Authorization': auth})
+
     json_data2 = rv2.get_json()
 
     accepted = False

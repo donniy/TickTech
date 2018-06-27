@@ -7,20 +7,12 @@ from flaskr.config import Config
 db = SQLAlchemy()
 
 
-class DatabaseException(Exception):
-
-    def __init__(self, debug_message):
-        self.debug_message = debug_message
-
-
-class DatabaseInsertException(DatabaseException):
-
-    def __init__(self, debug_message):
-        super().__init__(debug_message)
-        self.response_message = ""
-
-
 def init_db():
+    """
+    Function that initializes the database.
+    Moslty just creating the database, but
+    if debugging, also populating the database.
+    """
     db.create_all()
     populate_database_dummy_data()
     addTicketStatus("Unassigned")
@@ -45,27 +37,86 @@ def json_list(l):
     return jsonify(json_list=serialize_list(l))
 
 
-# Use these functions if you want to add items to
-# to the database.
-def addItemSafelyToDB(item):
+def log_database_error(err, func=None):
     """
-    Add the item to the db by checking
-    if the item is valid. The error can be logged.
+    Function that logs the database error.
+    This functions prints the database error to stdout
+    and if a function is specified, the name of the functions
+    and the module where the function is found
+    will be printed to stdout.
+    __getframe is not used, because it is not
+    guaranteed to exist.
+    """
+    import sys
+    print("-" * 36 + "database" + "-" * 36)
+    print("Error when adding an item to the database")
+    print("The error is:")
+    print(err)
+    if func is not None:
+        print("The name of the caller is:")
+        print(func.__name__)
+        print("This function can be found in the module:")
+        print(func.__module__)
+    print("-" * 80)
+    print()
+
+
+def deleteSafelyFromDB(item, func=None):
+    """
+    Function that deletes an item safely from the db.
+    If the deletion gives an error, we rollback the session
+    and log the database error.
     """
     try:
-        db.session.add(item)
+        db.session.delete(item)
         db.session.commit()
     except Exception as err:
-        print("Logging database error: {0}".format(err))
+        log_database_error(err, func)
         db.session.rollback()
         return False
     return True
 
 
-# End functions for insertion for database.
+def commitSafelyToDB(func=None):
+    """
+    Function that commits the current database.
+    If an error is found we log the error
+    and the session will be rolled back,
+    so the commit has not taken place.
+    Returns True if the commit was succesful
+    False if not.
+    """
+    try:
+        db.session.commit()
+    except Exception as err:
+        log_database_error(err, func)
+        db.session.rollback()
+        return False
+    return True
+
+
+def addItemSafelyToDB(item, func=None):
+    """
+    Adds an item to the database.
+    If an error happened, we log the error and rollback
+    the session. On error we return True, else False.
+    """
+    try:
+        db.session.add(item)
+        db.session.commit()
+    except Exception as err:
+        log_database_error(err, func)
+        db.session.rollback()
+        return False
+    return True
+
 
 # These are from the InitDB sql file. Can insert dummy data here.
 def populate_database_dummy_data():
+    """
+    This is a function that can be used to populate the database
+    with some dummy data. So only be used in debugging.
+    """
     from flaskr.models import Course, user
     items = []
     course = Course.Course(id=uuid.uuid4(),
@@ -109,7 +160,7 @@ def populate_database_dummy_data():
     items = [user1, user2, user3, user5, mail_server, course, course2]
 
     for item in items:
-        addItemSafelyToDB(item)
+        addItemSafelyToDB(item, populate_database_dummy_data)
 
     try:
         course.supervisors.append(user4)
@@ -122,7 +173,7 @@ def populate_database_dummy_data():
         course2.ta_courses.append(user2)
     except Exception as exp:
         db.session.rollback()
-        print(exp)
+        log_database_error(exp, populate_database_dummy_data)
 
     print(course.student_courses)
     print(course.ta_courses)
@@ -134,7 +185,7 @@ def addTicketStatus(name="Needs help"):
     ts = ticket.TicketStatus()
     ts.name = name
     try:
-        addItemSafelyToDB(ts)
+        addItemSafelyToDB(ts, addTicketStatus)
     except Exception as e:
         print(e)
 
@@ -147,7 +198,7 @@ def addTicketLabel(ticked_id=uuid.uuid4(), course_id=uuid.uuid4(),
     tl.course_id = course_id
     tl.name = name
     try:
-        addItemSafelyToDB(tl)
+        addItemSafelyToDB(tl, addTicketLabel)
     except Exception as e:
         print(e)
 
@@ -167,6 +218,6 @@ def addTicket(user_id=1, email="test@email.com", course_id=uuid.uuid4(),
     t.timestamp = timestamp
     t.label_id = uuid.uuid4()
     try:
-        addItemSafelyToDB(t)
+        addItemSafelyToDB(t, addTicket)
     except DatabaseInsertException as exp:
         print(exp.response_message)

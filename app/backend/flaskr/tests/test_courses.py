@@ -24,8 +24,8 @@ def test_get_course_tickets(app, client):
     Test the api call to get all tickets belonging to this course
     """
 
-    create_user(app, 1234)
-
+    usr = create_user(app, 1234)
+    auth = login(client, 1234)
     ticketId = uuid.uuid4()
     ticketId2 = uuid.uuid4()
     ticketId3 = uuid.uuid4()
@@ -33,33 +33,46 @@ def test_get_course_tickets(app, client):
     courseId = uuid.uuid4()
     courseId2 = uuid.uuid4()
 
-    create_course(app, courseId)
-    create_course(app, courseId2)
+    create_course(app, courseId, tas=[usr])
+    create_course(app, courseId2, tas=[usr])
 
     create_ticket(app, ticketId, 1234, courseId)
     create_ticket(app, ticketId2, 1234, courseId)
     create_ticket(app, ticketId3, 1234, courseId2)
 
-    rv = client.get('/api/courses/{}/tickets'.format(courseId))
+    rv = client.get('/api/courses/{}/tickets'.format(courseId),
+                    headers={
+                        'Authorization': auth
+                    })
+
     json_data = rv.get_json()
     print(json_data)
     assert len(json_data['json_data']) == 2
     assert rv.status == "200 OK"
 
-    rv2 = client.get('/api/courses/{}/tickets'.format(courseId2))
+    rv2 = client.get('/api/courses/{}/tickets'.format(courseId2),
+                     headers={
+                         'Authorization': auth
+                     })
+
     json_data2 = rv2.get_json()
     print(json_data2)
     assert len(json_data2['json_data']) == 1
     assert rv2.status == "200 OK"
 
 
-def test_get_course_tickets_empty(client):
+def test_get_course_tickets_empty(app, client):
     """
     Database should be empty so no tickets should be returned.
     """
-    rv = client.get('/api/courses')
-    cid = rv.get_json()['json_data'][0]['id']
-    tickets = client.get('/api/courses/{}/tickets'.format(cid))
+    user = create_user(app, 1234)
+    auth = login(client, user.id)
+    course = create_course(app, uuid.uuid4(), tas=[user])
+    tickets = client.get('/api/courses/{}/tickets'.format(course.id),
+                         headers={
+                         'Authorization': auth
+                         })
+
     assert tickets.status == '200 OK'
     print(tickets.get_json())
     assert len(tickets.get_json()['json_data']) == 0
