@@ -50,6 +50,8 @@ class Label(db.Model):
         """
         tmp = {}
         for cp in self.course.plugins:
+            if not cp.active:
+                continue
             tmp[cp.plugin] = {}
             tmp[cp.plugin]['name'] = plugins.get_plugin_name(cp.plugin)
             tmp[cp.plugin]['active'] = cp in self.plugins

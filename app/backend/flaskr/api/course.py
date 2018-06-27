@@ -86,7 +86,7 @@ def update_plugin_settings(course_id, plugin_id):
         return Iresponse.create_response({"error": "Plugin does not exist"}, 400)
 
     cp = next((p for p in course.plugins if p.plugin == plugin_id), None)
-    
+
     if cp is None:
         return Iresponse.create_response({"error": "Cannot configure plugin"}, 400)
 
