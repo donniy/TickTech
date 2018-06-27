@@ -52,8 +52,13 @@ def auth_lti_session():
     Function to authenticate the lti session.
     So, this checks if a valid token was supplied, this
     is done by the jwt_required decorator.
+    If a valid jwt token is found, we create a new token.
+    We do this because the supplied token is a token
+    with a very short life span given by the
+    above launch_lti_session function.
     """
-    return Iresponse.create_response("", 200)
+    access_token = create_access_token(identity=get_jwt_identity())
+    return Iresponse.create_response({'access_token': access_token}, 200)
 
 
 @apiBluePrint.route('lti/get_lti_params', methods=['GET'])

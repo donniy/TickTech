@@ -67,7 +67,7 @@ class Course(db.Model):
 
     supervisors = db.relationship(
         "User", secondary=supervisor_linker, lazy='subquery',
-        backref=db.backref('supervisors', lazy=True))
+        backref=db.backref('supervisor_courses', lazy=True))
 
     # Dit is een soort toString zoals in Java, voor het gebruiken van de
     # database in de commandline. Op die manier kan je data maken en weergeven
@@ -89,12 +89,3 @@ class Course(db.Model):
             'tas': [ta.serialize for ta in self.ta_courses],
             'supervisors': [suvi.serialize for suvi in self.supervisors]
         }
-
-    @property
-    def checkValid(self):
-        """
-        Checks if an object is valid to insert into a database. So all
-        fields that should be set, are set. If a value is not set, throw
-        for now a ValueError().
-        """
-        pass
