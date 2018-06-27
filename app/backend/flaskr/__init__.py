@@ -56,9 +56,10 @@ def create_app(test_config=None):
     app.config['MAIL_USERNAME'] = Config.EMAIL_SEND_EMAIL
     app.config['MAIL_PASSWORD'] = Config.EMAIL_SEND_PASSWORD
     app.config['MAIL_DEFAULT_SENDER'] = Config.EMAIL_SEND_EMAIL
+    app.config['MAIL_SUPPRESS_SEND'] = True
     Mail(app)
 
-    app.config['SEND_MAIL_ON_MESSAGE'] = False
+    app.config['SEND_MAIL_ON_MESSAGE'] = True
 
     # Make user logged in for 1 day.
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=86400)

@@ -10,7 +10,14 @@ from flaskr.utils.json_validation import validate_json
 from mail.thread import MailThread
 from mail.Message import ticketErrorEmail, createdTicketEmail
 from flask_mail import Mail
+from threading import Thread
+from flask import current_app
 import base64
+
+
+def send_async_email(message, app):
+    with app.app_context():
+        Mail().send(message)
 
 
 @apiBluePrint.route('/email/user/match/email', methods=["POST"])
@@ -38,6 +45,7 @@ def mail_match_on_mail():
         "studentid": id
     }
     return Iresponse.create_response(response, 200)
+
 
 @apiBluePrint.route('/email/user/match/studentid', methods=["POST"])
 def mail_match_on_studentid():
@@ -73,7 +81,7 @@ def mail_notify_failed_match():
     '''
     # Check data
     json_data = request.get_json()
-    if not validate_json(json_data, ["body","subject","address"]):
+    if not validate_json(json_data, ["body", "subject", "address"]):
         return Iresponse.empty_json_request()
 
     # Match on first succes
@@ -81,12 +89,11 @@ def mail_notify_failed_match():
     address = json_data["address"]
     body = json_data["body"]
 
-    try:
-        message = ticketErrorEmail(subject, [address], body)
-        res = Mail().send(message)
-        res = res  # for flake8
-    except:
-        print('address', address)
+    message = ticketErrorEmail(subject, [address], body)
+    app = current_app._get_current_object()
+    thr = Thread(target=send_async_email,args=[message, app])
+    thr.start()
+
     return Iresponse.create_response('Success', 200)
 
 
@@ -136,11 +143,13 @@ def create_email_ticket():
     if (response.status_code == 201):
         ticketid = response.get_json()['json_data']['ticketid']
         message = createdTicketEmail(formdata['subject'],
-                                    [formdata['email']],
-                                    ticketid,
-                                    formdata['message'])
-        res = Mail().send(message)
-        res = res
+                                     [formdata['email']],
+                                     ticketid,
+                                     formdata['message'])
+        app = current_app._get_current_object()
+        thr = Thread(target=send_async_email,args=[message, app])
+        thr.start()
+        
     return response
 
 

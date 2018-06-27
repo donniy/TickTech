@@ -20,7 +20,8 @@ from os.path import expanduser
 import base64
 import mimetypes
 from flaskr import database
-
+from threading import Thread
+from flask import current_app
 
 @apiBluePrint.route('/ticket/<ticket_id>/close', methods=['POST', 'PATCH'])
 @jwt_required
@@ -95,9 +96,14 @@ def create_message(ticket_id):
                                        [ticket.email], ticket_id,
                                        json_data['message'], user.name)
         if current_app.config['SEND_MAIL_ON_MESSAGE']:
-            res = Mail().send(message)
-            res = res  # for flake8
+            app = current_app._get_current_object()
+            thr = Thread(target=send_async_email,args=[message, app])
+            thr.start()
     return msg
+
+def send_async_email(message, app):
+    with app.app_context():
+        Mail().send(message)
 
 
 @apiBluePrint.route('/ticket/<ticket_id>/messages', methods=['GET'])

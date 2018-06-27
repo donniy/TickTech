@@ -8,6 +8,8 @@ import base64
 import html2text
 import socket
 
+poplib._MAXLINE=2048
+
 
 def connect(host, port, user, password):
     '''
@@ -310,7 +312,13 @@ def checkMail(host, port, user, password, courseid, debug=1):
 
     # Parse all new emails.
     for i in range(mailcount):
-        emailBytes = b"\n".join(server.retr(i + 1)[1])
+        try:
+            emailBytes = b"\n".join(server.retr(i + 1)[1])
+        except poplib.error_proto:
+            # we have no email information yet so no warning possible
+            print("To many char's in line")
+            continue
+
         subject, body, files, sender, address = parseEmail(emailBytes)
 
         if (subject is None or body is None or sender is None):
