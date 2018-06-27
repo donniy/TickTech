@@ -97,6 +97,7 @@ def create_message(ticket_id):
                                        [ticket.email], ticket_id,
                                        json_data['message'], user.name)
         if current_app.config['SEND_MAIL_ON_MESSAGE']:
+            print("send email")
             app = current_app._get_current_object()
             thr = Thread(target=send_async_email,args=[message, app])
             thr.start()
@@ -104,7 +105,9 @@ def create_message(ticket_id):
 
 def send_async_email(message, app):
     with app.app_context():
-        Mail().send(message)
+        print("SENDED EMAIL")
+        res = Mail().send(message)
+        print(res)
 
 
 @apiBluePrint.route('/ticket/<ticket_id>/messages', methods=['GET'])

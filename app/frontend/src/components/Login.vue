@@ -60,10 +60,16 @@ import Router from 'vue-router';
             }
         },
         mounted() {
-            this.path = this.$route.query.test
-            console.log(this.path)
+            window.$rederict_to_ticket = this.$route.query.redirect
+            console.log(window.$rederict_to_ticket)
             if (this.$user.logged_in()) {
-                this.$router.back()
+                if (window.$rederict_to_ticket){
+                    this.$router.push('/ticket/'+window.$rederict_to_ticket)
+                    window.$rederict_to_ticket = null
+                }
+                else{
+                    this.$router.back()
+                }
             }
         }
     }

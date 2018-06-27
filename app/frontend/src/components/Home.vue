@@ -122,8 +122,15 @@
 
 export default {
 	mounted: function () {
-		if (this.$auth.ready() && this.$auth.check())
-			this.$router.push('/home');
+		if (this.$auth.ready() && this.$auth.check()){
+            if (window.$rederict_to_ticket){
+                this.$router.push('/student/ticket/'+window.$rederict_to_ticket);
+                window.$path = null;
+            }
+            else{
+                this.$router.push('/home');
+            }
+        }
 	}
 }
 
