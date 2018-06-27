@@ -94,8 +94,9 @@ def create_message(ticket_id):
         message = create_email_message(ticket.title,
                                        [ticket.email], ticket_id,
                                        json_data['message'], user.name)
-        # res = Mail().send(message)
-        # res = res  # for flake8
+        if app.config['SEND_MAIL_ON_MESSAGE']:
+            res = Mail().send(message)
+            res = res  # for flake8
     return msg
 
 
