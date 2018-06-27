@@ -137,7 +137,7 @@ def register_user():
     # Backend check if email/studentid already exists
     user = User.query.filter_by(email=email).first()
     if user:
-        return Iresponse.create_response({"status": "Email already taken"}, 200)
+        return Iresponse.create_response({"status": "Email is taken"}, 200)
 
     studentid = json_data["studentid"]
     user = User.query.filter_by(id=studentid).first()
@@ -148,7 +148,6 @@ def register_user():
     new_user = User()
     salt = bcrypt.gensalt()
     hashedpsw = bcrypt.hashpw(password.encode('utf-8'), salt)
-    # Decrypt this using hashedpsw.encode('utf-8') == bcrypt.hashpw(passwordinput, hashedpsw.encode('utf-8'))
     new_user.password = hashedpsw
     new_user.id = studentid
     new_user.name = name
