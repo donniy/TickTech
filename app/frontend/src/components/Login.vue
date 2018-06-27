@@ -1,25 +1,32 @@
 <template>
-    <div>
-        <h2 class="form-header center-display">Demo login</h2>
+<div>
+	<h2 class="form-header center-display">Login</h2>
 
-        <form class="md-layout center-display" v-on:submit.prevent="checkUser">
-            <md-card class="md-layout-item md-size-50 md-small-size-100">
-                <md-card-content>
+	<form class="md-layout center-display" v-on:submit.prevent="checkUser">
+		<md-card class="md-layout-item md-size-50 md-small-size-100">
+			<md-card-content>
 
-                    <md-field>
-                    <label for="studentnumber">Student ID</label>
-                    <md-input autofocus class="form-control" id="studentnumber" name="studentnumber" v-model="form.username" v-validate="'required'" type="number"/>
-                    <div v-show="errors.has('studentid')" class="invalid-feedback">
-                        {{ errors.first('studentid') }}
-                    </div>
-                    <md-button type="submit" v-bind:disabled="errors.any()">
-                        Submit
-                    </md-button>
-                </md-field>
-            </md-card-content>
-        </md-card>
-    </form>
-    </div>
+				<md-field>
+					<label for="email">Email address</label>
+					<md-input autofocus id="email" name="email" v-model="form.email" v-validate="'required'" type="email" />
+				</md-field>
+				<md-field>
+					<label for="studentnumber">Password</label>
+					<md-input autofocus id="psw" name="psw" v-model="form.psw" v-validate="'required'" type="password" />
+				</md-field>
+				<div v-show="errors.has('email')" class="invalid-feedback">
+					{{ errors.first('email') }}
+				</div>
+				<div v-show="errors.has('psw')" class="invalid-feedback">
+					{{ errors.first('psw') }}
+				</div>
+				<md-button class="btn btn-primary" type="submit" v-bind:disabled="errors.any()">
+					Submit
+				</md-button>
+			</md-card-content>
+		</md-card>
+	</form>
+</div>
 </template>
 
 
@@ -69,7 +76,8 @@ import Router from 'vue-router';
                         })
                     }
                 })
-            }
+            },
+
         },
         mounted() {
             if (this.$user.logged_in()) {
