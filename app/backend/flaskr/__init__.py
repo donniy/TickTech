@@ -62,7 +62,8 @@ def create_app(test_config=None):
     app.config['SEND_MAIL_ON_MESSAGE'] = True
 
     # Make user logged in for 1 day.
-    app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=86400)
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(seconds=86400)
+    app.config['JWT_AUTH_HEADER_PREFIX'] = 'Bearer'
 
     # Set hashfs preferences
     fs = FlaskHashFS()

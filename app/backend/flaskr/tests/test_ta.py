@@ -1,6 +1,6 @@
 from flaskr.tests.utils import create_user, create_course, \
     link_ta_to_course, link_student_to_course, link_ta_to_ticket, \
-    create_ticket
+    create_ticket, login
 import uuid
 
 
@@ -11,7 +11,7 @@ def test_get_ta_tickets(app, client):
     taId = 1234
     student = 4321
     ta = create_user(app, taId)
-    create_user(app, student)
+    usr = create_user(app, student)
 
     courseId1 = uuid.uuid4()
     courseId2 = uuid.uuid4()
@@ -21,6 +21,8 @@ def test_get_ta_tickets(app, client):
     link_ta_to_course(ta, course1)
     link_student_to_course(ta, course2)
 
+    auth = login(client, ta.id)
+
     ticketId1 = uuid.uuid4()
     ticketId2 = uuid.uuid4()
     # create ticket in course where TA
@@ -29,7 +31,8 @@ def test_get_ta_tickets(app, client):
     # create ticket in course where not TA
     create_ticket(app, ticketId2, taId, courseId2)
 
-    rv = client.get('/api/ta/{}/tickets'.format(taId))
+    rv = client.get('/api/ta/{}/tickets'.format(taId),
+                    headers={'Authorization': auth})
     json_data = rv.get_json()['json_data']
     assert rv.status == '200 OK'
     print(json_data)
