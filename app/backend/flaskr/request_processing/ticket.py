@@ -11,6 +11,9 @@ from datetime import datetime
 
 # TODO: CHECK IF JSON IS VALID.
 def create_request(json_data):
+    """
+    Function that handles the create request from a ticket.
+    """
     name = escape(json_data["name"])
     name = name  # flake8
     studentid = escape(json_data["studentid"])
@@ -70,6 +73,9 @@ def create_request(json_data):
 
 # TODO: Should check is the json_data is valid.
 def add_ta_to_ticket(json_data):
+    """
+    Handles the request to add a teaching assistant to ticket.
+    """
     print("CALLED this")
     ticket = Ticket.query.filter_by(
         id=uuid.UUID(json_data['ticketid'])).first()
@@ -85,6 +91,9 @@ def add_ta_to_ticket(json_data):
 
 # TODO: CHECK IF JSON IS VALID.
 def add_ta_list_to_ticket(json_data):
+    """
+    Handles the request to add a teaching assistant list to ticket.
+    """
     ticket = Ticket.get(uuid.UUID(json_data['ticketid']))
     ta_list = list()
 
@@ -101,6 +110,9 @@ def add_ta_list_to_ticket(json_data):
 
 # TODO: CHECK IF JSON IS VALID.
 def remove_ta_from_ticket(json_data):
+    """
+    Removes assigned teaching assistant from ticket.
+    """
     ticket = Ticket.get(uuid.UUID(json_data['ticketid']))
     ta = User.query.filter_by(id=json_data['taid']).first()
 
@@ -113,6 +125,9 @@ def remove_ta_from_ticket(json_data):
 
 
 def get_label_tas(label):
+    """
+    Returns the labels of given teaching assistant.
+    """
     if label:
         tas_by_label = label.users
         print(tas_by_label)
