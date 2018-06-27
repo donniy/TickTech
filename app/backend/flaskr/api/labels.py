@@ -146,7 +146,19 @@ def deactivate_plugin(label_id, plugin_id):
     Note that dis also removes the assignment id which is stored in the
     pivot table.
     """
-    pass
+    label = Label.query.get_or_404(label_id)
+    plugin = label.get_plugin(plugin_id)
+    if not plugin:
+        return Iresponse.create_response({"error": "plugin not found"}, 200)
+
+    try:
+        db = database.get_db()
+        db.session.delete(plugin)
+        db.session.commit()
+        return Iresponse.create_response({"status": "success"}, 200)
+    except Exception as e:
+        print(e)
+        return Iresponse.create_response({"status": "failure"}, 500)
 
 
 @apiBluePrint.route('/labels/<label_id>/selected', methods=['POST'])

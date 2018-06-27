@@ -44,6 +44,10 @@ class Label(db.Model):
         return None
 
     def get_plugins(self):
+        """
+        Get all (available) plugins for this label along with their active
+        state and assignment_id.
+        """
         tmp = {}
         for cp in self.course.plugins:
             tmp[cp.plugin] = {}
