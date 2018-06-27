@@ -24,6 +24,7 @@ from threading import Thread
 from flask import current_app
 from flaskr.auth import require_role
 
+
 @apiBluePrint.route('/ticket/<ticket_id>/close', methods=['POST', 'PATCH'])
 @jwt_required
 def close_ticket(ticket_id):
@@ -97,14 +98,15 @@ def create_message(ticket_id):
 
     if(ticket.user_id != user.id):
         message = createEmailMessage(ticket.title,
-                                       [ticket.email], ticket_id,
-                                       json_data['message'], user.name)
+                                     [ticket.email], ticket_id,
+                                     json_data['message'], user.name)
         if current_app.config['SEND_MAIL_ON_MESSAGE']:
             print("send email")
             app = current_app._get_current_object()
-            thr = Thread(target=send_async_email,args=[message, app])
+            thr = Thread(target=send_async_email, args=[message, app])
             thr.start()
     return msg
+
 
 def send_async_email(message, app):
     with app.app_context():
@@ -239,7 +241,7 @@ def download_file():
         fileType, fileEncoding = mimetypes.guess_type(full_path)
 
         if folder and file:
-            fp = open(folder+'/'+file, 'br').read()
+            fp = open(folder + '/' + file, 'br').read()
             encoded = base64.b64encode(fp).decode("utf-8")
             return Iresponse.create_response({'encstring': str(encoded),
                                              'mimetype': fileType}, 200)

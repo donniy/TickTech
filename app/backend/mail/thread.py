@@ -36,7 +36,8 @@ class MailThread(Thread):
         #     self.stop()
         # else:
         #     print("Succes!\n\n")
-        #     result = requests.post('http://localhost:5000/api/email', "nothing")
+        #     result = requests.post('http://localhost:5000/api/email',
+        # "nothing")
         #     print(result)
         #     print("made post request")
         # notify somehow

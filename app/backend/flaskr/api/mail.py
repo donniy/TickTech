@@ -91,7 +91,7 @@ def mail_notify_failed_match():
 
     message = ticketErrorEmail(subject, [address], body)
     app = current_app._get_current_object()
-    thr = Thread(target=send_async_email,args=[message, app])
+    thr = Thread(target=send_async_email, args=[message, app])
     thr.start()
 
     return Iresponse.create_response('Success', 200)
@@ -147,9 +147,9 @@ def create_email_ticket():
                                      ticketid,
                                      formdata['message'])
         app = current_app._get_current_object()
-        thr = Thread(target=send_async_email,args=[message, app])
+        thr = Thread(target=send_async_email, args=[message, app])
         thr.start()
-        
+
     return response
 
 

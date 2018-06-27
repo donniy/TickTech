@@ -8,7 +8,7 @@ import base64
 import html2text
 import socket
 
-poplib._MAXLINE=2048
+poplib._MAXLINE = 2048
 
 
 def connect(host, port, user, password):
@@ -121,7 +121,8 @@ def parseBody(parsedEmail):
 
 def requestStudentID(result):
     '''
-    Helper function to send json request to retrieve information from the database.
+    Helper function to send json request to retrieve information
+    from the database.
     Returns studentid on success, None on failure.
     '''
     if (result.status_code == 200):
@@ -133,7 +134,8 @@ def requestStudentID(result):
 
 def retrieveLabels(courseid):
     '''
-    Helper function to retrieve all available labels of a course from the server.
+    Helper function to retrieve all available labels of a
+    course from the server.
     '''
     labels = []
     result = requests.get('http://localhost:5000/api/labels/' + courseid)
@@ -162,7 +164,7 @@ def findLabel(body, labels):
     bestLabel = None
 
     # Find the best match between labels and the body of the e-mail.
-    for i in range (0, labelcount):
+    for i in range(0, labelcount):
         currentScore = fuzz.ratio(result[i], body)
         if (currentScore > 1):
             if (currentScore > bestScore):
@@ -184,7 +186,7 @@ def findUser(body, sender, address):
         json=info)
 
     # If request was succesful, try and connect mail to student id in database.
-    if (requestStudentID(result) != None):
+    if (requestStudentID(result) is not None):
         return requestStudentID(result)
 
     # Parse for studentd ids: Old ids are 6 digits long, new ones are 8.
@@ -204,6 +206,8 @@ def findUser(body, sender, address):
     return requestStudentID(result)
 
 # TODO: Create a reply instead of a ticket.
+
+
 def createReply(subject, body, files, sender, address, courseid):
     '''
     Create a reply to a ticket from the acquired information from an email.
@@ -285,7 +289,7 @@ def createTicket(subject, body, files, sender, address, courseid):
         print("Course ID: ", courseid)
         print("Label ID: ", labelid)
         print("Body: " + body)
-    #else:
+    # else:
 
     # TODO: Send confirmation email.
     # createdTicketEmail(subject, address, TODO TICKETID, body)
@@ -338,7 +342,7 @@ def checkMail(host, port, user, password, courseid, debug=0):
     return 0
 
 
-#TODO: For debugging. Can be removed later (we use thread.py).
+# TODO: For debugging. Can be removed later (we use thread.py).
 if __name__ == '__main__':
     # Retrieve courses, get current course id.
     result = requests.get('http://localhost:5000/api/courses')
