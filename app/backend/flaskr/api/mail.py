@@ -8,10 +8,12 @@ from flaskr.utils import course_validation, json_validation
 from flask import escape, request
 from flaskr.utils.json_validation import validate_json
 from mail.thread import MailThread
+from mail.Message import ticketErrorEmail
+from flask_mail import Mail
 import base64
 
 
-@apiBluePrint.route('/email/user/match', methods=["POST"])
+@apiBluePrint.route('/email/user/match/email', methods=["POST"])
 def mail_match_on_mail():
     '''
     Try to match incomming email on email-address.
@@ -27,15 +29,65 @@ def mail_match_on_mail():
 
     if user is not None:
         id = user.id
-        succes = True
+        success = True
     else:
         id = None
-        succes = True
+        success = False
     response = {
-        "succes": succes,
+        "success": success,
         "studentid": id
     }
     return Iresponse.create_response(response, 200)
+
+@apiBluePrint.route('/email/user/match/studentid', methods=["POST"])
+def mail_match_on_studentid():
+    '''
+    Try to match incomming email on studentid.
+    '''
+    # Check data
+    json_data = request.get_json()
+    if not validate_json(json_data, ["studentid"]):
+        return Iresponse.empty_json_request()
+
+    # Match on first succes
+    studentid = json_data["studentid"]
+    user = User.query.filter_by(id=studentid).first()
+
+    if user is not None:
+        id = user.id
+        success = True
+    else:
+        id = None
+        success = False
+    response = {
+        "success": success,
+        "studentid": id
+    }
+    return Iresponse.create_response(response, 200)
+
+
+@apiBluePrint.route('/email/user/match/failed', methods=["POST"])
+def mail_notify_failed_match():
+    '''
+    Notify user that mail failed to match.
+    '''
+    # Check data
+    json_data = request.get_json()
+    if not validate_json(json_data, ["body","subject","address"]):
+        return Iresponse.empty_json_request()
+
+    # Match on first succes
+    subject = json_data["subject"]
+    address = json_data["address"]
+    body = json_data["body"]
+
+    try:
+        message = ticketErrorEmail(subject, [address], body)
+        res = Mail().send(message)
+        res = res  # for flake8
+    except:
+        print('address', address)
+    return Iresponse.create_response('Success', 200)
 
 
 @apiBluePrint.route('/email/ticket/submit', methods=['POST'])

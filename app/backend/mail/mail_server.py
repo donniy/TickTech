@@ -1,6 +1,4 @@
 from email.header import decode_header
-from flask_mail import Mail
-from mail.Message import ticketErrorEmail
 import email
 import poplib
 import requests
@@ -63,14 +61,16 @@ def parseEmail(emailBytes):
         sender = sender_parsed[0][0]
 
     # Sender is of format "Firstname Lastname <email@email.com>".
+    # Or sender is email@email.com
     try:
         name = sender.split("<")
         address = name[1].split(">")
+        return subject, body, attachments, name[0], address[0]
     except IndexError:
-        name = sender
+        name = 'unknown'
         address = sender
 
-    return subject, body, attachments, name[0], address[0]
+    return subject, body, attachments, name, address
 
 
 def parseBody(parsedEmail):
@@ -117,29 +117,38 @@ def findUser(body, sender, address):
     name and label, if possible.
     '''
     # Create JSON to match email to user in the database.
-    info = {'email': address}
+    # info = {'email': address}
+    # result = requests.post(
+    #     'http://localhost:5000/api/email/user/match/email',
+    #     json=info)
+    #
+    # If request was succesful, try and connect mail to student id in database.
+    # if (result.status_code == 200):
+    #     json = result.json()
+    # if (json['json_data']['success']):  # ENGELS FOUT FIX HET
+    #         studentid = json['json_data']['studentid']
+    #         if studentid is not None:
+    #             return studentid
+
+    # Parse for studentd ids: Old student ids are 6 digits long, new ones are 8.
+    body = body.split()
+    studentid = None
+    for words in body:
+        if words.isdigit() and len(words) > 6 and len(words) < 9:
+            studentid = int(words)
+
+    info = {'studentid': studentid}
     result = requests.post(
-        'http://localhost:5000/api/email/user/match',
+        'http://localhost:5000/api/email/user/match/studentid',
         json=info)
 
     # If request was succesful, try and connect mail to student id in database.
     if (result.status_code == 200):
         json = result.json()
-        if (json['json_data']['succes']):  # ENGELS FOUT FIX HET
+        if (json['json_data']['success']):  # ENGELS FOUT FIX HET
             studentid = json['json_data']['studentid']
             if studentid is not None:
                 return studentid
-
-    # Parse for studentd ids: Old student ids are 6 digits long, new ones are 8.
-    body = body.split()
-    for words in body:
-        if words.isdigit() and len(words) > 6 and len(words) < 9:
-            return int(words)
-
-        # TODO: DIT WERKT NOG NIET?
-        #   File "/TickTech/app/backend/flaskr/utils/notifications.py", line 68, in notify
-        #     'user_id':  user.id,
-        # AttributeError: 'NoneType' object has no attribute 'id'
 
     # Couldn't find student id with email or in body.
     print("COULD NOT FIND STUDENT ID. :(")
@@ -160,7 +169,8 @@ def retrieveLabels(courseid):
     return labels
 
 
-# TODO: Labels wordt weer many to many in de backend via Ravi, dus dit moet weer aangepast worden straks.
+# TODO: Labels wordt weer many to many in de backend via Ravi, dus dit
+# moet weer aangepast worden straks.
 def findLabel(body, labels):
     '''
     Parse the body for words that might be labels (simplified, accepting first found).
@@ -176,17 +186,18 @@ def findLabel(body, labels):
 
     return ''
 
+
 def createReply(subject, body, files, sender, address, courseid):
     '''
     Create a reply to a ticket from the acquired information from an email.
     '''
     # TODO: Finish this functione.
-    # # Find original ticket with subject / meta data? 
-    
-    # # Create a new reply.
+    # Find original ticket with subject / meta data?
+
+    # Create a new reply.
     # newmessage = {}
 
-    # # Add the reply to the database.
+    # Add the reply to the database.
     # result = requests.post(SOMETHING, json=newmessage)
 
     # if (result.status_code != 201):
@@ -201,19 +212,21 @@ def createTicket(subject, body, files, sender, address, courseid):
     # Find student in database or by email parsing.
     studentid = findUser(body, sender, address)
 
-    # If not found, send automatic reply that an error occurred.
     if studentid is None:
-        print("SENDING ERROR")
-        print(subject, address, body)
-        message = ticketErrorEmail(subject, address, body)
-        res = Mail().send(message)
-        res = res  # for flake8
+        info = {'subject': subject,
+                'body': body,
+                'address': address}
+        result = requests.post(
+            'http://localhost:5000/api/email/user/match/failed',
+            json=info)
+        print("Mail fetching failed, notifed user\nSubject:",
+              subject, '\nSender:', address)
         return
 
-    #   # TODO: Check if an email is a reply or a new email.
-    #     # if "Re: " in subject:
-    #     # Check the body for meta data? Ticket id in titel/body?
-    #     # Check if user corresponds with original ticket
+    # TODO: Check if an email is a reply or a new email.
+    # if "Re: " in subject:
+    # Check the body for meta data? Ticket id in titel/body?
+    # Check if user corresponds with original ticket
     #     createReply(subject, body, files, sender, address, courseid)
     #     else
     #         replyErrorMail(title, recipients, TODO TICKETID, body)
@@ -248,7 +261,7 @@ def createTicket(subject, body, files, sender, address, courseid):
         json=newticket)
 
     if (result.status_code != 201):
-        #ticketErrorEmail()
+        # ticketErrorEmail()
         print("Something went wrong creating a new ticket from an email.")
         print("******")
         print("Sender: " + str(sender) + "\nStudentid: " +
@@ -264,7 +277,8 @@ def createTicket(subject, body, files, sender, address, courseid):
     # res = res  # for flake8
     # return
 
-def checkMail(host, port, user, password, courseid, debug=0):
+
+def checkMail(host, port, user, password, courseid, debug=1):
     '''
     Start a mail server and sync all emails once.
     Set debug to anything but 0 to enable debugging. This will make sure

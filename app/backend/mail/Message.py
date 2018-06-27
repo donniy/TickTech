@@ -16,7 +16,7 @@ def createEmailMessage(title, recipients, ticketid, body, sender):
 def createdTicketEmail(title, recipients, ticketid, body):
     message = Message(
         subject="TIKTECH Confirmation. Received your question: " + title, recipients=recipients)
-    message.html = ('<body> We received your e-mail and created a matching ticket on TIKTECH.' + 
+    message.html = ('<body> We received your e-mail and created a matching ticket on TIKTECH.' +
                     '.<br /> Check it out ' +
                     '<a href="http://localhost:5000/ticket/' + ticketid +
                     '">here</a>.<br /> This is an automatically generated e-mail.' +
@@ -29,12 +29,13 @@ def createdTicketEmail(title, recipients, ticketid, body):
 def ticketErrorEmail(title, recipients, body):
     message = Message(
         subject="TIKTECH error. We could not process: " + title, recipients=recipients)
-    message.html = ('<body> We received your e-mail, but encountered an error while processing.' + 
-                    '.<br /> Please resent it and clearly state your student ID'+ 
-                    'in the following format on a separate line: <br />' +
-                    'student ID = [your student ID here] <br />' + 
-                    'Please do not reply to this e-mail. Alternatively, contact your TA. <hr><br />' +
-                    'Your original e-mail:' + body + '</body>'
+    message.html = ('<body> We received your e-mail, but encountered an error while processing.' +
+                    '.<br /> Please resent it and clearly state your student ID '+
+                    'in the following format on a separate line: <br /><br />' +
+                    'student ID = [your student ID here]. <br /><br />' +
+                    'If you already did this, please contact your TA. <br />'
+                    'Please do not reply to this e-mail. <hr><br />' +
+                    'Your original e-mail: <br />' + body + '</body>'
                     )
     return message
 
@@ -42,7 +43,7 @@ def replyErrorEmail(title, recipients, ticketid, body):
     message = Message(
         subject="TIKTECH error. We could not process: " + title, recipients=recipients)
     message.html = ('<body> We received your e-mail, but encountered an' +
-                    'error while processing.<br /> ' + 
+                    'error while processing.<br /> ' +
                     'Please resent it or visit your original' +
                     '<a href="http://localhost:5000/ticket/' + ticketid +
                     '">ticket</a> and reply there.<br />' +
@@ -50,4 +51,3 @@ def replyErrorEmail(title, recipients, ticketid, body):
                     'Your original e-mail:' + body + '</body>'
                     )
     return message
-
