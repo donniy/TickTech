@@ -5,15 +5,15 @@
     </div>
     <div class="md-layout md-gutter">
 
-        <div class="md-layout-item md-size-65 md-small-size-100">
-            <div class="md-gutter">
-                <div class="md-size-20">
-                    <router-link :to="'/course/' + ticket.course_id " class="btn btn-primary">&laquo; Back to course</router-link>
-                </div>
-                <div class="md-size-80 center-display">
-                    <h3 class="">Ticket info</h3>
-                </div>
-            </div>
+		<div class="md-layout-item md-size-70 md-small-size-60">
+			<div class="md-gutter">
+				<div class="md-size-20">
+					<router-link :to="'/course/' + ticket.course_id " class="btn btn-primary">&laquo; Back to course</router-link>
+				</div>
+				<div class="md-size-80 center-display">
+					<h3 class="">Ticket info</h3>
+				</div>
+			</div>
 
             <md-dialog :md-active.sync="showModal">
             <md-dialog-title>Do you want to close this ticket?</md-dialog-title>
@@ -22,12 +22,31 @@
                 <md-button class="md-primary" @click="closeTicket()">Yes, close it!</md-button>
             </md-dialog-actions>
             </md-dialog>
-            <md-card class="md-layout">
-                <md-card-content class="md-layout-item md-size-100">
-                    <h4>Subject: {{ticket.title}}</h4>
-                    <p>Status: {{ticket.status.name}}</p>
-                    TAs:
-                    <b v-for="ta in ticket.tas" v-bind:key="ta.id" v-bind:ta="ta">
+			<md-card class="md-layout">
+				<md-card-content class="md-layout-item md-size-100">
+					<div>
+			            <md-speed-dial md-event="click" class="close-button" md-direction="bottom">
+			                <md-speed-dial-target>
+			                    <md-icon class="md-morph-initial">more_vert</md-icon>
+			                    <md-icon class="md-morph-final">close</md-icon>
+			                </md-speed-dial-target>
+			                <md-speed-dial-content>
+			                    <md-button class="md-icon-button md-raised md-accent" @click="showModal = true">
+			                        <md-icon>lock</md-icon>
+			                        <md-tooltip md-direction="left">Close ticket</md-tooltip>
+			                    </md-button>
+			                    <md-button class="md-icon-button md-raised md-accent" @click="">
+			                        <md-icon>delete</md-icon>
+			                        <md-tooltip md-direction="left">Delete ticket</md-tooltip>
+			                    </md-button>
+			                </md-speed-dial-content>
+			            </md-speed-dial>
+			        </div>
+					<h4>Subject: {{ticket.title}}</h4>
+					Response email: <b>{{ticket.email}}</b><br/>
+					Status: {{ticket.status.name}}<br/>
+					TAs:
+					<b v-for="ta in ticket.tas" v-bind:key="ta.id" v-bind:ta="ta">
             {{ ta.name}}
         </b>
                     <b v-if="ticket.tas.length < 1">No one assigned yet</b>
@@ -53,33 +72,33 @@
                 </div>
             </md-card>
 
-            <md-card class="md-layout-item message-reply-container">
-                <div>
-                    <md-card-content>
-                        <form v-on:submit.prevent="sendReply">
-                            <md-field>
-                                <label>Respond</label>
-                                <md-textarea name="replyfield" v-validate="'required'" v-model="reply"></md-textarea>
-                            </md-field>
-                            <button class="btn btn-primary">Submit reply</button>
-                        </form>
-                    </md-card-content>
-                </div>
-            </md-card>
-        </div>
-        <div class="md-layout-item md-size-30 md-medium-size-50">
-            <h3 class="note-title">Notes</h3>
-            <note v-for="note in notes" v-bind:key="note.id" v-bind:note="note"></note>
+			<md-card class="md-layout-item message-reply-container">
+				<div>
+					<md-card-content>
+						<form v-on:submit.prevent="sendReply">
+							<md-field>
+								<label>Respond</label>
+								<md-textarea name="replyfield" v-validate="'required'" v-model="reply"></md-textarea>
+							</md-field>
+							<button class="btn btn-primary">Submit reply</button>
+						</form>
+					</md-card-content>
+				</div>
+			</md-card>
+		</div>
+		<div class="md-layout-item md-size-30 md-small-size-40">
+			<h3 class="note-title">Notes</h3>
+			<note v-for="note in notes" v-bind:key="note.id" v-bind:note="note"></note>
 
-            <md-button id="popoverButton-sync" class="center-display md-primary">
-                Add a note.
-            </md-button>
-            <b-popover ref="popoverRef" target="popoverButton-sync" triggers="click blur" placement='top'>
-                <vue-tribute :options="mentionOptions" v-on:tribute-replaced="matchFound">
-                    <textarea name="notefield" v-validate="'required'" v-model="noteTextArea" class="form-control" id="textAreaForNotes" style="height:200px;width:250px;" placeholder="Enter a comment"></textarea>
-                </vue-tribute>
-                <button @click="addNote" class="btn btn-primary" style="margin-top:10px">Send</button>
-            </b-popover>
+			<md-button id="popoverButton-sync" class="center-display md-primary">
+				Add a note.
+			</md-button>
+			<b-popover ref="popoverRef" target="popoverButton-sync" triggers="click blur" placement='top'>
+				<vue-tribute :options="mentionOptions" v-on:tribute-replaced="matchFound">
+					<textarea autofocus name="notefield" v-validate="'required'" v-model="noteTextArea" class="form-control" id="textAreaForNotes" style="height:200px;width:250px;" placeholder="Enter a comment"></textarea>
+				</vue-tribute>
+				<button @click="addNote" class="btn btn-primary" style="margin-top:10px">Send</button>
+			</b-popover>
 
             <md-content class="md-elevation-2 plugin-container" v-bind:key="plugin.id" v-for="(data, plugin) in plugins">
                 <md-card-header>
@@ -106,28 +125,11 @@
                     {{value.value}}
                 </md-list-item>
             </template>
-                </md-list>
-            </md-content>
-        </div>
-        <div class="md-layout-item md-size-5">
-            <md-speed-dial md-event="click" class="close-button" md-direction="bottom">
-                <md-speed-dial-target>
-                    <md-icon class="md-morph-initial">more_vert</md-icon>
-                    <md-icon class="md-morph-final">close</md-icon>
-                </md-speed-dial-target>
-                <md-speed-dial-content>
-                    <md-button class="md-icon-button md-raised md-accent" @click="showModal = true">
-                        <md-icon>lock</md-icon>
-                        <md-tooltip md-direction="left">Close ticket</md-tooltip>
-                    </md-button>
-                    <md-button class="md-icon-button md-raised md-accent" @click="">
-                        <md-icon>delete</md-icon>
-                        <md-tooltip md-direction="left">Delete ticket</md-tooltip>
-                    </md-button>
-                </md-speed-dial-content>
-            </md-speed-dial>
-        </div>
-    </div>
+				</md-list>
+			</md-content>
+		</div>
+
+	</div>
 </div>
 </template>
 

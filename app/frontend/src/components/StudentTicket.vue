@@ -25,7 +25,7 @@
         <md-card class="md-layout-item message-container">
             <div>
                 <md-card-content>
-                    <message v-bind:user="user" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
+                    <message v-bind:user="{id: user.id}" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
                 </md-card-content>
             </div>
         </md-card>
@@ -56,7 +56,7 @@
     export default {
         data() {
             return {
-                ticket: { title: '', status: { name: '' }, course_id: '' },
+                ticket: { title: '', status: { name: '' }, course_id: '', files: [] },
                 reply: '',
                 messages: [],
                 ret_url: '',
