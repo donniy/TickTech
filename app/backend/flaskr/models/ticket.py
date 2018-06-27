@@ -63,7 +63,6 @@ class Ticket(db.Model):
         "File", secondary=ticket_files_helper, lazy='subquery',
         backref=db.backref('tickets', lazy=True))
 
-
     def __repr__(self):
         return '<Ticket {}>'.format(self.title)
 
