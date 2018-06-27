@@ -78,6 +78,10 @@ def parseEmail(emailBytes):
 
 
 def parseBody(parsedEmail):
+    '''
+    Parses the body of an email. 
+    Returns the body and optional attachments on success.
+    '''
     body = ''
     html = ''
     attachments = []
@@ -127,38 +131,6 @@ def requestStudentID(result):
             return studentid
 
 
-def findUser(body, sender, address):
-    '''
-    Parses a given email body in string format. Returns the student id,
-    name and label, if possible.
-    '''
-    # Check if the email is in the database.
-    info = {'email': address}
-    result = requests.post(
-        'http://localhost:5000/api/email/user/match/email',
-        json=info)
-
-    # If request was succesful, try and connect mail to student id in database.
-    if (requestStudentID(result) != None):
-        return requestStudentID(result)
-
-    # Parse for studentd ids: Old ids are 6 digits long, new ones are 8.
-    body = body.split()
-    studentid = None
-    for words in body:
-        if words.isdigit() and len(words) > 6 and len(words) < 9:
-            studentid = int(words)
-
-    # Check if the student id is in the database.
-    info = {'studentid': studentid}
-    result = requests.post(
-        'http://localhost:5000/api/email/user/match/studentid',
-        json=info)
-
-    # Either return the student ID or None if not found.
-    return requestStudentID(result)
-
-
 def retrieveLabels(courseid):
     '''
     Helper function to retrieve all available labels of a course from the server.
@@ -200,6 +172,38 @@ def findLabel(body, labels):
     return bestLabel['label_id']
 
 
+def findUser(body, sender, address):
+    '''
+    Parses a given email body in string format. Returns the student id,
+    name and label, if possible.
+    '''
+    # Check if the email is in the database.
+    info = {'email': address}
+    result = requests.post(
+        'http://localhost:5000/api/email/user/match/email',
+        json=info)
+    
+    # If request was succesful, try and connect mail to student id in database.
+    if (requestStudentID(result) != None):
+        return requestStudentID(result)
+
+    # Parse for studentd ids: Old ids are 6 digits long, new ones are 8.
+    body = body.split()
+    studentid = None
+    for words in body:
+        if (words.isdigit() and len(words) > 6 and len(words) < 9):
+            studentid = int(words)
+
+    # Check if the student id is in the database.
+    info = {'studentid': studentid}
+    result = requests.post(
+        'http://localhost:5000/api/email/user/match/studentid',
+        json=info)
+
+    # Either return the student ID or None if not found.
+    return requestStudentID(result)
+
+# TODO: Create a reply instead of a ticket.
 def createReply(subject, body, files, sender, address, courseid):
     '''
     Create a reply to a ticket from the acquired information from an email.
@@ -237,13 +241,11 @@ def createTicket(subject, body, files, sender, address, courseid):
         return
 
     # TODO: Check if an email is a reply or a new email.
-    # if "Re: " in subject:
-    # Check the body for meta data? Ticket id in titel/body?
-    # Check if user corresponds with original ticket
-    #     createReply(subject, body, files, sender, address, courseid)
+    if "Ticket ID: " in subject:
+        print(subject)
+        return
+    # createReply(subject, body, files, sender, address, courseid)
     #     else
-    #         replyErrorMail(title, recipients, TODO TICKETID, body)
-    #     return
 
     # Get all labels available for this course.
     labels = retrieveLabels(courseid)
@@ -283,6 +285,7 @@ def createTicket(subject, body, files, sender, address, courseid):
         print("Course ID: ", courseid)
         print("Label ID: ", labelid)
         print("Body: " + body)
+    #else:
 
     # TODO: Send confirmation email.
     # createdTicketEmail(subject, address, TODO TICKETID, body)
@@ -335,7 +338,7 @@ def checkMail(host, port, user, password, courseid, debug=1):
     return 0
 
 
-# For debugging. Can be removed later (we use thread.py).
+#TODO: For debugging. Can be removed later (we use thread.py).
 if __name__ == '__main__':
     # Retrieve courses, get current course id.
     result = requests.get('http://localhost:5000/api/courses')
