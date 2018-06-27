@@ -120,7 +120,6 @@ class Ticket(db.Model):
             return
         self.status_id = help_status.id
 
-
     @property
     def related_users(self):
         """

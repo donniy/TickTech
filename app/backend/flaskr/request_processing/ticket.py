@@ -79,18 +79,16 @@ def add_ta_to_ticket(json_data):
 
     # Check if the ta and ticket were found and add if not already there.
     if ticket and ta:
-        print("ticket:\n\n",ticket.serialize)
         if ta not in ticket.bound_tas:
             ticket.bound_tas.append(ta)
             ticket.status_id = 4
-            print("ticket:\n\n",ticket.serialize)
             database.db.session.commit()
             level_up = levels.add_experience(levels.EXP_FOR_ASSING, ta.id)
             levels.notify_level_change(ta.id, ticket, level_up)
             return Iresponse.create_response({'ta': ta.serialize,
                                              'status': "Assigned"},
                                              200)
-        return Iresponse.create_response({'status':"OK"}, 201)
+        return Iresponse.create_response({'status': "OK"}, 201)
     return Iresponse.create_response("Failure", 400)
 
 
