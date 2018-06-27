@@ -9,7 +9,7 @@ class Note(db.Model):
 
     """
     This is the class that specifies the model for the Note.
-    A note is a way of communicating between TAs on a ticket.
+    A note is a way of communicating between teaching assistants on a ticket.
     """
     id = db.Column(UUIDType(binary=False), primary_key=True)
 
@@ -29,10 +29,20 @@ class Note(db.Model):
     #                           backref=db.backref('notes',lazy=True))
 
     def __repr__(self):
+        """
+        Function that will state how the object is
+        displayed when printed to the console.
+        Like a toString() method in Java.
+        """
         return '<Note {}>'.format(self.id)
 
     @property
     def serialize(self):
+        """
+        Transforms the object into a json object.
+        This will be used at the front-end, so dont include
+        sensitive information in the json object.
+        """
         return {
             'id': self.id,
             # 'message_id': self.message_id,

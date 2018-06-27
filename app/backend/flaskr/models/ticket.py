@@ -68,7 +68,10 @@ class Ticket(db.Model):
     @property
     def serialize(self):
         """
-        Ticket can be unassigned, so ta_id can be None.
+        Ticket can be unassigned, so teaching assistant id can be None.
+        Transforms the object into a json object.
+        This will be used at the front-end, so dont include
+        sensitive information in the json object.
         """
         if self.ta_id is None:
             self.ta_id = "null"
@@ -104,7 +107,7 @@ class Ticket(db.Model):
     def related_users(self):
         """
         Returns all users that are somehow related to this
-        ticket. That means, all TA's and the student that
+        ticket. That means, all teaching assistants and the student that
         created this ticket.
         """
         tmp = [self.owner]
@@ -142,6 +145,11 @@ class TicketStatus(db.Model):
 
     @property
     def serialize(self):
+        """
+        Transforms the object into a json object.
+        This will be used at the front-end, so dont include
+        sensitive information in the json object.
+        """
         return {
             'id': self.id,
             'name': self.name
@@ -164,6 +172,11 @@ class TicketLabel(db.Model):
 
     @property
     def serialize(self):
+        """
+        Transforms the object into a json object.
+        This will be used at the front-end, so dont include
+        sensitive information in the json object.
+        """
         return {
             'id': self.id,
             'course_id': self.course_id,
@@ -173,7 +186,7 @@ class TicketLabel(db.Model):
 
 class File(db.Model):
     """
-    Een File.
+    A File.
     """
 
     __tablename__ = 'files'
@@ -187,8 +200,9 @@ class File(db.Model):
     @property
     def serialize(self):
         """
-        Zet de message om in json. Dit is alles wat de front-end kan zien,
-        dus zorg dat er geen gevoelige info in zit.
+        Transforms the object into a json object.
+        This will be used at the front-end, so dont include
+        sensitive information in the json object.
         """
         return {
             'file_location': self.file_location,

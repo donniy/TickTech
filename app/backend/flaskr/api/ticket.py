@@ -26,7 +26,10 @@ from flaskr.auth import require_role
 @apiBluePrint.route('/ticket/<ticket_id>/close', methods=['POST', 'PATCH'])
 @jwt_required
 def close_ticket(ticket_id):
-    """ Update this with a rights check."""
+    """
+    Close ticket when is has been handled.
+    TODO: Update this with a rights check.
+    """
     current_identity = get_current_user()
     try:
         ticket = Ticket.query.get(ticket_id)
@@ -47,7 +50,7 @@ def close_ticket(ticket_id):
 @jwt_required
 def retrieve_single_ticket(ticket_id):
     """
-    Geeft een enkel ticket.
+    Retrieve single ticket from database.
     """
     # TODO: Controlleer rechten
     ticketObj = Ticket.query.get(ticket_id)
@@ -76,7 +79,7 @@ def retrieve_plugins(ticket_id):
 @jwt_required
 def create_message(ticket_id):
     """
-    Maak een nieuw bericht.
+    Create a new message.
     """
     json_data = request.get_json()
     if request is None:
@@ -104,7 +107,10 @@ def create_message(ticket_id):
 @apiBluePrint.route('/ticket/<ticket_id>/messages', methods=['GET'])
 @jwt_required
 def get_ticket_messages(ticket_id):
-    # TODO: Check if user is related to ticket.
+    """
+    Retrieve messages in ticket.
+    TODO: Check if user is related to ticket.
+    """
     return rp_message.retrieve_all_request(ticket_id,
                                            get_current_user(),
                                            read=True)
@@ -113,6 +119,9 @@ def get_ticket_messages(ticket_id):
 @apiBluePrint.route('ticket/addta', methods=['POST'])
 @require_role(['ta', 'supervisor'])
 def add_ta_to_ticket():
+    """
+    Assign teaching assistant to ticket.
+    """
     json_data = request.get_json()
     if json_data:
         if json_validation.validate_json(json_data, ['taid', 'ticketid']):
@@ -123,6 +132,9 @@ def add_ta_to_ticket():
 @apiBluePrint.route('ticket/removeta', methods=['POST'])
 @require_role(['ta', 'supervisor'])
 def remove_ta_from_ticket():
+    """
+    Unassign teaching assistant from ticket.
+    """
     json_data = request.get_json()
     if json_data:
         if json_validation.validate_json(json_data, ['taid', 'ticketid']):
@@ -203,7 +215,9 @@ def create_ticket():
 @apiBluePrint.route('/ticket/filedownload', methods=['POST'])
 @jwt_required
 def download_file():
-    """ Download a file from server (check rights in future)"""
+    """
+    Download a file from server (check rights in future).
+    """
     json_data = request.get_json()
     if 'address' in json_data:
         homefolder = expanduser("~")
@@ -227,7 +241,9 @@ def download_file():
 @apiBluePrint.route('/ticket/gettext', methods=["POST"])
 @jwt_required
 def get_text():
-    """ Convert an image file to text using Optical character recognition"""
+    """
+    Convert an image file to text using Optical character recognition.
+    """
     try:
         json_data = request.get_json()
         if 'address' in json_data:

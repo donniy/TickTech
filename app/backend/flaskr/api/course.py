@@ -31,8 +31,8 @@ def retreive_course(course_id):
 def retrieve_course_tickets(course_id):
     """
     Function that returns all tickets of a the given course.
+    TODO: Controle if user has permissions.
     """
-    # TODO: Controleer of degene die hierheen request permissies heeft.
     return rp_courses.retrieve_course_tickets_request(course_id)
 
 
@@ -75,6 +75,9 @@ def create_course():
 @apiBluePrint.route('/courses', methods=['GET'])
 @jwt_required
 def retrieve_all_courses():
+    """
+    Retrieve all courses from database.
+    """
     courses = Course.query.all()
     return Iresponse.create_response(database.serialize_list(courses), 200)
 
@@ -125,6 +128,9 @@ def get_course_students(course_id):
 @apiBluePrint.route('/courses/<course_id>/tas', methods=['POST'])
 @require_role(['supervisor'])
 def add_tas_to_course(course_id):
+    """
+    Add new teaching assistants to course.
+    """
     if request.files == '':
         return Iresponse.empty_json_request()
     for f_id in request.files:
@@ -139,6 +145,9 @@ def add_tas_to_course(course_id):
 
 
 def read_tas_csv(filename, course_id):
+    """
+    Add teaching assistants from uploaded file.
+    """
     f = open(filename, 'r')
     reader = csv.reader(f, delimiter=',')
     course = Course.query.get(course_id)
@@ -166,6 +175,9 @@ def read_tas_csv(filename, course_id):
 @apiBluePrint.route('/courses/<course_id>/students', methods=['POST'])
 @require_role(['supervisor'])
 def add_students_to_course(course_id):
+    """
+    Add students to course.
+    """
     if request.files == '':
         return Iresponse.empty_json_request()
 
