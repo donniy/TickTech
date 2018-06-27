@@ -63,11 +63,20 @@
                          v-if="isTA || isTeacher"
                          class="md-elevation-5 md-raised md-primary create-ticket-section1"
                          @click.native="$router.push('/course/' + lti_course.id)">
-                    <md-ripple>
-                        <md-card-content class="create-ticket-section2">
-                          <h1 style="opacity:1;">Course overview</h1>
-                          <md-badge v-bind:md-content="this.unassigned"> </md-badge>
-                        </md-card-content>
+                  <md-ripple>
+                    <md-card-content class="create-ticket-section2"
+                                     style="display: block;"
+                                     v-if="this.unassigned > 0">
+                      <h1 style="opacity:1;">Course overview </h1>
+                      <p style="align:center; padding-left:25%;">
+                        There are {{ this.unassigned}} unassigned tickets
+                      </p>
+                      </md-card-content>
+
+                    <md-card-content class="create-ticket-section2"
+                                     v-if="this.unassigned == 0">
+                      <h1 style="opacity:1;">Course overview </h1>
+                    </md-card-content>
                     </md-ripple>
                 </md-card>
 

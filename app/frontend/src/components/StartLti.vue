@@ -35,6 +35,10 @@ export default {
                 this.$auth.authenticated = true;
                 this.$lti.data.lti_session = true;
                 this.get_lti_data();
+                const p = 'http://localhost:3000/login/oauth2/auth?client_id=1&response_type=code&redirect_uri=http://localhost:5000/'
+                this.$ajax.get(p).then(response => {
+
+                })
                 this.$auth.fetch({
                     data: {},
                     success: function () {

@@ -2,7 +2,9 @@ from . import i_request
 from flaskr.models.Course import Course
 from flaskr.models.user import User
 from flaskr import database
+from flask import redirect
 import oauth2
+import requests
 import uuid
 """
 This file contains some of the code for lti from the following file:
@@ -60,6 +62,10 @@ class LTI_instance_database_helper:
         Function that ensures the course in the lti instance
         exists.
         """
+        data = requests.get('http://localhost:3000/login/oauth2/auth?client_id=1&response_type=code&redirect_uri=http://localhost:5000/api/user/retrieve').content
+        print(data)
+        self.lti_instance.params['needs_token'] = True
+        print(self.lti_instance.params)
         course_name = self.lti_instance.course_name
         course = Course.query.filter_by(title=course_name).first()
         if course is None:
@@ -75,6 +81,7 @@ class LTI_instance_database_helper:
         Function that ensures the user exists.
         """
         user_id = int(self.lti_instance.user_id)
+        print(user_id)
         user = User.query.get(user_id)
         if user is None:
             user = User(id=user_id,

@@ -40,9 +40,17 @@ def launch_lti_session():
     lti_instance.params['in_lti'] = True
     access_token = create_access_token(identity=lti_instance.params,
                                        expires_delta=expires)
+
+    #return redirect('http://localhost:3000/login/oauth2/auth?client_id=1&response_type=code&redirect_uri=http://localhost:5000/api/lti/canvas/access')
     # Add base url instead of hardcoded.
     return redirect("http://localhost:5000/start_lti_instance/"
                     + access_token, 302)
+
+
+@apiBluePrint.route('lti/canvas/access')
+def canvas_acces():
+    print("CODE")
+    print(request.args.get('code'))
 
 
 @apiBluePrint.route('lti/auth_session', methods=['POST'])
