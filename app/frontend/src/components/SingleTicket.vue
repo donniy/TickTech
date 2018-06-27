@@ -76,7 +76,7 @@
 			</md-button>
 			<b-popover ref="popoverRef" target="popoverButton-sync" triggers="click blur" placement='top'>
 				<vue-tribute :options="mentionOptions" v-on:tribute-replaced="matchFound">
-					<textarea name="notefield" v-validate="'required'" v-model="noteTextArea" class="form-control" id="textAreaForNotes" style="height:200px;width:250px;" placeholder="Enter a comment"></textarea>
+					<textarea autofocus name="notefield" v-validate="'required'" v-model="noteTextArea" class="form-control" id="textAreaForNotes" style="height:200px;width:250px;" placeholder="Enter a comment"></textarea>
 				</vue-tribute>
 				<button @click="addNote" class="btn btn-primary" style="margin-top:10px">Send</button>
 			</b-popover>

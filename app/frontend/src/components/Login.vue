@@ -8,7 +8,7 @@
 
                     <md-field>
                     <label for="studentnumber">Student ID</label>
-                    <md-input class="form-control" id="studentnumber" name="studentnumber" v-model="form.username" v-validate="'required'" type="number"/>
+                    <md-input autofocus class="form-control" id="studentnumber" name="studentnumber" v-model="form.username" v-validate="'required'" type="number"/>
                     <div v-show="errors.has('studentid')" class="invalid-feedback">
                         {{ errors.first('studentid') }}
                     </div>
