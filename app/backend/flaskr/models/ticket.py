@@ -28,6 +28,7 @@ class Ticket(db.Model):
     A ticket is created when a user has a question. The ticket
     will then own multiple entities, like notes and messages.
     The ticket is a container class for a question.
+
     """
     id = db.Column(UUIDType(binary=False), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -104,6 +105,22 @@ class Ticket(db.Model):
         self.status_id = closed_status.id
 
     @property
+    def assign(self):
+        # ID 3 is the assigned status.
+        assign_status = TicketStatus.query.filter_by(id=3).first()
+        if assign_status is None:
+            return
+        self.status_id = assign_status.id
+
+    @property
+    def help(self):
+        # id 4 is the helping status
+        help_status = TicketStatus.query.filter_by(id=4).first()
+        if help_status is None:
+            return
+        self.status_id = help_status.id
+
+    @property
     def related_users(self):
         """
         Returns all users that are somehow related to this
@@ -126,7 +143,7 @@ class Ticket(db.Model):
 class TicketStatus(db.Model):
 
     """
-    The status of a ticket.
+    De status van een ticket die kan worden ingesteld.
 
     Pre-defined statuses:
     1.  Unassigned
@@ -163,7 +180,7 @@ class TicketStatus(db.Model):
 class TicketLabel(db.Model):
 
     """
-    Label of a ticket, that can be set.
+    Label on a ticket.
     """
     id = db.Column(db.Integer, primary_key=True)
     ticket_id = db.Column(UUIDType(binary=False), unique=False, nullable=True)
@@ -183,6 +200,10 @@ class TicketLabel(db.Model):
             'name': self.name
         }
 
+    @property
+    def checkValid(self):
+        pass
+
 
 class File(db.Model):
     """
@@ -195,7 +216,6 @@ class File(db.Model):
     file_name = db.Column(db.Text, unique=False, nullable=False)
     file_id = db.Column(UUIDType(binary=False), primary_key=True)
     is_duplicate = db.Column(db.Boolean, default=False, nullable=False)
-    is_ocrable = db.Column(db.Boolean, default=False, nullable=False)
 
     @property
     def serialize(self):
@@ -207,6 +227,9 @@ class File(db.Model):
         return {
             'file_location': self.file_location,
             'file_name': self.file_name,
-            'is_duplicate': self.is_duplicate,
-            'is_ocrable': self.is_ocrable
+            'is_duplicate': self.is_duplicate
         }
+
+    @property
+    def checkValid(self):
+        pass
