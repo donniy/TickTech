@@ -157,7 +157,6 @@ def findUser(body, sender, address):
     return requestStudentID(result)
 
 
-
 def retrieveLabels(courseid):
     '''
     Helper function to retrieve all available labels of a course from the server.
@@ -172,7 +171,7 @@ def retrieveLabels(courseid):
     return labels
 
 
-# TODO: Labels will be many to many in thebackend (Ravi), so this is outdated.
+# TODO: Labels will be many-to-many in thebackend (Ravi), so this is outdated.
 def findLabel(body, labels):
     '''
     Parse the body for words that might be labels. Using the fuzzywuzzy module,
@@ -196,8 +195,6 @@ def findLabel(body, labels):
                 bestScore = currentScore
                 bestLabel = labels[i]
 
-    print("HIERR")
-    print(bestLabel['label_name'], bestLabel['label_id'])
     return bestLabel['label_id']
 
 
