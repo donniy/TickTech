@@ -322,6 +322,7 @@ export default {
                     this.noteTextArea = ""
                     this.$refs.popoverRef.$emit('close')
                     this.notes.push(response.data.json_data)
+                    // TODO: not hardcoding ta
                     this.bind_ta_to_ticket(this.ticket.id, 11111)
                 })
                 .catch(error => {

@@ -60,6 +60,7 @@ def assign_ticket(ticket_id):
     # TODO: Add Iresponse.
     return jsonify({'status': "success", 'message': 'ticket assigned'})
 
+
 @apiBluePrint.route('/ticket/<ticket_id>/help', methods=['POST', 'PATCH'])
 @jwt_required
 def help_ticket(ticket_id):
@@ -78,6 +79,7 @@ def help_ticket(ticket_id):
         return Iresponse.create_response("Error", 400)
     # TODO: Add Iresponse.
     return jsonify({'status': "success", 'message': 'ticket helping'})
+
 
 @apiBluePrint.route('/ticket/<ticket_id>', methods=['GET'])
 @jwt_required
