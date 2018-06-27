@@ -6,7 +6,9 @@ from flaskr.models.user import User
 from flaskr.request_processing import courses as rp_courses
 from flaskr.auth import require_role
 from flask_jwt_extended import jwt_required
+from flaskr.auth import require_ta_rights_in_course
 from werkzeug.utils import secure_filename
+from flaskr.models import ticket
 import csv
 import os
 
@@ -14,6 +16,9 @@ import os
 @apiBluePrint.route('/courses/single/<course_id>', methods=['GET'])
 @jwt_required
 def retreive_course(course_id):
+    """
+    Function that returns information about a specific course.
+    """
     course = Course.query.get(course_id)
     if course:
         return Iresponse.create_response(course.serialize, 200)
@@ -25,10 +30,32 @@ def retreive_course(course_id):
 @require_role(['supervisor', 'ta'])
 def retrieve_course_tickets(course_id):
     """
-    Geeft alle ticktes over gegeven course.
+    Function that returns all tickets of a the given course.
     """
     # TODO: Controleer of degene die hierheen request permissies heeft.
     return rp_courses.retrieve_course_tickets_request(course_id)
+
+
+@apiBluePrint.route('/courses/<course_id>/tickets/unassigned', methods=['GET'])
+def get_unassigned_course_tickets(course_id):
+    """
+    Function that returns the tickets in a course that are unassigned.
+    """
+    @require_ta_rights_in_course(course_id)
+    def get_unassigned_tickets_inner(curr_course, curr_user):
+        """
+        Inner function, wrapped in a decorator, so we check if the user
+        has the correct rigths, to get the unassigned tickets.
+        """
+        tickets = ticket.Ticket.query.filter_by(course_id=curr_course.id).all()
+        status = ticket.TicketStatus.query.filter_by(name="Unassigned").first()
+        unassign_tickets = list(filter(
+            lambda ticket: ticket.status_id == status.id, tickets))
+        print(unassign_tickets)
+        return Iresponse.create_response(
+            database.serialize_list(unassign_tickets), 200)
+
+    return get_unassigned_tickets_inner()
 
 
 @apiBluePrint.route('/courses', methods=['POST'])
@@ -69,6 +96,9 @@ def retrieve_all_courses():
 @apiBluePrint.route('/courses/<course_id>/tas', methods=['GET'])
 @jwt_required
 def get_course_tas(course_id):
+    """
+    Return all the tas in a course.
+    """
     course = Course.query.get(course_id)
     if course is None:
         return Iresponse.create_response("", 404)
@@ -79,6 +109,9 @@ def get_course_tas(course_id):
 @apiBluePrint.route('/courses/<course_id>/students', methods=['GET'])
 @require_role(['supervisor', 'ta'])
 def get_course_students(course_id):
+    """
+    Returns all the students in a course.
+    """
     course = Course.query.get(course_id)
     print(course_id)
     if course is None:
@@ -110,6 +143,7 @@ def read_tas_csv(filename, course_id):
     reader = csv.reader(f, delimiter=',')
     course = Course.query.get(course_id)
     if course is None:
+        f.close()
         return False
     for row in reader:
         if len(row) != 3:
@@ -125,6 +159,7 @@ def read_tas_csv(filename, course_id):
             print("ADDING TA")
             course.ta_courses.append(user)
             database.get_db().session.commit()
+    f.close()
     return True
 
 
@@ -160,6 +195,7 @@ def read_students_csv(filename, course_id):
     reader = csv.reader(f, delimiter=',')
     course = Course.query.get(course_id)
     if course is None:
+        f.close()
         return False
     for row in reader:
         if len(row) != 3:
@@ -175,4 +211,5 @@ def read_students_csv(filename, course_id):
             print("APPENDING USER")
             course.student_courses.append(user)
             database.get_db().session.commit()
+    f.close()
     return True

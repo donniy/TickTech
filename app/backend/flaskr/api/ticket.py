@@ -6,7 +6,7 @@ import uuid
 import datetime
 from flask_jwt_extended import jwt_required
 from flaskr.jwt_wrapper import get_current_user
-from flask import request, escape, jsonify
+from flask import request, escape, jsonify, current_app
 from flaskr import plugins
 from flaskr.request_processing import ticket as rp_ticket
 from flaskr.request_processing import message as rp_message
@@ -95,8 +95,9 @@ def create_message(ticket_id):
         message = create_email_message(ticket.title,
                                        [ticket.email], ticket_id,
                                        json_data['message'], user.name)
-        res = Mail().send(message)
-        res = res  # for flake8
+        if current_app.config['SEND_MAIL_ON_MESSAGE']:
+            res = Mail().send(message)
+            res = res  # for flake8
     return msg
 
 

@@ -82,36 +82,38 @@
 
 <script>
 
-import VeeValidate from 'vee-validate'
 
-let maxFiles = 6
-let maxFileSize = 10000000 // 10mb
+    import VeeValidate from 'vee-validate'
 
-export default {
-    data() {
-        return {
-            form: {
-                message: "",
-                courseid: "",
-                labelid: "",
-                subject: "",
-            },
-            files: [],
-            categories: {
-                courses: [],
-                labels: {}
-            },
-            fileTooLarge : false,
-            fileTooMany : false,
-        }
-    },
-    computed: {
-        options: function(event) {
-            return categories.labels[form.courseid]
-        }
-    },
-    methods: {
-            handleFilesUpload(){
+    let maxFiles = 6
+    let maxFileSize = 10000000 // == 10MB
+
+    export default {
+        data() {
+            return {
+                form: {
+                    message: "",
+                    courseid: "",
+                    labelid: "",
+                    subject: "",
+                },
+                files: [],
+                categories: {
+                    courses: [],
+                    labels: {}
+                },
+                fileTooLarge: false,
+                fileTooMany: false,
+            }
+        },
+        computed: {
+            options: function(event) {
+                return categories.labels[form.courseid]
+            }
+        },
+        methods: {
+            // Upload the supplied files.
+            handleFilesUpload() {
                 if (this.fileTooMany || this.fileTooLarge) {
                     return
                 }
@@ -237,32 +239,12 @@ export default {
                             }).catch(error => {
                                 console.log(error)
                             })
-                    }
-                }
+                      }
+                  }
 
-            }).catch(error => {
-                console.log(error)
-            });
-        this.$ajax.get(pathLabels)
-            .then(response => {
-                if (typeof response.data.json_data !== 'undefined') {
-                    for (let i = 0; i < response.data.json_data.length; i++) {
-                        let elem = response.data.json_data[i]
-                        if (this.categories.labels[elem.course_id])
-                            this.categories.labels[elem.course_id].push({
-                                value: elem.name,
-                                text: elem.name
-                            });
-                        else
-                            this.categories.labels[elem.course_id] = [{
-                                value: elem.name,
-                                text: elem.name
-                            }]
-                    }
-                }
-            }).catch(error => {
-                console.log(error)
-            })
+                }).catch(error => {
+                    console.log(error)
+                })
         }
     }
 

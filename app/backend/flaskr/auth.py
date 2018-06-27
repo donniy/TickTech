@@ -5,13 +5,15 @@ from flaskr import Iresponse
 from flaskr.models import Course
 
 
-def require_ta_in_course(course_id):
+def require_ta_rights_in_course(course_id):
     """
     Function that can be used as a decorator, to require
     that an api path can only be accessed if the user
-    is a ta in the specified course. The course_id of the
-    course should be given to this decorator and a valid
-    jwt should be present from which the user can be extracted.
+    has ta rights in the specified course. This means the user
+    is either TA or supervisor(teacher) in this course.
+    The course_id of the course should be given to
+    this decorator and a valid jwt should be present
+    from which the user can be extracted.
     """
 
     def decorator(func):
@@ -21,9 +23,9 @@ def require_ta_in_course(course_id):
         """
 
         @wraps(func)
-        def verify_ta_in_course(*args, **kwargs):
+        def verify_ta_rights_in_course(*args, **kwargs):
             """
-            Function that verifies that an user is a ta in the specified
+            Function that verifies that an user has ta rights in the specified
             course. This function required that the course_id is specified
             in the decorator.
 
@@ -47,9 +49,10 @@ def require_ta_in_course(course_id):
             if course is None:
                 return Iresponse.create_response("Course not found", 404)
             if curr_user not in course.ta_courses:
-                return Iresponse.create_response("", 403)
+                if curr_user not in course.supervisors:
+                    return Iresponse.create_response("", 403)
             return func(course, curr_user, *args, **kwargs)
-        return verify_ta_in_course
+        return verify_ta_rights_in_course
     return decorator
 
 

@@ -19,7 +19,6 @@ def test_insert_ticket(app, client):
         'Authorization': auth
     })
     cid = rv.get_json()['json_data'][0]['id']
-    c = Course.query.get(cid)
     link_student_to_course(usr, c)
     print("course: {}".format(cid))
 
@@ -39,13 +38,12 @@ def test_insert_ticket(app, client):
 def test_get_ticket(app, client):
     userId = 11188936
     usr = create_user(app, userId)
-    crs = create_course(app, uuid.uuid4())
-    link_ta_to_course(usr, crs)
+    c = create_course(app, uuid.uuid4())
+    link_ta_to_course(usr, c)
     auth = login(client, userId)
     rv = client.get('/api/courses',
                     headers={'Authorization': auth})
     cid = rv.get_json()['json_data'][0]['id']
-    c = Course.query.get(cid)
     link_student_to_course(usr, c)
     rv = client.post('/api/ticket/submit', json={
         'subject': 'test ticket',
@@ -60,7 +58,6 @@ def test_get_ticket(app, client):
     cid = rv.get_json()['json_data'][0]['id']
     tickets = client.get('/api/courses/{}/tickets'.format(cid),
                          headers={'Authorization': auth})
-    print(tickets.get_json())
     assert len(tickets.get_json()['json_data']) == 1
     ticketid = tickets.get_json()['json_data'][0]['id']
     assert ticketid is not None
@@ -98,7 +95,6 @@ def test_close_ticket(app, client):
     json_data2 = rv2.get_json()
 
     accepted = False
-    print(json_data2['json_data'])
     for x in json_data2['json_data']:
         if(x['id'] == str(ticketId1) and x['status']['id'] == 2):
             accepted = True

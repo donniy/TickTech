@@ -13,15 +13,15 @@ import uuid
 @apiBluePrint.route('/labels/<label_id>/close', methods=['POST'])
 @require_role(['supervisor', 'ta'])
 def remove_label(label_id):
+    """
+    Function that removes a label.
+    """
     label = Label.query.get(label_id)
     print(label)
     if label is None:
         return Iresponse.create_response("", 404)
-    try:
-        database.db.session.delete(label)
-        database.db.session.commit()
-    except Exception:
-        print("LOG: Deleting error")
+
+    if not database.deleteSafelyFromDB(label, remove_label):
         return Iresponse.internal_server_error()
 
     return Iresponse.create_response("", 202)
