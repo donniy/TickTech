@@ -116,10 +116,11 @@ export default {
 							return
 						} else {
                             this.$auth.login({data: {
-                                username: this.form.username,
-                                password: this.form.psw
+                                email: this.form.email,
+                                password: this.form.password
                                 },
                                 error: function (resp) {
+                                    window.alert("Authentication is down!")
                                     console.error(resp);
                                 }
                             });

@@ -13,7 +13,8 @@ def validate_userdata(email, name, studentid, password, repassword):
     if not password == repassword:
         return "Passwords did not match"
 
-    if studentid < 10000 or studentid > 100000000:
+    print(studentid)
+    if studentid < 10000 or studentid > 1000000000:
         return "Invalid student ID"
 
     return ''
