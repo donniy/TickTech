@@ -85,6 +85,7 @@
                             }
                         split_string = split_string.split('/');
                     } else {
+                        split_string = to.path;
                         if(window.$current_course_id !== null)
                             try {
                                 split_string = split_string.replace(':course_id', window.$current_course_id)
