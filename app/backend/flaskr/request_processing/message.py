@@ -4,7 +4,7 @@ from flask import escape
 import flaskr.utils.notifications as notifications
 from flaskr.models.Message import Message
 from flaskr.models.Course import Course
-from flaskr.models.user import *
+from flaskr.models.user import User
 from flaskr.request_processing import levels
 
 
