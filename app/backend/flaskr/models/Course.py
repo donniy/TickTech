@@ -22,14 +22,6 @@ student_course_linker = db.Table(
               primary_key=True)
 )
 
-label_course_linker = db.Table(
-    "label_link_course",
-    db.Column('course_id', UUIDType(binary=False), db.ForeignKey('course.id'),
-              primary_key=True),
-    db.Column('label_id', UUIDType(binary=False),
-              db.ForeignKey('label.label_id'), primary_key=True)
-)
-
 supervisor_linker = db.Table(
     "supervisor_linker",
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'),
@@ -61,10 +53,6 @@ class Course(db.Model):
     ta_courses = db.relationship(
         "User", secondary=ta_course_linker, lazy='subquery',
         backref=db.backref('ta_courses', lazy=True))
-
-    labels = db.relationship(
-        "Label", secondary=label_course_linker, lazy='subquery',
-        backref=db.backref('labels', lazy=True))
 
     supervisors = db.relationship(
         "User", secondary=supervisor_linker, lazy='subquery',
@@ -127,10 +115,8 @@ class CoursePlugin(db.Model):
         course_settings = p.course_settings
         for setting, props in course_settings.items():
             if self.settings and setting in self.settings:
-                print("Loading {} from settings".format(setting))
                 props['value'] = self.settings[setting]
             else:
-                print("Cannot find {} in settings. Fallback to default".format(setting))
                 props['value'] = props['default']
         return p.course_settings
 
@@ -140,3 +126,10 @@ class CoursePlugin(db.Model):
         the values and not all other properties of a setting.
         """
         return {k: v['value'] for k, v in self.get_settings().items()}
+
+    def __eq__(self, other):
+        """
+        Compare this plugin to another plugin. For compatibility to labels
+        only the name of the plugin is used.
+        """
+        return self.plugin == other.plugin

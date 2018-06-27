@@ -44,7 +44,7 @@ def retrieve_course_plugins(course_id):
     for p in all_plugins:
         cp = next((pl for pl in course.plugins if pl.plugin == p), None)
         tmp[p] = {}
-        tmp[p]['active'] = False if cp == None else cp.active
+        tmp[p]['active'] = False if not cp else cp.active
         tmp[p]['name'] = plugins.get_plugin_name(p)
 
     return Iresponse.create_response(tmp, 200)
@@ -60,7 +60,7 @@ def get_plugin_configurations(course_id, plugin_id):
     # TODO: Check if user is supervisor in this course.
 
     if plugin_id not in plugins.plugin_list():
-        return Iresponse.create({"error": "Plugin does not exist"}, 400)
+        return Iresponse.create_response({"error": "Plugin does not exist"}, 404)
 
     pids = [p.plugin for p in course.plugins]
     if plugin_id not in pids:

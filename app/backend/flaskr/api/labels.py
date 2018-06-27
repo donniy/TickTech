@@ -1,7 +1,7 @@
 from . import apiBluePrint
-from flaskr import database, Iresponse
+from flaskr import database, Iresponse, plugins
 from flask import request
-from flaskr.models.Label import Label
+from flaskr.models.Label import Label, LabelPlugin
 from flaskr.models.Course import Course
 from flaskr.models.user import User
 from flaskr.utils.json_validation import validate_json
@@ -43,7 +43,6 @@ def create_labels(course_id):
     """
     Adds a label to a course.
     """
-
     data = request.get_json()
     if data is None:
         return Iresponse.create_response("", 404)
@@ -61,11 +60,11 @@ def create_labels(course_id):
     new_label = Label()
     new_label.label_name = name
     new_label.label_id = labelid
+    new_label.course = course
 
     if not database.addItemSafelyToDB(new_label):
         return Iresponse.internal_server_error()
 
-    course.labels.append(new_label)
     database.db.session.commit()
     return Iresponse.create_response("", 200)
 
@@ -100,6 +99,54 @@ def deselectLabel(label_id):
     database.db.session.add(user)
     database.db.session.commit()
     return Iresponse.create_response("", 200)
+
+
+@apiBluePrint.route('/labels/<label_id>/plugins', methods=['GET'])
+def get_plugins(label_id):
+    """
+    Retrieve all available plugins for this label, along with the active state
+    and assignment id.
+    """
+    label = Label.query.get_or_404(label_id)
+    return Iresponse.create_response(label.get_plugins(), 200)
+
+
+@apiBluePrint.route('/labels/<label_id>/plugins', methods=['POST'])
+def activate_plugin(label_id):
+    """
+    Create a record in the database to activate this plugin.
+    """
+    label = Label.query.get_or_404(label_id)
+    plugin_id = request.get_json()['plugin_id']
+    if plugin_id not in plugins.plugin_list():
+        return Iresponse.create_response({"error": "Plugin does not exist"}, 404)
+    lp = LabelPlugin()
+    lp.id = uuid.uuid4()
+    lp.plugin = plugin_id
+    lp.label = label
+    lp.assignment_id = ''
+    if database.addItemSafelyToDB(lp):
+        return Iresponse.create_response({"status": "success"}, 200)
+    else:
+        return Iresponse.create_response({"error": "Something went wrong"}, 500)
+
+
+@apiBluePrint.route('/labels/<label_id>/plugins/<plugin_id>', methods=['PUT'])
+def update_plugin(label_id, plugin_id):
+    """
+    Change the assignment id of this plugin for this label.
+    """
+    pass
+
+
+@apiBluePrint.route('/labels/<label_id>/plugins/<plugin_id>', methods=['DELETE'])
+def deactivate_plugin(label_id, plugin_id):
+    """
+    Remove this plugin-label combination from the database to deactivate it.
+    Note that dis also removes the assignment id which is stored in the
+    pivot table.
+    """
+    pass
 
 
 @apiBluePrint.route('/labels/<label_id>/selected', methods=['POST'])

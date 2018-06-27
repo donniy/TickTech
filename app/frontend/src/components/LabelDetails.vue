@@ -1,16 +1,14 @@
 <!-- Label.vue implements everything label-related, such as selecting, adding and removing them. -->
 <template>
-    <md-list-item @click="clickLabel" v-if="exists">
-        <span class="md-list-item-text">{{label.label_name}}</span>
-
-        <md-dialog :md-active.sync="showModal">
-            <md-dialog-title>Do you want to remove this label?</md-dialog-title>
-            <md-dialog-actions>
-                <md-button class="md-primary" @click="showModal = false">Nope</md-button>
-                <md-button class="md-primary" @click="closeLabel()">Yes I'm sure</md-button>
-            </md-dialog-actions>
-        </md-dialog>
-    </md-list-item>
+    <div>
+        <md-subheader>{{label.label_name}}</md-subheader>
+        <md-list-item>
+            <span class="md-list-item-text">
+                Een optie
+            </span>
+            <md-switch v-model="label.bla" />
+            </md-list-item>
+    </div>
 </template>
 
 <script>
@@ -37,6 +35,13 @@ export default {
         // Change selection of labels based on mouseclick.
         clickLabel() {
             this.$emit('label-selected')
+        },
+        // Retrieve all plugins for this label.
+        getPlugins() {
+            const path = '/api/labels/' + this.label.label_id + '/plugins'
+            this.$ajax.get(path, response => {
+                console.log(response.data.json_data)
+            })
         },
         // Select current label.
         selectLabel() {

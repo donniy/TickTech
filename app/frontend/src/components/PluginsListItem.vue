@@ -18,7 +18,7 @@
                 </md-field>
             </md-dialog-content>
             <md-dialog-actions>
-                <md-button class="md-primary" @click="showModal = false">Close</md-button>
+                <md-button class="md-default" @click="showModal = false">Close</md-button>
                 <md-button class="md-primary" @click="save">Save</md-button>
             </md-dialog-actions>
         </md-dialog>
