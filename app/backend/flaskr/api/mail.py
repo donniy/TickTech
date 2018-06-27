@@ -8,7 +8,7 @@ from flaskr.utils import course_validation, json_validation
 from flask import escape, request
 from flaskr.utils.json_validation import validate_json
 from mail.thread import MailThread
-from mail.Message import ticketErrorEmail
+from mail.Message import ticketErrorEmail, createdTicketEmail
 from flask_mail import Mail
 import base64
 
@@ -133,6 +133,14 @@ def create_email_ticket():
 
     response = rp_ticket.create_request(formdata)
 
+    if (response.status_code == 201):
+        ticketid = response.get_json()['json_data']['ticketid']
+        message = createdTicketEmail(formdata['subject'],
+                                    [formdata['email']],
+                                    ticketid,
+                                    formdata['message'])
+        res = Mail().send(message)
+        res = res
     return response
 
 

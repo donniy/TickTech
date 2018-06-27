@@ -117,18 +117,18 @@ def findUser(body, sender, address):
     name and label, if possible.
     '''
     # Create JSON to match email to user in the database.
-    # info = {'email': address}
-    # result = requests.post(
-    #     'http://localhost:5000/api/email/user/match/email',
-    #     json=info)
-    #
-    # If request was succesful, try and connect mail to student id in database.
-    # if (result.status_code == 200):
-    #     json = result.json()
-    # if (json['json_data']['success']):  # ENGELS FOUT FIX HET
-    #         studentid = json['json_data']['studentid']
-    #         if studentid is not None:
-    #             return studentid
+    info = {'email': address}
+    result = requests.post(
+        'http://localhost:5000/api/email/user/match/email',
+        json=info)
+
+    #If request was succesful, try and connect mail to student id in database.
+    if (result.status_code == 200):
+        json = result.json()
+    if (json['json_data']['success']):  # ENGELS FOUT FIX HET
+            studentid = json['json_data']['studentid']
+            if studentid is not None:
+                return studentid
 
     # Parse for studentd ids: Old student ids are 6 digits long, new ones are 8.
     body = body.split()
