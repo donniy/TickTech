@@ -1,6 +1,7 @@
 import pytesseract
 import requests
 import cv2
+from PIL import Image
 from os.path import expanduser
 
 
@@ -10,7 +11,7 @@ def ocr_process_image(url):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         gray = cv2.threshold(gray, 0, 255,
                              cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
-        return pytesseract.image_to_string(gray, lang='eng')
+        return pytesseract.image_to_string(gray, lang='eng', nice=1)
     except IOError:
         return None
 
@@ -20,7 +21,7 @@ def isOcrable(address):
         homefolder = expanduser("~")
         base = '/serverdata/'
         address = homefolder + base + address
-        image = cv2.imread(address)
+        image = Image.open(address)
         if image:
             return True
             # image.close()

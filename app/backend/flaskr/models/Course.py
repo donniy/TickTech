@@ -46,7 +46,7 @@ class Course(db.Model):
     title = db.Column(db.String(255), unique=False, nullable=False)
     description = db.Column(db.Text, nullable=True)
 
-    # TODO: lengthe van deze data
+    # TODO: controle length of data
     course_email = db.Column(db.String(120), unique=False, nullable=True)
     mail_server_url = db.Column(db.String(120), unique=False, nullable=True)
     mail_port = db.Column(db.Integer, nullable=True)
@@ -69,17 +69,20 @@ class Course(db.Model):
         "User", secondary=supervisor_linker, lazy='subquery',
         backref=db.backref('supervisor_courses', lazy=True))
 
-    # Dit is een soort toString zoals in Java, voor het gebruiken van de
-    # database in de commandline. Op die manier kan je data maken en weergeven
-    # zonder formulier.
     def __repr__(self):
+        """
+        Function that will state how the object is
+        displayed when printed to the console.
+        Like a toString() method in Java.
+        """
         return '<Course {}>'.format(self.title)
 
     @property
     def serialize(self):
         """
-        Zet dit course om in json. Dit is alles wat de frontend kan zien,
-        dus zorg dat er geen gevoelige info in zit.
+        Transforms the object into a json object.
+        This will be used at the front-end, so dont include
+        sensitive information in the json object.
         """
         return {
             'id': self.id,

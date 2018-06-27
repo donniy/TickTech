@@ -111,8 +111,9 @@ def unread_messages():
 
 @apiBluePrint.route('/user/register', methods=["POST"])
 def register_user():
-    ''' Expects a request with email, name, id and password (and confirmed)
-        and enters new user into database.
+    '''
+    Expects a request with email, name, id and password (and confirmed)
+    and enters new user into database.
     '''
 
     json_data = request.get_json()
@@ -190,6 +191,9 @@ def userid_exists():
 @apiBluePrint.route('/user/student_courses', methods=['GET'])
 @require_role(['student'])
 def get_courses_user_is_student_in():
+    """
+    Retrieve the courses where user is a student.
+    """
     curr_user = get_current_user()
     if curr_user is None:
         return Iresponse.create_response("", 404)
@@ -200,6 +204,9 @@ def get_courses_user_is_student_in():
 @apiBluePrint.route('/user/teachingAssistant_courses', methods=['GET'])
 @require_role(['ta'])
 def get_courses_user_is_ta_in():
+    """
+    Retrieve the courses where user is a teaching assistant.
+    """
     curr_user = get_current_user()
     if curr_user is None:
         return Iresponse.create_response("", 404)
@@ -210,6 +217,9 @@ def get_courses_user_is_ta_in():
 @apiBluePrint.route('/user/<int:user_id>')
 @jwt_required
 def get_user(user_id):
+    """
+    Retrieve user credentials.
+    """
     user = get_current_user()
     if user is None:
         return Iresponse.create_response("", 404)
