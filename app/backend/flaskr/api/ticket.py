@@ -41,6 +41,7 @@ def close_ticket(ticket_id):
     # TODO: Add Iresponse.
     return jsonify({'status': "success", 'message': 'ticket closed'})
 
+
 @apiBluePrint.route('/ticket/<ticket_id>/assign', methods=['POST', 'PATCH'])
 @jwt_required
 def assign_ticket(ticket_id):
