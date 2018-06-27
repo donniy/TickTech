@@ -1,5 +1,5 @@
 from flaskr.tests.utils import create_course, create_user, \
-    create_ticket, link_ta_to_course, login
+    create_ticket, link_ta_to_course, link_supervisor_to_course, login
 import uuid
 
 
@@ -7,12 +7,15 @@ def test_get_single_course(app, client):
     """
     Test the api call to get a single course
     """
-    create_user(app, 1234)
+    usr = create_user(app, 1234)
     courseId = uuid.uuid4()
 
-    create_course(app, courseId)
+    c = create_course(app, courseId)
 
-    rv = client.get('/api/courses/single/{}'.format(courseId))
+    auth = login(client, usr.id)
+
+    rv = client.get('/api/courses/single/{}'.format(courseId),
+                    headers={'Authorization': auth})
     json_data = rv.get_json()
     print(json_data)
     assert len(json_data['json_data']) > 0
@@ -25,7 +28,7 @@ def test_get_course_tickets(app, client):
     """
 
     usr = create_user(app, 1234)
-    auth = login(client, 1234)
+
     ticketId = uuid.uuid4()
     ticketId2 = uuid.uuid4()
     ticketId3 = uuid.uuid4()
@@ -33,28 +36,24 @@ def test_get_course_tickets(app, client):
     courseId = uuid.uuid4()
     courseId2 = uuid.uuid4()
 
-    create_course(app, courseId, tas=[usr])
-    create_course(app, courseId2, tas=[usr])
+    auth = login(client, usr.id)
+
+    c = create_course(app, courseId, tas=[usr])
+    c2 = create_course(app, courseId2, tas=[usr])
 
     create_ticket(app, ticketId, 1234, courseId)
     create_ticket(app, ticketId2, 1234, courseId)
     create_ticket(app, ticketId3, 1234, courseId2)
 
     rv = client.get('/api/courses/{}/tickets'.format(courseId),
-                    headers={
-                        'Authorization': auth
-                    })
-
+                    headers={'Authorization': auth})
     json_data = rv.get_json()
     print(json_data)
     assert len(json_data['json_data']) == 2
     assert rv.status == "200 OK"
 
     rv2 = client.get('/api/courses/{}/tickets'.format(courseId2),
-                     headers={
-                         'Authorization': auth
-                     })
-
+                     headers={'Authorization': auth})
     json_data2 = rv2.get_json()
     print(json_data2)
     assert len(json_data2['json_data']) == 1
@@ -65,14 +64,15 @@ def test_get_course_tickets_empty(app, client):
     """
     Database should be empty so no tickets should be returned.
     """
-    user = create_user(app, 1234)
-    auth = login(client, user.id)
-    course = create_course(app, uuid.uuid4(), tas=[user])
-    tickets = client.get('/api/courses/{}/tickets'.format(course.id),
-                         headers={
-                         'Authorization': auth
-                         })
+    usr = create_user(app, 1234)
+    auth = login(client, 1234)
+    c = create_course(app, uuid.uuid4(), tas=[usr])
 
+    rv = client.get('/api/courses',
+                    headers={'Authorization': auth})
+    cid = c.id
+    tickets = client.get('/api/courses/{}/tickets'.format(cid),
+                         headers={'Authorization': auth})
     assert tickets.status == '200 OK'
     print(tickets.get_json())
     assert len(tickets.get_json()['json_data']) == 0
@@ -82,7 +82,8 @@ def test_create_new_course(app, client):
     """
     Test the api call to create a new course
     """
-    create_user(app, 1234)
+    usr = create_user(app, 1234)
+    c = create_course(app, uuid.uuid4(), supervisors=[usr])
     auth = login(client, 1234)
 
     mail = "test@test.com"
@@ -97,7 +98,8 @@ def test_create_new_course(app, client):
     })
     assert rv.status == "200 OK"
 
-    rv2 = client.get('/api/courses')
+    rv2 = client.get('/api/courses',
+                     headers={'Authorization': auth})
     json_data = rv2.get_json()
     print(json_data)
     assert len(json_data['json_data']) > 0
@@ -112,15 +114,20 @@ def test_create_new_course(app, client):
 
 
 def test_get_all_courses(app, client):
-    create_user(app, 1234)
+    usr = create_user(app, 1234)
 
     courseId = uuid.uuid4()
     courseId2 = uuid.uuid4()
 
-    create_course(app, courseId)
+    c = create_course(app, courseId)
     create_course(app, courseId2)
 
-    rv = client.get('/api/courses')
+    link_ta_to_course(usr, c)
+
+    auth = login(client, 1234)
+
+    rv = client.get('/api/courses',
+                    headers={'Authorization': auth})
     json_data = rv.get_json()
     print(json_data)
     assert len(json_data['json_data']) >= 2
@@ -136,7 +143,10 @@ def test_get_course_tas(app, client):
     link_ta_to_course(user, course)
     link_ta_to_course(user2, course)
 
-    rv = client.get('/api/courses/{}/tas'.format(courseId))
+    auth = login(client, 1234)
+
+    rv = client.get('/api/courses/{}/tas'.format(courseId),
+                    headers={'Authorization': auth})
     json_data = rv.get_json()
     print(json_data)
     assert rv.status == '200 OK'

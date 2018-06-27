@@ -16,7 +16,7 @@ import 'vue-material/dist/theme/default.css'
 import axios from 'axios'
 import VueAxios from 'vue-axios';
 import VueAuth from '@websanova/vue-auth'
-import JWTHeader from './components/jwtHeader'
+import authHeader from './components/authHeader'
 
 Vue.use(VueMaterial)
 Vue.use(VueAxios, axios);
@@ -67,7 +67,6 @@ Vue.prototype.$ajax = {
 
         hdr = add_bearer(hdr);
 
-
         let axios_auth = axios.create({
             headers: hdr
         });
@@ -76,7 +75,7 @@ Vue.prototype.$ajax = {
   post: function (url, data={}, f) {
     let hdr = {};
 
-      hdr = add_bearer(hdr);
+    hdr = add_bearer(hdr);
 
     hdr['X-CSRFToken'] = csrf_token;
     let axios_csrf = axios.create({
@@ -87,7 +86,7 @@ Vue.prototype.$ajax = {
   delete: function (url, data={}, f) {
     let hdr = {};
 
-      hdr = add_bearer(hdr);
+    hdr = add_bearer(hdr);
 
     hdr['X-CSRFToken'] = csrf_token;
     let axios_csrf = axios.create({
@@ -98,7 +97,7 @@ Vue.prototype.$ajax = {
   put: function (url, data={}, f) {
     let hdr = {};
 
-      hdr = add_bearer(hdr);
+    hdr = add_bearer(hdr);
 
     hdr['X-CSRFToken'] = csrf_token;
     let axios_csrf = axios.create({
@@ -109,8 +108,7 @@ Vue.prototype.$ajax = {
   patch: function (url, data={}, f) {
     let hdr = {};
 
-      hdr = add_bearer(hdr);
-
+    hdr = add_bearer(hdr);
 
     hdr['X-CSRFToken'] = csrf_token;
     let axios_csrf = axios.create({
@@ -121,13 +119,13 @@ Vue.prototype.$ajax = {
 }
 
 Vue.prototype.$user = {
-  get: () => {
-    let usr = window.$auth.user().user;
+  get: function () {
+    let usr = $auth.user();
     return usr;
   },
 
-  set: (user) => {
-    return window.$auth.user(user);
+  set: function (user) {
+    return $auth.user(user);
   },
 
   logout: function () {
@@ -140,31 +138,20 @@ Vue.prototype.$user = {
     });
   },
 
-    logged_in: () => {
-        console.log("ACCES")
-        console.log(window.$auth)
-        return window.$auth.check();
+  logged_in: function () {
+    return $auth.check()
   },
 
-  isStudent: () => {
-    let usr = window.$auth.user().user;
-    if(typeof usr === 'undefined')
-      return 0
-    return (typeof usr.student !== 'undefined') ? 1 : 0
+  isStudent: function () {
+    return $auth.check('student');
   },
 
-  isSupervisor: () => {
-    let usr = window.$auth.user().user;
-    if(typeof usr === 'undefined')
-      return 0
-    return (typeof usr.ta !== 'undefined') ? 1 : 0
+  isSupervisor: function () {
+    return $auth.check('supervisor');
   },
 
-  isTa: () => {
-    let usr = window.$auth.user().user;
-    if(typeof usr === 'undefined')
-      return 0
-    return (typeof usr.ta !== 'undefined') ? 1 : 0
+  isTa: function () {
+    return $auth.check('ta');
   }
 }
 
@@ -179,21 +166,22 @@ Vue.axios = axios
 Vue.router = router
 
 Vue.use(VueAuth, {
-    auth: require('@websanova/vue-auth/drivers/auth/bearer.js'),
-    http: require('@websanova/vue-auth/drivers/http/axios.1.x.js'),
-    router: require('@websanova/vue-auth/drivers/router/vue-router.2.x.js'),
-    token: [
-      {request: 'Authorization', response: 'Authorization', authType: 'JWT', foundIn: 'header'},
-      {request: 'access_token', response: 'access_token', authType: 'JWT', foundIn: 'response'}
-    ],
-    fetchData: {url: '/api/user/retrieve', method: 'GET', enabled: true},
-    refreshData: {url: '/api/user/retrieve', method: 'GET', enabled: true},
-    tokenDefaultName: 'access_token',
-    parseUserData: function (data) {
-        console.log(data)
-        return data.json_data
-    },
-    tokenStore: ['localStorage', 'cookie']
+  auth: authHeader,
+  http: require('@websanova/vue-auth/drivers/http/axios.1.x.js'),
+  router: require('@websanova/vue-auth/drivers/router/vue-router.2.x.js'),
+  token: [
+    {request: 'access_token', response: 'access_token', authType: 'Bearer', foundIn: 'header'},
+    {request: 'Authorization', response: 'Authorization', authType: 'Bearer', foundIn: 'header'},
+  ],
+  fetchData: {url: '/api/user/retrieve', method: 'GET', enabled: true},
+  refreshData: {url: '/api/user/retrieve', method: 'GET', enabled: true},
+  loginData: {url: '/api/login', fetchUser: true},
+  tokenDefaultName: 'access_token',
+  parseUserData: function (data) {
+    console.log(data.json_data.user)
+    return data.json_data.user
+  },
+  tokenStore: ['localStorage', 'cookie']
 });
 
 

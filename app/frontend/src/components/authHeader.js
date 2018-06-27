@@ -4,8 +4,11 @@ module.exports = {
     },
 
     response: function (res) {
-        var headers = this.options.http._getHeaders.call(this, res)
-        var token = headers.Authorization || headers.authorization;
+        var body = this.options.http._httpData.call(this, res),
+            headers = this.options.http._getHeaders.call(this, res),
+            token = headers.Authorization || headers.authorization
+                    || body.access_token || body.json_data.access_token;
+
         if (token) {
             token = token.split(/Bearer\:?\s?/i);
 
