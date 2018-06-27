@@ -1,6 +1,6 @@
 <template>
-<div>
-	<h2 class="form-header center-display">Login</h2>
+    <div v-if="$auth.ready()">
+        <h2 class="form-header center-display">Login</h2>
 
 	<form class="md-layout center-display" v-on:submit.prevent="checkUser">
 		<md-card class="md-layout-item md-size-50 md-small-size-100">
@@ -8,11 +8,11 @@
 
 				<md-field>
 					<label for="email">Email address</label>
-					<md-input autofocus id="email" name="email" v-model="form.email" v-validate="'required'" type="email" />
+					<md-input v-on:keyup="loginstatus = false" autofocus id="email" name="email" v-model="form.email" v-validate="'required'" type="email" />
 				</md-field>
 				<md-field>
 					<label for="studentnumber">Password</label>
-					<md-input autofocus id="psw" name="psw" v-model="form.psw" v-validate="'required'" type="password" />
+					<md-input v-on:keyup="loginstatus = false" autofocus id="psw" name="psw" v-model="form.psw" v-validate="'required'" type="password" />
 				</md-field>
 				<div v-show="errors.has('email')" class="invalid-feedback">
 					{{ errors.first('email') }}
@@ -20,6 +20,9 @@
 				<div v-show="errors.has('psw')" class="invalid-feedback">
 					{{ errors.first('psw') }}
 				</div>
+				<p id="loginfail" class="def-error-msg" v-show="this.loginstatus">
+					{{this.message}}
+				</p>
 				<md-button class="btn btn-primary" type="submit" v-bind:disabled="errors.any()">
 					Submit
 				</md-button>
@@ -42,49 +45,38 @@ import Router from 'vue-router';
         data() {
             return {
                 form: {
-                    username: '',
-                }
+                    email: '',
+					psw: ''
+                },
+				loginstatus: false,
+				message: ''
             }
         },
         methods: {
-            // Confirm the student ID.
-            // TODO: Give error message if ID is wrong - maybe pop-up window?
+            // Log the student in.
             checkUser() {
                 this.$validator.validateAll().then((result) => {
+					this.loginstatus = false
                     if (result) {
-                        this.$auth.login({url: '/api/login',
-                                        data: {username: this.form.username, password: "TickTech"},
-                                          success: function (response) {
-                                              this.$auth.token(null,
-                                                               response.data.json_data.access_token);
-                                              this.$auth.fetch({
-                                                  data: {},
-                                                  success: function () {
-                                                      this.$router.push('/home');
-                                                  },
-                                                  error: function (response_fetch) {
-                                                      console.error(response_fetch)
-                                                  },
-                                              });
-                                        },
-                                        error: function (response) {
-                                            console.error(response)
-                                        },
-                                        rememberMe: true,
-                                        fetchUser: false,
-                                        //redirect: '/home',
-                        })
+                        this.$auth.login({data: {
+                            email: this.form.email,
+                            password: this.form.psw
+                            },
+                            error: function (resp) {
+								// On failed login, show error
+                                console.error(resp);
+								this.message = resp.response.data.json_data
+								this.loginstatus = true
+                            }
+                        });
                     }
-                })
-            },
-
+                    }
+                )
+            }
         },
         mounted() {
             if (this.$user.logged_in()) {
                 this.$router.back()
-            } else {
-                window.$cookies.remove('token')
-                window.$cookies.remove('user')
             }
         }
     }

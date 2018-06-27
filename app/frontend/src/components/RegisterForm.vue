@@ -1,8 +1,9 @@
 
 <template>
 <div>
-	<form v-on:submit.prevent="Register">
-		<md-steppers :md-active-step.sync="active" md-sync-route md-dynamic-height>
+    <div class="md-layout center-display">
+	<form class="md-layout-item md-size-60 md-small-size-100" v-on:submit.prevent="Register">
+		<md-steppers class="md-elevation-5" :md-active-step.sync="active" md-sync-route md-dynamic-height>
 			<md-step :md-error="firstStepError" id="first" md-label="Student details" :md-done.sync="first" md-description="Required">
 				<md-field>
 					<label for="email">Email address</label>
@@ -74,6 +75,7 @@
 		</md-steppers>
 	</form>
 </div>
+</div>
 </template>
 
 
@@ -113,7 +115,14 @@ export default {
 							window.alert("We could not register you at this time!\n" + response.data.json_data["status"] )
 							return
 						} else {
-							//TODO: Log user in
+                            this.$auth.login({data: {
+                                username: this.form.username,
+                                password: this.form.psw
+                                },
+                                error: function (resp) {
+                                    console.error(resp);
+                                }
+                            });
 						}
 					})
 				}
