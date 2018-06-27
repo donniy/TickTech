@@ -1,7 +1,10 @@
 from flask_mail import Message
 
 def createEmailMessage(title, recipients, ticketid, body, sender):
-    message = Message(subject="RE: " + title, recipients=recipients)
+    '''
+    #TODO:
+    '''
+    message = Message(subject=title, recipients=recipients)
     message.html = (
         '<body>You got a new reply to your question from ' + sender +
         '.<br /> Check out your ' +
@@ -12,10 +15,13 @@ def createEmailMessage(title, recipients, ticketid, body, sender):
     return message
 
 
-# DIT OOK NOG
 def createdTicketEmail(title, recipients, ticketid, body):
+    '''
+    #TODO:
+    '''
+
     message = Message(
-        subject="TIKTECH Confirmation. Received your question: " + title, recipients=recipients)
+        subject="TIKTECH Confirmation:" + title + ". Ticket ID: " +  ticketid, recipients=recipients)
     message.html = ('<body> We received your e-mail and created a matching ticket on TIKTECH.' +
                     '.<br /> Check it out ' +
                     '<a href="http://localhost:5000/ticket/' + ticketid +
@@ -25,8 +31,10 @@ def createdTicketEmail(title, recipients, ticketid, body):
     return message
 
 
-# DIT FAALT
 def ticketErrorEmail(title, recipients, body):
+    '''
+    #TODO:
+    '''
     message = Message(
         subject="TIKTECH error. We could not process: " + title, recipients=recipients)
     message.html = ('<body> We received your e-mail, but encountered an error while processing.' +
@@ -39,7 +47,11 @@ def ticketErrorEmail(title, recipients, body):
                     )
     return message
 
+# TODO: Dit invoeren.
 def replyErrorEmail(title, recipients, ticketid, body):
+    '''
+    #TODO:
+    '''
     message = Message(
         subject="TIKTECH error. We could not process: " + title, recipients=recipients)
     message.html = ('<body> We received your e-mail, but encountered an' +
