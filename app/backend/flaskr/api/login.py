@@ -42,7 +42,7 @@ def retrieve_user():
     student, ta, supv, usr = {}, {}, {}, {}
     student = database.serialize_list(current_identity.student_courses)
     ta = database.serialize_list(current_identity.ta_courses)
-    supv = database.serialize_list(current_identity.supervisors)
+    supv = database.serialize_list(current_identity.supervisor_courses)
 
     usr = current_identity.serialize
     usr['student'] = student

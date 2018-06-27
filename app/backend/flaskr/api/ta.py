@@ -4,8 +4,7 @@ from flaskr.models.user import User
 from flaskr import Iresponse
 from flask_jwt_extended import jwt_required
 from flaskr.jwt_wrapper import get_current_user
-from flaskr.auth import require_ta_in_course, require_role
-from flaskr.auth import require_ta_rights_in_course
+from flaskr.auth import require_ta_rights_in_course, require_role
 from flaskr import database
 
 

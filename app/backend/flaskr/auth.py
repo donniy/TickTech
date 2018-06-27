@@ -92,7 +92,7 @@ def require_role(roles):
             c_stud = 'student' in roles
             c_stud &= len(curr_user.student_courses) > 0
             c_super = 'supervisor' in roles
-            c_super &= len(curr_user.supervisors) > 0
+            c_super &= len(curr_user.supervisor_courses) > 0
 
             if curr_user is None:
                 return Iresponse.create_response("", 400)

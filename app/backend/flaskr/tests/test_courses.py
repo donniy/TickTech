@@ -36,12 +36,10 @@ def test_get_course_tickets(app, client):
     courseId = uuid.uuid4()
     courseId2 = uuid.uuid4()
 
-    c = create_course(app, courseId)
-    create_course(app, courseId2)
-
-    link_ta_to_course(usr, c)
-
     auth = login(client, usr.id)
+
+    c = create_course(app, courseId, tas=[usr])
+    c2 = create_course(app, courseId2, tas=[usr])
 
     create_ticket(app, ticketId, 1234, courseId)
     create_ticket(app, ticketId2, 1234, courseId)
@@ -67,14 +65,12 @@ def test_get_course_tickets_empty(app, client):
     Database should be empty so no tickets should be returned.
     """
     usr = create_user(app, 1234)
-    c = create_course(app, uuid.uuid4())
-    link_ta_to_course(usr, c)
-
     auth = login(client, 1234)
+    c = create_course(app, uuid.uuid4(), tas=[usr])
 
     rv = client.get('/api/courses',
                     headers={'Authorization': auth})
-    cid = rv.get_json()['json_data'][0]['id']
+    cid = c.id
     tickets = client.get('/api/courses/{}/tickets'.format(cid),
                          headers={'Authorization': auth})
     assert tickets.status == '200 OK'
@@ -87,11 +83,8 @@ def test_create_new_course(app, client):
     Test the api call to create a new course
     """
     usr = create_user(app, 1234)
+    c = create_course(app, uuid.uuid4(), supervisors=[usr])
     auth = login(client, 1234)
-
-    c = create_course(app, uuid.uuid4())
-
-    link_supervisor_to_course(usr, c)
 
     mail = "test@test.com"
     title = "test course title"

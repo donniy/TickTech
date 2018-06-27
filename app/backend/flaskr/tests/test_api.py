@@ -7,7 +7,7 @@ def test_get_courses(app, client):
     """
     Test database contains courses so at leas one should be returned.
     """
-    usr = create_user(app, 1234)
+    usr = create_user(app, 12345)
     c = create_course(app, uuid.uuid4())
     link_ta_to_course(usr, c)
     auth = login(client, usr.id)
@@ -22,14 +22,10 @@ def test_get_tickets(app, client):
     """
     Database should be empty so no tickets should be returned.
     """
-    usr = create_user(app, 1234)
-    c = create_course(app, uuid.uuid4())
-    link_ta_to_course(usr, c)
+    usr = create_user(app, 12345)
     auth = login(client, usr.id)
-    rv = client.get('/api/courses',
-                    headers={'Authorization': auth})
-    cid = rv.get_json()['json_data'][0]['id']
-    tickets = client.get('/api/courses/{}/tickets'.format(cid),
+    c = create_course(app, courseId=uuid.uuid4(), tas=[usr])
+    tickets = client.get('/api/courses/{}/tickets'.format(c.id),
                          headers={'Authorization': auth})
     assert tickets.status == '200 OK'
     print(tickets.get_json())
@@ -40,9 +36,9 @@ def test_incorrect_course_post(app, client):
     """
     Not sending any json should return 400.
     """
-    usr = create_user(app, 1234)
-    c = create_course(app, uuid.uuid4())
-    link_supervisor_to_course(usr, c)
+    usr = create_user(app, 12345)
+    c = create_course(app, uuid.uuid4(), supervisors=[usr])
+    # link_supervisor_to_course(usr, c)
     auth = login(client, usr.id)
     rv = client.post('/api/courses',
                      headers={'Authorization': auth})
@@ -79,13 +75,11 @@ def test_insert_ticket(app, client):
 
 def test_get_ticket(app, client):
     usr = create_user(app, 11188936)
-    c = create_course(app, uuid.uuid4())
-    link_student_to_course(usr, c)
-    link_supervisor_to_course(usr, c)
     auth = login(client, 11188936)
+    c = create_course(app, uuid.uuid4(), students=[usr], supervisors=[usr])
     rv = client.get('/api/courses',
                     headers={'Authorization': auth})
-    cid = rv.get_json()['json_data'][0]['id']
+    cid = c.id
     rv = client.post('/api/ticket/submit', json={
         'subject': 'test ticket',
         'message': 'Test bericht',
@@ -96,7 +90,7 @@ def test_get_ticket(app, client):
     })
     rv = client.get('/api/courses',
                     headers={'Authorization': auth})
-    cid = rv.get_json()['json_data'][0]['id']
+    cid = c.id
     tickets = client.get('/api/courses/{}/tickets'.format(cid),
                          headers={'Authorization': auth})
     print(tickets.get_json())

@@ -10,11 +10,9 @@ def test_insert_ticket(app, client):
     """
     userId = 12345
     usr = create_user(app, userId)
-    c = create_course(app, uuid.uuid4())
-
-    link_ta_to_course(usr, c)
-
     auth = login(client, userId)
+    c = create_course(app, uuid.uuid4(), tas=[usr])
+
     rv = client.get('/api/courses', headers={
         'Authorization': auth
     })
@@ -38,13 +36,11 @@ def test_insert_ticket(app, client):
 def test_get_ticket(app, client):
     userId = 11188936
     usr = create_user(app, userId)
-    c = create_course(app, uuid.uuid4())
-    link_ta_to_course(usr, c)
     auth = login(client, userId)
+    c = create_course(app, uuid.uuid4(), tas=[usr], students=[usr], supervisors=[usr])
     rv = client.get('/api/courses',
                     headers={'Authorization': auth})
-    cid = rv.get_json()['json_data'][0]['id']
-    link_student_to_course(usr, c)
+    cid = c.id
     rv = client.post('/api/ticket/submit', json={
         'subject': 'test ticket',
         'message': 'Test bericht',
@@ -55,7 +51,7 @@ def test_get_ticket(app, client):
     })
     rv = client.get('/api/courses',
                     headers={'Authorization': auth})
-    cid = rv.get_json()['json_data'][0]['id']
+    cid = c.id
     tickets = client.get('/api/courses/{}/tickets'.format(cid),
                          headers={'Authorization': auth})
     assert len(tickets.get_json()['json_data']) == 1
