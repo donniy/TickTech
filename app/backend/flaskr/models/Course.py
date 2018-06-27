@@ -46,6 +46,8 @@ class Course(db.Model):
     title = db.Column(db.String(255), unique=False, nullable=False)
     description = db.Column(db.Text, nullable=True)
 
+    canvas_unique_id = db.Column(db.Integer, nullable=True, unique=True)
+
     # TODO: lengthe van deze data
     course_email = db.Column(db.String(120), unique=False, nullable=True)
     mail_server_url = db.Column(db.String(120), unique=False, nullable=True)

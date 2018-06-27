@@ -20,10 +20,16 @@ export default {
         }
     },
     mounted: function () {
+        let auth_url = '/api/lti/auth_session';
+        if (this.$route.query.code)
+            auth_url += '?code=' + this.$route.query.code;
+
         this.$auth.login({
-            url: '/api/lti/auth_session',
+            url: auth_url,
             headers: {Authorization: 'Bearer ' + this.$route.params.access_token},
             success: function (response) {
+                console.log("PARAMS")
+                console.log(this.$route.query)
                 if (response.data.json_data.access_token) {
                     this.$auth.token(null,
                                      response.data.json_data.access_token);
@@ -35,10 +41,6 @@ export default {
                 this.$auth.authenticated = true;
                 this.$lti.data.lti_session = true;
                 this.get_lti_data();
-                const p = 'http://localhost:3000/login/oauth2/auth?client_id=1&response_type=code&redirect_uri=http://localhost:5000/'
-                this.$ajax.get(p).then(response => {
-
-                })
                 this.$auth.fetch({
                     data: {},
                     success: function () {

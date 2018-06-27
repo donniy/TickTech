@@ -62,17 +62,18 @@ class LTI_instance_database_helper:
         Function that ensures the course in the lti instance
         exists.
         """
-        data = requests.get('http://localhost:3000/login/oauth2/auth?client_id=1&response_type=code&redirect_uri=http://localhost:5000/api/user/retrieve').content
-        print(data)
-        self.lti_instance.params['needs_token'] = True
         print(self.lti_instance.params)
+        canvas_course_id = self.lti_instance.params['custom_canvas_course_id']
+        course = Course.query.filter_by(canvas_unique_id=canvas_course_id).first()
         course_name = self.lti_instance.course_name
-        course = Course.query.filter_by(title=course_name).first()
         if course is None:
+            self.lti_instance.params['new_tiktech_course'] = True
             course = Course(id=uuid.uuid4(), title=course_name,
-                            description=self.lti_instance.course_description)
-            if not database.addItemSafelyToDB(course):
-                pass
+                            description=self.lti_instance.course_description,
+                            canvas_unique_id = canvas_course_id)
+            if not database.addItemSafelyToDB(course, self.ensure_course_exists):
+                self.cache['course'] = None
+                return
         self.lti_instance.params['tiktech_course_id'] = course.id
         self.cache['course'] = course
 
@@ -88,7 +89,7 @@ class LTI_instance_database_helper:
                         name=self.lti_instance.user_full_name,
                         email=self.lti_instance.user_primary_email)
             if not database.addItemSafelyToDB(user):
-                pass
+                user = None
         self.cache['user'] = user
 
     def ensure_user_coupled_to_course(self):
@@ -98,6 +99,8 @@ class LTI_instance_database_helper:
         """
         course = self.cache['course']
         user = self.cache['user']
+        if course is None or user is None:
+            return
         if self.lti_instance.is_student_in_course():
             if user not in course.student_courses:
                 course.student_courses.append(user)
@@ -249,3 +252,45 @@ class LTI_instance:
     @property
     def user_primary_email(self):
         return self.params['lis_person_contact_email_primary']
+
+
+def ensure_user_couples_to_course(user, course, user_data):
+    for role in user_data.get('enrollments'):
+        role_type = role.get('type')
+        if role_type == "StudentEnrollment":
+            course.student_courses.append(user)
+            break
+        elif role_type == "TaEnrollment":
+            course.ta_courses.append(user)
+            break
+        elif role_type == "TeacherEnrollment":
+            course.supervisors.append(user)
+            break
+    database.commitSafelyToDB(ensure_user_couples_to_course)
+
+
+def fill_new_course_with_canvas_data(headers):
+    # TODO: Haal de hardcoded course hier weg!
+    user_req = requests.get('http://localhost:3000/api/v1/courses/1/users' +
+                            '?include[]=enrollments&include[]=email',
+                            headers=headers)
+    users = user_req.json()
+    for user in users:
+        print(user)
+        user_id = user.get('sis_user_id')
+        existing_user = User.query.get(user_id)
+        if existing_user is None:
+            name = user.get('name')
+            email = user.get('email')
+            existing_user = User(id=user_id, name=name, email=email)
+            if not database.addItemSafelyToDB(existing_user,
+                                              fill_new_course_with_canvas_data):
+                continue
+
+        course = Course.query.filter_by(canvas_unique_id=1).first()
+        if course is None:
+            return
+        ensure_user_couples_to_course(existing_user, course, user)
+        print(course.student_courses)
+        print(course.ta_courses)
+        print(course.supervisors)
