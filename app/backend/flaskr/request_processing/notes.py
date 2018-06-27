@@ -57,9 +57,17 @@ def create_request(jsonData):
     user_id = escape(jsonData["user_id"])
     message = escape(jsonData["text"])
 
+    response_body = {}
+
+    if message == '':
+        response_body['message'] = "empty message"
+
     ticket = Ticket.query.get(ticket_id)
     if ticket is None:
-        return Iresponse.create_response("", 404)
+        response_body['ticket'] = "No ticket exists with this id"
+
+    if len(response_body) != 0:
+        return Iresponse.create_response(response_body, 400)
 
     note = Note()
     note.id = uuid.uuid4()
