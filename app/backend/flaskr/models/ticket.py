@@ -97,6 +97,31 @@ class Ticket(db.Model):
         }
 
     @property
+    def close(self):
+        # id 2 is the closed status
+        closed_status = TicketStatus.query.filter_by(id=2).first()
+        if closed_status is None:
+            return
+        self.status_id = closed_status.id
+
+    @property
+    def assign(self):
+        # ID 3 is the assigned status.
+        assign_status = TicketStatus.query.filter_by(id=3).first()
+        if assign_status is None:
+            return
+        self.status_id = assign_status.id
+
+    @property
+    def help(self):
+        # id 4 is the helping status
+        help_status = TicketStatus.query.filter_by(id=4).first()
+        if help_status is None:
+            return
+        self.status_id = help_status.id
+
+
+    @property
     def related_users(self):
         """
         Returns all users that are somehow related to this
