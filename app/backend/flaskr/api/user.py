@@ -7,6 +7,7 @@ from flask import request, escape
 from flaskr.models.user import User
 from flaskr.request_processing.user import validate_userdata
 from flaskr.utils.json_validation import validate_json
+import bcrypt
 
 
 @apiBluePrint.route('/user/tickets')
@@ -142,6 +143,10 @@ def register_user():
         return Iresponse.create_response({"status": "Studentid taken"}, 200)
 
     new_user = User()
+    salt = bcrypt.gensalt()
+    hashedpsw = bcrypt.hashpw(password.encode('utf-8'), salt)
+    # Decrypt this using hashedpsw.encode('utf-8') == bcrypt.hashpw(passwordinput, hashedpsw.encode('utf-8'))
+    new_user.password = hashedpsw
     new_user.id = studentid
     new_user.name = name
     new_user.email = email

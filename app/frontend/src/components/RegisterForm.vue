@@ -113,7 +113,7 @@ export default {
 							window.alert("We could not register you at this time!\n" + response.data.json_data["status"] )
 							return
 						} else {
-							window.alert("Done!")
+							//TODO: Log user in
 						}
 					})
 				}
@@ -141,23 +141,6 @@ export default {
 		},
 		checkPswConfirmation() {
 			this.pswstatus = (this.form.password === this.form.password_confirmation) || this.form.password === ""
-		},
-		logUserIn() {
-			const path = '/auth'
-			this.$ajax.post(path, {
-				username: this.form.studentid,
-				password: "JWT is cool!!!"
-			}, response => {
-				// TODO: Implement authentication on backend work with Canvas.
-				window.$cookies.set('token', response.data.access_token);
-				console.log(response);
-				this.$ajax.get('/api/user/retrieve', response => {
-					if (this.$user.set(response.data.user))
-						this.$router.replace('/');
-					else
-						console.log("Can\'t set user.");
-				});
-			});
 		},
 		nextArea() {
 
