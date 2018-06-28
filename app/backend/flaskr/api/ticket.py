@@ -97,7 +97,7 @@ def create_message(ticket_id):
     user = User.query.get(userId)
 
     if(ticket.user_id != user.id):
-        message = createEmailMessage(ticket.title,
+        message = createdEmailMessage(ticket.title,
                                      [ticket.email], ticket_id,
                                      json_data['message'], user.name)
         if current_app.config['SEND_MAIL_ON_MESSAGE']:
