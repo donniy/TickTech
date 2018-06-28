@@ -45,15 +45,13 @@
                                 <md-table-empty-state md-label="No tickets in this course" v-show="this.tickets.length <= 0">
                                 </md-table-empty-state>
 
-                                <md-table-row md-delay="1000" slot="md-table-row" slot-scope="{ item }" class="tickettable" v-on:click="navTicket(item.id)"
-                                                                                                        v-on:mouseover="showTicket(item.id)" v-bind:class="{'md-table-cell':true, 'activated':(item.id === ticketSum)}">
-                                    <md-table-cell md-label="Title" md-sort-by="title" md-numeric>{{ item.title }}</md-table-cell>
-                                    <md-table-cell md-label="Label" md-sort-by="label.label_name" md-numeric>{{ item.label.label_name }}</md-table-cell>
-                                    <md-table-cell md-label="Name" md-sort-by="user_id">{{ item.user_id }}</md-table-cell>
-                                    <md-table-cell md-label="Status" md-sort-by="status.name">{{ item.status.name }}</md-table-cell>
-                                    <md-table-cell md-label="Time" md-sort-by="timestamp">{{ item.timestamp | moment("DD/MM/YY HH:mm")}}</md-table-cell>
-                                    <md-table-cell md-label="Operator" md-sort-by="binded_tas" v-if="item.binded_tas != null">{{ item.binded_tas }}</md-table-cell>
-                                    <md-table-cell md-label="Operator" md-sort-by="binded_tas" v-if="item.binded_tas == null">unassigned</md-table-cell>
+                                <md-table-row md-delay="1000" slot="md-table-row" slot-scope="{ item }" class="tickettable" v-on:click="navTicket(item.id)"v-on:mouseover="showTicket(item.id)" v-bind:class="{'md-table-cell':true, 'activated':(item.id === ticketSum)}">
+                                    <md-table-cell md-label="Title" md-sort-by="title"md-numeric>{{item.title}}</md-table-cell>
+                                    <md-table-cell md-label="Label" md-sort-by="label.label_name" md-numeric v-if="Object.keys(item.label).length != 0" >{{item.label.label_name}}</md-table-cell>
+                                    <md-table-cell md-label="Label" md-sort-by="label.label_name" md-numeric v-if="Object.keys(item.label).length === 0">No Label</md-table-cell>
+                                    <md-table-cell md-label="Name" md-sort-by="user_id">{{item.user_id}}</md-table-cell>
+                                    <md-table-cell md-label="Status" md-sort-by="status.name">{{item.status.name}}</md-table-cell>
+                                    <md-table-cell md-label="Time" md-sort-by="timestamp">{{item.timestamp | moment("DD/MM/YY HH:mm")}}</md-table-cell>
                                 </md-table-row>
                             </md-table>
                         </div>
@@ -86,9 +84,8 @@
             </emodal>
         </div>
         </transition>
-        <div v-if="false" class=s ummary-sub-container>
-            <summodal @close="showSum = false, ticketSum = 0" v-for="ticket in tickets" v-if="ticket.id == ticketSum" v-bind:key="ticket.id"
-                                                                                        v-bind:ticket="ticket" class="singleTicket">
+        <div class=summary-sub-container>
+            <summodal @close="showSum = false, ticketSum = 0" v-for="ticket in tickets" v-if="ticket.id == ticketSum" v-bind:key="ticket.id" v-bind:ticket="ticket" class="singleTicket">
             </summodal>
         </div>
         <p v-if="email_running">EMAIL IS RUNNING</p>
@@ -123,6 +120,7 @@ const toLower = text => {
     export default {
         data() {
             return {
+                timeout: 0,
                 search: "",
                 searched: [],
                 ticketSum: 0,
@@ -155,7 +153,8 @@ const toLower = text => {
         },
         methods: {
             showTicket(item) {
-                this.ticketSum = item
+                clearTimeout(this.timeout)
+                this.timeout = setTimeout(() => { this.ticketSum = item }, 400)
             },
             navTicket(item) {
                 this.$router.push("/ticket/" + item)

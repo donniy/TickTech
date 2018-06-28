@@ -674,6 +674,7 @@ a.list-ticket:hover, a.list-ticket:focus {
   //position: relative;
   width: 25%;
   height: 100%;
+  right: 0;
   top: 12%;
   -webkit-transition: opacity 0.1s ease-in-out;
   padding-bottom: 10px;
@@ -734,7 +735,7 @@ a.list-ticket:hover, a.list-ticket:focus {
 
 .summary-tab{
   width: 100%;
-  float: left;
+  // float: left;
 
 }
 .summary-tab-notes{
@@ -768,6 +769,7 @@ a.list-ticket:hover, a.list-ticket:focus {
   line-height: 1.2;
   font-size: 1.4em;
 }
+
 .close-sum:hover {
     color: white;
     background-color: $default-red !important;
@@ -781,19 +783,23 @@ a.list-ticket:hover, a.list-ticket:focus {
 }
 
 .subbox {
-    float: left;
-    width: 70%;
-    margin-left: -5%;
-    padding-left: -10%;
+    width: 100%;
+    word-wrap: break-word;
 }
 .summary-sub-container {
     float: right;
     top: 10%;
     padding-left: 1%;
     width: 30%;
+    zoom: 1;
+}
+
+@media only screen and (max-width: 1100px) {
+    .summary-sub-container {
+        display: none;
+    }
 }
 .sum {
-
   width: auto;
   word-wrap: break-word;
 }
@@ -813,8 +819,8 @@ a.list-ticket:hover, a.list-ticket:focus {
 }
 
 .md-table {
-    //min-width: 55em;
-    //max-width: 60em;
+    min-width: 60em;
+    max-width: 65em;
 }
 
 .tickettable:hover {
@@ -1007,6 +1013,20 @@ hr {
   text-shadow: none;
   background-color: transparent;
   border: 0;
+}
+
+.md-table .md-table-cell.md-has-action .md-table-cell-container {
+  justify-content: space-around;
+}
+.md-table .md-table-head {
+  text-align: center;
+}
+.md-table .md-table-cell {
+  text-align: center;
+}
+
+.md-table-cell:last-child {
+    padding-right: 0;
 }
 
 @import "~vue-material/dist/theme/engine"; // Import the theme engine

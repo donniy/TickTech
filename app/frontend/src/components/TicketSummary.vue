@@ -68,6 +68,8 @@
                 this.$ajax.get(path)
                     .then(response => {
                         this.messages = response.data.json_data
+                        console.log(this.messages)
+                        this.messages = this.messages.filter(el=>el.type==0)
                     })
                     .catch(error => {
                         console.log(error)
