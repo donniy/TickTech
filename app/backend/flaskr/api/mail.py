@@ -9,7 +9,7 @@ from flask import escape, request
 from flaskr.utils.json_validation import validate_json
 from mail.thread import MailThread
 from mail.Message import ticketErrorEmail, createdTicketEmail
-from mail.Message import somethingWentWrong, replyErrorMail
+from mail.Message import somethingWentWrong, replyErrorEmail
 from flask_mail import Mail
 from threading import Thread
 from flask import current_app
@@ -111,7 +111,7 @@ def create_email_ticket():
     if(len(files.keys()) > 5):
         something_went_wrong_message(formdata['subject'],
                                      formdata['email'],
-                                     'To many files'
+                                     'To many files',
                                      formdata['message'])
         return Iresponse.create_response("Too many files", 400)
 
@@ -122,7 +122,7 @@ def create_email_ticket():
         if not rp_file.save_file_from_mail(file, filename, file_names):
             something_went_wrong_message(formdata['subject'],
                                          formdata['email'],
-                                         'File to large'
+                                         'File to large',
                                          formdata['message'])
             return Iresponse.create_response("File too large", 400)
     formdata['files'] = file_names
@@ -133,7 +133,7 @@ def create_email_ticket():
                                                     'labelid']):
         something_went_wrong_message(formdata['subject'],
                                      formdata['email'],
-                                     'validate json data'
+                                     'validate json data',
                                      formdata['message'])
         return Iresponse.create_response("Malformed request", 400)
 
@@ -148,7 +148,7 @@ def create_email_ticket():
             rp_file.remove_file(file)
         something_went_wrong_message(formdata['subject'],
                                      formdata['email'],
-                                     'validate ticket data'
+                                     'validate ticket data',
                                      formdata['message'])
         return Iresponse.create_response("Invalid ticket data", 400)
 
@@ -175,7 +175,7 @@ def create_email_message():
     if not json_validation.validate_json(formdata, ['ticketid']):
         something_went_wrong_message(formdata['subject'],
                                      formdata['email'],
-                                     'validate json data'
+                                     'validate json data',
                                      formdata['message'])
         return Iresponse.create_response("Malformed request", 400)
 
@@ -183,7 +183,7 @@ def create_email_message():
     if ticket is None:
         something_went_wrong_message(formdata['subject'],
                                      formdata['email'],
-                                     'Could not find ticket with that id'
+                                     'Could not find ticket with that id',
                                      formdata['message'])
         return Iresponse.create_response("Could not find ticket", 400)
 
@@ -191,8 +191,8 @@ def create_email_message():
 
     msg = rp_message.create_request(formdata, formdata['ticketid'])
 
-    if (msg.status_code != 201)
-        message = replyErrorMail(ticket.title,
+    if (msg.status_code != 201):
+        message = replyErrorEmail(ticket.title,
                                      [ticket.email], formdata['ticketid'],
                                      json_data['message'])
         if current_app.config['SEND_MAIL_ON_MESSAGE']:
