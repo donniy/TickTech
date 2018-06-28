@@ -47,7 +47,8 @@
                                 <md-table-row md-delay="1000" slot="md-table-row" slot-scope="{ item }" class="tickettable" v-on:click="navTicket(item.id)"
                                     v-on:mouseover="showTicket(item.id)" v-bind:class="{'md-table-cell':true, 'activated':(item.id === ticketSum)}">
                                     <md-table-cell md-label="Title" md-sort-by="title"md-numeric>{{item.title}}</md-table-cell>
-                                    <md-table-cell md-label="Label" md-sort-by="label.label_name" md-numeric>{{item.label.label_name}}</md-table-cell>
+                                    <md-table-cell md-label="Label" md-sort-by="label.label_name" md-numeric v-if="Object.keys(item.label).length != 0" >{{item.label.label_name}}</md-table-cell>
+                                    <md-table-cell md-label="Label" md-sort-by="label.label_name" md-numeric v-if="Object.keys(item.label).length === 0">No Label</md-table-cell>
                                     <md-table-cell md-label="Name" md-sort-by="user_id">{{item.user_id}}</md-table-cell>
                                     <md-table-cell md-label="Status" md-sort-by="status.name">{{item.status.name}}</md-table-cell>
                                     <md-table-cell md-label="Time" md-sort-by="timestamp">{{item.timestamp | moment("DD/MM/YY HH:mm")}}</md-table-cell>
