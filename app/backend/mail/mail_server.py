@@ -7,6 +7,7 @@ import requests
 import base64
 import html2text
 import socket
+import re
 
 poplib._MAXLINE = 2048
 
@@ -233,7 +234,7 @@ def createReply(ticketid, subject, address, body):
     # the reply is not posted.
     if (result.status_code != 201):
         print("Something went wrong creating a new reply from an email.")
-    
+
 def createTicket(subject, body, files, sender, address, courseid):
     '''
     Create a ticket from the acquired information from an email.

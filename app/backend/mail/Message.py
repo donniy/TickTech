@@ -22,10 +22,10 @@ def createdTicketEmail(title, recipients, ticketid, body):
 
 def createdEmailMessage(title, recipients, ticketid, body, sender):
     '''
-    Sends an email to the student, confirming a TA has responded 
+    Sends an email to the student, confirming a TA has responded
     to their ticket on TIKTECH (e.g. a message has been added to the ticket).
     '''
-    string = "TIKTECH notification. New reply on your ticket. Ticket ID: " + ticketid
+    string = "TIKTECH notification. Ticket ID: " + ticketid
     message = Message(subject=string, recipients=recipients)
     message.html = (
         '<body>Hey!<br />You got a new reply to your question from ' + sender +
@@ -43,8 +43,9 @@ def ticketErrorEmail(title, recipients, body):
     Sends an email to the student, confirming we received their email
     but an error occurred when adding it to TIKTECH.
     '''
+    string = "TIKTECH error. We could not process: " + title
     message = Message(
-        subject="TIKTECH error. We could not process: " + title,
+        subject=string,
                 recipients=recipients)
     message.html = (
         '<body>Hey!<br />We received your e-mail, but encountered an ' +
@@ -62,11 +63,12 @@ def ticketErrorEmail(title, recipients, body):
 def replyErrorEmail(title, recipients, ticketid, body):
     '''
     Sends an email to the student, confirming we received their email
-    as a reply on an original ticket, 
+    as a reply on an original ticket,
     but an error occurred when adding it to TIKTECH.
     '''
+    string = "TIKTECH error. We could not process your reply: " + title
     message = Message(
-        subject="TIKTECH error. We could not process your reply: " + title,
+        subject=string,
                 recipients=recipients)
     message.html = (
         '<body>Hey!<br />We received your e-mail, but encountered an' +
@@ -83,8 +85,9 @@ def somethingWentWrong(title, recipients, part, body):
     '''
     It went wrong somewhere:
     '''
+    string = "TIKTECH error. We could not process: " + title
     message = Message(
-        subject="TIKTECH error. We could not process: " + title,
+        subject=string,
                 recipients=recipients)
     message.html = (
         '<body> We received your e-mail, but encountered an' +
