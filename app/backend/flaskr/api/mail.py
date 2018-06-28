@@ -9,6 +9,7 @@ from flask import escape, request
 from flaskr.utils.json_validation import validate_json
 from mail.thread import MailThread
 from mail.Message import ticketErrorEmail, createdTicketEmail
+from mail.Message import somethingWentWrong, replyErrorMail
 from flask_mail import Mail
 from threading import Thread
 from flask import current_app
@@ -108,6 +109,10 @@ def create_email_ticket():
     files = formdata['files']
 
     if(len(files.keys()) > 5):
+        something_went_wrong_message(formdata['subject'],
+                                     formdata['email'],
+                                     'To many files'
+                                     formdata['message'])
         return Iresponse.create_response("Too many files", 400)
 
     file_names = list()
@@ -115,6 +120,10 @@ def create_email_ticket():
         file = base64.b64decode(files[filename])
 
         if not rp_file.save_file_from_mail(file, filename, file_names):
+            something_went_wrong_message(formdata['subject'],
+                                         formdata['email'],
+                                         'File to large'
+                                         formdata['message'])
             return Iresponse.create_response("File too large", 400)
     formdata['files'] = file_names
 
@@ -122,6 +131,10 @@ def create_email_ticket():
                                                     'subject',
                                                     'courseid',
                                                     'labelid']):
+        something_went_wrong_message(formdata['subject'],
+                                     formdata['email'],
+                                     'validate json data'
+                                     formdata['message'])
         return Iresponse.create_response("Malformed request", 400)
 
     if not course_validation.check_course_validity(formdata['courseid'],
@@ -133,6 +146,10 @@ def create_email_ticket():
     if not json_validation.validate_ticket_data(formdata):
         for file in file_names:
             rp_file.remove_file(file)
+        something_went_wrong_message(formdata['subject'],
+                                     formdata['email'],
+                                     'validate ticket data'
+                                     formdata['message'])
         return Iresponse.create_response("Invalid ticket data", 400)
 
     response = rp_ticket.create_request(formdata)
@@ -149,6 +166,54 @@ def create_email_ticket():
 
     return response
 
+@apiBluePrint.route('/email/ticket/email/newmessage', methods=['POST'])
+def create_email_message():
+    """
+    Add message in existing ticket.
+    """
+    formdata = request.get_json()
+    if not json_validation.validate_json(formdata, ['ticketid']):
+        something_went_wrong_message(formdata['subject'],
+                                     formdata['email'],
+                                     'validate json data'
+                                     formdata['message'])
+        return Iresponse.create_response("Malformed request", 400)
+
+    ticket = Ticket.query.get(formdata['ticketid'])
+    if ticket is None:
+        something_went_wrong_message(formdata['subject'],
+                                     formdata['email'],
+                                     'Could not find ticket with that id'
+                                     formdata['message'])
+        return Iresponse.create_response("Could not find ticket", 400)
+
+    formdata["studentid"] = ticket.user_id
+
+    msg = rp_message.create_request(formdata, formdata['ticketid'])
+
+    if (msg.status_code != 201)
+        message = replyErrorMail(ticket.title,
+                                     [ticket.email], formdata['ticketid'],
+                                     json_data['message'])
+        if current_app.config['SEND_MAIL_ON_MESSAGE']:
+            app = current_app._get_current_object()
+            thr = Thread(target=send_async_email, args=[message, app])
+            thr.start()
+    return msg
+
+
+
+def something_went_wrong_message(subject, email, part, message):
+    '''
+    Send mail to user that something went wrong with creating his ticket.
+    '''
+    message = somethingWentWrong(subject,
+                                 [email],
+                                 part,
+                                 message)
+    app = current_app._get_current_object()
+    thr = Thread(target=send_async_email, args=[message, app])
+    thr.start()
 
 @apiBluePrint.route('/email/<course_id>/settings', methods=['GET'])
 def retrieve_current_mail_settings(course_id):
@@ -175,7 +240,7 @@ def retrieve_current_mail_settings(course_id):
 @apiBluePrint.route('/email/<course_id>/online', methods=['GET'])
 def is_email_running(course_id):
     """
-    return if email is already running
+    return if email is already running.
     """
     thread = MailThread.exist_thread_courseid(course_id)
     running = False
@@ -211,90 +276,3 @@ def stop_email_fetching():
         return Iresponse.create_response("No email thread running", 200)
     thread.stop()
     return Iresponse.create_response("Succes", 201)
-
-#
-# def create_new_email_thread(sleeptime, server, port, email, password,
-#                             course_id):
-#     """
-#     Create a new email thread
-#     """
-#     thread = MailThread.exist_thread_courseid(course_id)
-#     if (thread is None):
-#         print("create new thread")
-#         new_thread = MailThread(sleeptime, server, port, email, password,
-#                                 course_id)
-#         new_thread.setName(course_id)
-#         new_thread.start()
-#         print("done")
-#     else:
-#         print("Thread already exists, update")
-#         update_thread(thread, sleeptime, server, port, email, password)
-#     return
-#
-#
-# def stop_thread(thread):
-#     """
-#     Stop an existing email thread
-#     """
-#     thread.stop()
-#     return
-#
-#
-# def update_thread(thread, sleeptime, server, port, email, password):
-#     """
-#     Update an existing thread.
-#     """
-# One example
-#     print("Updating thread..")
-#     thread.update(sleep_time=sleeptime, server=server, port=port,
-#                   email=email, password=password)
-#     return
-
-# @apiBluePrint.route('/email', methods=['POST'])
-# def notify_succes():
-#     print("Got notify\n\n")
-#     emit('setup-email', {'result': 'succes'})
-#     print("emmited")
-#     return Iresponse.create_response("succes", 200)
-# def create_new_email_thread_post():
-#     '''
-#     Recieve email settings from website. Update it in database and send to
-#     mail server.
-#     '''
-# Time between fetching emails
-#     sleeptime = 60
-#     server = escape(request.json["pop"])
-#     port = escape(request.json["port"])
-#     email = escape(request.json["email"])
-#     password = escape(request.json["password"])
-#     course_id = escape(request.json["course_id"])
-#
-#     try:
-#         test_connection = poplib.POP3_SSL(server, port)
-#         print(test_connection)
-#         test_connection.user(email)
-#         test_connection.pass_(password)
-#         test_connection.quit()
-#         print("Succesfull test connection")
-#     except (poplib.error_proto) as msg:
-#         print("failed")
-#         message = msg.args[0].decode('ascii')
-#         return Iresponse.create_response(message, 200)
-#     except OSError as msg:
-#         message = str(msg)
-#         return Iresponse.create_response(message, 200)
-#     except:
-#         return Iresponse.create_response("Invalid settings", 200)
-#
-#     create_new_email_thread(sleeptime, server, port, email,
-#                             password, course_id)
-#
-#     course = Course.query.get(course_id)
-#     course.course_email = email
-#     course.mail_password = password
-#     course.mail_port = port
-#     course.mail_server_url = server
-#     if not database.addItemSafelyToDB(course):
-#        return Iresponse.create_response("Failed to attach to database", 412)
-#
-#     return Iresponse.create_response("wait for further instruction", 201)

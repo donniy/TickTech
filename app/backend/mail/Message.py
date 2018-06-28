@@ -75,3 +75,20 @@ def replyErrorEmail(title, recipients, ticketid, body):
         'Your original e-mail:' + body + '</body>'
         )
     return message
+
+def somethingWentWrong(title, recipients, part, body):
+    '''
+    It went wrong somewhere:
+    '''
+    message = Message(
+        subject="TIKTECH error. We could not process: " + title,
+                recipients=recipients)
+    message.html = (
+        '<body> We received your e-mail, but encountered an' +
+        'error while processing.<br /> ' +
+        'error message: ' + part + '<br />' +
+        'Please resent it or contact your TA' +
+        'Please do not reply to this e-mail.' +
+        'Your original e-mail:' + body + '</body>'
+        )
+    return message
