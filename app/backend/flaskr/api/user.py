@@ -74,6 +74,9 @@ def retrieve_single_userlevel(user_id):
     Geeft level van gegeven user.
     """
     # TODO: Controleer of degene die hierheen request permissies heeft.
+    if get_current_user().id != user_id:
+        return Iresponse.create_response('Unauthorized', 403)
+
     user = User.query.get(user_id)
     if user:
         response = {}
