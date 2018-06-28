@@ -1,19 +1,22 @@
 <template>
-<div>
-    <div id="loading-icon" class="loading">
-        <md-progress-spinner class="md-accent" md-mode="indeterminate"></md-progress-spinner>
-    </div>
-    <div class="md-layout md-gutter">
+<div v-if="$auth.ready()">
+	<div id="loading-icon" class="loading">
+		<md-progress-spinner class="md-accent" md-mode="indeterminate"></md-progress-spinner>
+	</div>
+	<div class="md-layout md-gutter">
 
-        <div class="md-layout-item md-size-70 md-small-size-60">
-            <div class="md-gutter">
-                <div class="md-size-20">
-                    <router-link :to="'/course/' + ticket.course_id " class="btn btn-primary">&laquo; Back to course</router-link>
+		<div class="md-layout-item md-size-70 md-small-size-60">
+			<div class="md-gutter">
+				<div v-if="$auth.check('ta') || $auth.check('supervisor')" class="md-size-20">
+					<router-link :to="'/course/' + ticket.course_id " class="btn btn-primary">&laquo; Back to course</router-link>
+				</div>
+                <div v-else class="md-size-20">
+                    <div @click="$router.go(-1)" class="btn btn-primary">&laquo; Back</div>
                 </div>
-                <div class="md-size-80 center-display">
-                    <h3 class="">Ticket info</h3>
-                </div>
-            </div>
+				<div class="md-size-80 center-display">
+					<h3 class="">Ticket info</h3>
+				</div>
+			</div>
 
             <md-dialog :md-active.sync="showModal">
             <md-dialog-title>Do you want to close this ticket?</md-dialog-title>
@@ -67,7 +70,7 @@
             <md-card class="md-layout-item message-container">
                 <div>
                     <md-card-content>
-                        <message v-bind:user="{id: user_id}" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
+                        <message v-bind:user="{id: user_id}" v-bind:tas="{course_tas}" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
                     </md-card-content>
                 </div>
             </md-card>
@@ -351,16 +354,6 @@ export default {
                         console.log(error)
                     })
             }
-
-            this.$ajax.post(path, noteData)
-                .then(response => {
-                    this.noteTextArea = ""
-                    this.$refs.popoverRef.$emit('close')
-                    this.notes.push(response.data.json_data)
-                })
-                .catch(error => {
-                    console.log(error)
-                })
         },
         /* Get the ta's in this course. Will add all the ta's to the
          * course_tas array.

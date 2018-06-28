@@ -57,7 +57,7 @@ const routerOptions = [
         meta: {
             breadcrumb: 'Ticket',
             pre: '/course/:course_id',
-            auth: true
+            auth: ['ta', 'supervisor'],
         },
     },
     {

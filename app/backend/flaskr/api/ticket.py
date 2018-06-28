@@ -1,3 +1,4 @@
+from flaskr.models.Course import Course
 from flaskr.models.ticket import Ticket, TicketStatus
 from flaskr.models.Message import Message
 from flaskr.models.user import User
@@ -35,17 +36,22 @@ def close_ticket(ticket_id):
     current_identity = get_current_user()
     try:
         ticket = Ticket.query.get(ticket_id)
-        ticket.close
-        database.db.session.commit()
-        notifications.notify(current_identity.id,
-                             ticket,
-                             'Closed ticket',
-                             Message.NTFY_TYPE_CLOSED)
+        if is_user_relevant_to_ticket(current_identity, ticket):
+            ticket.close
+            database.db.session.commit()
+            notifications.notify(current_identity.id,
+                                 ticket,
+                                 'Closed ticket',
+                                 Message.NTFY_TYPE_CLOSED)
+        else:
+            return Iresponse.create_response('Unauthorized', 403)
     except Exception as e:
         print(e)  # LOGGING
         return Iresponse.create_response("Error", 400)
-    # TODO: Add Iresponse.
-    return jsonify({'status': "success", 'message': 'ticket closed'})
+    return Iresponse.create_response({
+        'status': "success",
+        'message': 'ticket closed'
+    }, 200)
 
 
 @apiBluePrint.route('/ticket/<ticket_id>', methods=['GET'])
@@ -54,8 +60,12 @@ def retrieve_single_ticket(ticket_id):
     """
     Retrieve single ticket from database.
     """
-    # TODO: Controlleer rechten
-    ticketObj = Ticket.query.get(ticket_id)
+    current_identity = get_current_user()
+    ticket = Ticket.query.get(ticket_id)
+    if is_user_relevant_to_ticket(current_identity, ticket):
+        ticketObj = Ticket.query.get(ticket_id)
+    else:
+        return Iresponse.create_response('Unauthorized', 403)
     if ticketObj is None:
         return Iresponse.create_response("", 404)
     return Iresponse.create_response(ticketObj.serialize, 200)
@@ -119,13 +129,18 @@ def get_ticket_messages(ticket_id):
     Retrieve messages in ticket.
     TODO: Check if user is related to ticket.
     """
-    return rp_message.retrieve_all_request(ticket_id,
-                                           get_current_user(),
-                                           read=True)
+    current_identity = get_current_user()
+    ticket = Ticket.query.get(ticket_id)
+    if is_user_relevant_to_ticket(current_identity, ticket):
+        return rp_message.retrieve_all_request(ticket_id,
+                                               get_current_user(),
+                                               read=True)
+    else:
+        return Iresponse.create_response('Unauthorized', 403)
 
 
 @apiBluePrint.route('/ticket/addta', methods=['POST'])
-@require_role(['ta', 'supervisor'])
+@require_role(['supervisor'])
 def add_ta_to_ticket():
     """
     Assign teaching assistant to ticket.
@@ -137,8 +152,8 @@ def add_ta_to_ticket():
     return Iresponse.create_response("Invalid request", 400)
 
 
-@apiBluePrint.route('ticket/removeta', methods=['POST'])
-@require_role(['ta', 'supervisor'])
+@apiBluePrint.route('/ticket/removeta', methods=['POST'])
+@require_role(['supervisor'])
 def remove_ta_from_ticket():
     """
     Unassign teaching assistant from ticket.
@@ -265,3 +280,10 @@ def get_text():
                 return Iresponse.create_response("Bad request", 400)
     except IOError:
         return Iresponse.create_response("Bad request", 400)
+
+
+def is_user_relevant_to_ticket(user, ticket):
+    course = Course.query.filter_by(id=ticket.course_id).first()
+    return ticket in user.created_tickets or \
+        user in course.supervisors or \
+        user in course.ta_courses
