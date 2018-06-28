@@ -10,7 +10,6 @@ import socket
 
 poplib._MAXLINE = 2048
 
-
 def connect(host, port, user, password):
     '''
     Connects to and authenticates with a POP3 mail server.
@@ -122,8 +121,7 @@ def parseBody(parsedEmail):
 def requestStudentID(result):
     '''
     Helper function to send json request to retrieve information
-    from the database.
-    Returns studentid on success, None on failure.
+    from the database. Returns studentid on success, None on failure.
     '''
     if (result.status_code == 200):
         json = result.json()
@@ -152,7 +150,7 @@ def findLabel(body, labels):
     '''
     Parse the body for words that might be labels. Using the fuzzywuzzy module,
     a score will be calculated on the match of a substring.
-    The best match will be returned.
+    The UUID of the best match will be returned.
     '''
     # Put all labels in a list.
     labelcount = len(labels)
@@ -177,7 +175,7 @@ def findLabel(body, labels):
 def findUser(body, sender, address):
     '''
     Parses a given email body in string format. Returns the student id,
-    name and label, if possible.
+    name and label, if possible, else None.
     '''
     # Check if the email is in the database.
     info = {'email': address}
@@ -206,22 +204,37 @@ def findUser(body, sender, address):
     return requestStudentID(result)
 
 # TODO: Create a reply instead of a ticket.
-
-
-def createReply(subject, body, files, sender, address, courseid):
+def createReply(subject, body, files, sender, address, courseid, ticketid, studentid):
     '''
     Create a reply to a ticket from the acquired information from an email.
     '''
-    # TODO: Finish this functione.
     # Find original ticket with subject / meta data?
 
+    # Check user id against ticket user id
+
+    # Error if not the same.
+
     # Create a new reply.
-    # newmessage = {}
+    newmessage = {
+        'name': sender,
+        'courseid': courseid,
+        'studentid': studentid,
+        'ticketid': ticketid,
+        'n_type': 0,
+        'message': body,
+    }
 
     # Add the reply to the database.
-    # result = requests.post(SOMETHING, json=newmessage)
-
-    # if (result.status_code != 201):
+    result = requests.post(
+        'http://localhost:5000/api/email/ticket/' + ticketid + '/messages',
+        json=newmessage)
+    
+    print("HIERRR")
+    print(newmessage)
+    print(result)
+    
+    if (result.status_code != 201):
+        print("Error.")
     # replyErrorMail()
 
 
@@ -244,12 +257,11 @@ def createTicket(subject, body, files, sender, address, courseid):
               subject, '\nSender:', address)
         return
 
-    # TODO: Check if an email is a reply or a new email.
+    # Check if an email is a reply, if so, a new message must be created to a ticket.
     if "Ticket ID: " in subject:
-        print(subject)
+        ticketid = subject.split("Ticket ID: ")
+        createReply(subject, body, files, sender, address, courseid, ticketid[1], studentid)
         return
-    # createReply(subject, body, files, sender, address, courseid)
-    #     else
 
     # Get all labels available for this course.
     labels = retrieveLabels(courseid)
@@ -278,9 +290,10 @@ def createTicket(subject, body, files, sender, address, courseid):
     result = requests.post(
         'http://localhost:5000/api/email/ticket/submit',
         json=newticket)
-
+    
+    # Below is for debugging. An errormail will be send if 
+    # the ticket is not posted.
     if (result.status_code != 201):
-        # ticketErrorEmail()
         print("Something went wrong creating a new ticket from an email.")
         print("******")
         print("Sender: " + str(sender) + "\nStudentid: " +
@@ -289,13 +302,6 @@ def createTicket(subject, body, files, sender, address, courseid):
         print("Course ID: ", courseid)
         print("Label ID: ", labelid)
         print("Body: " + body)
-    # else:
-
-    # TODO: Send confirmation email.
-    # createdTicketEmail(subject, address, TODO TICKETID, body)
-    # res = Mail().send(message)
-    # res = res  # for flake8
-    # return
 
 
 def checkMail(host, port, user, password, courseid, debug=0):

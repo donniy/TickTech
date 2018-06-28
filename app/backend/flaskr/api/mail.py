@@ -106,18 +106,15 @@ def create_email_ticket():
 
     formdata = request.get_json()
     files = formdata['files']
-    # print(files.keys())
 
     if(len(files.keys()) > 5):
         return Iresponse.create_response("Too many files", 400)
 
     file_names = list()
     for filename in files.keys():
-        # print("FILE", filename)
         file = base64.b64decode(files[filename])
 
         if not rp_file.save_file_from_mail(file, filename, file_names):
-            # print("invalid file")
             return Iresponse.create_response("File too large", 400)
     formdata['files'] = file_names
 

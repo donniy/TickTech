@@ -1,8 +1,8 @@
+from datetime import datetime
 from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
-import uuid
 from flaskr.config import Config
+import uuid
 
 db = SQLAlchemy()
 
@@ -133,15 +133,15 @@ def populate_database_dummy_data():
                             description="Test")
 
     user1 = user.User(id=11111,
-                      name="Erik Kooijstra",
-                      email="Erik@kooijstra.nl")
+                      name="Erik Kooistra",
+                      email="Erik@kooistra.nl")
 
     user2 = user.User(id=11112,
-                      name="Kire Kooijstra",
-                      email="Kire@kooijstra.nl")
+                      name="Kire Kooistra",
+                      email="Kire@kooistra.nl")
 
     user3 = user.User(id=123123123,
-                      name="Test mctestie",
+                      name="Test McTestie",
                       email="test@test.nl")
 
     user4 = user.User(id=10000,
@@ -149,12 +149,12 @@ def populate_database_dummy_data():
                       email="super@visor.nl")
 
     user5 = user.User(id=111111111,
-                      name="Test test",
+                      name="Test Test",
                       email="test@test.nl")
 
     # !IMPORTANT! This is for the mail server - ask stephan
     mail_server = user.User(id=107584259,
-                            name="Mail server",
+                            name="Mail Server",
                             email="uvapsetest@gmail.com")
 
     items = [user1, user2, user3, user5, mail_server, course, course2]

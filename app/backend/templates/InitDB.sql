@@ -1,7 +1,7 @@
 /* Add test courses */
-insert or replace into course values ('71d929a86b1311e8adc0fa7ae01bbebc',"Project Software Engineering","this is a test description","mail@mail.com","","","");
-insert or replace into course values ('51d929a86b1311e8adc0fa7ae01bbebc',"Operating Systems","this is a test description 2","test@test.com","","","");
-insert or replace into course values ('31d929a86b1311e8adc0fa7ae01bbebc',"Compiler Construction","this is a test description 3","test2@test.com","","","");
+insert or replace into course values ('71d929a86b1311e8adc0fa7ae01bbebc',"Project Software Engineering","this is a test description","uvapsetest@gmail.com","","","");
+insert or replace into course values ('51d929a86b1311e8adc0fa7ae01bbebc',"Operating Systems","this is a test description 2","tiktech.noreply@gmail.com","","","");
+insert or replace into course values ('31d929a86b1311e8adc0fa7ae01bbebc',"Compiler Construction","this is a test description 3","tiktech.noreply@gmail.com","","","");
 
 -- SET @ta1 = 12345678;
 -- SET @ta2 = 87654321;
