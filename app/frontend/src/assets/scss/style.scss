@@ -895,9 +895,23 @@ hr {
     margin-top: 10vh;
 }
 
-.notification-section-35 {
+.level-container {
+    margin-top: 2vh;
+    max-height: 14vh;
+    min-height: 14vh;
+    overflow: auto;
+}
+
+.notification-container-medium {
+    margin-top: 2vh;
     min-height: 35vh;
     max-height: 35vh;
+    overflow: auto;
+}
+
+.course-container-medium {
+    min-height: 29vh;
+    max-height: 29vh;
     overflow: auto;
 }
 
@@ -928,11 +942,27 @@ hr {
 }
 
 .ticket-container-small {
-    min-height: 40vh;
-    max-height: 40vh;
+    min-height: 50vh;
+    max-height: 50vh;
+}
+.course-container-small {
+    min-height: 24vh;
+    max-height: 24vh;
     overflow: auto;
 }
 
+.notification-container-small {
+    min-height: 24vh;
+    max-height: 24vh;
+    margin-top: 2vh;
+    overflow: auto;
+}
+
+.tab-layout {
+    min-height: 35vh !important;
+    max-height: 35vh !important;
+    overflow: auto;
+}
 .courses-section {
     max-height: 65vh;
     min-height: 65vh;
@@ -944,10 +974,27 @@ hr {
 }
 
 .create-ticket-section1 {
-    margin-top: 2.4vh;
+    margin-top: 2vh;
+    min-height: 11vh;
+    max-height: 11vh;
+    overflow: auto;
 }
 
 .create-ticket-section2 {
+    margin-bottom: -4px;
+    min-height: 11vh;
+    max-height: 11vh;
+    display:flex;
+    overflow: auto;
+    align-items: center;
+    justify-content: center;
+}
+
+.create-ticket-section1-small {
+    margin-top: 2.4vh;
+}
+
+.create-ticket-section2-small {
     min-height: 12vh;
     max-height: 12vh;
     margin-bottom: -4px;

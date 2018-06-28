@@ -165,6 +165,16 @@ def remove_ta_from_ticket():
     return Iresponse.create_response("Invalid request", 400)
 
 
+@apiBluePrint.route('/ticket/gettatickets', methods=['GET'])
+@jwt_required
+def get_ta_tickets():
+    """
+    Get tickets by ta
+    """
+    current_identity = get_current_user()
+    return rp_ticket.get_assigned_tickets(current_identity)
+
+
 @apiBluePrint.route('/ticket/submit', methods=['POST'])
 @require_role(['student'])
 def create_ticket():

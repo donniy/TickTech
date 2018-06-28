@@ -1,7 +1,7 @@
-<!-- UserHome.vue is the homepage for a logged in student. -->
+<!-- Student only userhome. -->
 <template>
 <div v-if="$auth.ready()">
-	<template v-if="isTA == false && isStudent == true && false">
+	<template v-if="isTA == false && isStudent == true">
 		<div class="md-layout welcome-header">
 			<h3>Welcome back {{ $user.get().name }}</h3>
 		</div>
@@ -25,8 +25,8 @@
 						</md-content>
 						<md-content class="md-scrollbar">
 							<md-list>
-								<md-list-item v-for="ticket in filteredItems">
-									<ticket v-bind:key="ticket.id" v-bind:ticket="ticket"></ticket>
+								<md-list-item v-bind:key="ticket.id" v-for="ticket in filteredItems">
+									<ticket v-bind:ticket="ticket"></ticket>
 								</md-list-item>
 							</md-list>
 						</md-content>
@@ -37,8 +37,8 @@
 				<md-content class="md-elevation-5">
 					<md-content class="md-scrollbar notification-section-47">
 						<md-subheader>Notifications</md-subheader>
+						<p style="padding-left: 16px;" v-if="notifications.length < 1">No notifications</p>
 						<template v-for="notification in notifications">
-                            <p style="padding-left: 16px;" v-if="tickets.length < 1">No notifications</p>
                             <md-ripple>
                                 <md-list-item :to="{name: (notification.ta ? 'SingleTicket' : 'StudentTicket'), params: {ticket_id: notification.ticket.id}}">
                                     <div class="md-list-item-text">
@@ -48,7 +48,6 @@
                                     <md-badge class="md-primary" :md-content="notification.n" />
                                 </md-list-item>
                             </md-ripple>
-                                <!-- <md-divider></md-divider> -->
                         </template>
 					</md-content>
 				</md-content>
@@ -63,44 +62,131 @@
 		</div>
 	</template>
 
-<!-- UserHome.vue is the homepage for a logged in student. -->
-<template v-if="isTA == true && isStudent == false || true">
-<div class="container">
-	<div class="md-layout welcome-header">
-		<h3>Welcome back {{ $user.get().name }}</h3>
-	</div>
-	<div class="md-layout center-display md-gutter">
-		<div class="md-layout-item md-size-50">
-			<div class="md-layout-item">
-				<md-tabs class="md-elevation-5 ticket-container-small" md-sync-route>
-					<md-tab id="tab-student" md-label="Student tickets">
-						<md-subheader>My Submitted Tickets</md-subheader>
-						<md-content >
-							<md-content class="md-layout center-display">
-								<md-field class="md-layout-item md-size-90 ">
-									<label for="courseFilter">Filter by course</label>
-									<md-select id="courseFilter" v-model="selectedcourse">
-										<md-option default value="">All courses</md-option>
-										<md-option v-bind:value="course.id" v-bind:key="course.id" v-for="course in student_courses">{{course.title}}</md-option>
-									</md-select>
-								</md-field>
-								<md-field md-clearable class="md-layout-item md-size-90 md-toolbar-section-end">
-									<label for="searchField">Search by title...</label>
-									<md-input id="searchField" v-model="search" style="color = white; background-color = white;" />
-								</md-field>
-							</md-content>
-							<md-content class="md-scrollbar">
-								<md-list>
-									<md-list-item v-for="ticket in filteredItems">
-										<ticket v-bind:key="ticket.id" v-bind:ticket="ticket"></ticket>
-									</md-list-item>
-								</md-list>
-							</md-content>
-						</md-content>
-					</md-tab>
-					<md-tab id="tab-ta" md-label="TA assigned tickets">
-						<md-subheader>Tickets I'm assigned to</md-subheader>
+	<!-- Hybride userhome. -->
+	<template v-if="isTA == true && isStudent == true">
+		<div class="container">
+			<div class="md-layout welcome-header">
+				<h3>Welcome back {{ $user.get().name }}</h3>
+			</div>
+			<div class="md-layout center-display md-gutter">
+				<div class="md-layout-item md-size-60">
+					<div class="md-layout-item">
+						<md-tabs style="background-color: white;" class="md-elevation-5 ticket-container-small" md-sync-route md-alignment="fixed">
+							<md-tab id="tab-student" md-label="Student tickets">
+								<md-subheader>My Submitted Tickets</md-subheader>
+								<div class="tab-layout">
+									<md-content class="md-layout center-display">
+										<md-field class="md-layout-item md-size-90 ">
+											<label for="courseFilter">Filter by course</label>
+											<md-select id="courseFilter" v-model="selectedcourse">
+												<md-option default value="">All courses</md-option>
+												<md-option v-bind:value="course.id" v-bind:key="course.id" v-for="course in student_courses">{{course.title}}</md-option>
+											</md-select>
+										</md-field>
+										<md-field md-clearable class="md-layout-item md-size-90 md-toolbar-section-end">
+											<label for="searchField">Search by title...</label>
+											<md-input id="searchField" v-model="search" style="color = white; background-color = white;" />
+										</md-field>
+									</md-content>
+									<md-content class="md-scrollbar">
+										<md-list>
+											<md-list-item v-bind:key="ticket.id" v-for="ticket in filteredItems">
+												<ticket v-bind:ticket="ticket"></ticket>
+											</md-list-item>
+										</md-list>
+									</md-content>
+								</div>
+							</md-tab>
+							<md-tab id="tab-ta" md-label="TA assigned tickets">
+								<md-subheader>Tickets I'm assigned to</md-subheader>
+								<div class="tab-layout">
+									<md-content class="md-layout center-display">
+										<md-field class="md-layout-item md-size-90 ">
+											<label for="courseTAFilter">Filter by course</label>
+											<md-select id="courseTAFilter" v-model="selectedTAcourse">
+												<md-option default value="">All courses</md-option>
+												<md-option v-bind:value="course.id" v-bind:key="course.id" v-for="course in ta_courses">{{course.title}}</md-option>
+											</md-select>
+										</md-field>
+										<md-field md-clearable class="md-layout-item md-size-90 md-toolbar-section-end">
+											<label for="searchTAField">Search by title...</label>
+											<md-input id="searchTAField" v-model="searchTA" style="color = white; background-color = white;" />
+										</md-field>
+									</md-content>
+									<md-content class="md-scrollbar">
+										<md-list>
+											<md-list-item v-bind:key="ticket.id" v-for="ticket in filteredTAItems">
+												<ticket v-bind:ticket="ticket"></ticket>
+											</md-list-item>
+										</md-list>
+									</md-content>
+								</div>
+							</md-tab>
+						</md-tabs>
 						<md-content>
+							<md-card class="md-elevation-5 create-ticket-section1">
+								<md-card-content class="md-gutter md-size-100 center-display md-layout-item">
+									<h5 class="md-title">Teaching assistant level {{this.level}} <md-tooltip md-direction="bottom"> Earn experience by being a helpful TA</md-tooltip></h5>
+									<p class="md-caption">{{rank}}</p>
+									<md-progress-bar md-mode="determinate" :md-value="amount"></md-progress-bar>
+									<div v-if="this.experience == 0" class="md-subhead">Start helping people to earn experience</div>
+									<div v-if="this.experience != 0" class="md-subhead">{{this.experience}}/{{this.exp_to_next}} experience to next level</div>
+								</md-card-content>
+							</md-card>
+						</md-content>
+					</div>
+				</div>
+				<div class="md-layout md-size-40">
+					<div class="md-layout-item">
+					<md-content class="md-elevation-5 course-container-small">
+						<md-subheader>Courses I'm TA in</md-subheader>
+
+						<md-content class="md-scrollbar">
+							<md-list class="md-triple-line">
+								<course v-for="course in ta_courses" v-bind:key="course.id" v-bind:course="course"></course>
+							</md-list>
+						</md-content>
+
+					</md-content>
+					<md-content class="md-layout-item md-elevation-5 notification-container-small">
+						<md-subheader>Notifications</md-subheader>
+						<p style="padding-left: 16px;" v-if="notifications.length < 1">No notifications</p>
+						<template v-for="notification in notifications">
+							<md-ripple>
+								<md-list-item :to="{name: (notification.ta ? 'SingleTicket' : 'StudentTicket'), params: {ticket_id: notification.ticket.id}}">
+									<div class="md-list-item-text">
+										<span>{{notification.ticket.title}}</span>
+										<span>{{notification.ticket.message}}</span>
+									</div>
+									<md-badge class="md-primary" :md-content="notification.n" />
+								</md-list-item>
+							</md-ripple>
+						</template>
+					</md-content>
+					<md-card md-with-hover class="md-elevation-5 md-raised md-primary create-ticket-section1" @click.native="$router.push('/ticket/submit')">
+						<md-ripple>
+							<md-card-content class="create-ticket-section2">
+								<h3 style="opacity:1;">Create ticket</h3>
+							</md-card-content>
+						</md-ripple>
+					</md-card>
+				</div>
+				</div>
+			</div>
+		</div>
+	</template>
+
+	<!-- TA only userhome. -->
+	<template v-if="isTA == true && isStudent == false">
+		<div class="container">
+			<div class="md-layout welcome-header">
+				<h3>Welcome back {{ $user.get().name }}</h3>
+			</div>
+			<div class="md-layout center-display md-gutter">
+				<div class="md-layout-item md-size-60">
+					<div class="md-layout-item">
+						<md-content class="md-elevation-5 ticket-container-small">
+							<md-subheader>Tickets I'm assigned to</md-subheader>
 							<md-content class="md-layout center-display">
 								<md-field class="md-layout-item md-size-90 ">
 									<label for="courseTAFilter">Filter by course</label>
@@ -110,70 +196,63 @@
 									</md-select>
 								</md-field>
 								<md-field md-clearable class="md-layout-item md-size-90 md-toolbar-section-end">
-									<label for="searchField">Search by title...</label>
-									<md-input id="searchField" v-model="search" style="color = white; background-color = white;" />
+									<label for="searchTAField">Search by title...</label>
+									<md-input id="searchTAField" v-model="searchTA" style="color = white; background-color = white;" />
 								</md-field>
 							</md-content>
 							<md-content class="md-scrollbar">
 								<md-list>
-									<md-list-item v-for="ticket in filteredTAItems">
-										<ticket v-bind:key="ticket.id" v-bind:ticket="ticket"></ticket>
+									<md-list-item v-bind:key="ticket.id" v-for="ticket in filteredTAItems">
+										<ticket v-bind:ticket="ticket"></ticket>
 									</md-list-item>
 								</md-list>
 							</md-content>
 						</md-content>
-					</md-tab>
-				</md-tabs>
-				<md-content>
-					<md-card class="md-elevation-5 create-ticket-section1">
-						<md-card-content class="md-gutter md-size-100 center-display md-layout-item">
-							<h5 class="md-title">Teaching assistant level {{this.level}} <md-tooltip md-direction="bottom"> Earn experience by being a helpful TA</md-tooltip></h5>
-							<p class="md-caption">{{rank}}</p>
-							<br/>
-							<md-progress-bar md-mode="determinate" :md-value="amount"></md-progress-bar>
-							<div class="md-subhead">{{this.experience}}/{{this.exp_to_next}} experience to next level</div>
-						</md-card-content>
-					</md-card>
-				</md-content>
+						<md-content>
+							<md-card class="md-elevation-5 level-container">
+								<md-card-content class="md-size-100 center-display md-layout-item">
+									<h5 class="md-title">Teaching assistant level {{this.level}} <md-tooltip md-direction="bottom"> Earn experience by being a helpful TA</md-tooltip></h5>
+									<p class="md-caption">{{rank}}</p>
+									<md-progress-bar md-mode="determinate" :md-value="amount"></md-progress-bar>
+									<div v-if="this.experience == 0" class="md-subhead">Start helping people to earn experience</div>
+									<div v-if="this.experience != 0" class="md-subhead">{{this.experience}}/{{this.exp_to_next}} experience to next level</div>
+								</md-card-content>
+							</md-card>
+						</md-content>
+					</div>
+				</div>
+				<div class="md-layout md-size-40">
+					<div class="md-layout-item">
+					<md-content class="md-elevation-5 course-container-medium">
+						<md-subheader>Courses I'm TA in</md-subheader>
+
+						<md-content class="md-scrollbar">
+							<md-list class="md-triple-line">
+								<course v-for="course in ta_courses" v-bind:key="course.id" v-bind:course="course"></course>
+							</md-list>
+						</md-content>
+
+					</md-content>
+					<md-content class="md-layout-item md-elevation-5 notification-container-medium">
+						<md-subheader>Notifications</md-subheader>
+						<p style="padding-left: 16px;" v-if="notifications.length < 1">No notifications</p>
+						<template v-for="notification in notifications">
+							<md-ripple>
+								<md-list-item :to="{name: (notification.ta ? 'SingleTicket' : 'StudentTicket'), params: {ticket_id: notification.ticket.id}}">
+									<div class="md-list-item-text">
+										<span>{{notification.ticket.title}}</span>
+										<span>{{notification.ticket.message}}</span>
+									</div>
+									<md-badge class="md-primary" :md-content="notification.n" />
+								</md-list-item>
+							</md-ripple>
+						</template>
+					</md-content>
+				</div>
+				</div>
 			</div>
 		</div>
-		<div class="md-layout-item md-size-40">
-			<md-content class="md-elevation-5 ticket-container-small">
-				<md-subheader>Courses</md-subheader>
-
-				<md-content class="md-scrollbar courses-section">
-					<md-list class="md-triple-line">
-						<course v-for="course in ta_courses" v-bind:key="course.id" v-bind:course="course"></course>
-					</md-list>
-				</md-content>
-
-			</md-content>
-			<md-content class="md-scrollbar notification-section-47">
-				<md-subheader>Notifications</md-subheader>
-				<template v-for="notification in notifications">
-					<p style="padding-left: 16px;" v-if="tickets.length < 1">No notifications</p>
-					<md-ripple>
-						<md-list-item :to="{name: (notification.ta ? 'SingleTicket' : 'StudentTicket'), params: {ticket_id: notification.ticket.id}}">
-							<div class="md-list-item-text">
-								<span>{{notification.ticket.title}}</span>
-								<span>{{notification.ticket.message}}</span>
-							</div>
-							<md-badge class="md-primary" :md-content="notification.n" />
-						</md-list-item>
-					</md-ripple>
-					<md-card v-if="$user.isStudent()" md-with-hover class="md-elevation-5 md-raised md-primary create-ticket-section1" @click.native="$router.push('/ticket/submit')">
-						<md-ripple>
-							<md-card-content class="create-ticket-section2">
-								<h3 style="opacity:1;">Create ticket</h3>
-							</md-card-content>
-						</md-ripple>
-					</md-card>
-				</template>
-			</md-content>
-		</div>
-	</div>
-</div>
-</template>
+	</template>
 </div>
 </template>
 
@@ -196,6 +275,7 @@ export default {
 			level: 0,
 			exp_to_next: 0,
 			search: '',
+			searchTA: '',
 			selectedcourse: '',
 			selectedTAcourse: '',
 			student_courses: [],
@@ -210,7 +290,19 @@ export default {
 			this.status = 'getting ticket'
 			const path = '/api/user/tickets'
 			this.$ajax.get(path).then(response => {
-				this.tickets = response.data.json_data
+				if (typeof response.data.json_data !== 'undefined') {
+					this.tickets = response.data.json_data
+				}
+			}).catch(error => {
+				console.log(error)
+			})
+		},
+		getTaTickets() {
+			const path = '/api/ticket/gettatickets'
+			this.$ajax.get(path).then(response => {
+				if (typeof response.data.json_data !== 'undefined') {
+					this.TAtickets = response.data.json_data
+				}
 			}).catch(error => {
 				console.log(error)
 			})
@@ -271,7 +363,9 @@ export default {
                  } else {
                      this.rank = "Master of TikTech (" + this.level + ")"
                  }
-             }
+             } else {
+				 this.rank = "Rookie TA (" + this.level + ")"
+			 }
          },
 		/*
 		 * Get all notifications.
@@ -289,7 +383,6 @@ export default {
 
             this.$ajax.get(pathCourses)
                 .then(response => {
-					console.log(response)
                     if (typeof response.data.json_data !== 'undefined') {
                         for (let i = 0; i < response.data.json_data.length; i++) {
                             let dataObj = response.data.json_data[i]
@@ -317,9 +410,9 @@ export default {
 				this.experience = response.data.json_data['experience'] - this.level_to_xp(this.level - 1)
 				this.exp_to_next = this.level_to_xp(this.level) - this.level_to_xp(this.level - 1)
 
-				console.log(this.experience, this.exp_to_next)
 				// Set the level progress
 				this.amount = Math.round(100 * (this.experience / this.exp_to_next))
+				this.getRanking()
 
 			}).catch(error => {
 				console.log(error)
@@ -349,14 +442,18 @@ export default {
 		 */
 		created() {
 			this.status = 'created'
-			this.getTaCourses()
-			this.getTaTickets()
-			this.getStudentCourses()
+			if (this.$user.get().ta) {
+
+				this.getTaCourses()
+				this.getTaTickets()
+				this.setLevelProgress()
+			}
+			if (this.$user.isStudent) {
+				console.log("STUDENT")
+				this.getStudentCourses()
+				this.getTickets()
+			}
 			this.getTodos()
-			this.getTickets()
-			this.setLevelProgress()
-			this.getRanking()
-			console.log(this.rank)
 		}
 	},
 	/*

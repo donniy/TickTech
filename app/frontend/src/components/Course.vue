@@ -1,9 +1,8 @@
 <template>
     <md-list-item v-on:click="pushCourse">
         <div class="md-list-item-text">
-            <h5>{{course.title}}</h5>
-            <h6>{{course.name}}</h6>
-            <p>{{course.description}}</p>
+            <p class="md-subheading">{{course.title}}</p>
+            <p class="md-caption">{{course.description}}</p>
         </div>
     </md-list-item>
 </template>
