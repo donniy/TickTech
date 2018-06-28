@@ -25,10 +25,18 @@ export default {
         return { }
     },
     methods: {
+
+        /*
+         * On hover the ticket summery is displayed.
+         */
         showTicket () {
             this.$parent.showSum = true
             this.$parent.ticketSum = this.ticket.id
         },
+
+        /*
+         * Go to the selected tickets when the tickets summary is clicked.
+         */
         navTicket () {
             this.$router.push("/ticket/" + this.ticket.id)
         }
