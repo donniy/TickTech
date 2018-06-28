@@ -1,5 +1,5 @@
 from . import apiBluePrint
-from flask import jsonify, request, escape
+from flask import request
 from flaskr import database, Iresponse, plugins, db
 from flaskr.models.Course import Course, CoursePlugin
 from flaskr.models.user import User
