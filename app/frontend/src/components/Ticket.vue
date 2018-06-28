@@ -24,6 +24,9 @@ export default {
             course: ''
         }
         }, methods: {
+        /*
+         * Get info of a specific course.
+         */
         getCourse() {
                 const path = '/api/courses/single/' + this.ticket.course_id
                 this.$ajax.get(path, response => {

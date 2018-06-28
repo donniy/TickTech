@@ -328,6 +328,9 @@ export default {
                 window.alert("Whoops! We were unable to read anything useful here...")
             })
         },
+        /*
+         * Add note to database and display it in the ticket page.
+         */
         addNote() {
             if (this.noteTextArea.length > 0) {
                 console.log(this.noteTextArea)
@@ -400,6 +403,9 @@ export default {
             console.log("found", e)
             this.noteTextArea = matchedValue
         },
+        /*
+         * If a TA is mentioned by another TA this TA is also bound to the ticket.
+         */
         bind_ta_to_ticket(ticketid, taid) {
             const path = '/api/ticket/addta'
             this.$ajax.post(path, { 'ticketid': ticketid, 'taid': taid })
