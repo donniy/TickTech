@@ -140,11 +140,7 @@ def get_ticket_messages(ticket_id):
 
 
 @apiBluePrint.route('/ticket/addta', methods=['POST'])
-<<<<<<< app/backend/flaskr/api/ticket.py
-@require_role(['supervisor'])
-=======
 @require_role(['ta', 'supervisor'])
->>>>>>> app/backend/flaskr/api/ticket.py
 def add_ta_to_ticket():
     """
     Assign teaching assistant to ticket.
