@@ -32,7 +32,7 @@ def create_request(json_data):
 
     if labelid != "":
         label = Label.query.get(uuid.UUID(labelid))
-        bound_tas = get_label_tas(label)
+        bound_tas = get_label_tas(label, studentid)
 
     if len(bound_tas) < 1:
         status_id = TicketStatus.unassigned
@@ -107,9 +107,9 @@ def remove_ta_from_ticket(json_data):
     return Iresponse.create_response("Failure", 400)
 
 
-def get_label_tas(label):
+def get_label_tas(label, user_id):
     if label:
-        tas_by_label = label.users
+        tas_by_label = label.get_tas(user_id)
         return tas_by_label
     return None
 

@@ -1,19 +1,20 @@
 <template>
     <div class="course-container">
         <transition name="custom-classes-transition" enter-active-class="animated tada" leave-active-class="animated bounceOutRight">
-            <div class="subbox">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <h1>Course: {{ this.course.title }}</h1>
-                        <br />
-                        <hr style="width: 20%;">
-                        <br />
-                    </div>
+        <div class="">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1>Course: {{ this.course.title }}</h1>
+                    <br />
+                    <hr style="width: 20%;">
+                    <br />
                 </div>
-                <div class="row">
-                    <div class="col-lg-12 col-md-12 text-center">
-                        <div class="row">
-                            <md-table v-model="searched" md-sort="name" md-sort-order="asc" md-card md-fixed-header class="white">
+            </div>
+            <div class="row">
+                <div class="col-lg-12 col-md-12 text-center">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <md-table v-model="searched" md-sort="name" md-sort-order="asc" md-fixed-header class="white md-elevation-3">
                                 <md-table-toolbar class="red">
 
                                     <div class="col-lg-3 col-md-3 text-center">
@@ -45,7 +46,7 @@
                                 </md-table-empty-state>
 
                                 <md-table-row md-delay="1000" slot="md-table-row" slot-scope="{ item }" class="tickettable" v-on:click="navTicket(item.id)"
-                                    v-on:mouseover="showTicket(item.id)" v-bind:class="{'md-table-cell':true, 'activated':(item.id === ticketSum)}">
+                                                                                                        v-on:mouseover="showTicket(item.id)" v-bind:class="{'md-table-cell':true, 'activated':(item.id === ticketSum)}">
                                     <md-table-cell md-label="Title" md-sort-by="title" md-numeric>{{ item.title }}</md-table-cell>
                                     <md-table-cell md-label="Label" md-sort-by="label.label_name" md-numeric>{{ item.label.label_name }}</md-table-cell>
                                     <md-table-cell md-label="Name" md-sort-by="user_id">{{ item.user_id }}</md-table-cell>
@@ -55,6 +56,17 @@
                                     <md-table-cell md-label="Operator" md-sort-by="binded_tas" v-if="item.binded_tas == null">unassigned</md-table-cell>
                                 </md-table-row>
                             </md-table>
+                        </div>
+                        <div class="col-md-4">
+                            <template v-if="isSupervisor">
+                                <md-content class="md-elevation-3">
+                                    <md-list>
+                                        <md-subheader>Plugins</md-subheader>
+
+                                        <plugin :key="pid" v-for="(plugin, pid) in plugins" :plugin="plugin" :pid="pid" />
+                                    </md-list>
+                                </md-content>
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -69,10 +81,14 @@
                 <emodal v-if="showEmailModal" warning="Setup a fetcher to your mailinglist." @close="showEmailModal = false">
                 </emodal>
             </div>
+            <p v-if="email_running">EMAIL IS RUNNING</p>
+            <emodal v-if="showEmailModal" warning="Setup a fetcher to your mailinglist." @close="showEmailModal = false">
+            </emodal>
+        </div>
         </transition>
         <div v-if="false" class=s ummary-sub-container>
             <summodal @close="showSum = false, ticketSum = 0" v-for="ticket in tickets" v-if="ticket.id == ticketSum" v-bind:key="ticket.id"
-                v-bind:ticket="ticket" class="singleTicket">
+                                                                                        v-bind:ticket="ticket" class="singleTicket">
             </summodal>
         </div>
         <p v-if="email_running">EMAIL IS RUNNING</p>
@@ -87,9 +103,9 @@
 </template>
 
 <script>
-    const toLower = text => {
-        return text.toString().toLowerCase()
-    }
+const toLower = text => {
+    return text.toString().toLowerCase()
+}
 
     const searchByName = (items, term) => {
         if (term) {
@@ -102,6 +118,7 @@
     import SumModal from './TicketSummary.vue'
     import EmailModal from './EmailSettingsModal.vue'
     import addUsersModel from './addUsersModel.vue'
+    import PluginsListItem from './PluginsListItem.vue'
 
     export default {
         data() {
@@ -132,6 +149,8 @@
                     'tas': [],
                     'supervisors': [],
                 },
+                plugins: {
+                }
             }
         },
         methods: {
@@ -163,6 +182,19 @@
                         console.log(error)
                         this.status = 'failed getting tickets'
                     })
+            },
+            getPlugins() {
+                const path = '/api/courses/' + this.$route.params.course_id + '/plugins'
+                this.$ajax.get(path, response => {
+                    this.plugins = response.data.json_data
+                })
+            },
+            updatePluginState(data) {
+                console.log(data)
+                const path = '/api/courses/' + this.$route.params.course_id + '/plugins/' + data
+                this.$ajax.patch(path, {active: this.plugins[data].active}, response => {
+                    console.log(response)
+                })
             },
 
             /*
@@ -204,6 +236,7 @@
                 this.status = 'created'
                 this.getCourseInfo()
                 this.getTickets()
+                this.getPlugins()
                 this.getLabels()
             },
             emailRunning: function () {
@@ -302,6 +335,7 @@
             'emodal': EmailModal,
             'summodal': SumModal,
             'addusers': addUsersModel,
+            'plugin': PluginsListItem,
         },
         created: function () {
             this.emailRunning()
@@ -317,6 +351,18 @@
             status_filter: function() {
                 this.filter_tickets()
             }
+        },
+        computed: {
+            tickets_reverse: function () {
+                return this.tickets.slice().reverse()
+            },
+
+            tickets_by_alpabet: function() {
+                return this.tickets.slice().sort(function(a,b) {
+                    // return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);
+                    return a.user_id - b.user_id;
+                }); 
+            },
         }
     }
 </script>

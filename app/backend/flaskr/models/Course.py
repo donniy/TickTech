@@ -1,6 +1,7 @@
 from datetime import datetime
-from flaskr import database
+from flaskr import database, plugins
 from sqlalchemy_utils import UUIDType
+from sqlalchemy.ext.mutable import MutableDict
 import uuid
 
 db = database.db
@@ -19,14 +20,6 @@ student_course_linker = db.Table(
               primary_key=True),
     db.Column('course_id', UUIDType(binary=False), db.ForeignKey('course.id'),
               primary_key=True)
-)
-
-label_course_linker = db.Table(
-    "label_link_course",
-    db.Column('course_id', UUIDType(binary=False), db.ForeignKey('course.id'),
-              primary_key=True),
-    db.Column('label_id', UUIDType(binary=False),
-              db.ForeignKey('label.label_id'), primary_key=True)
 )
 
 supervisor_linker = db.Table(
@@ -61,10 +54,6 @@ class Course(db.Model):
         "User", secondary=ta_course_linker, lazy='subquery',
         backref=db.backref('ta_courses', lazy=True))
 
-    labels = db.relationship(
-        "Label", secondary=label_course_linker, lazy='subquery',
-        backref=db.backref('labels', lazy=True))
-
     supervisors = db.relationship(
         "User", secondary=supervisor_linker, lazy='subquery',
         backref=db.backref('supervisor_courses', lazy=True))
@@ -76,6 +65,15 @@ class Course(db.Model):
         Like a toString() method in Java.
         """
         return '<Course {}>'.format(self.title)
+
+    def get_plugin(self, plugin_id):
+        """
+        Get the given plugin.
+        """
+        for cp in self.plugins:
+            if cp.plugin == plugin_id:
+                return cp
+        return None
 
     @property
     def serialize(self):
@@ -93,8 +91,71 @@ class Course(db.Model):
             'supervisors': [suvi.serialize for suvi in self.supervisors]
         }
 
+    @property
+    def checkValid(self):
+        """
+        Checks if an object is valid to insert into a database. So all
+        fields that should be set, are set. If a value is not set, throw
+        for now a ValueError().
+        """
+        pass
+
     def create(self, id, name, desc, mail, url, port, password):
         self.id = id
         self.title = name
         self.description = desc
         self.course_email = mail
+
+
+class CoursePlugin(db.Model):
+    """
+    Keeps track of enabled plugins for each course.
+    """
+    id = db.Column(UUIDType(binary=False), primary_key=True)
+    plugin = db.Column(db.String(255), unique=False, nullable=False)
+    active = db.Column(db.Boolean, unique=False, nullable=False, default=False)
+    course_id = db.Column(UUIDType(binary=False), db.ForeignKey(
+        'course.id'), nullable=False, default='asdf')
+
+    # Make sure changes in the pickled dict get detected so use a MutableDict.
+    settings = db.Column(MutableDict.as_mutable(db.PickleType),
+                         unique=False,
+                         nullable=True)
+
+    course = db.relationship('Course',
+                             lazy=True,
+                             backref=db.backref('plugins'))
+
+    def __repr__(self):
+        return "<CoursePlugin: {}>".format(self.plugin)
+
+    def __hash__(self):
+        return hash(str(self))
+
+    def get_settings(self):
+        """
+        Returns the settings of this plugin, along with the types and
+        descriptions of each setting.
+        """
+        p = plugins.get_plugin(self.plugin)
+        course_settings = p.course_settings
+        for setting, props in course_settings.items():
+            if self.settings and setting in self.settings:
+                props['value'] = self.settings[setting]
+            else:
+                props['value'] = props['default']
+        return p.course_settings
+
+    def get_setting_values(self):
+        """
+        Returns a simple key: value pair for each setting listing only
+        the values and not all other properties of a setting.
+        """
+        return {k: v['value'] for k, v in self.get_settings().items()}
+
+    def __eq__(self, other):
+        """
+        Compare this plugin to another plugin. For compatibility to labels
+        only the name of the plugin is used.
+        """
+        return self.plugin == other.plugin
