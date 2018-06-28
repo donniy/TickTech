@@ -2,7 +2,7 @@
     <router-link class="ticket-single" :to="base_url + ticket.id">
       <md-ripple>
           <h6>{{ticket.title}}</h6>
-        In course: {{ this.course }}<br />
+        In course: {{ this.course.title }}<br />
         Status: {{ticket.status.name}} <br />
         Time: {{ticket.timestamp}}
     </md-ripple>
@@ -30,7 +30,7 @@ export default {
         getCourse() {
                 const path = '/api/courses/single/' + this.ticket.course_id
                 this.$ajax.get(path, response => {
-                    this.course = response.data.json_data['title']
+                    this.course = response.data.json_data
                 })
             }
         }, mounted() {
