@@ -1,6 +1,7 @@
 from . import apiBluePrint
 from flaskr.models.Course import Course
 from flaskr.models.user import User
+from flaskr.models.ticket import Ticket
 from flaskr import Iresponse
 from flaskr.request_processing import ticket as rp_ticket
 from flaskr.request_processing import file as rp_file
@@ -9,7 +10,7 @@ from flask import escape, request
 from flaskr.utils.json_validation import validate_json
 from mail.thread import MailThread
 from mail.Message import ticketErrorEmail, createdEmailMessage
-from mail.Message import somethingWentWrong, replyErrorEmail
+from mail.Message import somethingWentWrong, replyErrorEmail, createdTicketEmail
 from flask_mail import Mail
 from threading import Thread
 from flask import current_app

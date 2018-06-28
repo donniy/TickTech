@@ -5,9 +5,8 @@ def createdTicketEmail(title, recipients, ticketid, body):
     Sends an email to the student, confirming we received their email
     and created a ticket on TIKTECH. The ticket id is in the subject.
     '''
-    message = Message(
-        subject="TIKTECH Confirmation: " + title + ". Ticket ID: " + ticketid,
-                recipients=recipients)
+    string = "TIKTECH Confirmation: " + title + ". Ticket ID: " + ticketid
+    message = Message(subject=string, recipients=recipients)
     message.html = (
         '<body>Hey!<br />We received your e-mail and created ' +
         'a matching ticket on TIKTECH.' +
@@ -26,7 +25,8 @@ def createdEmailMessage(title, recipients, ticketid, body, sender):
     Sends an email to the student, confirming a TA has responded 
     to their ticket on TIKTECH (e.g. a message has been added to the ticket).
     '''
-    message = Message(subject=title, recipients=recipients)
+    string = "TIKTECH notification. New reply on your ticket. Ticket ID: " + ticketid
+    message = Message(subject=string, recipients=recipients)
     message.html = (
         '<body>Hey!<br />You got a new reply to your question from ' + sender +
         '.<br /> Check out your ' +

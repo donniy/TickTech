@@ -145,7 +145,6 @@ def retrieveLabels(courseid):
     return labels
 
 
-# TODO: Labels will be many-to-many in thebackend (Ravi), so this is outdated.
 def findLabel(body, labels):
     '''
     Parse the body for words that might be labels. Using the fuzzywuzzy module,
@@ -208,12 +207,15 @@ def createReply(ticketid, subject, address, body):
     '''
     Create a reply to a ticket from the acquired information from an email.
     '''
+    # Split body on old message
+    newbody = re.split('(On )(Mon|Tue|Wed|Thu|Fri|Sat|Sun)(,)', body, 1)
+
     # Create a new reply.
     newmessage = {
         'email': address,
         'ticketid': ticketid,
         'subject': subject,
-        'message': body
+        'message': newbody[0]
     }
 
     # Add the reply to the database.
@@ -230,16 +232,8 @@ def createReply(ticketid, subject, address, body):
     # Below is for debugging. An error mail will be send if 
     # the reply is not posted.
     if (result.status_code != 201):
-        print("Something went wrong creating a new ticket from an email.")
-        print("******")
-        print("Sender: " + str(sender) + "\nStudentid: " +
-              str(studentid) + "\nEmail: " + str(address) +
-              "\nSubject: " + str(subject))
-        print("Course ID: ", courseid)
-        print("Label ID: ", labelid)
-        print("Body: " + body)
-
-
+        print("Something went wrong creating a new reply from an email.")
+    
 def createTicket(subject, body, files, sender, address, courseid):
     '''
     Create a ticket from the acquired information from an email.
