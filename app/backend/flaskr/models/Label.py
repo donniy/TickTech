@@ -16,7 +16,7 @@ class Label(db.Model):
                           default=0)
     label_name = db.Column(db.Text, nullable=False, unique=False)
 
-    plugins = db.relationship('LabelPlugin', backref='label', lazy=False)
+    plugins = db.relationship('LabelPlugin', cascade='save-update, merge, delete', backref='label', lazy=False)
     course = db.relationship('Course', backref='labels', lazy=False)
 
     @property

@@ -16,7 +16,6 @@
             </md-card>
         </form>
         </br>
-        <p class="md-helper-text center-display">Select labels you want to be bound to.</p>
 
         <div class="md-layout md-gutter">
             <div class="md-layout-item">
@@ -29,15 +28,15 @@
             </div>
             <div class="md-layout-item">
                 <md-content class="md-elevation-3">
-                    <md-list>
-                        <label-details v-if="selected_label" :label="selected_label" />
-                            <md-empty-state
-                                       v-else
-                                       md-rounded
-                                       md-icon="label"
-                                       md-label="No label selected"
-                                       md-description="Click a label on the left to edit its properties." />
-                            </md-empty-state>
+                    <md-list class="md-double-line md-dense">
+                        <label-details @label-deselected="selected_label = null" v-if="selected_label" :label="selected_label" />
+                        <md-empty-state
+                                   v-else
+                                   md-rounded
+                                   md-icon="label"
+                                   md-label="No label selected"
+                                   md-description="Click a label on the left to edit its properties." />
+                        </md-empty-state>
                     </md-list>
                 </md-content>
             </div>
