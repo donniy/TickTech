@@ -11,7 +11,7 @@
         <md-dialog :md-active.sync="showModal">
             <md-dialog-title>{{plugin.name}} Settings</md-dialog-title>
             <md-dialog-content md-dynamic-height>
-                <md-field v-for="(props, setting) in settings">
+                <md-field :key="setting" v-for="(props, setting) in settings">
                     <label>{{ props.display_name }}</label>
                     <md-input v-model="settings[setting].value"></md-input>
                     <span class="md-helper-text">{{ props.help_text }}</span>
