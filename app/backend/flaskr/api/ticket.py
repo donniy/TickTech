@@ -140,7 +140,7 @@ def get_ticket_messages(ticket_id):
 
 
 @apiBluePrint.route('/ticket/addta', methods=['POST'])
-@require_role(['supervisor','ta'])
+@require_role(['supervisor', 'ta'])
 def add_ta_to_ticket():
     """
     Assign teaching assistant to ticket.
