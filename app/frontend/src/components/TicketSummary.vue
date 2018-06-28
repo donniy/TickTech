@@ -60,16 +60,24 @@
             }
         },
         methods: {
+            /*
+             * Get all messages in a ticket between a student and a TA.
+             */
             getMessages() {
                 const path = '/api/ticket/' + this.ticket.id + '/messages'
                 this.$ajax.get(path)
                     .then(response => {
                         this.messages = response.data.json_data
+                        console.log(this.messages)
+                        this.messages = this.messages.filter(el=>el.type==0)
                     })
                     .catch(error => {
                         console.log(error)
                     })
             },
+            /*
+             * Get all notes in a ticket.
+             */
             getNotes() {
                 this.$ajax.get('/api/notes/' + this.ticket.id)
                     .then(res => {

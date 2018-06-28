@@ -47,6 +47,9 @@ export default {
     },
     props: ['message', 'user'],
     computed: {
+        /* 
+         * If user is the sender on the message page replaces user name with 'You'
+         */
         username: function () {
             if (this.user) {
                 return this.user.id == this.message.user_id ? 'You' : this.message.user_name
@@ -54,6 +57,10 @@ export default {
                 return 'unknown'
             }
         },
+
+        /*
+         * Display corresponding rank with the current level of the user.
+         */
         rank: function () {
             if (this.level) {
                 if (this.level < 5) {
@@ -99,6 +106,10 @@ export default {
         },
     },
     methods: {
+
+        /*
+         * Get the current level of a user from the database.
+         */
         getLevel() {
             const path = '/api/user/getsinglelevel/' + this.message.user_id
 			this.$ajax.get(path).then(response => {

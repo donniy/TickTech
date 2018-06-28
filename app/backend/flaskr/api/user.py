@@ -1,4 +1,4 @@
-from flaskr.models.ticket import Ticket
+from flaskr.models.ticket import Ticket, TicketStatus
 from . import apiBluePrint
 from flask_jwt_extended import jwt_required
 from flaskr.jwt_wrapper import get_current_user
@@ -44,8 +44,9 @@ def retrieve_active_user_tickets(user_id):
     # TODO: Controleer of degene die hierheen request permissies heeft.
     current_identity = get_current_user()
     user_id = current_identity.id
-    tickets = Ticket.query.filter(Ticket.user_id == user_id,
-                                  Ticket.status_id != 2).all()
+    tickets = Ticket.query.filter(
+        Ticket.user_id == user_id,
+        Ticket.status_id != TicketStatus.closed).all()
     return Iresponse.create_response(database.serialize_list(tickets), 200)
 
 

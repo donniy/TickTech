@@ -1,4 +1,4 @@
-from flaskr.models.ticket import Ticket
+from flaskr.models.ticket import Ticket, TicketStatus
 from flaskr.models.Message import Message
 from flaskr.models.user import User
 from . import apiBluePrint
@@ -67,13 +67,10 @@ def retrieve_plugins(ticket_id):
     """
     List the plugins available for this ticket.
     """
-    print("===Retrieving plugins for ticket===")
     ticketObj = Ticket.query.get_or_404(ticket_id)
     # TODO: For now this returns all available plugins.
-    pls = {}
-    for p in plugins.plugin_list():
-        pl = plugins.get_plugin(p)
-        pls[pl.display_name] = pl.get_assignment_info(ticketObj.owner.id, 123)
+    pls = ticketObj.label.get_assignment_info(ticketObj.user_id)
+
     return Iresponse.create_response(pls, 200)
 
 
@@ -127,7 +124,7 @@ def get_ticket_messages(ticket_id):
                                            read=True)
 
 
-@apiBluePrint.route('ticket/addta', methods=['POST'])
+@apiBluePrint.route('/ticket/addta', methods=['POST'])
 @require_role(['ta', 'supervisor'])
 def add_ta_to_ticket():
     """

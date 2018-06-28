@@ -30,6 +30,9 @@
             }
         },
         methods: {
+            /*
+             * Removes a note from the database.
+             */
             closeNote() {
                 const path = '/api/notes/' + this.note.id + '/close'
                 this.$ajax.post(path)
@@ -39,6 +42,9 @@
                 this.exists = false
                 this.$parent.getNotes()
             },
+            /*
+             * Get all info of a current user from the database.
+             */
             getUser() {
                 const path = '/api/user/' + this.note.user_id
                 this.$ajax.get(path)

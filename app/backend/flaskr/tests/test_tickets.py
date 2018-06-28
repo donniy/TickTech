@@ -62,7 +62,7 @@ def test_get_ticket(app, client):
 
 def test_close_ticket(app, client):
     """
-        Close a ticket
+    Close a ticket
     """
     userId = 1234
     usr = create_user(app, userId)

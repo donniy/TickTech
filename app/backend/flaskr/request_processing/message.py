@@ -9,6 +9,9 @@ from flaskr.request_processing import levels
 
 
 def create_request(jsonData, ticket_id):
+    """
+    Function that handles the create request from a ticket.
+    """
     user_id = escape(jsonData["studentid"])
     text = escape(jsonData["message"])
 
@@ -45,6 +48,12 @@ def create_request(jsonData, ticket_id):
 
 
 def retrieve_all_request(ticket_id, for_user, read=False):
+    """
+    Function that handle the request that retrieves
+    the messages of a ticket. In order to be able
+    to get the messages, a user needs to have atleast
+    rights for the ticket.
+    """
     body = {}
     ticket = Ticket.query.get(ticket_id)
     if ticket is None:

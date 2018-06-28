@@ -12,6 +12,9 @@ from datetime import datetime
 
 # TODO: CHECK IF JSON IS VALID.
 def create_request(json_data):
+    """
+    Function that handles the create request for a ticket.
+    """
     name = escape(json_data["name"])
     name = name  # flake8
     studentid = escape(json_data["studentid"])
@@ -29,14 +32,12 @@ def create_request(json_data):
 
     if labelid != "":
         label = Label.query.get(uuid.UUID(labelid))
-        bound_tas = get_label_tas(label)
+        bound_tas = get_label_tas(label, studentid)
 
     if len(bound_tas) < 1:
-        status_id = 1
+        status_id = TicketStatus.unassigned
     else:
-        status_id = 3
-
-    print(status_id)
+        status_id = TicketStatus.waiting_for_help
 
     ticket = Ticket(id=uuid.uuid4(), user_id=studentid, course_id=courseid,
                     status_id=status_id, title=subject, email=email,
@@ -45,7 +46,7 @@ def create_request(json_data):
     for ta in bound_tas:
         ticket.bound_tas.append(ta)
         level_up = levels.add_experience(levels.EXP_FOR_ASSING, ta.id)
-        levels.notify_level_change(ta.id, None, level_up)
+        levels.notify_level_change(ta.id, ticket, level_up)
 
     if not database.addItemSafelyToDB(ticket):
         return Iresponse.internal_server_error()
@@ -77,12 +78,14 @@ def add_ta_to_ticket(json_data):
         id=uuid.UUID(json_data['ticketid'])).first()
     ta = User.query.filter_by(id=json_data['taid']).first()
 
+    if ticket.status_id != TicketStatus.receiving_help:
+        ticket.status_id = TicketStatus.receiving_help
+        database.db.session.commit()
+
     # Check if the ta and ticket were found and add if not already there.
     if ticket and ta:
         if ta not in ticket.bound_tas:
             ticket.bound_tas.append(ta)
-            ticket.status_id = 4
-            database.db.session.commit()
             level_up = levels.add_experience(levels.EXP_FOR_ASSING, ta.id)
             levels.notify_level_change(ta.id, ticket, level_up)
             return Iresponse.create_response({'ta': ta.serialize,
@@ -104,15 +107,15 @@ def remove_ta_from_ticket(json_data):
     return Iresponse.create_response("Failure", 400)
 
 
-def get_label_tas(label):
+def get_label_tas(label, user_id):
     if label:
-        tas_by_label = label.users
+        tas_by_label = label.get_tas(user_id)
         return tas_by_label
     return None
 
 
 def close_ticket(ticket):
     if ticket:
-        ticket.status_id = 2
+        ticket.status_id = TicketStatus.closed
         database.db.session.commit()
         return "Closed"
