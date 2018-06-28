@@ -4,6 +4,10 @@ from datetime import datetime, timedelta
 import uuid
 import bcrypt
 from flaskr.models.user import User
+from mail.Message import changePassword
+from flask_mail import Mail
+from threading import Thread
+from flask import current_app
 from flask import escape
 
 def validate_userdata(email, name, studentid, password, repassword):
@@ -107,11 +111,18 @@ def set_reset_code(email):
 
     if user_data.code_expiration is None or user_data.code_expiration < present:
         user_data.code = uuid.uuid4()
-        # TODO: STEPHAN HIER MOET EEN MAILTJE MEE WORDEN GESTUURD
-        print(user_data.code)
         user_data.code_expiration = present + timedelta(0, 7200)
         database.db.session.commit()
+
+        message = changePassword([user_data.email], str(user_data.code))
+        app = current_app._get_current_object()
+        thr = Thread(target=send_async_email, args=[message, app])
+        thr.start()
         return Iresponse.create_response(str(user_data.code), 201)
 
 
     return Iresponse.create_response("Your previous link hasn't expired", 200)
+
+def send_async_email(message, app):
+    with app.app_context():
+        Mail().send(message)
