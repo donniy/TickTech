@@ -39,6 +39,7 @@ function handle_ajax_error(error) {
       prev = router.currentRoute.fullPath;
     else if (typeof router.params !== 'undefined' && typeof router.params.prev_url !== 'undefined')
       prev = router.params.prev_url;
+    this.$user.logout()
     router.push({name: 'Login', params: {prev_url: prev}});
   }
 }
