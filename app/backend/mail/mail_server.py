@@ -12,6 +12,7 @@ import socket
 
 poplib._MAXLINE = 2048
 
+
 def connect(host, port, user, password):
     '''
     Connects to and authenticates with a POP3 mail server.

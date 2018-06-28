@@ -83,7 +83,7 @@ def replyErrorEmail(title, recipients, ticketid, body):
 def somethingWentWrong(title, recipients, part, body):
     '''
     Sends an email to the student, confirming we received their email,
-    but notifying them that it went wrong somewhere, and an appropriate 
+    but notifying them that it went wrong somewhere, and an appropriate
     error message is displayed.
     '''
     subject = "TIKTECH error. We could not process: " + title
