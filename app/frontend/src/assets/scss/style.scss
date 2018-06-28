@@ -813,8 +813,8 @@ a.list-ticket:hover, a.list-ticket:focus {
 }
 
 .md-table {
-    min-width: 55em;
-    max-width: 60em;
+    //min-width: 55em;
+    //max-width: 60em;
 }
 
 .tickettable:hover {
@@ -914,7 +914,6 @@ hr {
 }
 
 .single-course {
-    color: green!important;
     background-color: white;
 }
 
@@ -1009,3 +1008,12 @@ hr {
   background-color: transparent;
   border: 0;
 }
+
+@import "~vue-material/dist/theme/engine"; // Import the theme engine
+
+@include md-register-theme("default", (
+    primary: $default-red, // The primary color of your brand
+    accent: #00bc8a // The secondary color of your brand
+));
+
+@import "~vue-material/dist/theme/all"; // Apply the theme

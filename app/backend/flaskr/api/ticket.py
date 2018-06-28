@@ -67,13 +67,10 @@ def retrieve_plugins(ticket_id):
     """
     List the plugins available for this ticket.
     """
-    print("===Retrieving plugins for ticket===")
     ticketObj = Ticket.query.get_or_404(ticket_id)
     # TODO: For now this returns all available plugins.
-    pls = {}
-    for p in plugins.plugin_list():
-        pl = plugins.get_plugin(p)
-        pls[pl.display_name] = pl.get_assignment_info(ticketObj.owner.id, 123)
+    pls = ticketObj.label.get_assignment_info(ticketObj.user_id)
+
     return Iresponse.create_response(pls, 200)
 
 

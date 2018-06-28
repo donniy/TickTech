@@ -125,11 +125,11 @@
                     {{value.value}}
                 </md-list-item>
             </template>
-                </md-list>
-            </md-content>
-        </div>
-
-    </div>
+                        <md-divider v-if="index != Object.keys(plugins).length - 1" />
+				</md-list>
+			</md-content>
+		</div>
+	</div>
 </div>
 </template>
 
