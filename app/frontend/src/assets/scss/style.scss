@@ -920,7 +920,6 @@ hr {
 }
 
 .single-course {
-    color: green!important;
     background-color: white;
 }
 
@@ -1030,3 +1029,11 @@ hr {
     padding-right: 0;
 }
 
+@import "~vue-material/dist/theme/engine"; // Import the theme engine
+
+@include md-register-theme("default", (
+    primary: $default-red, // The primary color of your brand
+    accent: #00bc8a // The secondary color of your brand
+));
+
+@import "~vue-material/dist/theme/all"; // Apply the theme

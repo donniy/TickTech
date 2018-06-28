@@ -3,7 +3,7 @@ Demo Plugin - This plugin is not connected to an api and will return
 demo data.
 '''
 
-display_name = "Demo Plugin"
+display_name = "CodeGrade"
 
 course_settings = {
     'api_key': {
@@ -12,10 +12,10 @@ course_settings = {
         'display_name': 'Api key',
         'help_text': 'Can be found on the account page on DemoPlugin.io'
     },
-    'demo_setting': {
+    'feedback': {
         'type': 'string',
         'default': '',
-        'display_name': 'Demo Setting',
+        'display_name': 'Code Feedback',
         'help_text': ''
     },
     'grade': {
@@ -29,13 +29,12 @@ course_settings = {
 
 def get_ta(course_settings, student_id, assignment_id):
     '''
-    Returns the teaching assistant of this student.
-    Should receive an assignment_id that is
-    in the format of the api this plugin suppors.
+    Returns the ta of this student. Should receive an assignment_id that is
+    int the format of the api this plugin suppors.
 
     Demo: This returns the id of demo TA Erik Kooistra.
     '''
-    return 50637080
+    return 87654321
 
 
 def get_assignment_info(course_settings, student_id, assignment_id):
@@ -45,6 +44,7 @@ def get_assignment_info(course_settings, student_id, assignment_id):
     '''
     tmp = {}
     tmp['Grade'] = {'type': 'grade', 'value': course_settings['grade']}
-    tmp['Feedback'] = {'type': 'text', 'value': 'Code was not PEP8 compliant.'}
+    tmp['Feedback'] = {'type': 'text', 'value': course_settings['feedback']}
     tmp['Assignment'] = {'type': 'text', 'value': assignment_id}
+    tmp['Visit CodeGrade'] = {'type': 'url', 'value': 'https://codegra.de'}
     return tmp
