@@ -34,7 +34,7 @@ def get_ta(course_settings, student_id, assignment_id):
 
     Demo: This returns the id of demo TA Erik Kooistra.
     '''
-    return 11111
+    return 11112
 
 
 def get_assignment_info(course_settings, student_id, assignment_id):
@@ -45,6 +45,6 @@ def get_assignment_info(course_settings, student_id, assignment_id):
     tmp = {}
     tmp['Grade'] = {'type': 'grade', 'value': course_settings['grade']}
     tmp['Feedback'] = {'type': 'text', 'value': course_settings['feedback']}
-    tmp['Assignment'] = {'type': 'url', 'value': 'https://www.google.com'}
+    tmp['Assignment'] = {'type': 'text', 'value': assignment_id}
     tmp['Visit CodeGrade'] = {'type': 'url', 'value': 'https://codegra.de'}
     return tmp

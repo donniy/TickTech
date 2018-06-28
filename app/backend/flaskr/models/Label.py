@@ -1,4 +1,5 @@
 from flaskr import database, plugins
+from flaskr.models.user import User
 from sqlalchemy_utils import UUIDType
 
 db = database.db
@@ -64,6 +65,31 @@ class Label(db.Model):
                                                       .assignment_id
 
         return tmp
+
+    def get_active_plugins(self):
+        """
+        Get all plugins which are active.
+        """
+        tmp = []
+        for lp in self.plugins:
+            if not lp in self.course.plugins:
+                continue
+            tmp.append({'id': lp.plugin, 'lp': lp})
+        return tmp
+
+    def get_tas(self, user_id):
+        """
+        Get the TAs for this label using the plugins.
+        """
+        tmp = []
+        for plugin in self.get_active_plugins():
+            p = plugins.get_plugin(plugin['id'])
+            cp = self.course.get_plugin(plugin['id'])
+            ta_id = p.get_ta(cp.settings, user_id, plugin['lp'].assignment_id)
+            if ta_id:
+                tmp.append(User.query.get(ta_id))
+        # TODO: If the list is empty, assign random TA?
+        return set(tmp)
 
 
 class LabelPlugin(db.Model):

@@ -64,6 +64,16 @@ class Course(db.Model):
     def __repr__(self):
         return '<Course {}>'.format(self.title)
 
+
+    def get_plugin(self, plugin_id):
+        """
+        Get the given plugin.
+        """
+        for cp in self.plugins:
+            if cp.plugin == plugin_id:
+                return cp
+        return None
+
     @property
     def serialize(self):
         """
