@@ -92,3 +92,9 @@ class Course(db.Model):
             'tas': [ta.serialize for ta in self.ta_courses],
             'supervisors': [suvi.serialize for suvi in self.supervisors]
         }
+
+    def create(self, id, name, desc, mail, url, port, password):
+        self.id = id
+        self.title = name
+        self.description = desc
+        self.course_email = mail

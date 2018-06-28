@@ -45,7 +45,7 @@ def create_request(json_data):
     for ta in bound_tas:
         ticket.bound_tas.append(ta)
         level_up = levels.add_experience(levels.EXP_FOR_ASSING, ta.id)
-        levels.notify_level_change(ta.id, None, level_up)
+        levels.notify_level_change(ta.id, ticket, level_up)
 
     if not database.addItemSafelyToDB(ticket):
         return Iresponse.internal_server_error()

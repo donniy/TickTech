@@ -26,3 +26,7 @@ class Label(db.Model):
             'label_id': self.label_id,
             'label_name': self.label_name,
         }
+
+    def create(self, id, name):
+        self.label_id = id
+        self.label_name = name
