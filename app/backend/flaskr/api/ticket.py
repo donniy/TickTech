@@ -79,7 +79,10 @@ def retrieve_plugins(ticket_id):
     """
     ticketObj = Ticket.query.get_or_404(ticket_id)
     # TODO: For now this returns all available plugins.
-    pls = ticketObj.label.get_assignment_info(ticketObj.user_id)
+    if ticketObj.label:
+        pls = ticketObj.label.get_assignment_info(ticketObj.user_id)
+    else:
+        pls = {}
 
     return Iresponse.create_response(pls, 200)
 
