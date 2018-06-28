@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import uuid
 import bcrypt
 from flaskr.models.user import User
+from flask import escape
 
 def validate_userdata(email, name, studentid, password, repassword):
     # Check email.
@@ -73,7 +74,7 @@ def reset_password(json_data):
                 present = datetime.now()
                 if user.code_expiration < present:
                     if user.code:
-                        if user.code == code:
+                        if user.code == uuid.UUID(code):
                             salt = bcrypt.gensalt()
                             hashedpsw = bcrypt.hashpw(password.encode('utf-8'),
                                                       salt)
@@ -83,6 +84,7 @@ def reset_password(json_data):
                             database.db.session.commit()
                             return Iresponse.create_response("Succes", 200)
                         else:
+                            print(code, user.code)
                             return Iresponse.create_response("Wrong code", 403)
                     else:
                         return Iresponse.create_response("No code", 403)
@@ -106,6 +108,7 @@ def set_reset_code(email):
     if user_data.code_expiration is None or user_data.code_expiration < present:
         user_data.code = uuid.uuid4()
         # TODO: STEPHAN HIER MOET EEN MAILTJE MEE WORDEN GESTUURD
+        print(user_data.code)
         user_data.code_expiration = present + timedelta(0, 7200)
         database.db.session.commit()
         return Iresponse.create_response(str(user_data.code), 201)
