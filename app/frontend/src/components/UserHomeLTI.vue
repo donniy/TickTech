@@ -62,6 +62,18 @@
 
           </md-list>
         </md-content>
+        <md-content>
+				  <md-card class="md-elevation-5 create-ticket-section1">
+					  <md-card-content v-if="isTA" class="md-gutter md-size-100 center-display md-layout-item">
+						  <h5 class="md-title">Teaching assistant level {{this.level}} <md-tooltip md-direction="bottom"> Earn experience by being a helpful TA</md-tooltip></h5>
+
+              <br/>
+						  <md-progress-bar md-mode="determinate" :md-value="amount"></md-progress-bar>
+              <div class="md-subhead">{{this.experience}}/{{this.exp_to_next}} experience to next level</div>
+					  </md-card-content>
+				  </md-card>
+			</md-content>
+
         <!-- A TA can not create a ticket in an LTI session. -->
         <md-card md-with-hover
                  v-if="isTA || isTeacher"
@@ -115,6 +127,10 @@ export default {
             notifications: [],
             lti_course: null,
             unassigned: 0,
+            amount: 0.0,
+			      experience: 0,
+			      level: 0,
+			      exp_to_next: 0,
         }
     },
     methods: {
@@ -201,12 +217,42 @@ export default {
                 this.isTeacher = true;
             }
         },
+        setLevelProgress() {
+
+			      const path = '/api/user/getlevels'
+			      this.$ajax.get(path).then(response => {
+				        this.level = response.data.json_data['level']
+				        this.experience = response.data.json_data['experience'] - this.level_to_xp(this.level - 1)
+				        this.exp_to_next = this.level_to_xp(this.level) - this.level_to_xp(this.level - 1)
+
+                console.log(this.experience, this.exp_to_next)
+				        // Set the level progress
+				        this.amount = Math.round(100 * (this.experience / this.exp_to_next))
+
+			      }).catch(error => {
+				        console.log(error)
+			      })
+
+			      return
+		    },
+		    equate(xp) {
+			      return Math.floor(xp + 300 * Math.pow(2, xp / 7));
+		    },
+		    level_to_xp(level) {
+			      var xp = 0;
+
+			      for (var i = 1; i < level; i++)
+				        xp += this.equate(i);
+
+			      return Math.floor(xp / 4);
+		    },
 
         created() {
             this.determineRole()
             this.getLtiCourse();
             this.getTickets()
             this.getTodos();
+            this.setLevelProgress()
             this.status = 'created'
         }
     },
