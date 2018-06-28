@@ -36,7 +36,7 @@
 
                                     <md-field md-clearable class="md-toolbar-section-end">
                                         <label for="searchField">Search by title...</label>
-                                        <md-input autofocus id="searchField" v-model="search" @input="searchOnTable" style="color = white; background-color = white;"
+                                        <md-input autofocus id="searchField" v-model="search" @input="searchOnTable" style="color:white; background-color:white;"
                                         />
                                     </md-field>
                                 </md-table-toolbar>
