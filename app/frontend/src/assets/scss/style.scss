@@ -790,6 +790,13 @@ a.list-ticket:hover, a.list-ticket:focus {
     top: 10%;
     padding-left: 1%;
     width: 30%;
+    zoom: 1;
+}
+
+@media only screen and (max-width: 1100px) {
+    .summary-sub-container {
+        display: none;
+    }
 }
 .sum {
   width: auto;
@@ -1021,3 +1028,4 @@ hr {
 .md-table-cell:last-child {
     padding-right: 0;
 }
+
