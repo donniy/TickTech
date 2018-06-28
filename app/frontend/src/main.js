@@ -178,9 +178,10 @@ Vue.use(VueAuth, {
   refreshData: {url: '/api/user/retrieve', method: 'GET', enabled: true},
   loginData: {url: '/api/login', fetchUser: true},
   tokenDefaultName: 'access_token',
-  parseUserData: function (data) {
-    console.log(data.json_data.user)
-    return data.json_data.user
+    parseUserData: function (data) {
+        if (data.json_data)
+            return data.json_data.user
+        return data.json_data
   },
   tokenStore: ['localStorage', 'cookie']
 });

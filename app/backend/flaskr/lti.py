@@ -1,9 +1,3 @@
-from . import i_request
-from flaskr.models.Course import Course
-from flaskr.models.user import User
-from flaskr import database
-import oauth2
-import uuid
 """
 This file contains some of the code for lti from the following file:
 Mostly the signature validation.
@@ -17,7 +11,18 @@ https://github.com/instructure/canvas-lms/blob/stable/lib%2Flti%2Fvariable_expan
 The above source also shows custom variables that can be added to the xml.
 So far we use on custom variable, check the xml.
 """
-# TODO: Add batch processing for the database.
+
+from . import i_request
+from flaskr.models.Course import Course
+from flaskr.models.user import User
+from flaskr import database
+from flask import redirect
+import oauth2
+import requests
+import uuid
+
+lti_base_route = 'http://localhost:3000'
+lti_api_route = '/api/v1'
 
 # ext_roles are roles a person has over all the courses.
 ext_roles_lookup_table = {
@@ -60,13 +65,20 @@ class LTI_instance_database_helper:
         Function that ensures the course in the lti instance
         exists.
         """
+        print(self.lti_instance.params)
+        canvas_course_id = self.lti_instance.params['custom_canvas_course_id']
+        course = Course.query.filter_by(
+            canvas_unique_id=canvas_course_id).first()
         course_name = self.lti_instance.course_name
-        course = Course.query.filter_by(title=course_name).first()
         if course is None:
+            self.lti_instance.params['new_tiktech_course'] = True
             course = Course(id=uuid.uuid4(), title=course_name,
-                            description=self.lti_instance.course_description)
-            if not database.addItemSafelyToDB(course):
-                pass
+                            description=self.lti_instance.course_description,
+                            canvas_unique_id=canvas_course_id)
+            if not database.addItemSafelyToDB(course,
+                                              self.ensure_course_exists):
+                self.cache['course'] = None
+                return
         self.lti_instance.params['tiktech_course_id'] = course.id
         self.cache['course'] = course
 
@@ -75,13 +87,16 @@ class LTI_instance_database_helper:
         Function that ensures the user exists.
         """
         user_id = int(self.lti_instance.user_id)
+        print(user_id)
         user = User.query.get(user_id)
         if user is None:
-            user = User(id=user_id,
+            user = User()
+            user.create(id=user_id,
                         name=self.lti_instance.user_full_name,
-                        email=self.lti_instance.user_primary_email)
+                        email=self.lti_instance.user_primary_email,
+                        password="1")
             if not database.addItemSafelyToDB(user):
-                pass
+                user = None
         self.cache['user'] = user
 
     def ensure_user_coupled_to_course(self):
@@ -91,6 +106,8 @@ class LTI_instance_database_helper:
         """
         course = self.cache['course']
         user = self.cache['user']
+        if course is None or user is None:
+            return
         if self.lti_instance.is_student_in_course():
             if user not in course.student_courses:
                 course.student_courses.append(user)
@@ -125,7 +142,7 @@ class LTI_instance:
         """
         self.params = {}
         self.database_helper = None
-        try:  # Maybe wrap this into a helper class.
+        try:
             self._validate_lti_Irequest_signature(i_req)
             self._sanitize_lti_Irequest(i_req)
             self._ensure_params_exists(self.params)
@@ -172,7 +189,7 @@ class LTI_instance:
         oauth_server = oauth2.Server()
         signature_method = oauth2.SignatureMethod_HMAC_SHA1()
         oauth_server.add_signature_method(signature_method)
-        consumer = oauth2.Consumer('consumerKey', 'test')
+        consumer = oauth2.Consumer('consumerKey', 'test')  # Test values
         oauth_request = oauth2.Request.from_request(
             i_req.method, i_req.url, i_req.headers, i_req.body)
 
@@ -242,3 +259,62 @@ class LTI_instance:
     @property
     def user_primary_email(self):
         return self.params['lis_person_contact_email_primary']
+
+
+def ensure_user_couples_to_course(user, course, user_data):
+    """
+    Helper for the one time fill function for canvas courses.
+    It ensures the user is couples rightly to the course.
+    """
+    for role in user_data.get('enrollments'):
+        role_type = role.get('type')
+        if role_type == "StudentEnrollment":
+            course.student_courses.append(user)
+            break
+        elif role_type == "TaEnrollment":
+            course.ta_courses.append(user)
+            break
+        elif role_type == "TeacherEnrollment":
+            course.supervisors.append(user)
+            break
+    database.commitSafelyToDB(func=ensure_user_couples_to_course)
+
+
+def fill_new_course_with_canvas_data(headers, course_id):
+    """
+    A function that fills a new course with data from canvas.
+    This function is only called if a new course is created.
+    It then fills the course with students, tas and teachers.
+    When using the api canvas has different names for roles,
+    so we use a different function for filling a course
+    with canvas data.
+    """
+    request_url = lti_base_route + lti_api_route
+    request_url += '/courses/{}/users?'.format(course_id)
+    request_url += 'include[]=enrollments&include[]=email'
+    user_req = requests.get(request_url, headers=headers)
+
+    users = user_req.json()
+    if user_req.status_code != 200:
+        return
+
+    for user in users:
+        user_id = user.get('sis_user_id')
+        if user_id is None:
+            return
+
+        existing_user = User.query.get(user_id)
+        if existing_user is None:
+            name = user.get('name')
+            email = user.get('email')
+            existing_user = User()
+            existing_user.create(id=user_id, name=name, email=email,
+                                 password="1")
+            if not database.addItemSafelyToDB(
+                    existing_user, fill_new_course_with_canvas_data):
+                continue
+
+        course = Course.query.filter_by(canvas_unique_id=course_id).first()
+        if course is None:
+            return
+        ensure_user_couples_to_course(existing_user, course, user)
