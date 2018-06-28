@@ -95,7 +95,9 @@ export default {
 		}
 	},
 	methods: {
-		// Retrieve tickets.
+		/*
+		 * Get all tickets.
+		 */
 		getTickets() {
 			this.status = 'getting ticket'
 			const path = '/api/user/tickets'
@@ -105,6 +107,9 @@ export default {
 				console.log(error)
 			})
 		},
+		/*
+		 * Get all courses a TA is bound to.
+		 */
 		getCourses() {
 			this.ta_courses = this.$user.get().ta
 			if (this.ta_courses && this.ta_courses.length > 0) {
@@ -114,12 +119,17 @@ export default {
 			this.isTA = false;
 			this.ta_courses = []
 		},
-		// Retrieve notifications.
+		/*
+		 * Get all notifications.
+		 */
 		getTodos() {
 			this.$ajax.get('/api/user/notifications', response => {
 				this.notifications = response.data.json_data
 			})
 		},
+		/*
+		 * Add xp to the user and set possible next level.
+		 */
 		setLevelProgress() {
 
 			const path = '/api/user/getlevels'
@@ -138,9 +148,15 @@ export default {
 
 			return
 		},
+		/*
+		 * calculate new xp level.
+		 */
 		equate(xp) {
 			return Math.floor(xp + 300 * Math.pow(2, xp / 7));
 		},
+		/*
+		 * Calculate xp needed for a specific level.
+		 */
 		level_to_xp(level) {
 			var xp = 0;
 
@@ -149,7 +165,9 @@ export default {
 
 			return Math.floor(xp / 4);
 		},
-		// Retrieve all information.
+		/*
+		 * Retrieve all information.
+		 */
 		created() {
 			this.status = 'created'
 			this.getCourses()
@@ -158,7 +176,9 @@ export default {
 			this.setLevelProgress()
 		}
 	},
-	// Called when page is loaded.
+	/*
+	 * Called when page is loaded.
+	 */
 	mounted: function() {
 		if (!this.$user.logged_in()) {
 			this.$router.push('/login')

@@ -1,4 +1,4 @@
-from flaskr.models.ticket import Ticket
+from flaskr.models.ticket import Ticket, TicketStatus
 from flaskr.models.Message import Message
 from flaskr.models.user import User
 from . import apiBluePrint
@@ -127,7 +127,7 @@ def get_ticket_messages(ticket_id):
                                            read=True)
 
 
-@apiBluePrint.route('ticket/addta', methods=['POST'])
+@apiBluePrint.route('/ticket/addta', methods=['POST'])
 @require_role(['ta', 'supervisor'])
 def add_ta_to_ticket():
     """

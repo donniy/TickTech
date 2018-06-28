@@ -105,6 +105,9 @@ export default {
 		}
 	},
 	methods: {
+        /*
+         * Register user into database.
+         */
 		Register() {
 			this.$validator.validateAll().then((result) => {
 				if (result) {
@@ -128,7 +131,10 @@ export default {
 					})
 				}
 			})
-		},
+        },
+        /*
+         * Check if email is already present in database.
+         */
 		checkEmailAvailability() {
 			const path = '/api/user/exists'
 			this.$ajax.post(path, {
@@ -138,7 +144,10 @@ export default {
 				console.log(this.emailstatus)
 
 			})
-		},
+        },
+        /*
+         * Check if ID is already present in database.
+         */
 		checkIDAvailability() {
 			const path = '/api/user/idexists';
 			this.$ajax.post(path, {
@@ -148,7 +157,10 @@ export default {
 				console.log(this.idstatus)
 
 			})
-		},
+        },
+        /*
+         * Check if password is the same as confirmation password.
+         */
 		checkPswConfirmation() {
 			this.pswstatus = (this.form.password === this.form.password_confirmation) || this.form.password === ""
 		},
@@ -160,7 +172,10 @@ export default {
             } else {
 
             }
-		},
+        },
+        /*
+         * Verify if all fields are valid.
+         */
 		setError(step) {
             if (step == 1) {
                 if (this.emailstatus || this.idstatus || this.form.email.length == 0 || this.form.studentid.length == 0 || this.form.name.length == 0) {

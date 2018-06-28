@@ -1,5 +1,6 @@
 from flaskr import database, sockets
 from sqlalchemy_utils import UUIDType
+import bcrypt
 
 db = database.db
 socketio = sockets.get_socketio()
@@ -13,7 +14,7 @@ association_table = db.Table('association', db.Model.metadata,
 
 class User(db.Model):
     """
-    A user.
+    A user class that specifies the user model.
     """
     __tablename__ = "user"
     id = db.Column(db.Integer, nullable=False, primary_key=True)  # student ID
@@ -74,3 +75,16 @@ class User(db.Model):
                 self.unread.remove(message)
         db.session.add(self)
         db.session.commit()
+
+    def create(self, id, name, email, password):
+        """
+        Creates a user.
+        """
+        self.id = id
+        self.name = name
+        self.email = email
+        salt = bcrypt.gensalt()
+        hashedpsw = bcrypt.hashpw(password.encode('utf-8'), salt)
+        self.password = hashedpsw
+        self.level = 0
+        self.experience = 0

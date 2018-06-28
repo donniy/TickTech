@@ -60,6 +60,9 @@
             }
         },
         methods: {
+            /*
+             * Get all messages in a ticket between a student and a TA.
+             */
             getMessages() {
                 const path = '/api/ticket/' + this.ticket.id + '/messages'
                 this.$ajax.get(path)
@@ -72,6 +75,9 @@
                         console.log(error)
                     })
             },
+            /*
+             * Get all notes in a ticket.
+             */
             getNotes() {
                 this.$ajax.get('/api/notes/' + this.ticket.id)
                     .then(res => {

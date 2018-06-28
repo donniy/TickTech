@@ -68,6 +68,10 @@
                     return 1
                 }
             },
+            /*
+             * Logic for the breadcrumbs in the navbar. Pages get added to the navbar when visited and
+             * they get deleted from the navbar if the user goes back a page or returns to the homepage.
+             */
             breadcrumbList: function (to) {
                 // if (this.$user.logged_in()) {
                     let matcher = this.$router.matcher.match;
