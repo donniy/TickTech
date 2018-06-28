@@ -1,6 +1,7 @@
 <template>
 <div v-if="$auth.ready()">
 	<h2 class="form-header center-display">Reset password</h2>
+	<md-dialog-alert :md-active.sync="succes" md-content="Your password reset link has been sent to your email!" @md-confirm="onConfirm" md-confirm-text="Excellent!" />
 
 	<form class="md-layout center-display" v-on:submit.prevent="setResetCode">
 		<md-card class="md-layout-item md-size-50 md-small-size-100">
@@ -41,6 +42,7 @@ export default {
 			},
 			forgotstatus: false,
 			message: '',
+			succes: false
 		}
 	},
 	methods: {
@@ -52,8 +54,8 @@ export default {
 					email: this.form.email
 				}, response => {
 					if (response.status == 201) {
-                        window.alert("Check your email for the reset link")
-						this.$router.push('/login')
+                        this.succes = true
+						this.form.email = ''
 					} else {
 						console.log(response.data.json_data)
 						this.message = response.data.json_data
@@ -61,6 +63,9 @@ export default {
 					}
 				})
 			})
+		},
+		onConfirm() {
+			this.$router.push('/login')
 		}
 	}
 }

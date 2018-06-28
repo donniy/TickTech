@@ -82,20 +82,20 @@ def reset_password(json_data):
                             user.code = None
                             user.code_expiration = None
                             database.db.session.commit()
-                            return Iresponse.create_response("Succes", 200)
+                            return Iresponse.create_response("Succes", 201)
                         else:
                             print(code, user.code)
-                            return Iresponse.create_response("Wrong code", 403)
+                            return Iresponse.create_response("Wrong code", 200)
                     else:
-                        return Iresponse.create_response("No code", 403)
+                        return Iresponse.create_response("No code", 200)
                 else:
-                    return Iresponse.create_response("Code expired", 403)
+                    return Iresponse.create_response("Code expired", 200)
             else:
-                return Iresponse.create_response("Can't reset", 403)
+                return Iresponse.create_response("Can't reset", 200)
         else:
-            return Iresponse.create_response("Invalid code", 404)
+            return Iresponse.create_response("Invalid code", 200)
     else:
-        return Iresponse.create_response("Passwords don't match", 403)
+        return Iresponse.create_response("Passwords don't match", 200)
 
 def set_reset_code(email):
 
