@@ -203,25 +203,16 @@ def findUser(body, sender, address):
     # Either return the student ID or None if not found.
     return requestStudentID(result)
 
-# TODO: Create a reply instead of a ticket.
-def createReply(subject, body, files, sender, address, courseid, ticketid, studentid):
+def createReply(ticketid, subject, address, body):
     '''
     Create a reply to a ticket from the acquired information from an email.
     '''
-    # Find original ticket with subject / meta data?
-
-    # Check user id against ticket user id
-
-    # Error if not the same.
-
     # Create a new reply.
     newmessage = {
-        'name': sender,
-        'courseid': courseid,
-        'studentid': studentid,
+        'email': address,
         'ticketid': ticketid,
-        'n_type': 0,
-        'message': body,
+        'subject': subject,
+        'message': body
     }
 
     # Add the reply to the database.
@@ -229,13 +220,23 @@ def createReply(subject, body, files, sender, address, courseid, ticketid, stude
         'http://localhost:5000/api/email/ticket/' + ticketid + '/messages',
         json=newmessage)
     
-    print("HIERRR")
+    print("HIERRR NEW REPLY")
     print(newmessage)
+
+    print("RESPONSE CODE: ")
     print(result)
     
+    # Below is for debugging. An error mail will be send if 
+    # the reply is not posted.
     if (result.status_code != 201):
-        print("Error.")
-    # replyErrorMail()
+        print("Something went wrong creating a new ticket from an email.")
+        print("******")
+        print("Sender: " + str(sender) + "\nStudentid: " +
+              str(studentid) + "\nEmail: " + str(address) +
+              "\nSubject: " + str(subject))
+        print("Course ID: ", courseid)
+        print("Label ID: ", labelid)
+        print("Body: " + body)
 
 
 def createTicket(subject, body, files, sender, address, courseid):
@@ -260,7 +261,7 @@ def createTicket(subject, body, files, sender, address, courseid):
     # Check if an email is a reply, if so, a new message must be created to a ticket.
     if "Ticket ID: " in subject:
         ticketid = subject.split("Ticket ID: ")
-        createReply(subject, body, files, sender, address, courseid, ticketid[1], studentid)
+        createReply(ticketid[1], subject, address, body)
         return
 
     # Get all labels available for this course.
