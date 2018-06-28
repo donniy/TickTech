@@ -47,7 +47,7 @@ export default {
     },
     props: ['message', 'user'],
     computed: {
-        /* 
+        /*
          * If user is the sender on the message page replaces user name with 'You'
          */
         username: function () {
@@ -62,6 +62,7 @@ export default {
          * Display corresponding rank with the current level of the user.
          */
         rank: function () {
+            console.log(this.level)
             if (this.level) {
                 if (this.level < 5) {
                     return "Novice TA (" + this.level + ")"

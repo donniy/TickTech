@@ -74,6 +74,7 @@
                         this.ticket = response.data.json_data
                     })
                     .catch(error => {
+                        this.$router.go(-1)
                         console.log(error)
                     })
             },
@@ -103,7 +104,7 @@
                     .catch(error => {
                         console.log(error)
                     })
-            }, 
+            },
             /*
              * Transform the B64DATA to a byte array blob.
              */
