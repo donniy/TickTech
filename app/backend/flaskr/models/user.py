@@ -13,7 +13,7 @@ association_table = db.Table('association', db.Model.metadata,
 
 class User(db.Model):
     """
-    A user.
+    A user class that specifies the user model.
     """
     __tablename__ = "user"
     id = db.Column(db.Integer, nullable=False, primary_key=True)  # student ID
