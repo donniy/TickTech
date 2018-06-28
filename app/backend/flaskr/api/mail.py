@@ -266,6 +266,7 @@ def isEmailFetching(course_id):
 
     return Iresponse.create_response(object, 201)
 
+
 @apiBluePrint.route('/email/labels/<course_id>', methods=['GET'])
 def email_retrieve_labels(course_id):
     """
