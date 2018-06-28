@@ -81,93 +81,113 @@ import Course from './Course.vue'
 import Ticket from './Ticket.vue'
 
 export default {
-    data() {
-        return {
-            ta_courses: [],
-            status: 'not set',
-            tickets: [],
-            isTA: false,
-            notifications: [],
-            amount: 0.0,
-            experience: 0,
-            level: 0,
-            exp_to_next: 0,
-        }
-    },
-    methods: {
-        // Retrieve tickets.
-        getTickets() {
-            this.status = 'getting ticket'
-            const path = '/api/user/tickets'
-            this.$ajax.get(path).then(response => {
-                this.tickets = response.data.json_data
-            }).catch(error => {
-                console.log(error)
-            })
-        },
-        getCourses() {
-            this.ta_courses = this.$user.get().ta
-            if (this.ta_courses && this.ta_courses.length > 0) {
-                this.isTA = true
-                return;
-            }
-            this.isTA = false;
-            this.ta_courses = []
-        },
-        // Retrieve notifications.
-        getTodos() {
-            this.$ajax.get('/api/user/notifications', response => {
-                this.notifications = response.data.json_data
-            })
-        },
-        setLevelProgress() {
+	data() {
+		return {
+			ta_courses: [],
+			status: 'not set',
+			tickets: [],
+			isTA: false,
+			notifications: [],
+			amount: 0.0,
+			experience: 0,
+			level: 0,
+			exp_to_next: 0,
+		}
+	},
+	methods: {
+		/*
+		 * Get all tickets.
+		 */
+		getTickets() {
+			this.status = 'getting ticket'
+			const path = '/api/user/tickets'
+			this.$ajax.get(path).then(response => {
+				this.tickets = response.data.json_data
+			}).catch(error => {
+				console.log(error)
+			})
+		},
+		/*
+		 * Get all courses a TA is bound to.
+		 */
+		getCourses() {
+			this.ta_courses = this.$user.get().ta
+			if (this.ta_courses && this.ta_courses.length > 0) {
+				this.isTA = true
+				return;
+			}
+			this.isTA = false;
+			this.ta_courses = []
+		},
+		/*
+		 * Get all notifications.
+		 */
+		getTodos() {
+			this.$ajax.get('/api/user/notifications', response => {
+				this.notifications = response.data.json_data
+			})
+		},
+		/*
+		 * Add xp to the user and set possible next level.
+		 */
+		setLevelProgress() {
 
-            const path = '/api/user/getlevels'
-            this.$ajax.get(path).then(response => {
-                this.level = response.data.json_data['level']
-                this.experience = response.data.json_data['experience'] - this.level_to_xp(this.level - 1)
-                this.exp_to_next = this.level_to_xp(this.level) - this.level_to_xp(this.level - 1)
+			const path = '/api/user/getlevels'
+			this.$ajax.get(path).then(response => {
+				this.level = response.data.json_data['level']
+				this.experience = response.data.json_data['experience'] - this.level_to_xp(this.level - 1)
+				this.exp_to_next = this.level_to_xp(this.level) - this.level_to_xp(this.level - 1)
 
                 console.log(this.experience, this.exp_to_next)
-                // Set the level progress
-                this.amount = Math.round(100 * (this.experience / this.exp_to_next))
+				// Set the level progress
+				this.amount = Math.round(100 * (this.experience / this.exp_to_next))
 
-            }).catch(error => {
-                console.log(error)
-            })
+			}).catch(error => {
+				console.log(error)
+			})
 
-            return
-        },
-        equate(xp) {
-            return Math.floor(xp + 300 * Math.pow(2, xp / 7));
-        },
-        level_to_xp(level) {
-            var xp = 0;
+			return
+		},
+		/*
+		 * calculate new xp level.
+		 */
+		equate(xp) {
+			return Math.floor(xp + 300 * Math.pow(2, xp / 7));
+		},
+		/*
+		 * Calculate xp needed for a specific level.
+		 */
+		level_to_xp(level) {
+			var xp = 0;
 
-            for (var i = 1; i < level; i++)
-                xp += this.equate(i);
+			for (var i = 1; i < level; i++)
+				xp += this.equate(i);
 
-            return Math.floor(xp / 4);
-        },
-        // Retrieve all information.
-        created() {
-            this.status = 'created'
-            this.getCourses()
-            this.getTodos()
-            this.getTickets()
-            this.setLevelProgress()
-        }
-    },
-    // Called when page is loaded.
-    mounted: function() {
-        if (!this.$user.logged_in()) {
-            this.$router.push('/login')
-        }
-        this.created();
-    },
-    components: {
-        'course': Course,
-        'ticket': Ticket
-    }
+			return Math.floor(xp / 4);
+		},
+		/*
+		 * Retrieve all information.
+		 */
+		created() {
+			this.status = 'created'
+			this.getCourses()
+			this.getTodos()
+			this.getTickets()
+			this.setLevelProgress()
+		}
+	},
+	/*
+	 * Called when page is loaded.
+	 */
+	mounted: function() {
+		if (!this.$user.logged_in()) {
+			this.$router.push('/login')
+		}
+		this.created();
+	},
+	components: {
+		'course': Course,
+		'ticket': Ticket
+	}
 }
 </script>

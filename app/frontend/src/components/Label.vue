@@ -33,6 +33,9 @@
             }
         },
         methods: {
+            /*
+             * Deletes a label attached to a course.
+             */
             closeLabel() {
                 const path = '/api/labels/' + this.label.label_id + '/close'
                 this.showModal = false
@@ -41,22 +44,35 @@
                 this.$parent.getLabels()
 
             },
+            /*
+             * If the label is selected: unsubscribe TA from the label.
+             * If the label is unselected: subscribe TA to the label.
+             */
             clickLabel() {
                 if (this.isSelected)
                     this.deselectLabel()
                 else
                     this.selectLabel()
             },
+            /*
+             * Subscribe TA to a label from a course.
+             */
             selectLabel() {
                 const path = '/api/labels/' + this.label.label_id + '/select'
                 this.$ajax.post(path, { user_id: this.$user.get().id })
                 this.isSelected = true
             },
+            /*
+             * Unsubscribe TA from a label in a course.
+             */
             deselectLabel() {
                 const path = '/api/labels/' + this.label.label_id + '/deselect'
                 this.$ajax.post(path, { user_id: this.$user.get().id })
                 this.isSelected = false
             },
+            /*
+             * Verify if TA is already subscribed to labels in a course.
+             */
             checkSelected() {
                 const path = '/api/labels/' + this.label.label_id + '/selected'
                 this.$ajax.post(path, { user_id: this.$user.get().id }, response => {

@@ -12,6 +12,9 @@
     export default {
         props: ['message', 'user'],
         computed: {
+            /* 
+             * If user is the sender on the message page replaces user name with 'You'
+             */
             username: function () {
                 if (this.user) {
                     return this.user.id == this.message.user_id ? 'You' : this.message.user_name

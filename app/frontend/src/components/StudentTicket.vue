@@ -64,6 +64,9 @@
             }
         },
         methods: {
+            /*
+             * Get all informtion from a specific ticket.
+             */
             getTicket() {
                 const path = '/api/ticket/' + this.$route.params.ticket_id
                 this.$ajax.get(path)
@@ -74,6 +77,9 @@
                         console.log(error)
                     })
             },
+            /*
+             * Get all messages in a ticket between the student and a TA.
+             */
             getMessages() {
                 const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
                 this.$ajax.get(path)
@@ -84,6 +90,9 @@
                         console.log(error)
                     })
             },
+            /*
+             * Send a message to the database and display it on the ticket page.
+             */
             sendReply() {
                 const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
                 console.log(this.user)
@@ -94,7 +103,11 @@
                     .catch(error => {
                         console.log(error)
                     })
-            }, b64toBlob(b64Data, contentType, sliceSize) {
+            }, 
+            /*
+             * Transform the B64DATA to a byte array blob.
+             */
+            b64toBlob(b64Data, contentType, sliceSize) {
                   contentType = contentType || '';
                   sliceSize = sliceSize || 512;
 
@@ -119,6 +132,9 @@
                   var blob = new Blob(byteArrays, {type: contentType});
                   return blob;
             },
+            /*
+             * Create a downloadable link with the corresponding blob.
+             */
             downloadFile(key, name){
 
                 const path = '/api/ticket/filedownload'

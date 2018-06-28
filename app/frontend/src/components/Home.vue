@@ -121,8 +121,11 @@
 <script>
 
 export default {
-    mounted: function () {
-        if (this.$auth.ready() && this.$auth.check()){
+    /*
+     * Check if user is already logged in and then redirect to user homepage.
+     */
+	mounted: function () {
+		if (this.$auth.ready() && this.$auth.check()){
             if (window.$rederict_to_ticket){
                 this.$router.push('/student/ticket/'+window.$rederict_to_ticket);
                 window.$path = null;
