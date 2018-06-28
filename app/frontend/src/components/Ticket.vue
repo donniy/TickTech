@@ -2,8 +2,8 @@
     <router-link class="ticket-single" :to="base_url + ticket.id">
       <md-ripple>
           <h6>{{ticket.title}}</h6>
-        In course: {{ this.course }}</br>
-        Status: {{ticket.status.name}} </br>
+        In course: {{ this.course }}<br />
+        Status: {{ticket.status.name}} <br />
         Time: {{ticket.timestamp}}
     </md-ripple>
     </router-link>

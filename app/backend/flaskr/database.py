@@ -117,66 +117,93 @@ def populate_database_dummy_data():
     This is a function that can be used to populate the database
     with some dummy data. So only be used in debugging.
     """
-    from flaskr.models import Course, user
+    from flaskr.models import Course, user, Label
+
+    print("Inserting dummy data")
+
     items = []
-    course = Course.Course(id=uuid.uuid4(),
-                           course_email=Config.EMAIL_FETCH_EMAIL,
-                           mail_server_url="pop.gmail.com",
-                           mail_port="995",
-                           mail_password=Config.EMAIL_FETCH_PASSWORD,
-                           title="course 1",
-                           description="Test")
 
-    course2 = Course.Course(id=uuid.uuid4(),
-                            course_email="testie@test.com",
-                            title="course 2",
-                            description="Test")
+    user1 = user.User()
+    user1.create(12345678, "Erik", "erik@a.a", "1")
 
-    user1 = user.User(id=11111,
-                      name="Erik Kooijstra",
-                      email="Erik@kooijstra.nl")
+    user2 = user.User()
+    user2.create(87654321, "Kire", "kire@a.a", "1")
 
-    user2 = user.User(id=11112,
-                      name="Kire Kooijstra",
-                      email="Kire@kooijstra.nl")
+    user3 = user.User()
+    user3.create(10203040, "student1", "studend1@a.a", "1")
 
-    user3 = user.User(id=123123123,
-                      name="Test mctestie",
-                      email="test@test.nl")
+    user4 = user.User()
+    user4.create(50617080, "student2", "student2@a.a", "1")
 
-    user4 = user.User(id=10000,
-                      name="Supervisor",
-                      email="super@visor.nl")
+    user5 = user.User()
+    user5.create(50627080, "Test McTestie", "a@a.a", "1")
 
-    user5 = user.User(id=111111111,
-                      name="Test test",
-                      email="test@test.nl")
+    user6 = user.User()
+    user6.create(50637080, "EK", "b@b.b", "1")
 
-    # !IMPORTANT! This is for the mail server - ask stephan
-    mail_server = user.User(id=107584259,
-                            name="Mail server",
-                            email="uvapsetest@gmail.com")
+    user7 = user.User()
+    user7.create(10000, "Supervisor", "super@visor.nl", "1")
 
-    items = [user1, user2, user3, user5, mail_server, course, course2]
+    # !IMPORTANT! This is for the mail server - ask phtephan
+    mail_server = user.User()
+    mail_server.create(107584259, "Mail server", "uvapsetest@gmail.com", "1")
+
+    course1 = Course.Course()
+    course1.create(uuid.UUID('71d929a86b1311e8adc0fa7ae01bbebc'),
+                   "Project Software Engineering",
+                   "this is a test description",
+                   Config.EMAIL_FETCH_EMAIL,
+                   "pop.gmail.com", "955", Config.EMAIL_FETCH_PASSWORD)
+
+    course2 = Course.Course()
+    course2.create(uuid.UUID('51d929a86b1311e8adc0fa7ae01bbebc'),
+                   "Operating Systems",
+                   "this is a test description 2",
+                   "test@test.com", "", "", "")
+
+    course3 = Course.Course()
+    course3.create(uuid.UUID('31d929a86b1311e8adc0fa7ae01bbebc'),
+                   "Compiler Construction",
+                   "this is a test description 3",
+                   "test2@test.com", "", "", "")
+
+    label1 = Label.Label()
+    label1.create(uuid.UUID("fa1b7b20307e4250b59c6d0811315203"), "PSE FAQ")
+
+    items = [user1, user2, user3, user4, user5, user6, user7,
+             mail_server, course1, course2, course3, label1]
 
     for item in items:
         addItemSafelyToDB(item, populate_database_dummy_data)
+        ("Inserted dummy objects")
 
     try:
-        course.supervisors.append(user4)
-        course2.supervisors.append(user4)
-        course.student_courses.append(user3)
-        course2.student_courses.append(user3)
-        course.student_courses.append(user5)
-        course2.student_courses.append(user5)
-        course.ta_courses.append(user1)
-        course2.ta_courses.append(user2)
+        course1.ta_courses.append(user6)
+        course2.ta_courses.append(user6)
+        course1.ta_courses.append(user2)
+        course3.ta_courses.append(user2)
+        course1.ta_courses.append(user1)
+
+        course2.student_courses.append(user1)
+        course1.student_courses.append(user3)
+        course1.student_courses.append(user5)
+        course3.student_courses.append(user5)
+        course1.student_courses.append(user4)
+        course3.student_courses.append(user3)
+        course2.student_courses.append(user4)
+
+        course1.supervisors.append(user7)
+        course2.supervisors.append(user7)
+        course3.supervisors.append(user7)
+
+        course1.labels.append(label1)
+        user6.labels.append(label1)
+        db.session.commit()
+        print("Inserted dummy links")
+
     except Exception as exp:
         db.session.rollback()
         log_database_error(exp, populate_database_dummy_data)
-
-    print(course.student_courses)
-    print(course.ta_courses)
 
 
 # Just for testing

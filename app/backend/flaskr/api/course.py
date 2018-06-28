@@ -8,7 +8,7 @@ from flaskr.auth import require_role
 from flask_jwt_extended import jwt_required
 from flaskr.auth import require_ta_rights_in_course
 from werkzeug.utils import secure_filename
-from flaskr.models import ticket
+from flaskr.models.ticket import Ticket, TicketStatus
 import csv
 import os
 
@@ -47,8 +47,9 @@ def get_unassigned_course_tickets(course_id):
         Inner function, wrapped in a decorator, so we check if the user
         has the correct rigths, to get the unassigned tickets.
         """
-        tickets = ticket.Ticket.query.filter_by(course_id=curr_course.id).all()
-        status = ticket.TicketStatus.query.filter_by(name="Unassigned").first()
+        tickets = Ticket.query.filter_by(course_id=curr_course.id).all()
+        status = TicketStatus.query.filter_by(
+            id=TicketStatus.unassigned).first()
         unassign_tickets = list(filter(
             lambda ticket: ticket.status_id == status.id, tickets))
         print(unassign_tickets)

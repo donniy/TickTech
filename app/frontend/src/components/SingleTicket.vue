@@ -194,6 +194,7 @@ export default {
                     this.getCourseTas()
                 }).catch(error => {
                     console.log(error)
+                    this.$router.go(-1)
                 })
         },
         /*
@@ -415,7 +416,7 @@ export default {
 						this.ticket.tas.push(response.data.json_data['ta'])
 						this.ticket.status.name = response.data.json_data['status']
 					} else {
-						this.ticket.status.name = "Assigned"
+						this.ticket.status.name = "Receiving help"
 					}
                 }).catch(error => {
                     console.log(error)

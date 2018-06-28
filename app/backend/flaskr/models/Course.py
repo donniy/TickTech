@@ -40,7 +40,7 @@ supervisor_linker = db.Table(
 
 class Course(db.Model):
     """
-    Een course.
+    A course class which specifies the course model.
     """
     id = db.Column(UUIDType(binary=False), primary_key=True)
     title = db.Column(db.String(255), unique=False, nullable=False)
@@ -92,3 +92,9 @@ class Course(db.Model):
             'tas': [ta.serialize for ta in self.ta_courses],
             'supervisors': [suvi.serialize for suvi in self.supervisors]
         }
+
+    def create(self, id, name, desc, mail, url, port, password):
+        self.id = id
+        self.title = name
+        self.description = desc
+        self.course_email = mail
