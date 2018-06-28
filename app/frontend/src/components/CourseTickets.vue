@@ -235,6 +235,7 @@
                     .catch(error => {
                         console.log(error)
                         this.status = 'failed getting course information'
+                        this.$router.push('/home')
                     })
             },
             getLabels() {

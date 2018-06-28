@@ -191,6 +191,7 @@ export default {
                     this.getCourseTas()
                 }).catch(error => {
                     console.log(error)
+                    this.$router.go(-1)
                 })
         },
         getPlugins() {
