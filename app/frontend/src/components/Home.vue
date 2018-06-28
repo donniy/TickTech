@@ -121,8 +121,8 @@
 <script>
 
 export default {
-	mounted: function () {
-		if (this.$auth.ready() && this.$auth.check()){
+    mounted: function () {
+        if (this.$auth.ready() && this.$auth.check()){
             if (window.$rederict_to_ticket){
                 this.$router.push('/student/ticket/'+window.$rederict_to_ticket);
                 window.$path = null;
@@ -131,7 +131,7 @@ export default {
                 this.$router.push('/home');
             }
         }
-	}
+    }
 }
 
 </script>

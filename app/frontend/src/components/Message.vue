@@ -101,12 +101,12 @@ export default {
     methods: {
         getLevel() {
             const path = '/api/user/getsinglelevel/' + this.message.user_id
-			this.$ajax.get(path).then(response => {
-				this.level = response.data.json_data['level']
+            this.$ajax.get(path).then(response => {
+                this.level = response.data.json_data['level']
                 console.log(this.level)
-			}).catch(error => {
-				console.log(error)
-			})
+            }).catch(error => {
+                console.log(error)
+            })
         },
     },
     created: function () {

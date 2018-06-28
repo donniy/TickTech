@@ -1,42 +1,43 @@
 from . import apiBluePrint
+from flask import escape, request, current_app
+from flask_mail import Mail
+from flaskr import Iresponse
 from flaskr.models.Course import Course
 from flaskr.models.user import User
 from flaskr.models.ticket import Ticket
-from flaskr import Iresponse
 from flaskr.request_processing import ticket as rp_ticket
 from flaskr.request_processing import file as rp_file
 from flaskr.request_processing import message as rp_message
 from flaskr.utils import course_validation, json_validation
-from flask import escape, request
 from flaskr.utils.json_validation import validate_json
-from mail.thread import MailThread
 from mail.Message import ticketErrorEmail, createdEmailMessage
 from mail.Message import somethingWentWrong, replyErrorEmail
 from mail.Message import createdTicketEmail
-from flask_mail import Mail
+from mail.thread import MailThread
 from threading import Thread
-from flask import current_app
 import base64
 
 
-def send_async_email(message, app):
+def sendAsyncEmail(message, app):
+    '''
+    Helper function to send an email when a message has been added to a ticket.
+    '''
     with app.app_context():
         Mail().send(message)
 
 
-@apiBluePrint.route('/email/user/match/email', methods=["POST"])
-def mail_match_on_mail():
-    """
-    Try to match incomming email on email-address.
-    """
-    # Check data
+@apiBluePrint.route('/email/user/match/email', methods=['POST'])
+def mailMatchWithEmail():
+    '''
+    Try to match incoming email to an email address.
+    '''
+    # Request and check the data.
     json_data = request.get_json()
-    if not validate_json(json_data, ["email"]):
+    if not validate_json(json_data, ['email']):
         return Iresponse.empty_json_request()
 
-    # Match on first succes
-    email = json_data["email"]
-    email = email.lower()
+    # Match on first success.
+    email = json_data['email'].lower()
     user = User.query.filter_by(email=email).first()
 
     if user is not None:
@@ -46,24 +47,24 @@ def mail_match_on_mail():
         id = None
         success = False
     response = {
-        "success": success,
-        "studentid": id
+        'success': success,
+        'studentid': id
     }
     return Iresponse.create_response(response, 200)
 
 
-@apiBluePrint.route('/email/user/match/studentid', methods=["POST"])
-def mail_match_on_studentid():
+@apiBluePrint.route('/email/user/match/studentid', methods=['POST'])
+def mailMatchWithStudentID():
     '''
     Try to match incomming email on studentid.
     '''
-    # Check data
+    # Request and check the data.
     json_data = request.get_json()
-    if not validate_json(json_data, ["studentid"]):
+    if not validate_json(json_data, ['studentid']):
         return Iresponse.empty_json_request()
 
-    # Match on first succes
-    studentid = json_data["studentid"]
+    # Match on first success.
+    studentid = json_data['studentid']
     user = User.query.filter_by(id=studentid).first()
 
     if user is not None:
@@ -73,177 +74,172 @@ def mail_match_on_studentid():
         id = None
         success = False
     response = {
-        "success": success,
-        "studentid": id
+        'success': success,
+        'studentid': id
     }
+
     return Iresponse.create_response(response, 200)
 
 
-@apiBluePrint.route('/email/user/match/failed', methods=["POST"])
-def mail_notify_failed_match():
+@apiBluePrint.route('/email/user/match/failed', methods=['POST'])
+def mailNotifyFailedMatch():
     '''
-    Notify user that mail failed to match.
+    Notify user that an email failed to match.
     '''
-    # Check data
+    # Request and check the data.
     json_data = request.get_json()
-    if not validate_json(json_data, ["body", "subject", "address"]):
+    if not validate_json(json_data, ['body', 'subject', 'address']):
         return Iresponse.empty_json_request()
 
-    # Match on first succes
-    subject = json_data["subject"]
-    address = json_data["address"]
-    body = json_data["body"]
+    # Match on first success.
+    subject = json_data['subject']
+    address = json_data['address']
+    body = json_data['body']
     subject = subject.replace('\n', '')
     message = ticketErrorEmail(subject, [address], body)
     app = current_app._get_current_object()
-    thr = Thread(target=send_async_email, args=[message, app])
+    thr = Thread(target=sendAsyncEmail, args=[message, app])
     thr.start()
 
     return Iresponse.create_response('Success', 200)
 
 
 @apiBluePrint.route('/email/ticket/submit', methods=['POST'])
-def create_email_ticket():
-    """
-    Check ticket submission and add to database.
-    """
+def createEmailTicket():
+    '''
+    Check a ticket submission and add it to database.
+    '''
     # Mandatory check to comply with incompatible testing.
-
     formdata = request.get_json()
     files = formdata['files']
 
-    if(len(files.keys()) > 5):
-        print("TICKET: TO MANY FILES\n")
-        something_went_wrong_message(formdata['subject'],
-                                     formdata['email'],
-                                     'Ticket: To many files',
-                                     formdata['message'])
-        return Iresponse.create_response("Too many files", 400)
+    # Check if there are too many files.
+    if (len(files.keys()) > 5):
+        somethingWentWrongMessage(formdata['subject'],
+                                  formdata['email'],
+                                  'Ticket: Too many files',
+                                  formdata['message'])
+        return Iresponse.create_response('Too many files', 400)
 
-    file_names = list()
+    filenames = list()
+    # Check if files are the right size.
     for filename in files.keys():
         file = base64.b64decode(files[filename])
 
-        if not rp_file.save_file_from_mail(file, filename, file_names):
-            print("TICKET: INVALID FILE SIZE\n")
-            something_went_wrong_message(formdata['subject'],
-                                         formdata['email'],
-                                         'Ticket: File to large',
-                                         formdata['message'])
-            return Iresponse.create_response("File too large", 400)
-    formdata['files'] = file_names
+        if not rp_file.save_file_from_mail(file, filename, filenames):
+            somethingWentWrongMessage(formdata['subject'],
+                                      formdata['email'],
+                                      'Ticket: File too large.',
+                                      formdata['message'])
+            return Iresponse.create_response('File too large', 400)
+    formdata['files'] = filenames
 
+    # Check if all data resulted in a valid json.
     if not json_validation.validate_json(formdata, ['message',
                                                     'subject',
                                                     'courseid',
                                                     'labelid']):
-        print("TICKET: INVALID JSON\n")
-        something_went_wrong_message(formdata['subject'],
-                                     formdata['email'],
-                                     'Ticket: validate json data',
-                                     formdata['message'])
-        return Iresponse.create_response("Malformed request", 400)
+        somethingWentWrongMessage(formdata['subject'],
+                                  formdata['email'],
+                                  'Ticket: validate json data.',
+                                  formdata['message'])
+        return Iresponse.create_response('Malformed request', 400)
 
+    # Check if the course is valid.
     if not course_validation.check_course_validity(formdata['courseid'],
                                                    formdata['labelid']):
-        for file in file_names:
+        for file in filenames:
             rp_file.remove_file(file)
-        return Iresponse.create_response("Invalid Course/Label", 400)
+        return Iresponse.create_response('Invalid Course/Label', 400)
 
+    # Check if uploading the files went succesful.
     if not json_validation.validate_ticket_data(formdata):
-        for file in file_names:
+        for file in filenames:
             rp_file.remove_file(file)
-        print("TICKET: INVALID FILES\n")
-        something_went_wrong_message(formdata['subject'],
-                                     formdata['email'],
-                                     'Ticket: validate ticket data',
-                                     formdata['message'])
-        return Iresponse.create_response("Invalid ticket data", 400)
+        somethingWentWrongMessage(formdata['subject'],
+                                  formdata['email'],
+                                  'Ticket: validate ticket data.',
+                                  formdata['message'])
+        return Iresponse.create_response('Invalid ticket data', 400)
 
     response = rp_ticket.create_request(formdata)
 
+    # Send an email to the student to confirm we received the ticket.
     if (response.status_code == 201):
-        print("TICKET: INVALID REQUEST\n")
         ticketid = response.get_json()['json_data']['ticketid']
         message = createdTicketEmail(formdata['subject'],
                                      [formdata['email']],
                                      ticketid,
                                      formdata['message'])
         app = current_app._get_current_object()
-        thr = Thread(target=send_async_email, args=[message, app])
+        thr = Thread(target=sendAsyncEmail, args=[message, app])
         thr.start()
-
     return response
 
 
 @apiBluePrint.route('/email/ticket/newmessage', methods=['POST'])
-def create_email_message():
-    """
-    Add message in existing ticket.
-    """
+def createEmailMessage():
+    '''
+    Add a message to an existing ticket.
+    '''
     formdata = request.get_json()
+    # Check if the ticket and message have a valid JSON.
     if not json_validation.validate_json(formdata, ['ticketid']):
-        print("MESSAGE: Invalid json\n")
-        something_went_wrong_message(formdata['subject'],
-                                     formdata['email'],
-                                     'Message: validate json data',
-                                     formdata['message'])
-        return Iresponse.create_response("Malformed request", 400)
+        somethingWentWrongMessage(formdata['subject'],
+                                  formdata['email'],
+                                  'Message: validate json data.',
+                                  formdata['message'])
+        return Iresponse.create_response('Malformed request', 400)
 
-    print('*********************')
-    print(formdata['ticketid'])
-    print('*********************')
-    print('*********************')
     ticket = Ticket.query.get(formdata['ticketid'])
+
+    # Check if the ticket related to the message is valid.
     if ticket is None:
-        print("MESSAGE: Invalid ticket id\n")
-        something_went_wrong_message(
-                                formdata['subject'],
-                                formdata['email'],
-                                'Message: Could not find ticket with that id',
-                                formdata['message'])
-        return Iresponse.create_response("Could not find ticket", 400)
+        somethingWentWrongMessage(
+            formdata['subject'],
+            formdata['email'],
+            'Message: Could not find a ticket with that id.',
+            formdata['message'])
+        return Iresponse.create_response('Could not find ticket', 400)
 
-    formdata["studentid"] = ticket.user_id
-
+    formdata['studentid'] = ticket.user_id
     msg = rp_message.create_request(formdata, formdata['ticketid'])
 
+    # Send an email to the student to notify them of our failing in life.
     if (msg.status_code != 201):
-        print("MESSAGE: invalid request\n")
-        message = replyErrorEmail(ticket.title,
-                                  [ticket.email], formdata['ticketid'],
-                                  json_data['message'])
+        message = replyErrorEmail(ticket.title, [ticket.email],
+                                  formdata['ticketid'], json_data['message'])
         if current_app.config['SEND_MAIL_ON_MESSAGE']:
             app = current_app._get_current_object()
-            thr = Thread(target=send_async_email, args=[message, app])
+            thr = Thread(target=sendAsyncEmail, args=[message, app])
             thr.start()
     return msg
 
 
-def something_went_wrong_message(subject, email, part, message):
+def somethingWentWrongMessage(subject, email, part, message):
     '''
-    Send mail to user that something went wrong with creating his ticket.
+    Send an email to the student,
+    informing them that something went wrong with creating their ticket.
     '''
-    message = somethingWentWrong(subject,
-                                 [email],
-                                 part,
-                                 message)
+    message = somethingWentWrong(subject, [email], part, message)
     app = current_app._get_current_object()
-    thr = Thread(target=send_async_email, args=[message, app])
+    thr = Thread(target=sendAsyncEmail, args=[message, app])
     thr.start()
 
 
 @apiBluePrint.route('/email/<course_id>/settings', methods=['GET'])
-def retrieve_current_mail_settings(course_id):
-    """
-    Give mail settings of course.
-    """
+def retrieveEmailSettings(course_id):
+    '''
+    Retrieve the email settings of a course.
+    '''
+    # Find the course in the database.
     course = Course.query.get(course_id)
     if course is None:
-        return Iresponse.create_response("This course does no longer exists",
+        return Iresponse.create_response('This course does no longer exists',
                                          200)
 
-    thread = MailThread.exist_thread_courseid(course_id)
+    # Check if a thread exists.
+    thread = MailThread.existThreadCourseID(course_id)
     running = False
     if (thread is not None):
         running = True
@@ -256,41 +252,32 @@ def retrieve_current_mail_settings(course_id):
 
 
 @apiBluePrint.route('/email/<course_id>/online', methods=['GET'])
-def is_email_running(course_id):
-    """
-    return if email is already running.
-    """
-    thread = MailThread.exist_thread_courseid(course_id)
+def isEmailFetching(course_id):
+    '''
+    Returns if an email fetcher is already running.
+    '''
+    # Find the thread and check if it's running.
+    thread = MailThread.existThreadCourseID(course_id)
     running = False
     if (thread is not None):
         running = True
-    object = {'running': running}
-    return Iresponse.create_response(object, 201)
 
-#  This can be added if needed, currently not used
-# @apiBluePrint.route('/email/force/<course_id>/fetch', methods=['POST'])
-# def force_fetch_email(course_id):
-#     """
-#     Force a one time email fetch
-#     """
-#     thread = MailThread.exist_thread_courseid(course_id)
-#     if (thread is not None):
-#         thread.force_fetch()
-#         message = "succes"
-#     else:
-#         message = "failed, thread not found"
-#     result = {'status': message}
-#     return Iresponse.create_response(result, 200)
+    object = {'running': running}
+
+    return Iresponse.create_response(object, 201)
 
 
 @apiBluePrint.route('/email/stop', methods=['POST'])
-def stop_email_fetching():
-    """
-    Stop email fetching.
-    """
-    course_id = escape(request.json["course_id"])
-    thread = MailThread.exist_thread_courseid(course_id)
+def stopEmailFetching():
+    '''
+    Stop the fetching of emails.
+    '''
+    # Find the thread and check if it's running.
+    course_id = escape(request.json['course_id'])
+    thread = MailThread.existThreadCourseID(course_id)
+
     if (thread is None):
-        return Iresponse.create_response("No email thread running", 200)
+        return Iresponse.create_response('No email thread running', 200)
+
     thread.stop()
-    return Iresponse.create_response("Succes", 201)
+    return Iresponse.create_response('Succes', 201)

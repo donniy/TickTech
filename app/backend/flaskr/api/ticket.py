@@ -103,12 +103,12 @@ def create_message(ticket_id):
         if current_app.config['SEND_MAIL_ON_MESSAGE']:
             print("send email")
             app = current_app._get_current_object()
-            thr = Thread(target=send_async_email, args=[message, app])
+            thr = Thread(target=sendAsyncEmail, args=[message, app])
             thr.start()
     return msg
 
 
-def send_async_email(message, app):
+def sendAsyncEmail(message, app):
     with app.app_context():
         print("SENDED EMAIL")
         res = Mail().send(message)
@@ -244,7 +244,7 @@ def download_file():
             fp = open(folder + '/' + file, 'br').read()
             encoded = base64.b64encode(fp).decode("utf-8")
             return Iresponse.create_response({'encstring': str(encoded),
-                                             'mimetype': fileType}, 200)
+                                              'mimetype': fileType}, 200)
     else:
         return Iresponse.create_response("No address", 404)
 

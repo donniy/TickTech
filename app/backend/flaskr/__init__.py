@@ -175,8 +175,8 @@ def create_app(test_config=None):
         course_id = data['course_id']
         sleeptime = 10
 
-        thread = MailThread.exist_thread_courseid(course_id)
-        if (MailThread.exist_thread_email(email)):
+        thread = MailThread.existThreadCourseID(course_id)
+        if (MailThread.existThreadEmail(email)):
             if thread is None:
                 emit('setup-email',
                      {'result': 'fail', 'data': 'Email already exists'})

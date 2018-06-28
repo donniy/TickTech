@@ -1,16 +1,16 @@
 from email.header import decode_header
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
-import email
-import poplib
-import requests
 import base64
+import email
 import html2text
-import socket
+import poplib
 import re
+import requests
+import socket
+
 
 poplib._MAXLINE = 2048
-
 
 def connect(host, port, user, password):
     '''
@@ -39,7 +39,8 @@ def connect(host, port, user, password):
 
 def parseEmail(emailBytes):
     '''
-    Parses a raw email. Returns the subject, body and sender in string format.
+    Parses a raw email.
+    Returns the subject, body and sender in string format.
     '''
     # Parse the email.
     parsedEmail = email.message_from_bytes(emailBytes)
@@ -238,37 +239,31 @@ def createTicket(subject, body, files, sender, address, courseid):
     Create a ticket from the acquired information from an email.
     Note: New tickets will only be displayed after refreshing the page.
     '''
-    # Check if an email is a reply, if so, a
-    # new message must be created to a ticket.
+    # Check if an email is a reply, if so,
+    # a new message must be created instead of a new ticket.
     if "Ticket ID:" in subject:
         ticketid = subject.split("Ticket ID:")[1]
-        print('ticketid:', ticketid)
         ticketid = ticketid.replace("\n", "")
         ticketid = ticketid.replace(" ", "")
-        print('ticketid:', ticketid)
         createReply(ticketid, subject, address, body)
         return
-    print("Not a reply")
 
     # Find student in database or by email parsing.
     sender = sender.replace(' ', '')
     studentid = findUser(body, sender, address)
     if studentid is None:
-        print('sender', sender)
-        print('address', address)
-
         info = {'subject': subject,
                 'body': body,
                 'address': address}
-        print("IT WAS HERE\n\n\n\n")
+
+        # If result returned an error status code, an email is sent
         result = requests.post(
             'http://localhost:5000/api/email/user/match/failed',
             json=info)
-        print("Mail fetching failed, notifed user\nSubject:",
-              subject, '\nSender:', address)
+
         return
 
-    # Get all labels available for this course.
+    # Get all labels available for this course, find the best matching one.
     labels = retrieveLabels(courseid)
     if (labels != []):
         labelid = findLabel(body, labels)
@@ -326,21 +321,21 @@ def checkMail(host, port, user, password, courseid, debug=0):
         server.quit()
         return 0
     else:
-        print(mailcount, "new email(s) found!")
+        print(mailcount, "new email(s) found. Parsing now!")
 
     # Parse all new emails.
     for i in range(mailcount):
         try:
             emailBytes = b"\n".join(server.retr(i + 1)[1])
         except poplib.error_proto:
-            # we have no email information yet so no warning possible
-            print("To many char's in line")
+            # We have no email information yet, so no warning possible.
+            print("Found too many chars in a line, while parsing an email.")
             continue
 
         subject, body, files, sender, address = parseEmail(emailBytes)
 
         if (subject is None or body is None or sender is None):
-            print("Error parsing email.")
+            print("An error occurred while parsing email.")
             print("Found subject:", subject)
             print("Found body:", body)
             print("Found sender:", sender)
@@ -351,20 +346,3 @@ def checkMail(host, port, user, password, courseid, debug=0):
     if (debug == 0):
         server.quit()
     return 0
-
-
-# TODO: For debugging. Can be removed later (we use thread.py).
-if __name__ == '__main__':
-    # Retrieve courses, get current course id.
-    result = requests.get('http://localhost:5000/api/courses')
-
-    if (result.status_code == 200):
-        courses = result.json()
-        courseid = courses["json_data"][0]["id"]
-    else:
-        print("Could not retrieve courses, error code: ", result.status_code)
-        print(result.text)
-
-    # Check mail for current course.
-    checkMail("pop.gmail.com", "995",
-              "uvapsetest@gmail.com", "stephanandrea", courseid)
