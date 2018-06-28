@@ -70,7 +70,7 @@
             <md-card class="md-layout-item message-container">
                 <div>
                     <md-card-content>
-                        <message v-bind:user="{id: user_id}" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
+                        <message v-bind:user="{id: user_id}" v-bind:tas="{course_tas}" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
                     </md-card-content>
                 </div>
             </md-card>
