@@ -167,7 +167,7 @@ def create_email_ticket():
 
     return response
 
-@apiBluePrint.route('/email/ticket/email/newmessage', methods=['POST'])
+@apiBluePrint.route('/email/ticket/newmessage', methods=['POST'])
 def create_email_message():
     """
     Add message in existing ticket.

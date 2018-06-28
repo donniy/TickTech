@@ -203,6 +203,7 @@ def findUser(body, sender, address):
     # Either return the student ID or None if not found.
     return requestStudentID(result)
 
+
 def createReply(ticketid, subject, address, body):
     '''
     Create a reply to a ticket from the acquired information from an email.
@@ -217,7 +218,7 @@ def createReply(ticketid, subject, address, body):
 
     # Add the reply to the database.
     result = requests.post(
-        'http://localhost:5000/api/email/ticket/' + ticketid + '/messages',
+        'http://localhost:5000/api/email/ticket/newmessage',
         json=newmessage)
 
     print("HIERRR NEW REPLY")
