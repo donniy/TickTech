@@ -163,6 +163,10 @@ const toLower = text => {
             searchOnTable() {
                 this.searched = searchByName(this.tickets, this.search)
             },
+
+            /*
+             * Get all tickets from a specific course.
+             */
             getTickets() {
                 this.status = 'getting tickets'
                 const path = '/api/courses/' + this.$route.params.course_id + '/tickets'
@@ -192,12 +196,20 @@ const toLower = text => {
                     console.log(response)
                 })
             },
+
+            /*
+             * Go to the corresponding label page from a course.
+             */ 
             pushLocation(here) {
                 this.$router.push(here)
             },
             emailSettings() {
                 this.showEmailModal = true
             },
+
+            /*
+             * Fetch new emails from backend.
+             */
             updateEmail(form) {
                 this.showEmailModal = false
                 console.log(form)
@@ -207,6 +219,10 @@ const toLower = text => {
                     console.log(response)
                 })
             },
+
+            /*
+             * Stop the mail server in the backend.
+             */
             stopEmail(form) {
                 this.showEmailModal = false
                 console.log(form)
@@ -251,6 +267,10 @@ const toLower = text => {
                 let matches = supervisors.filter(supervisor => supervisor.id === userid)
                 this.isSupervisor = matches.length === 1
             },
+
+            /*
+             * Get all information from a specific course. 
+             */
             getCourseInfo() {
                 this.status = 'getting course information'
                 const path = '/api/courses/single/' + this.$route.params.course_id
@@ -271,6 +291,10 @@ const toLower = text => {
                         this.$router.push('/home')
                     })
             },
+
+            /*
+             * Get all labels attached to a course.
+             */
             getLabels() {
                 const path = '/api/labels/' + this.$route.params.course_id
                 this.$ajax.get(path, response => {
@@ -287,6 +311,10 @@ const toLower = text => {
                 this.wantsToAddUsers = false
                 this.wantsToAddTa = this.wantsToAddTa === false
             },
+
+            /*
+             * Logic to filter tickets by label or status. 
+             */
             filter_tickets() {
                 this.searched = this.tickets.filter(ticket => {
                                     return (ticket.label.label_name == this.label_filter || this.label_filter == "Any label")

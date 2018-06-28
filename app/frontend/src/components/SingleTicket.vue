@@ -183,6 +183,9 @@ export default {
         }
     },
     methods: {
+        /*
+         * Get all information from a specific ticket.
+         */
         getTicket() {
             const path = '/api/ticket/' + this.$route.params.ticket_id
             this.$ajax.get(path)
@@ -194,12 +197,18 @@ export default {
                     this.$router.go(-1)
                 })
         },
+        /*
+         * Get all plugins attached to the ticket.
+         */
         getPlugins() {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/plugins'
             this.$ajax.get(path, response => {
                 this.plugins = response.data.json_data
             })
         },
+        /*
+         * Load all messages between TA and student in the ticket.
+         */
         getMessages() {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
             this.$ajax.get(path)
@@ -210,6 +219,9 @@ export default {
                     console.log(error)
                 })
         },
+        /*
+         * Get all notes attached to a ticket.
+         */
         getNotes() {
             //get all notes
             this.$ajax.get('/api/notes/' + this.$route.params.ticket_id)
@@ -221,6 +233,9 @@ export default {
                     console.log(err)
                 })
         },
+        /*
+         * Send reply in to the database.
+         */
         sendReply() {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
             let reply = this.reply
@@ -241,6 +256,9 @@ export default {
                 })
             }
         },
+        /*
+         * Close the ticket if the question has been answered by a TA.
+         */
         closeTicket() {
             this.showModal = false
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/close'
@@ -251,6 +269,9 @@ export default {
                 })
 
         },
+        /*
+         * Create a downloadable link. Retrieve location from the database and create a link to download the file.
+         */
         downloadFile(key, name){
 
             const path = '/api/ticket/filedownload'
@@ -308,6 +329,9 @@ export default {
                 window.alert("Whoops! We were unable to read anything useful here...")
             })
         },
+        /*
+         * Add note to database and display it in the ticket page.
+         */
         addNote() {
             if (this.noteTextArea.length > 0) {
                 console.log(this.noteTextArea)
@@ -380,6 +404,9 @@ export default {
             console.log("found", e)
             this.noteTextArea = matchedValue
         },
+        /*
+         * If a TA is mentioned by another TA this TA is also bound to the ticket.
+         */
         bind_ta_to_ticket(ticketid, taid) {
             const path = '/api/ticket/addta'
             this.$ajax.post(path, { 'ticketid': ticketid, 'taid': taid })

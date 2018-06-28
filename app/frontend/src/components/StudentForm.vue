@@ -112,7 +112,9 @@
             }
         },
         methods: {
-            // Upload the supplied files.
+            /*
+             * Upload the supplied files.
+             */
             handleFilesUpload() {
                 if (this.fileTooMany || this.fileTooLarge) {
                     return
@@ -125,7 +127,9 @@
                     this.fileTooMany = false
                 }
 
-                // Adds the uploaded file to the files array
+                /* 
+                 * Adds the uploaded file to the files array
+                 */
                 let largeFileFound = false
                 if (typeof uploadedFiles !== 'undefined') {
                     for( var i = 0; i < uploadedFiles.length; i++ ){
@@ -140,7 +144,9 @@
                     this.fileTooLarge = false
                 }
             },
-            // Removes the supplied files.
+            /*
+             * Removes the supplied files.
+             */
             removeFile(key) {
                 this.files.splice(key, 1)
 
@@ -165,13 +171,17 @@
                 }
 
             },
-            // Adds supplied files.
+            /*
+             * Adds supplied files.
+             */
             addFiles() {
                 if (!this.fileTooMany && !this.fileTooLarge) {
                     this.$refs.files.click()
                 }
             },
-            // Check if all required boxes are filled correctly.
+            /*
+             * Check if all required boxes are filled correctly.
+             */
             sendTicket() {
                 this.$validator.validateAll().then((result) => {
                     if (result) {
@@ -220,6 +230,10 @@
 
             const pathLabels = '/api/labels'
             const pathCourses = '/api/user/student_courses'
+
+            /*
+             * Get all courses and the corresponding labels in the course.
+             */
             this.$ajax.get(pathCourses)
                 .then(response => {
                     if (typeof response.data.json_data !== 'undefined') {

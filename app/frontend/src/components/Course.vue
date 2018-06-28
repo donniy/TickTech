@@ -22,6 +22,10 @@
             return {}
         },
         methods: {
+
+            /*
+             * Go to the selected course page.
+             */
             pushCourse() {
                 this.$router.push("/course/" + this.course.id)
                 this.$emit('title', this.course.title)

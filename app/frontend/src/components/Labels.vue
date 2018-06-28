@@ -65,12 +65,53 @@ export default {
                 this.course = response.data.json_data
             })
         },
+<<<<<<< HEAD
         // Retrieve all labels associated with current course.
         getLabels() {
             const path = '/api/labels/' + this.$route.params.course_id
             this.$ajax.get(path, response => {
                 this.labels = response.data.json_data
             })
+=======
+        methods: {
+            /* 
+             * Get all info from a course.
+             */
+            getCourse() {
+                const path = '/api/courses/single/' + this.$route.params.course_id
+                this.$ajax.get(path).then(response => {
+                    this.course = response.data.json_data
+                }).catch(error => {
+                    console.log(error)
+                    this.$router.go(-1)
+                })
+            },
+            /*
+             * Get all labels in a coures.
+             */
+            getLabels() {
+                const path = '/api/labels/' + this.$route.params.course_id
+                this.$ajax.get(path, response => {
+                    this.labels = response.data.json_data
+                })
+            },
+            /*
+             * Insert new label to the list of labels in a course.
+             */
+            createLabel() {
+                if (this.new_label_name == '') {
+                    return
+                }
+                const path = '/api/labels/' + this.$route.params.course_id
+                this.$ajax.post(path, {
+                    name: this.new_label_name
+                }, response => {
+                    this.tickets = response.data.json_data
+                    this.new_label_name = ''
+                    this.getLabels()
+                })
+            }
+>>>>>>> master
         },
         // Add a new label.
         createLabel() {
