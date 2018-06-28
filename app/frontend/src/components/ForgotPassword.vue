@@ -52,6 +52,7 @@ export default {
 					email: this.form.email
 				}, response => {
 					if (response.status == 201) {
+                        window.alert("Check your email for the reset link")
 						this.$router.push('/login')
 					} else {
 						console.log(response.data.json_data)

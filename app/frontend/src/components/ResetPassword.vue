@@ -23,6 +23,9 @@
                 <div v-if="!this.pswstatus">
                     Passwords do not match!
                 </div>
+                <p id="loginfail" class="def-error-msg" v-show="this.responseerror">
+					{{this.message}}
+				</p>
 				<md-button class="btn btn-primary" type="submit" v-bind:disabled="errors.any()">
 					Reset
 				</md-button>
@@ -48,6 +51,9 @@ import Router from 'vue-router';
                     password: '',
 					password_confirmation: ''
                 },
+                pswstatus: true,
+                message: '',
+                responseerror: false
             }
         },
         methods: {
@@ -61,10 +67,21 @@ import Router from 'vue-router';
     				code: code,
                     password: this.form.password,
                     psw_confirmation: this.form.password_confirmation
-    			}, response => {
-    				console.log(response)
-    			})
+    			}).then(response => {
+                    this.ticket = response.data.json_data
+                    this.getCourseTas()
+                }).catch(error => {
+                    console.log(error)
+                    let errormsg = error.data.json_data
+                    this.message = errormsg
+                    this.responseerror = true
+                })
             }
         },
+        mounted: function() {
+            if (!this.$route.query.code) {
+                this.$router.back()
+            }
+        }
     }
 </script>
