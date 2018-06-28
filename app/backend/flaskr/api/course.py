@@ -178,6 +178,8 @@ def update_plugin_state(course_id, plugin_id):
                                               your request"}, 500)
         return Iresponse.create_response({"status": "success",
                                           "active": cp.active}, 200)
+
+
 @apiBluePrint.route('/courses/<course_id>/tickets/unassigned', methods=['GET'])
 def get_unassigned_course_tickets(course_id):
     """
