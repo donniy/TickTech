@@ -1,11 +1,3 @@
-from . import i_request
-from flaskr.models.Course import Course
-from flaskr.models.user import User
-from flaskr import database
-from flask import redirect
-import oauth2
-import requests
-import uuid
 """
 This file contains some of the code for lti from the following file:
 Mostly the signature validation.
@@ -19,6 +11,15 @@ https://github.com/instructure/canvas-lms/blob/stable/lib%2Flti%2Fvariable_expan
 The above source also shows custom variables that can be added to the xml.
 So far we use on custom variable, check the xml.
 """
+
+from . import i_request
+from flaskr.models.Course import Course
+from flaskr.models.user import User
+from flaskr import database
+from flask import redirect
+import oauth2
+import requests
+import uuid
 
 lti_base_route = 'http://localhost:3000'
 lti_api_route = '/api/v1'
@@ -66,14 +67,16 @@ class LTI_instance_database_helper:
         """
         print(self.lti_instance.params)
         canvas_course_id = self.lti_instance.params['custom_canvas_course_id']
-        course = Course.query.filter_by(canvas_unique_id=canvas_course_id).first()
+        course = Course.query.filter_by(
+            canvas_unique_id=canvas_course_id).first()
         course_name = self.lti_instance.course_name
         if course is None:
             self.lti_instance.params['new_tiktech_course'] = True
             course = Course(id=uuid.uuid4(), title=course_name,
                             description=self.lti_instance.course_description,
-                            canvas_unique_id = canvas_course_id)
-            if not database.addItemSafelyToDB(course, self.ensure_course_exists):
+                            canvas_unique_id=canvas_course_id)
+            if not database.addItemSafelyToDB(course,
+                                              self.ensure_course_exists):
                 self.cache['course'] = None
                 return
         self.lti_instance.params['tiktech_course_id'] = course.id
@@ -139,7 +142,7 @@ class LTI_instance:
         """
         self.params = {}
         self.database_helper = None
-        try:  # Maybe wrap this into a helper class.
+        try:
             self._validate_lti_Irequest_signature(i_req)
             self._sanitize_lti_Irequest(i_req)
             self._ensure_params_exists(self.params)
@@ -186,7 +189,7 @@ class LTI_instance:
         oauth_server = oauth2.Server()
         signature_method = oauth2.SignatureMethod_HMAC_SHA1()
         oauth_server.add_signature_method(signature_method)
-        consumer = oauth2.Consumer('consumerKey', 'test')
+        consumer = oauth2.Consumer('consumerKey', 'test')  # Test values
         oauth_request = oauth2.Request.from_request(
             i_req.method, i_req.url, i_req.headers, i_req.body)
 
@@ -282,6 +285,9 @@ def fill_new_course_with_canvas_data(headers, course_id):
     A function that fills a new course with data from canvas.
     This function is only called if a new course is created.
     It then fills the course with students, tas and teachers.
+    When using the api canvas has different names for roles,
+    so we use a different function for filling a course
+    with canvas data.
     """
     request_url = lti_base_route + lti_api_route
     request_url += '/courses/{}/users?'.format(course_id)
@@ -304,8 +310,8 @@ def fill_new_course_with_canvas_data(headers, course_id):
             existing_user = User()
             existing_user.create(id=user_id, name=name, email=email,
                                  password="1")
-            if not database.addItemSafelyToDB(existing_user,
-                                              fill_new_course_with_canvas_data):
+            if not database.addItemSafelyToDB(
+                    existing_user, fill_new_course_with_canvas_data):
                 continue
 
         course = Course.query.filter_by(canvas_unique_id=course_id).first()
