@@ -1,7 +1,7 @@
 from . import apiBluePrint
 from flask import escape, request, current_app
 from flask_mail import Mail
-from flaskr import Iresponse
+from flaskr import Iresponse, database
 from flaskr.models.Course import Course
 from flaskr.models.user import User
 from flaskr.models.ticket import Ticket
@@ -265,6 +265,18 @@ def isEmailFetching(course_id):
     object = {'running': running}
 
     return Iresponse.create_response(object, 201)
+
+@apiBluePrint.route('/email/labels/<course_id>', methods=['GET'])
+def email_retrieve_labels(course_id):
+    """
+    Returns all labels of given course.
+    TODO: Controle if user has permissions.
+    """
+    course = Course.query.get(course_id)
+    if course is None:
+        return Iresponse.create_response("", 404)
+    return Iresponse.create_response(
+        database.serialize_list(course.labels), 200)
 
 
 @apiBluePrint.route('/email/stop', methods=['POST'])

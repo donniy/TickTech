@@ -141,12 +141,11 @@ def retrieveLabels(courseid):
     course from the server.
     '''
     labels = []
-    result = requests.get('http://localhost:5000/api/labels/' + courseid)
+    result = requests.get('http://localhost:5000/api/email/labels/' + courseid)
 
-    if (result.status_code == 200):
+    if (result.status_code != 200):
         data = result.json()
         labels = data['json_data']
-
     return labels
 
 
@@ -266,6 +265,8 @@ def createTicket(subject, body, files, sender, address, courseid):
 
     # Get all labels available for this course, find the best matching one.
     labels = retrieveLabels(courseid)
+    print('#'*20)
+    print(labels)
     if (labels != []):
         labelid = findLabel(body, labels)
     else:
