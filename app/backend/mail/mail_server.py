@@ -257,6 +257,7 @@ def createTicket(subject, body, files, sender, address, courseid):
     # Check if an email is a reply, if so, a new message must be created to a ticket.
     if "Ticket ID: " in subject:
         ticketid = subject.split("Ticket ID: ")
+        print(ticketid, '\n\n\n\n\n\n')
         createReply(ticketid[1], subject, address, body)
         return
 
@@ -301,7 +302,7 @@ def createTicket(subject, body, files, sender, address, courseid):
         print("Body: " + body)
 
 
-def checkMail(host, port, user, password, courseid, debug=1):
+def checkMail(host, port, user, password, courseid, debug=0):
     '''
     Start a mail server and sync all emails once.
     Set debug to anything but 0 to enable debugging. This will make sure

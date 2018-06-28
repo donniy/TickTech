@@ -86,6 +86,10 @@ def somethingWentWrong(title, recipients, part, body):
     It went wrong somewhere:
     '''
     string = "TIKTECH error. We could not process: " + title
+    string = string.replace('\n', '')
+    print('#'*20)
+    print(string)
+    print('#'*20)
     message = Message(
         subject=string,
                 recipients=recipients)

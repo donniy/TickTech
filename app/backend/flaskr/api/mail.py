@@ -5,6 +5,7 @@ from flaskr.models.ticket import Ticket
 from flaskr import Iresponse
 from flaskr.request_processing import ticket as rp_ticket
 from flaskr.request_processing import file as rp_file
+from flaskr.request_processing import message as rp_message
 from flaskr.utils import course_validation, json_validation
 from flask import escape, request
 from flaskr.utils.json_validation import validate_json
@@ -181,6 +182,11 @@ def create_email_message():
                                      formdata['message'])
         return Iresponse.create_response("Malformed request", 400)
 
+
+    print('*********************')
+    print(formdata['ticketid'])
+    print('*********************')
+    print('*********************')
     ticket = Ticket.query.get(formdata['ticketid'])
     if ticket is None:
         something_went_wrong_message(formdata['subject'],
