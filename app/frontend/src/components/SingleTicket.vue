@@ -67,7 +67,7 @@
             <md-card class="md-layout-item message-container">
                 <div>
                     <md-card-content>
-                        <message v-bind:user="{id: user_id}" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
+                        <message v-bind:user="{id: user_id}" v-bind:tas="{course_tas}" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
                     </md-card-content>
                 </div>
             </md-card>
@@ -351,16 +351,6 @@ export default {
                         console.log(error)
                     })
             }
-
-            this.$ajax.post(path, noteData)
-                .then(response => {
-                    this.noteTextArea = ""
-                    this.$refs.popoverRef.$emit('close')
-                    this.notes.push(response.data.json_data)
-                })
-                .catch(error => {
-                    console.log(error)
-                })
         },
         /* Get the ta's in this course. Will add all the ta's to the
          * course_tas array.
