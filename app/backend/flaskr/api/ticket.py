@@ -48,7 +48,10 @@ def close_ticket(ticket_id):
     except Exception as e:
         print(e)  # LOGGING
         return Iresponse.create_response("Error", 400)
-    return Iresponse.create_response({'status': "success", 'message': 'ticket closed'}, 200)
+    return Iresponse.create_response({
+        'status': "success",
+        'message': 'ticket closed'
+    }, 200)
 
 
 @apiBluePrint.route('/ticket/<ticket_id>', methods=['GET'])
