@@ -7,7 +7,7 @@ db = database.db
 class Label(db.Model):
 
     """
-    A Label.
+    A Label class which specifies the label model.
     """
 
     __tablename__ = 'label'

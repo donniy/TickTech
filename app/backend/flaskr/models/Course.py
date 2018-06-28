@@ -40,7 +40,7 @@ supervisor_linker = db.Table(
 
 class Course(db.Model):
     """
-    Een course.
+    A course class which specifies the course model.
     """
     id = db.Column(UUIDType(binary=False), primary_key=True)
     title = db.Column(db.String(255), unique=False, nullable=False)
