@@ -11,7 +11,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-12 col-md-12 text-center">
+                    <div class="col-lg-12 col-md-12 text-center center">
                         <div class="row">
                             <md-table v-model="searched" md-sort="name" md-sort-order="asc" md-card md-fixed-header class="white">
                                 <md-table-toolbar class="red">
@@ -46,13 +46,11 @@
 
                                 <md-table-row md-delay="1000" slot="md-table-row" slot-scope="{ item }" class="tickettable" v-on:click="navTicket(item.id)"
                                     v-on:mouseover="showTicket(item.id)" v-bind:class="{'md-table-cell':true, 'activated':(item.id === ticketSum)}">
-                                    <md-table-cell md-label="Title" md-sort-by="title" md-numeric>{{ item.title }}</md-table-cell>
-                                    <md-table-cell md-label="Label" md-sort-by="label.label_name" md-numeric>{{ item.label.label_name }}</md-table-cell>
-                                    <md-table-cell md-label="Name" md-sort-by="user_id">{{ item.user_id }}</md-table-cell>
-                                    <md-table-cell md-label="Status" md-sort-by="status.name">{{ item.status.name }}</md-table-cell>
-                                    <md-table-cell md-label="Time" md-sort-by="timestamp">{{ item.timestamp | moment("DD/MM/YY HH:mm")}}</md-table-cell>
-                                    <md-table-cell md-label="Operator" md-sort-by="binded_tas" v-if="item.binded_tas != null">{{ item.binded_tas }}</md-table-cell>
-                                    <md-table-cell md-label="Operator" md-sort-by="binded_tas" v-if="item.binded_tas == null">unassigned</md-table-cell>
+                                    <md-table-cell md-label="Title" md-sort-by="title"md-numeric>{{item.title}}</md-table-cell>
+                                    <md-table-cell md-label="Label" md-sort-by="label.label_name" md-numeric>{{item.label.label_name}}</md-table-cell>
+                                    <md-table-cell md-label="Name" md-sort-by="user_id">{{item.user_id}}</md-table-cell>
+                                    <md-table-cell md-label="Status" md-sort-by="status.name">{{item.status.name}}</md-table-cell>
+                                    <md-table-cell md-label="Time" md-sort-by="timestamp">{{item.timestamp | moment("DD/MM/YY HH:mm")}}</md-table-cell>
                                 </md-table-row>
                             </md-table>
                         </div>
@@ -70,7 +68,7 @@
                 </emodal>
             </div>
         </transition>
-        <div v-if="false" class=s ummary-sub-container>
+        <div class=summary-sub-container>
             <summodal @close="showSum = false, ticketSum = 0" v-for="ticket in tickets" v-if="ticket.id == ticketSum" v-bind:key="ticket.id"
                 v-bind:ticket="ticket" class="singleTicket">
             </summodal>
@@ -106,6 +104,7 @@
     export default {
         data() {
             return {
+                timeout: 0,
                 search: "",
                 searched: [],
                 ticketSum: 0,
@@ -136,7 +135,8 @@
         },
         methods: {
             showTicket(item) {
-                this.ticketSum = item
+                clearTimeout(this.timeout)
+                this.timeout = setTimeout(() => { this.ticketSum = item }, 1000)
             },
             navTicket(item) {
                 this.$router.push("/ticket/" + item)
