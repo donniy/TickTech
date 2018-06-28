@@ -29,8 +29,9 @@ course_settings = {
 
 def get_ta(course_settings, student_id, assignment_id):
     '''
-    Returns the ta of this student. Should receive an assignment_id that is
-    int the format of the api this plugin suppors.
+    Returns the teaching assistant of this student.
+    Should receive an assignment_id that is
+    in the format of the api this plugin suppors.
 
     Demo: This returns the id of demo TA Erik Kooistra.
     '''

@@ -1,37 +1,39 @@
 from . import apiBluePrint
 from flaskr import database, Iresponse, plugins
+from flask_jwt_extended import jwt_required
 from flask import request
 from flaskr.models.Label import Label, LabelPlugin
 from flaskr.models.Course import Course
 from flaskr.models.user import User
 from flaskr.utils.json_validation import validate_json
-from flask_jwt_extended import jwt_required
+from flaskr.auth import require_role
 import uuid
 
 
 @apiBluePrint.route('/labels/<label_id>/close', methods=['POST'])
+@require_role(['supervisor', 'ta'])
 def remove_label(label_id):
+    """
+    Function that removes a label.
+    """
     label = Label.query.get(label_id)
     print(label)
     if label is None:
         return Iresponse.create_response("", 404)
-    try:
-        database.db.session.delete(label)
-        database.db.session.commit()
-    except Exception:
-        print("LOG: Deleting error")
+
+    if not database.deleteSafelyFromDB(label, remove_label):
         return Iresponse.internal_server_error()
 
     return Iresponse.create_response("", 202)
 
 
 @apiBluePrint.route('/labels/<course_id>', methods=['GET'])
+@jwt_required
 def retrieve_labels(course_id):
     """
     Returns all labels of given course.
+    TODO: Controle if user has permissions.
     """
-    print("Getting label. ")
-    # TODO: Controleer of degene die hierheen request permissies heeft.
     course = Course.query.get(course_id)
     if course is None:
         return Iresponse.create_response("", 404)
@@ -40,6 +42,7 @@ def retrieve_labels(course_id):
 
 
 @apiBluePrint.route('/labels/<course_id>', methods=['POST'])
+@require_role(['supervisor', 'ta'])
 def create_labels(course_id):
     """
     Adds a label to a course.
@@ -71,7 +74,12 @@ def create_labels(course_id):
 
 
 @apiBluePrint.route('/labels/<label_id>/select', methods=['POST'])
+@require_role(['supervisor', 'ta'])
 def selectLabel(label_id):
+    """
+    Select a label as teaching assistant to get notifications when new tickets
+    are added with selected label.
+    """
     json_data = request.get_json()
 
     if not validate_json(json_data, ["user_id"]):
@@ -87,7 +95,11 @@ def selectLabel(label_id):
 
 
 @apiBluePrint.route('/labels/<label_id>/deselect', methods=['POST'])
+@require_role(['supervisor', 'ta'])
 def deselectLabel(label_id):
+    """
+    Remove label selected as teaching assistant.
+    """
     json_data = request.get_json()
 
     if not validate_json(json_data, ["user_id"]):
@@ -181,7 +193,11 @@ def deactivate_plugin(label_id, plugin_id):
 
 
 @apiBluePrint.route('/labels/<label_id>/selected', methods=['POST'])
+@require_role(['supervisor', 'ta'])
 def labelSelected(label_id):
+    """
+    Return a boolean for selected labels.
+    """
     json_data = request.get_json()
 
     if not validate_json(json_data, ["user_id"]):

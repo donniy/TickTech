@@ -7,7 +7,7 @@ db = database.db
 
 class Label(db.Model):
     """
-    Een Label.
+    A Label class which specifies the label model.
     """
 
     __tablename__ = 'label'
@@ -27,8 +27,9 @@ class Label(db.Model):
     @property
     def serialize(self):
         """
-        Zet de message om in json. Dit is alles wat de front-end kan zien,
-        dus zorg dat er geen gevoelige info in zit.
+        Transforms the object into a json object.
+        This will be used at the front-end, so dont include
+        sensitive information in the json object.
         """
         return {
             'label_id': self.label_id,
@@ -109,6 +110,10 @@ class Label(db.Model):
                 if info:
                     pls[p.display_name] = info
         return pls
+
+    def create(self, id, name):
+        self.label_id = id
+        self.label_name = name
 
 
 class LabelPlugin(db.Model):

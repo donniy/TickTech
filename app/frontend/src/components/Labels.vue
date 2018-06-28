@@ -1,4 +1,3 @@
-<!-- Labels.vue implements Label.vue and shows all labels of the current course. -->
 <template>
     <div>
         <h2 class="form-header center-display">labels in {{course.title}}</h2>

@@ -33,13 +33,13 @@ supervisor_linker = db.Table(
 
 class Course(db.Model):
     """
-    Een course.
+    A course class which specifies the course model.
     """
     id = db.Column(UUIDType(binary=False), primary_key=True)
     title = db.Column(db.String(255), unique=False, nullable=False)
     description = db.Column(db.Text, nullable=True)
 
-    # TODO: lengthe van deze data
+    # TODO: controle length of data
     course_email = db.Column(db.String(120), unique=False, nullable=True)
     mail_server_url = db.Column(db.String(120), unique=False, nullable=True)
     mail_port = db.Column(db.Integer, nullable=True)
@@ -56,12 +56,14 @@ class Course(db.Model):
 
     supervisors = db.relationship(
         "User", secondary=supervisor_linker, lazy='subquery',
-        backref=db.backref('supervisors', lazy=True))
+        backref=db.backref('supervisor_courses', lazy=True))
 
-    # Dit is een soort toString zoals in Java, voor het gebruiken van de
-    # database in de commandline. Op die manier kan je data maken en weergeven
-    # zonder formulier.
     def __repr__(self):
+        """
+        Function that will state how the object is
+        displayed when printed to the console.
+        Like a toString() method in Java.
+        """
         return '<Course {}>'.format(self.title)
 
     def get_plugin(self, plugin_id):
@@ -76,8 +78,9 @@ class Course(db.Model):
     @property
     def serialize(self):
         """
-        Zet dit course om in json. Dit is alles wat de frontend kan zien,
-        dus zorg dat er geen gevoelige info in zit.
+        Transforms the object into a json object.
+        This will be used at the front-end, so dont include
+        sensitive information in the json object.
         """
         return {
             'id': self.id,
@@ -96,6 +99,12 @@ class Course(db.Model):
         for now a ValueError().
         """
         pass
+
+    def create(self, id, name, desc, mail, url, port, password):
+        self.id = id
+        self.title = name
+        self.description = desc
+        self.course_email = mail
 
 
 class CoursePlugin(db.Model):

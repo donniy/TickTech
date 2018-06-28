@@ -27,7 +27,7 @@ const routerOptions = [
         meta: {
             breadcrumb: 'Course',
             pre: '/home',
-            auth: true
+            auth: ['supervisor', 'ta']
         },
     },
 
@@ -37,17 +37,17 @@ const routerOptions = [
         component: 'UserTickets',
         meta: {
             breadcrumb: 'User Tickets',
-            auth: true
+            auth: ['student']
         },
     },
     {
-        path: '/ticket/submit/',
-        name: 'SubmitTicket',
-        component: 'StudentForm',
+        path: '/ticket/submit',
+        name: 'StudentFormLoader',
+        component: 'StudentFormLoader',
         meta: {
             breadcrumb: 'Create Ticket',
             pre: '/home',
-            auth: true
+            auth: ['student']
         },
     },
     {
@@ -75,7 +75,7 @@ const routerOptions = [
         component: 'Login',
         meta: {
             breadcrumb: 'Login',
-            auth: false
+            auth: undefined
         },
     },
     {
@@ -93,7 +93,7 @@ const routerOptions = [
         component: 'Labels',
         meta: {
             breadcrumb: 'Course Labels',
-            auth: true
+            auth: ['supervisor', 'ta']
         },
     },
     {
@@ -103,7 +103,7 @@ const routerOptions = [
         meta: {
             breadcrumb: 'Student Ticket',
             pre: '/user/:user_id',
-            auth: true
+            auth: ['student']
         },
     },
     {
@@ -115,7 +115,7 @@ const routerOptions = [
         path: '*',
         component: 'NotFound',
         meta: {
-            auth: true
+            auth: undefined
         }
     }
 ]

@@ -7,20 +7,12 @@ from flaskr.config import Config
 db = SQLAlchemy()
 
 
-class DatabaseException(Exception):
-
-    def __init__(self, debug_message):
-        self.debug_message = debug_message
-
-
-class DatabaseInsertException(DatabaseException):
-
-    def __init__(self, debug_message):
-        super().__init__(debug_message)
-        self.response_message = ""
-
-
 def init_db():
+    """
+    Function that initializes the database.
+    Moslty just creating the database, but
+    if debugging, also populating the database.
+    """
     db.create_all()
     populate_database_dummy_data()
     addTicketStatus("Unassigned")
@@ -45,89 +37,173 @@ def json_list(l):
     return jsonify(json_list=serialize_list(l))
 
 
-# Use these functions if you want to add items to
-# to the database.
-def addItemSafelyToDB(item):
+def log_database_error(err, func=None):
     """
-    Add the item to the db by checking
-    if the item is valid. The error can be logged.
+    Function that logs the database error.
+    This functions prints the database error to stdout
+    and if a function is specified, the name of the functions
+    and the module where the function is found
+    will be printed to stdout.
+    __getframe is not used, because it is not
+    guaranteed to exist.
+    """
+    import sys
+    print("-" * 36 + "database" + "-" * 36)
+    print("Error when adding an item to the database")
+    print("The error is:")
+    print(err)
+    if func is not None:
+        print("The name of the caller is:")
+        print(func.__name__)
+        print("This function can be found in the module:")
+        print(func.__module__)
+    print("-" * 80)
+    print()
+
+
+def deleteSafelyFromDB(item, func=None):
+    """
+    Function that deletes an item safely from the db.
+    If the deletion gives an error, we rollback the session
+    and log the database error.
     """
     try:
-        db.session.add(item)
+        db.session.delete(item)
         db.session.commit()
     except Exception as err:
-        print("Logging database error: {0}".format(err))
+        log_database_error(err, func)
         db.session.rollback()
         return False
     return True
 
 
-# End functions for insertion for database.
+def commitSafelyToDB(func=None):
+    """
+    Function that commits the current database.
+    If an error is found we log the error
+    and the session will be rolled back,
+    so the commit has not taken place.
+    Returns True if the commit was succesful
+    False if not.
+    """
+    try:
+        db.session.commit()
+    except Exception as err:
+        log_database_error(err, func)
+        db.session.rollback()
+        return False
+    return True
+
+
+def addItemSafelyToDB(item, func=None):
+    """
+    Adds an item to the database.
+    If an error happened, we log the error and rollback
+    the session. On error we return True, else False.
+    """
+    try:
+        db.session.add(item)
+        db.session.commit()
+    except Exception as err:
+        log_database_error(err, func)
+        db.session.rollback()
+        return False
+    return True
+
 
 # These are from the InitDB sql file. Can insert dummy data here.
 def populate_database_dummy_data():
-    from flaskr.models import Course, user
+    """
+    This is a function that can be used to populate the database
+    with some dummy data. So only be used in debugging.
+    """
+    from flaskr.models import Course, user, Label
+
+    print("Inserting dummy data")
+
     items = []
-    course = Course.Course(id=uuid.uuid4(),
-                           course_email=Config.EMAIL_FETCH_EMAIL,
-                           mail_server_url="pop.gmail.com",
-                           mail_port="995",
-                           mail_password=Config.EMAIL_FETCH_PASSWORD,
-                           title="course 1",
-                           description="Test")
 
-    course2 = Course.Course(id=uuid.uuid4(),
-                            course_email="testie@test.com",
-                            title="course 2",
-                            description="Test")
+    user1 = user.User()
+    user1.create(12345678, "Erik", "erik@a.a", "1")
 
-    user1 = user.User(id=11111,
-                      name="Erik Kooijstra",
-                      email="Erik@kooijstra.nl")
+    user2 = user.User()
+    user2.create(87654321, "Kire", "kire@a.a", "1")
 
-    user2 = user.User(id=11112,
-                      name="Kire Kooijstra",
-                      email="Kire@kooijstra.nl")
+    user3 = user.User()
+    user3.create(10203040, "student1", "studend1@a.a", "1")
 
-    user3 = user.User(id=123123123,
-                      name="Test mctestie",
-                      email="test@test.nl")
+    user4 = user.User()
+    user4.create(50617080, "student2", "student2@a.a", "1")
 
-    user4 = user.User(id=10000,
-                      name="Supervisor",
-                      email="super@visor.nl")
+    user5 = user.User()
+    user5.create(50627080, "Test McTestie", "a@a.a", "1")
 
-    user5 = user.User(id=111111111,
-                      name="Test test",
-                      email="test@test.nl")
+    user6 = user.User()
+    user6.create(50637080, "EK", "b@b.b", "1")
 
-    # !IMPORTANT! This is for the mail server - ask stephan
-    mail_server = user.User(id=107584259,
-                            name="Mail server",
-                            email="uvapsetest@gmail.com")
+    user7 = user.User()
+    user7.create(10000, "Supervisor", "super@visor.nl", "1")
 
-    items = [user1, user2, user3, user5, mail_server, course, course2]
+    # !IMPORTANT! This is for the mail server - ask phtephan
+    mail_server = user.User()
+    mail_server.create(107584259, "Mail server", "uvapsetest@gmail.com", "1")
+
+    course1 = Course.Course()
+    course1.create(uuid.UUID('71d929a86b1311e8adc0fa7ae01bbebc'),
+                   "Project Software Engineering",
+                   "this is a test description",
+                   Config.EMAIL_FETCH_EMAIL,
+                   "pop.gmail.com", "955", Config.EMAIL_FETCH_PASSWORD)
+
+    course2 = Course.Course()
+    course2.create(uuid.UUID('51d929a86b1311e8adc0fa7ae01bbebc'),
+                   "Operating Systems",
+                   "this is a test description 2",
+                   "test@test.com", "", "", "")
+
+    course3 = Course.Course()
+    course3.create(uuid.UUID('31d929a86b1311e8adc0fa7ae01bbebc'),
+                   "Compiler Construction",
+                   "this is a test description 3",
+                   "test2@test.com", "", "", "")
+
+    label1 = Label.Label()
+    label1.create(uuid.UUID("fa1b7b20307e4250b59c6d0811315203"), "PSE FAQ")
+
+    items = [user1, user2, user3, user4, user5, user6, user7,
+             mail_server, course1, course2, course3, label1]
 
     for item in items:
-        addItemSafelyToDB(item)
+        addItemSafelyToDB(item, populate_database_dummy_data)
+        ("Inserted dummy objects")
 
     try:
-        course.supervisors.append(user4)
-        course2.supervisors.append(user4)
-        course.student_courses.append(user3)
-        course2.student_courses.append(user3)
-        course.student_courses.append(user5)
-        course2.student_courses.append(user5)
-        course.ta_courses.append(user1)
-        course2.ta_courses.append(user2)
-        course.ta_courses.append(user4)
-        course2.ta_courses.append(user4)
+        course1.ta_courses.append(user6)
+        course2.ta_courses.append(user6)
+        course1.ta_courses.append(user2)
+        course3.ta_courses.append(user2)
+        course1.ta_courses.append(user1)
+
+        course2.student_courses.append(user1)
+        course1.student_courses.append(user3)
+        course1.student_courses.append(user5)
+        course3.student_courses.append(user5)
+        course1.student_courses.append(user4)
+        course3.student_courses.append(user3)
+        course2.student_courses.append(user4)
+
+        course1.supervisors.append(user7)
+        course2.supervisors.append(user7)
+        course3.supervisors.append(user7)
+
+        course1.labels.append(label1)
+        user6.labels.append(label1)
+        db.session.commit()
+        print("Inserted dummy links")
+
     except Exception as exp:
         db.session.rollback()
-        print(exp)
-
-    print(course.student_courses)
-    print(course.ta_courses)
+        log_database_error(exp, populate_database_dummy_data)
 
 
 # Just for testing
@@ -136,7 +212,7 @@ def addTicketStatus(name="Needs help"):
     ts = ticket.TicketStatus()
     ts.name = name
     try:
-        addItemSafelyToDB(ts)
+        addItemSafelyToDB(ts, addTicketStatus)
     except Exception as e:
         print(e)
 
@@ -149,7 +225,7 @@ def addTicketLabel(ticked_id=uuid.uuid4(), course_id=uuid.uuid4(),
     tl.course_id = course_id
     tl.name = name
     try:
-        addItemSafelyToDB(tl)
+        addItemSafelyToDB(tl, addTicketLabel)
     except Exception as e:
         print(e)
 
@@ -167,8 +243,8 @@ def addTicket(user_id=1, email="test@email.com", course_id=uuid.uuid4(),
     t.status_id = 10000
     t.title = title
     t.timestamp = timestamp
-    t.label_id = 1
+    t.label_id = uuid.uuid4()
     try:
-        addItemSafelyToDB(t)
+        addItemSafelyToDB(t, addTicket)
     except DatabaseInsertException as exp:
         print(exp.response_message)

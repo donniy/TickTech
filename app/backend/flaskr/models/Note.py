@@ -8,7 +8,8 @@ db = database.db
 class Note(db.Model):
 
     """
-    Een notitie.
+    This is the class that specifies the model for the Note.
+    A note is a way of communicating between teaching assistants on a ticket.
     """
     id = db.Column(UUIDType(binary=False), primary_key=True)
 
@@ -28,10 +29,20 @@ class Note(db.Model):
     #                           backref=db.backref('notes',lazy=True))
 
     def __repr__(self):
+        """
+        Function that will state how the object is
+        displayed when printed to the console.
+        Like a toString() method in Java.
+        """
         return '<Note {}>'.format(self.id)
 
     @property
     def serialize(self):
+        """
+        Transforms the object into a json object.
+        This will be used at the front-end, so dont include
+        sensitive information in the json object.
+        """
         return {
             'id': self.id,
             # 'message_id': self.message_id,
@@ -40,12 +51,3 @@ class Note(db.Model):
             'text': self.text,
             'timestamp': self.timestamp
         }
-
-    @property
-    def checkValid(self):
-        """
-        Checks if an object is valid to insert into a database. So all
-        fields that should be set, are set. If a value is not set, throw
-        for now a ValueError().
-        """
-        pass

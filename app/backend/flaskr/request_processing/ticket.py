@@ -1,7 +1,8 @@
 from flaskr import database, Iresponse
 from flask import escape
 import uuid
-from flaskr.models.ticket import Ticket
+from flaskr.request_processing import levels
+from flaskr.models.ticket import Ticket, TicketStatus
 from flaskr.models.user import User
 from flaskr.models.Label import Label
 from flaskr.models.Message import Message
@@ -11,6 +12,9 @@ from datetime import datetime
 
 # TODO: CHECK IF JSON IS VALID.
 def create_request(json_data):
+    """
+    Function that handles the create request for a ticket.
+    """
     name = escape(json_data["name"])
     name = name  # flake8
     studentid = escape(json_data["studentid"])
@@ -31,11 +35,9 @@ def create_request(json_data):
         bound_tas = get_label_tas(label, studentid)
 
     if len(bound_tas) < 1:
-        status_id = 1
+        status_id = TicketStatus.unassigned
     else:
-        status_id = 3
-
-    print(status_id)
+        status_id = TicketStatus.waiting_for_help
 
     ticket = Ticket(id=uuid.uuid4(), user_id=studentid, course_id=courseid,
                     status_id=status_id, title=subject, email=email,
@@ -43,6 +45,8 @@ def create_request(json_data):
 
     for ta in bound_tas:
         ticket.bound_tas.append(ta)
+        level_up = levels.add_experience(levels.EXP_FOR_ASSING, ta.id)
+        levels.notify_level_change(ta.id, ticket, level_up)
 
     if not database.addItemSafelyToDB(ticket):
         return Iresponse.internal_server_error()
@@ -70,33 +74,25 @@ def create_request(json_data):
 
 # TODO: Should check is the json_data is valid.
 def add_ta_to_ticket(json_data):
-    print("CALLED this")
     ticket = Ticket.query.filter_by(
         id=uuid.UUID(json_data['ticketid'])).first()
     ta = User.query.filter_by(id=json_data['taid']).first()
+
+    if ticket.status_id != TicketStatus.receiving_help:
+        ticket.status_id = TicketStatus.receiving_help
+        database.db.session.commit()
 
     # Check if the ta and ticket were found and add if not already there.
     if ticket and ta:
         if ta not in ticket.bound_tas:
             ticket.bound_tas.append(ta)
-        return Iresponse.create_response("Success", 200)
+            level_up = levels.add_experience(levels.EXP_FOR_ASSING, ta.id)
+            levels.notify_level_change(ta.id, ticket, level_up)
+            return Iresponse.create_response({'ta': ta.serialize,
+                                             'status': "Assigned"},
+                                             200)
+        return Iresponse.create_response({'status': "OK"}, 201)
     return Iresponse.create_response("Failure", 400)
-
-
-# TODO: CHECK IF JSON IS VALID.
-def add_ta_list_to_ticket(json_data):
-    ticket = Ticket.get(uuid.UUID(json_data['ticketid']))
-    ta_list = list()
-
-    # Retrieve all users and add them to a list.
-    for taid in json_data['taids']:
-        ta_list.append(User.get(taid))
-
-    if ticket and len(ta_list) > 0 and None not in ta_list:
-        for ta in ta_list:
-            ticket.bound_tas.append(ta)
-        return Iresponse.create_response("Success", 200)
-    return Iresponse.create_response("No TAs found", 400)
 
 
 # TODO: CHECK IF JSON IS VALID.
@@ -106,7 +102,6 @@ def remove_ta_from_ticket(json_data):
 
     if ticket and ta:
         if ta in ticket.bound_tas:
-            print("found ta in ticket")
             ticket.bound_tas.remove(ta)
             return Iresponse.create_response("Success", 200)
     return Iresponse.create_response("Failure", 400)
@@ -115,6 +110,12 @@ def remove_ta_from_ticket(json_data):
 def get_label_tas(label, user_id):
     if label:
         tas_by_label = label.get_tas(user_id)
-        print(tas_by_label)
         return tas_by_label
     return None
+
+
+def close_ticket(ticket):
+    if ticket:
+        ticket.status_id = TicketStatus.closed
+        database.db.session.commit()
+        return "Closed"

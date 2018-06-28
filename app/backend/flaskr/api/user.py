@@ -1,21 +1,23 @@
-from flaskr.models.ticket import *
+from flaskr.models.ticket import Ticket, TicketStatus
 from . import apiBluePrint
 from flask_jwt_extended import jwt_required
 from flaskr.jwt_wrapper import get_current_user
-from flaskr import Iresponse
-from flask import request
-from flaskr.models.user import *
-from flaskr.utils.json_validation import *
-from flaskr.request_processing.user import *
-from sqlalchemy import and_
+from flaskr import Iresponse, database
+from flask import request, escape
+from flaskr.models.user import User
+from flaskr.request_processing.user import validate_userdata
+from flaskr.utils.json_validation import validate_json
+from flaskr.auth import require_role
+import bcrypt
 
 
 @apiBluePrint.route('/user/tickets')
 @jwt_required
 def retrieve_user_tickets():
     """
-    Geeft alle ticktes van gegeven user.
+    Returns all the tickets of the user.
     """
+
     curr_user = get_current_user()
     tickets = Ticket.query.filter_by(user_id=curr_user.id).all()
     return Iresponse.create_response(database.serialize_list(tickets), 200)
@@ -24,6 +26,10 @@ def retrieve_user_tickets():
 @apiBluePrint.route('/user/tickets/course/<course_id>', methods=['GET'])
 @jwt_required
 def get_user_ticket_for_course(course_id):
+    """
+    Function that gets all the tickets of a user in the course with
+    id: <course_id>
+    """
     curr_user = get_current_user()
     tickets = Ticket.query.filter(Ticket.user_id == curr_user.id,
                                   Ticket.course_id == course_id).all()
@@ -34,14 +40,46 @@ def get_user_ticket_for_course(course_id):
 @jwt_required
 def retrieve_active_user_tickets(user_id):
     """
-    Geeft alle ticktes van gegeven user.
+    Gets all the active tickets of a user with id: <user_id>
     """
     # TODO: Controleer of degene die hierheen request permissies heeft.
     current_identity = get_current_user()
     user_id = current_identity.id
-    tickets = Ticket.query.filter(Ticket.user_id == user_id,
-                                  Ticket.status_id != 2).all()
+    tickets = Ticket.query.filter(
+        Ticket.user_id == user_id,
+        Ticket.status_id != TicketStatus.closed).all()
     return Iresponse.create_response(database.serialize_list(tickets), 200)
+
+
+@apiBluePrint.route('/user/getlevels', methods=["GET"])
+@jwt_required
+def retrieve_user_leveldata():
+    """
+    Geeft level en xp van ingelogde user.
+    """
+    # TODO: Controleer of degene die hierheen request permissies heeft.
+    current_identity = get_current_user()
+    user_id = current_identity.id
+    user = User.query.get(user_id)
+    response = {}
+    response['level'] = level = user.level
+    response['experience'] = user.experience
+    return Iresponse.create_response(response, 200)
+
+
+@apiBluePrint.route('/user/getsinglelevel/<user_id>', methods=["GET"])
+@jwt_required
+def retrieve_single_userlevel(user_id):
+    """
+    Geeft level van gegeven user.
+    """
+    # TODO: Controleer of degene die hierheen request permissies heeft.
+    user = User.query.get(user_id)
+    if user:
+        response = {}
+        response['level'] = level = user.level
+        return Iresponse.create_response(response, 200)
+    return Iresponse.create_response("", 400)
 
 
 @apiBluePrint.route('/user/notifications', methods=["GET"])
@@ -49,12 +87,20 @@ def retrieve_active_user_tickets(user_id):
 def unread_messages():
     """
     Retrieve all unread messages of this user.
+    If in the url the param course_id is specified
+    only the unread messages with a course_id matching
+    the specified course_id will be returned.
     """
+    specified_course = request.args.get('course_id')
     current_identity = get_current_user()
     tmp = {}
     unread = current_identity.unread
     for msg in unread:
         if str(msg.ticket_id) not in tmp:
+            if specified_course is not None:
+                tick = Ticket.query.filter_by(id=msg.ticket_id).first()
+                if str(tick.course_id) != str(specified_course):
+                    continue
             ticket_id = str(msg.ticket_id)
             tmp[ticket_id] = {'ticket': msg.ticket.serialize, 'n': 0}
             if current_identity in msg.ticket.bound_tas:
@@ -62,14 +108,14 @@ def unread_messages():
             else:
                 tmp[ticket_id]['ta'] = False
         tmp[ticket_id]['n'] += 1
-
     return Iresponse.create_response(tmp, 200)
 
 
 @apiBluePrint.route('/user/register', methods=["POST"])
 def register_user():
-    ''' Expects a request with email, name, id and password (and confirmed)
-        and enters new user into database.
+    '''
+    Expects a request with email, name, id and password (and confirmed)
+    and enters new user into database.
     '''
 
     json_data = request.get_json()
@@ -81,38 +127,46 @@ def register_user():
 
     email = escape(json_data["email"])
     name = escape(json_data["name"])
-    studentid = escape(json_data["studentid"])
+    studentid = int(escape(json_data["studentid"]))
     password = escape(json_data["password"])
     repassword = escape(json_data["password_confirmation"])
 
-    if not validate_userdata(email, name, studentid, password, repassword):
-        return Iresponse.empty_json_request()
+    validated = validate_userdata(email, name, studentid, password, repassword)
+    if validated != '':
+        return Iresponse.create_response({"status": validated}, 200)
 
     # Backend check if email/studentid already exists
     user = User.query.filter_by(email=email).first()
     if user:
-        return Iresponse.create_response({"status": False}, 200)
+        return Iresponse.create_response({"status": "Email is taken"}, 200)
 
     studentid = json_data["studentid"]
     user = User.query.filter_by(id=studentid).first()
 
     if user:
-        return Iresponse.create_response({"status": False}, 200)
+        return Iresponse.create_response({"status": "Studentid taken"}, 200)
 
     new_user = User()
+    salt = bcrypt.gensalt()
+    hashedpsw = bcrypt.hashpw(password.encode('utf-8'), salt)
+    new_user.password = hashedpsw
     new_user.id = studentid
     new_user.name = name
     new_user.email = email
+    new_user.level = 1
+    new_user.experience = 1
 
     if not database.addItemSafelyToDB(new_user):
         return Iresponse.internal_server_error()
 
-    return Iresponse.create_response("", 201)
+    return Iresponse.create_response({"status": "OK"}, 201)
 
 
 @apiBluePrint.route('/user/exists', methods=["POST"])
 def user_exists():
-
+    """
+    Function that checks if a user email already exists.
+    """
     json_data = request.get_json()
     if not validate_json(json_data, ["email"]):
         return Iresponse.empty_json_request()
@@ -127,7 +181,9 @@ def user_exists():
 
 @apiBluePrint.route('/user/idexists', methods=["POST"])
 def userid_exists():
-
+    """
+    Function that checks if the id of a user already exists.
+    """
     json_data = request.get_json()
     if not validate_json(json_data, ["studentid"]):
         return Iresponse.empty_json_request()
@@ -141,8 +197,11 @@ def userid_exists():
 
 
 @apiBluePrint.route('/user/student_courses', methods=['GET'])
-@jwt_required
+@require_role(['student'])
 def get_courses_user_is_student_in():
+    """
+    Retrieve the courses where user is a student.
+    """
     curr_user = get_current_user()
     if curr_user is None:
         return Iresponse.create_response("", 404)
@@ -151,8 +210,11 @@ def get_courses_user_is_student_in():
 
 
 @apiBluePrint.route('/user/teachingAssistant_courses', methods=['GET'])
-@jwt_required
+@require_role(['ta'])
 def get_courses_user_is_ta_in():
+    """
+    Retrieve the courses where user is a teaching assistant.
+    """
     curr_user = get_current_user()
     if curr_user is None:
         return Iresponse.create_response("", 404)
@@ -163,6 +225,9 @@ def get_courses_user_is_ta_in():
 @apiBluePrint.route('/user/<int:user_id>')
 @jwt_required
 def get_user(user_id):
+    """
+    Retrieve user credentials.
+    """
     user = get_current_user()
     if user is None:
         return Iresponse.create_response("", 404)

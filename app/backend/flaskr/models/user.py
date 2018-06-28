@@ -1,5 +1,6 @@
 from flaskr import database, sockets
 from sqlalchemy_utils import UUIDType
+import bcrypt
 
 db = database.db
 socketio = sockets.get_socketio()
@@ -13,39 +14,38 @@ association_table = db.Table('association', db.Model.metadata,
 
 class User(db.Model):
     """
-    Een user.
+    A user class that specifies the user model.
     """
     __tablename__ = "user"
     id = db.Column(db.Integer, nullable=False, primary_key=True)  # student ID
     name = db.Column(db.String(120), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=False, nullable=True)
+    password = db.Column(db.String(120), unique=False, nullable=False)
     labels = db.relationship("Label", secondary=association_table,
                              backref="users")
+    experience = db.Column(db.Integer, nullable=False, default=1)
+    level = db.Column(db.Integer, nullable=False, default=1)
 
-    # Dit is een soort toString zoals in Java, voor het gebruiken van de
-    # database in de commandline. Op die manier kan je data maken en weergeven
-    # zonder formulier.
     def __repr__(self):
+        """
+        Function that will state how the object is
+        displayed when printed to the console.
+        Like a toString() method in Java.
+        """
         return '<User {}>'.format(self.name)
 
     @property
     def serialize(self):
         """
-        Zet de user om in json. Dit is alles wat de frontend kan zien,
-        dus zorg dat er geen gevoelige info in zit.
+        Transforms the object into a json object.
+        This will be used at the front-end, so dont include
+        sensitive information in the json object.
         """
         return {
             'name': self.name,
             'id': self.id,
             'email': self.email,
         }
-
-    @property
-    def checkValid(self):
-        """
-        Niet nodig.
-        """
-        pass
 
     def notify(self, notification):
         """
@@ -75,3 +75,16 @@ class User(db.Model):
                 self.unread.remove(message)
         db.session.add(self)
         db.session.commit()
+
+    def create(self, id, name, email, password):
+        """
+        Creates a user.
+        """
+        self.id = id
+        self.name = name
+        self.email = email
+        salt = bcrypt.gensalt()
+        hashedpsw = bcrypt.hashpw(password.encode('utf-8'), salt)
+        self.password = hashedpsw
+        self.level = 0
+        self.experience = 0

@@ -1,11 +1,12 @@
-<!-- Team.vue shows the amazing team of TIKTECH and their roles. -->
 <template>
     <div>
+
         <!-- Teampage -->
         <section id="team" style="padding:50px !important;">
             <div class="col-12 text-center">
                 <h3 class="section-heading text-uppercase">The people behind Tiktech:</h3>
                 <hr>
+
             </div>
             <div class="row text-center">
                 <div class="col-md-4">
@@ -46,7 +47,7 @@
                 </div>
                 <div class="col-md-4">
                     <h4 class="service-heading">Andrea</h4>
-                    <p class="text-muted">Gender diversity administrator and grammar lover</p>
+                    <p class="text-muted">Making homepages even greater and mail parsing</p>
                 </div>
             </div>
             <div class="row text-center">
@@ -67,7 +68,7 @@
                 <router-link to="/" :class="'button text-uppercase scroll-button btn-arrow'">
                     <span>Back to home
                         <svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                            viewBox="-1 0 36.1 27.8" enable-background="new 0 0 36.1 25.8" xml:space="preserve">
+                         viewBox="-1 0 36.1 27.8" enable-background="new 0 0 36.1 25.8" xml:space="preserve">
                             <g>
                                 <line fill="none" stroke="#FFFFFF" stroke-width="3" stroke-miterlimit="10" x1="0" y1="12.9" x2="34" y2="12.9">
                                 </line>
