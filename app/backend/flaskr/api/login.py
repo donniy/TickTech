@@ -39,12 +39,22 @@ def retrieve_user():
     Returns the user model of the current user.
     """
     current_identity = get_current_user()
-    student, ta, usr = {}, {}, {}
+    student, ta, supv, usr = {}, {}, {}, {}
     student = database.serialize_list(current_identity.student_courses)
     ta = database.serialize_list(current_identity.ta_courses)
-    supervisor = database.serialize_list(current_identity.supervisor_courses)
+    supv = database.serialize_list(current_identity.supervisor_courses)
+
     usr = current_identity.serialize
     usr['student'] = student
     usr['ta'] = ta
-    usr['supervisor'] = supervisor
+    usr['supervisor'] = supv
+    usr['roles'] = []
+
+    if len(usr['student']) >= 1:
+        usr['roles'].append('student')
+    if len(usr['ta']) >= 1:
+        usr['roles'].append('ta')
+    if len(usr['supervisor']) >= 1:
+        usr['roles'].append('supervisor')
+
     return Iresponse.create_response({'user': usr}, 200)

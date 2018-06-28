@@ -21,6 +21,8 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=False, nullable=True)
     labels = db.relationship("Label", secondary=association_table,
                              backref="users")
+    experience = db.Column(db.Integer, nullable=False, default=1)
+    level = db.Column(db.Integer, nullable=False, default=1)
 
     def __repr__(self):
         """

@@ -14,12 +14,15 @@ from flaskr.request_processing import file as rp_file
 from flaskr import Iresponse
 from flaskr.utils import notifications
 from flask_mail import Mail
-from mail.Message import create_email_message
+from mail.Message import createEmailMessage
 from flaskr.utils import course_validation, json_validation, ocr
 from os.path import expanduser
 import base64
 import mimetypes
 from flaskr import database
+from threading import Thread
+from flask import current_app
+from flaskr.auth import require_role
 
 
 @apiBluePrint.route('/ticket/<ticket_id>/close', methods=['POST', 'PATCH'])
@@ -59,7 +62,7 @@ def retrieve_single_ticket(ticket_id):
 
 
 @apiBluePrint.route('/ticket/<ticket_id>/plugins', methods=['GET'])
-@jwt_required
+@require_role(['ta', 'supervisor'])
 def retrieve_plugins(ticket_id):
     """
     List the plugins available for this ticket.
@@ -94,13 +97,22 @@ def create_message(ticket_id):
     user = User.query.get(userId)
 
     if(ticket.user_id != user.id):
-        message = create_email_message(ticket.title,
-                                       [ticket.email], ticket_id,
-                                       json_data['message'], user.name)
+        message = createEmailMessage(ticket.title,
+                                     [ticket.email], ticket_id,
+                                     json_data['message'], user.name)
         if current_app.config['SEND_MAIL_ON_MESSAGE']:
-            res = Mail().send(message)
-            res = res  # for flake8
+            print("send email")
+            app = current_app._get_current_object()
+            thr = Thread(target=send_async_email, args=[message, app])
+            thr.start()
     return msg
+
+
+def send_async_email(message, app):
+    with app.app_context():
+        print("SENDED EMAIL")
+        res = Mail().send(message)
+        print(res)
 
 
 @apiBluePrint.route('/ticket/<ticket_id>/messages', methods=['GET'])
@@ -116,7 +128,7 @@ def get_ticket_messages(ticket_id):
 
 
 @apiBluePrint.route('ticket/addta', methods=['POST'])
-@jwt_required
+@require_role(['ta', 'supervisor'])
 def add_ta_to_ticket():
     """
     Assign teaching assistant to ticket.
@@ -129,7 +141,7 @@ def add_ta_to_ticket():
 
 
 @apiBluePrint.route('ticket/removeta', methods=['POST'])
-@jwt_required
+@require_role(['ta', 'supervisor'])
 def remove_ta_from_ticket():
     """
     Unassign teaching assistant from ticket.
@@ -142,7 +154,7 @@ def remove_ta_from_ticket():
 
 
 @apiBluePrint.route('/ticket/submit', methods=['POST'])
-@jwt_required
+@require_role(['student'])
 def create_ticket():
     """
     Check ticket submission and add to database.
@@ -229,7 +241,7 @@ def download_file():
         fileType, fileEncoding = mimetypes.guess_type(full_path)
 
         if folder and file:
-            fp = open(folder+'/'+file, 'br').read()
+            fp = open(folder + '/' + file, 'br').read()
             encoded = base64.b64encode(fp).decode("utf-8")
             return Iresponse.create_response({'encstring': str(encoded),
                                              'mimetype': fileType}, 200)

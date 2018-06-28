@@ -7,6 +7,7 @@ from flask import request, escape
 from flaskr.models.user import User
 from flaskr.request_processing.user import validate_userdata
 from flaskr.utils.json_validation import validate_json
+from flaskr.auth import require_role
 
 
 @apiBluePrint.route('/user/tickets')
@@ -15,6 +16,7 @@ def retrieve_user_tickets():
     """
     Returns all the tickets of the user.
     """
+
     curr_user = get_current_user()
     tickets = Ticket.query.filter_by(user_id=curr_user.id).all()
     return Iresponse.create_response(database.serialize_list(tickets), 200)
@@ -45,6 +47,37 @@ def retrieve_active_user_tickets(user_id):
     tickets = Ticket.query.filter(Ticket.user_id == user_id,
                                   Ticket.status_id != 2).all()
     return Iresponse.create_response(database.serialize_list(tickets), 200)
+
+
+@apiBluePrint.route('/user/getlevels', methods=["GET"])
+@jwt_required
+def retrieve_user_leveldata():
+    """
+    Geeft level en xp van ingelogde user.
+    """
+    # TODO: Controleer of degene die hierheen request permissies heeft.
+    current_identity = get_current_user()
+    user_id = current_identity.id
+    user = User.query.get(user_id)
+    response = {}
+    response['level'] = level = user.level
+    response['experience'] = user.experience
+    return Iresponse.create_response(response, 200)
+
+
+@apiBluePrint.route('/user/getsinglelevel/<user_id>', methods=["GET"])
+@jwt_required
+def retrieve_single_userlevel(user_id):
+    """
+    Geeft level van gegeven user.
+    """
+    # TODO: Controleer of degene die hierheen request permissies heeft.
+    user = User.query.get(user_id)
+    if user:
+        response = {}
+        response['level'] = level = user.level
+        return Iresponse.create_response(response, 200)
+    return Iresponse.create_response("", 400)
 
 
 @apiBluePrint.route('/user/notifications', methods=["GET"])
@@ -156,7 +189,7 @@ def userid_exists():
 
 
 @apiBluePrint.route('/user/student_courses', methods=['GET'])
-@jwt_required
+@require_role(['student'])
 def get_courses_user_is_student_in():
     """
     Retrieve the courses where user is a student.
@@ -169,7 +202,7 @@ def get_courses_user_is_student_in():
 
 
 @apiBluePrint.route('/user/teachingAssistant_courses', methods=['GET'])
-@jwt_required
+@require_role(['ta'])
 def get_courses_user_is_ta_in():
     """
     Retrieve the courses where user is a teaching assistant.

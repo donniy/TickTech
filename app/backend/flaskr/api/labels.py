@@ -1,14 +1,17 @@
 from . import apiBluePrint
 from flaskr import database, Iresponse
+from flask_jwt_extended import jwt_required
 from flask import request
 from flaskr.models.Label import Label
 from flaskr.models.Course import Course
 from flaskr.models.user import User
 from flaskr.utils.json_validation import validate_json
+from flaskr.auth import require_role
 import uuid
 
 
 @apiBluePrint.route('/labels/<label_id>/close', methods=['POST'])
+@require_role(['supervisor', 'ta'])
 def remove_label(label_id):
     """
     Function that removes a label.
@@ -25,6 +28,7 @@ def remove_label(label_id):
 
 
 @apiBluePrint.route('/labels/<course_id>', methods=['GET'])
+@jwt_required
 def retrieve_labels(course_id):
     """
     Returns all labels of given course.
@@ -38,6 +42,7 @@ def retrieve_labels(course_id):
 
 
 @apiBluePrint.route('/labels/<course_id>', methods=['POST'])
+@require_role(['supervisor', 'ta'])
 def create_labels(course_id):
     """
     Adds a label to a course.
@@ -69,6 +74,7 @@ def create_labels(course_id):
 
 
 @apiBluePrint.route('/labels/<label_id>/select', methods=['POST'])
+@require_role(['supervisor', 'ta'])
 def selectLabel(label_id):
     """
     Select a label as teaching assistant to get notifications when new tickets
@@ -89,6 +95,7 @@ def selectLabel(label_id):
 
 
 @apiBluePrint.route('/labels/<label_id>/deselect', methods=['POST'])
+@require_role(['supervisor', 'ta'])
 def deselectLabel(label_id):
     """
     Remove label selected as teaching assistant.
@@ -108,6 +115,7 @@ def deselectLabel(label_id):
 
 
 @apiBluePrint.route('/labels/<label_id>/selected', methods=['POST'])
+@require_role(['supervisor', 'ta'])
 def labelSelected(label_id):
     """
     Return a boolean for selected labels.
