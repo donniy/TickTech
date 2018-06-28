@@ -80,6 +80,10 @@
             };
         },
         methods: {
+
+            /*
+             * Check if all fields are not empty and if they are valid.
+             */
             checkForm: function () {
                 this.error.text = ''
                 if (this.form.password == "") this.error.text = ("Password required.");
@@ -101,6 +105,10 @@
                 }
                 return true
             },
+
+            /*
+             * Setup new email server with new email settings.
+             */
             newEmailSettings() {
                 this.error.show = false
                 this.error.text = ''
@@ -118,6 +126,10 @@
                 }
                 console.log("emitted")
             },
+
+            /*
+             * Stop email server. 
+             */ 
             stopThread() {
                 const path = '/api/email/stop'
                 this.$ajax.post(path, this.form, response => {

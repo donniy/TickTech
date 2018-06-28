@@ -75,6 +75,9 @@ import Router from 'vue-router';
                 )
             }
         },
+        /*
+         * Redirect user if user is not logged in.
+         */
         mounted() {
             window.$rederict_to_ticket = this.$route.query.redirect
             console.log(window.$rederict_to_ticket)
