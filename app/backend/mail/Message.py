@@ -75,3 +75,28 @@ def replyErrorEmail(title, recipients, ticketid, body):
         'Your original e-mail:' + body + '</body>'
         )
     return message
+
+
+def changePassword(recipients, linkid):
+    '''
+    #TODO:
+    '''
+    message = Message(
+        subject="Change password",
+                recipients=recipients)
+    message.html = (
+        '<body style="margin: 0; padding: 0;">' +
+        '<table border="1" cellpadding="0" cellspacing="0" width="100%">' +
+        '<td>' +
+        '<tr>' +
+        'With this link you can reset your password for the next' +
+        ' 2 hours. Please do not share it with others.<br /><br />' +
+        'Please reset your password with the follow link: ' +
+        '<a href="http://localhost:5000/resetpassword?code=' +
+        linkid + '">reset password</a>' +
+        '</td>' +
+        '</tr>' +
+        '</table>' +
+        '<p>&copy; 2018 Tiktech<p>' +
+        '</body>')
+    return message

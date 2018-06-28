@@ -1,15 +1,18 @@
 <template>
-<div>
-    <div id="loading-icon" class="loading">
-        <md-progress-spinner class="md-accent" md-mode="indeterminate"></md-progress-spinner>
-    </div>
-    <div class="md-layout md-gutter">
+<div v-if="$auth.ready()">
+	<div id="loading-icon" class="loading">
+		<md-progress-spinner class="md-accent" md-mode="indeterminate"></md-progress-spinner>
+	</div>
+	<div class="md-layout md-gutter">
 
 		<div class="md-layout-item md-size-70 md-small-size-60">
 			<div class="md-gutter">
-				<div class="md-size-20">
+				<div v-if="$auth.check('ta') || $auth.check('supervisor')" class="md-size-20">
 					<router-link :to="'/course/' + ticket.course_id " class="btn btn-primary">&laquo; Back to course</router-link>
 				</div>
+                <div v-else class="md-size-20">
+                    <div @click="$router.go(-1)" class="btn btn-primary">&laquo; Back</div>
+                </div>
 				<div class="md-size-80 center-display">
 					<h3 class="">Ticket info</h3>
 				</div>
@@ -26,16 +29,16 @@
 				<md-card-content class="md-layout-item md-size-100">
 					<div>
 			            <md-speed-dial md-event="click" class="close-button" md-direction="bottom">
-			                <md-speed-dial-target>
+			                <md-speed-dial-target class="important-red">
 			                    <md-icon class="md-morph-initial">more_vert</md-icon>
 			                    <md-icon class="md-morph-final">close</md-icon>
 			                </md-speed-dial-target>
 			                <md-speed-dial-content>
-			                    <md-button class="md-icon-button md-raised md-accent" @click="showModal = true">
+			                    <md-button class="important-red md-icon-button md-raised md-accent" @click="showModal = true">
 			                        <md-icon>lock</md-icon>
 			                        <md-tooltip md-direction="left">Close ticket</md-tooltip>
 			                    </md-button>
-			                    <md-button class="md-icon-button md-raised md-accent" @click="">
+			                    <md-button class="important-red md-icon-button md-raised md-accent" @click="">
 			                        <md-icon>delete</md-icon>
 			                        <md-tooltip md-direction="left">Delete ticket</md-tooltip>
 			                    </md-button>
@@ -67,7 +70,7 @@
             <md-card class="md-layout-item message-container">
                 <div>
                     <md-card-content>
-                        <message v-bind:user="{id: user_id}" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
+                        <message v-bind:user="{id: user_id}" v-bind:tas="{course_tas}" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
                     </md-card-content>
                 </div>
             </md-card>
@@ -125,10 +128,10 @@
                     {{value.value}}
                 </md-list-item>
             </template>
+                        <md-divider v-if="index != Object.keys(plugins).length - 1" />
 				</md-list>
 			</md-content>
 		</div>
-
 	</div>
 </div>
 </template>
@@ -183,6 +186,9 @@ export default {
         }
     },
     methods: {
+        /*
+         * Get all information from a specific ticket.
+         */
         getTicket() {
             const path = '/api/ticket/' + this.$route.params.ticket_id
             this.$ajax.get(path)
@@ -194,12 +200,18 @@ export default {
                     this.$router.go(-1)
                 })
         },
+        /*
+         * Get all plugins attached to the ticket.
+         */
         getPlugins() {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/plugins'
             this.$ajax.get(path, response => {
                 this.plugins = response.data.json_data
             })
         },
+        /*
+         * Load all messages between TA and student in the ticket.
+         */
         getMessages() {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
             this.$ajax.get(path)
@@ -210,6 +222,9 @@ export default {
                     console.log(error)
                 })
         },
+        /*
+         * Get all notes attached to a ticket.
+         */
         getNotes() {
             //get all notes
             this.$ajax.get('/api/notes/' + this.$route.params.ticket_id)
@@ -221,6 +236,9 @@ export default {
                     console.log(err)
                 })
         },
+        /*
+         * Send reply in to the database.
+         */
         sendReply() {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
             let reply = this.reply
@@ -241,6 +259,9 @@ export default {
                 })
             }
         },
+        /*
+         * Close the ticket if the question has been answered by a TA.
+         */
         closeTicket() {
             this.showModal = false
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/close'
@@ -251,6 +272,9 @@ export default {
                 })
 
         },
+        /*
+         * Create a downloadable link. Retrieve location from the database and create a link to download the file.
+         */
         downloadFile(key, name){
 
             const path = '/api/ticket/filedownload'
@@ -308,6 +332,9 @@ export default {
                 window.alert("Whoops! We were unable to read anything useful here...")
             })
         },
+        /*
+         * Add note to database and display it in the ticket page.
+         */
         addNote() {
             if (this.noteTextArea.length > 0) {
                 console.log(this.noteTextArea)
@@ -327,16 +354,6 @@ export default {
                         console.log(error)
                     })
             }
-
-            this.$ajax.post(path, noteData)
-                .then(response => {
-                    this.noteTextArea = ""
-                    this.$refs.popoverRef.$emit('close')
-                    this.notes.push(response.data.json_data)
-                })
-                .catch(error => {
-                    console.log(error)
-                })
         },
         /* Get the ta's in this course. Will add all the ta's to the
          * course_tas array.
@@ -380,6 +397,9 @@ export default {
             console.log("found", e)
             this.noteTextArea = matchedValue
         },
+        /*
+         * If a TA is mentioned by another TA this TA is also bound to the ticket.
+         */
         bind_ta_to_ticket(ticketid, taid) {
             const path = '/api/ticket/addta'
             this.$ajax.post(path, { 'ticketid': ticketid, 'taid': taid })
@@ -389,7 +409,7 @@ export default {
 						this.ticket.tas.push(response.data.json_data['ta'])
 						this.ticket.status.name = response.data.json_data['status']
 					} else {
-						this.ticket.status.name = "Assigned"
+						this.ticket.status.name = "Receiving help"
 					}
                 }).catch(error => {
                     console.log(error)

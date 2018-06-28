@@ -36,7 +36,9 @@ export default {
         }
     },
     methods: {
-        // Add error to form and maybe check size.
+        /*
+         * Attaches a file and checks if it is a .csv filetype.
+         */
         attachFile(e) {
             const file = this.$refs.student_file.files[0]
             console.log(file)
@@ -48,7 +50,10 @@ export default {
             this.file = file;
 
         },
-
+        
+        /* 
+         * Submits attached .csv file and sends it to the backend. 
+         */
         submitFile() {
             if (this.file === null)
                 return;
@@ -65,6 +70,10 @@ export default {
                 this.resetFileName()
             })
         },
+
+        /*
+         * Resets filename to 'uploaded'.
+         */
         resetFileName() {
             document.getElementById('students_file').value = "Uploaded";
         }

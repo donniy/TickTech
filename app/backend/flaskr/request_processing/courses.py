@@ -9,7 +9,7 @@ from flaskr.auth import require_ta_rights_in_course
 
 def create_request(jsonData):
     """
-    Function that handles the create request from a course.
+    Function that handles the create request for a course.
     """
     mail = escape(jsonData['mail'])
     title = escape(jsonData['title'])

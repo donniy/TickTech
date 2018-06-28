@@ -30,7 +30,26 @@ const routerOptions = [
             auth: ['supervisor', 'ta']
         },
     },
-
+    {
+        path: '/resetpassword',
+        name: 'ResetPassword',
+        component: 'ResetPassword',
+        meta: {
+            breadcrumb: 'Reset',
+            pre: '/login',
+            auth: false
+        },
+    },
+    {
+        path: '/forgotpassword',
+        name: 'ForgotPassword',
+        component: 'ForgotPassword',
+        meta: {
+            breadcrumb: 'Forgot password',
+            pre: '/login',
+            auth: false
+        },
+    },
     {
         path: '/user/tickets',
         name: 'UserTickets',
@@ -57,7 +76,7 @@ const routerOptions = [
         meta: {
             breadcrumb: 'Ticket',
             pre: '/course/:course_id',
-            auth: true
+            auth: ['ta', 'supervisor'],
         },
     },
     {
