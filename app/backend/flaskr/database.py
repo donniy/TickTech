@@ -119,6 +119,7 @@ def populate_database_dummy_data():
     """
     from flaskr.models import Course, user
     items = []
+    psw = b'$2b$12$1Y21IaNbwu357bI4ipaZO.GVvzouAEvnrAy80TGCBRtX5q8OUlIr2'
     course = Course.Course(id=uuid.uuid4(),
                            course_email=Config.EMAIL_FETCH_EMAIL,
                            mail_server_url="pop.gmail.com",
@@ -134,28 +135,34 @@ def populate_database_dummy_data():
 
     user1 = user.User(id=11111,
                       name="Erik Kooijstra",
-                      email="Erik@kooijstra.nl")
+                      email="a@a.a",
+                      password=psw)
 
     user2 = user.User(id=11112,
                       name="Kire Kooijstra",
-                      email="Kire@kooijstra.nl")
+                      email="Kire@kooijstra.nl",
+                      password=psw)
 
     user3 = user.User(id=123123123,
                       name="Test mctestie",
-                      email="test@test.nl")
+                      email="b@b.b",
+                      password=psw)
 
     user4 = user.User(id=10000,
                       name="Supervisor",
-                      email="super@visor.nl")
+                      email="super@visor.nl",
+                      password=psw)
 
     user5 = user.User(id=111111111,
                       name="Test test",
-                      email="test@test.nl")
+                      email="test@test.nl",
+                      password=psw)
 
     # !IMPORTANT! This is for the mail server - ask stephan
     mail_server = user.User(id=107584259,
                             name="Mail server",
-                            email="uvapsetest@gmail.com")
+                            email="uvapsetest@gmail.com",
+                            password=psw)
 
     items = [user1, user2, user3, user5, mail_server, course, course2]
 
