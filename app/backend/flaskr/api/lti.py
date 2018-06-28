@@ -1,5 +1,5 @@
 from . import apiBluePrint
-from flask import request, redirect, jsonify
+from flask import request, redirect, jsonify, current_app
 from flaskr.i_request import *
 from flaskr import lti, Iresponse
 from flask_jwt import JWT
@@ -36,32 +36,46 @@ def launch_lti_session():
     if curr_user is None:
         return Iresponse.create_repsonse("Invalid user", 403)
 
-    # One minutes should be secure and enough?.
     expires = datetime.timedelta(minutes=1)
     lti_instance.params['in_lti'] = True
-    print(lti_instance.params)
     access_token = create_access_token(identity=lti_instance.params,
                                        expires_delta=expires)
+    if lti_instance.params.get('new_tiktech_course'):
+        redirect_uri = current_app.config['TIKTECH_BASE_URL']
+        redirect_uri += '/start_lti_instance/' + access_token
+        lti_url = lti.lti_base_route + '/login/oauth2/auth?'
+        lti_url += 'client_id=10000000000036&'
+        lti_url += 'response_type=code&'
+        lti_url += 'redirect_uri=' + redirect_uri
+        return redirect(lti_url, 302)
 
-    #if lti_instance.params.get('new_tiktech_course'):
-    return redirect('http://localhost:3000/login/oauth2/auth?client_id=10000000000036&response_type=code&redirect_uri=http://localhost:5000/start_lti_instance/'
-                    + access_token)
-
-    return redirect('http://localhost:5000/start_lti_instance/' + access_token)
+    redirect_url = current_app.config['TIKTECH_BASE_URL']
+    redirect_url += '/start_lti_instance/' + access_token
+    return redirect(redirect_url)
 
 
-def get_all_users_of_canvas_course_via_api(code, token):
-    url = 'http://localhost:3000/login/oauth2/token'
+def get_all_users_of_canvas_course_via_api(code, token, course_id):
+    """
+    Function that connects to the api of canvas, acting as the user.
+    We can then get all the users for a course in canvas.
+    """
+    url = lti.lti_base_route + '/login/oauth2/token'
+    redirect_uri = current_app.config['TIKTECH_BASE_URL']
+    redirect_uri += '/start_lti_instance/' + token
     resp = requests.post(url, data = {
         'grant_type': 'authorization_code',
         'client_id': 10000000000036,
         'client_secret': 'XcHBV43CIqs4SZlgvFU6a2STQrF4YHGnQ26aMQiIIdNX0oCMcx3Eqpbvdqdwtrks',
-        'redirect_uri': 'http://localhost:5000/start_lti_instance/' + token,
-        'code': code
+        'redirect_uri': redirect_uri,
+        'code': code,
+        'replace_tokens': 'True',
     })
     access_token = resp.json().get('access_token')
     headers = {'Authorization': 'Bearer ' + access_token}
-    lti.fill_new_course_with_canvas_data(headers)
+    lti.fill_new_course_with_canvas_data(headers, course_id)
+    request_url = lti.lti_base_route + '/login/oauth2/token'
+    res = requests.delete(request_url, headers=headers)
+
 
 
 @apiBluePrint.route('lti/auth_session', methods=['POST'])
@@ -78,8 +92,11 @@ def auth_lti_session():
     """
     token = request.headers['Authorization'].split(' ')[1]
     lti_api_code = request.args.get('code')
+    lti_data = get_jwt_identity()
+    custom_canvas_course_id = lti_data['custom_canvas_course_id']
     if lti_api_code:
-        get_all_users_of_canvas_course_via_api(lti_api_code, token)
+        get_all_users_of_canvas_course_via_api(lti_api_code, token,
+                                               custom_canvas_course_id)
     access_token = create_access_token(identity=get_jwt_identity())
     return Iresponse.create_response({'access_token': access_token}, 200)
 

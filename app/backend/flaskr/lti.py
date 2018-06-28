@@ -19,7 +19,9 @@ https://github.com/instructure/canvas-lms/blob/stable/lib%2Flti%2Fvariable_expan
 The above source also shows custom variables that can be added to the xml.
 So far we use on custom variable, check the xml.
 """
-# TODO: Add batch processing for the database.
+
+lti_base_route = 'http://localhost:3000'
+lti_api_route = '/api/v1'
 
 # ext_roles are roles a person has over all the courses.
 ext_roles_lookup_table = {
@@ -255,6 +257,10 @@ class LTI_instance:
 
 
 def ensure_user_couples_to_course(user, course, user_data):
+    """
+    Helper for the one time fill function for canvas courses.
+    It ensures the user is couples rightly to the course.
+    """
     for role in user_data.get('enrollments'):
         role_type = role.get('type')
         if role_type == "StudentEnrollment":
@@ -266,18 +272,29 @@ def ensure_user_couples_to_course(user, course, user_data):
         elif role_type == "TeacherEnrollment":
             course.supervisors.append(user)
             break
-    database.commitSafelyToDB(ensure_user_couples_to_course)
+    database.commitSafelyToDB(func=ensure_user_couples_to_course)
 
 
-def fill_new_course_with_canvas_data(headers):
-    # TODO: Haal de hardcoded course hier weg!
-    user_req = requests.get('http://localhost:3000/api/v1/courses/1/users' +
-                            '?include[]=enrollments&include[]=email',
-                            headers=headers)
+def fill_new_course_with_canvas_data(headers, course_id):
+    """
+    A function that fills a new course with data from canvas.
+    This function is only called if a new course is created.
+    It then fills the course with students, tas and teachers.
+    """
+    request_url = lti_base_route + lti_api_route
+    request_url += '/courses/{}/users?'.format(course_id)
+    request_url += 'include[]=enrollments&include[]=email'
+    user_req = requests.get(request_url, headers=headers)
+
     users = user_req.json()
+    if user_req.status_code != 200:
+        return
+
     for user in users:
-        print(user)
         user_id = user.get('sis_user_id')
+        if user_id is None:
+            return
+
         existing_user = User.query.get(user_id)
         if existing_user is None:
             name = user.get('name')
@@ -287,10 +304,7 @@ def fill_new_course_with_canvas_data(headers):
                                               fill_new_course_with_canvas_data):
                 continue
 
-        course = Course.query.filter_by(canvas_unique_id=1).first()
+        course = Course.query.filter_by(canvas_unique_id=course_id).first()
         if course is None:
             return
         ensure_user_couples_to_course(existing_user, course, user)
-        print(course.student_courses)
-        print(course.ta_courses)
-        print(course.supervisors)
