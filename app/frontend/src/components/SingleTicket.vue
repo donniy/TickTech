@@ -29,16 +29,16 @@
 				<md-card-content class="md-layout-item md-size-100">
 					<div>
 			            <md-speed-dial md-event="click" class="close-button" md-direction="bottom">
-			                <md-speed-dial-target>
+			                <md-speed-dial-target class="important-red">
 			                    <md-icon class="md-morph-initial">more_vert</md-icon>
 			                    <md-icon class="md-morph-final">close</md-icon>
 			                </md-speed-dial-target>
 			                <md-speed-dial-content>
-			                    <md-button class="md-icon-button md-raised md-accent" @click="showModal = true">
+			                    <md-button class="important-red md-icon-button md-raised md-accent" @click="showModal = true">
 			                        <md-icon>lock</md-icon>
 			                        <md-tooltip md-direction="left">Close ticket</md-tooltip>
 			                    </md-button>
-			                    <md-button class="md-icon-button md-raised md-accent" @click="">
+			                    <md-button class="important-red md-icon-button md-raised md-accent" @click="">
 			                        <md-icon>delete</md-icon>
 			                        <md-tooltip md-direction="left">Delete ticket</md-tooltip>
 			                    </md-button>

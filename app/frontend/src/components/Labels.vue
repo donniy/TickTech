@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2 class="form-header center-display">labels in {{course.title}}</h2>
+        <h2 class="form-header center-display">Labels in {{course.title}}</h2>
         <form class="md-layout center-display" v-on:submit.prevent="createLabel">
             <md-card class="center-display md-layout-item md-size-50 md-small-size-100">
                 <md-card-content class="center-display">
@@ -26,7 +26,7 @@
                 </md-content>
             </div>
             <div class="md-layout-item">
-                <md-content class="md-elevation-3">
+                <md-content class="md-card-content md-elevation-3">
                     <md-list class="md-double-line md-dense">
                         <label-details @label-deselected="selected_label = null" v-if="selected_label" :label="selected_label" />
                         <md-empty-state
