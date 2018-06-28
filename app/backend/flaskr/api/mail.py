@@ -175,6 +175,7 @@ def create_email_ticket():
 
     return response
 
+
 @apiBluePrint.route('/email/ticket/newmessage', methods=['POST'])
 def create_email_message():
     """
@@ -189,7 +190,6 @@ def create_email_message():
                                      formdata['message'])
         return Iresponse.create_response("Malformed request", 400)
 
-
     print('*********************')
     print(formdata['ticketid'])
     print('*********************')
@@ -197,10 +197,11 @@ def create_email_message():
     ticket = Ticket.query.get(formdata['ticketid'])
     if ticket is None:
         print("MESSAGE: Invalid ticket id\n")
-        something_went_wrong_message(formdata['subject'],
-                                     formdata['email'],
-                                     'Message: Could not find ticket with that id',
-                                     formdata['message'])
+        something_went_wrong_message(
+                                formdata['subject'],
+                                formdata['email'],
+                                'Message: Could not find ticket with that id',
+                                formdata['message'])
         return Iresponse.create_response("Could not find ticket", 400)
 
     formdata["studentid"] = ticket.user_id
@@ -210,14 +211,13 @@ def create_email_message():
     if (msg.status_code != 201):
         print("MESSAGE: invalid request\n")
         message = replyErrorEmail(ticket.title,
-                                     [ticket.email], formdata['ticketid'],
-                                     json_data['message'])
+                                  [ticket.email], formdata['ticketid'],
+                                  json_data['message'])
         if current_app.config['SEND_MAIL_ON_MESSAGE']:
             app = current_app._get_current_object()
             thr = Thread(target=send_async_email, args=[message, app])
             thr.start()
     return msg
-
 
 
 def something_went_wrong_message(subject, email, part, message):
@@ -231,6 +231,7 @@ def something_went_wrong_message(subject, email, part, message):
     app = current_app._get_current_object()
     thr = Thread(target=send_async_email, args=[message, app])
     thr.start()
+
 
 @apiBluePrint.route('/email/<course_id>/settings', methods=['GET'])
 def retrieve_current_mail_settings(course_id):

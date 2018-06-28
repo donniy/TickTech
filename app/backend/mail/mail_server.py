@@ -11,6 +11,7 @@ import re
 
 poplib._MAXLINE = 2048
 
+
 def connect(host, port, user, password):
     '''
     Connects to and authenticates with a POP3 mail server.
@@ -92,15 +93,6 @@ def parseBody(parsedEmail):
         for part in parsedEmail.walk():
             ctype = part.get_content_type()
             data = part.get_payload(decode=True)
-            print("CTYPE", ctype)
-            if part.get_payload() is not None:
-                print("DATA", part.get_payload())
-                try:
-                    print("decode", part.get_payload(decode = True))
-                except:
-                    print("no decode")
-            else:
-                print("NONE")
             if (ctype == 'text/plain'):
                 body += str(data.decode("utf-8"))
             elif ctype == "text/html":
@@ -123,7 +115,8 @@ def parseBody(parsedEmail):
         elif parsedEmail.get_content_type() == "text/html":
             html += str(parsedEmail.get_payload(decode=True).decode("utf-8"))
         else:
-            print("Could not parse email. It was neither multipart nor plain.")
+            print("Could not parse email. " +
+                  "It was neither multipart nor plain.")
 
     return body, html, attachments, files
 
@@ -218,12 +211,8 @@ def createReply(ticketid, subject, address, body):
     Create a reply to a ticket from the acquired information from an email.
     '''
     # Split body on old message
-    print('*'*80)
-    print(body)
     newbody = re.split('(On )(Mon|Tue|Wed|Thu|Fri|Sat|Sun)(,)', body, 1)[0]
-    print("newbody", newbody)
     newbody = re.split('--------', newbody, 1)[0]
-    print("newbody", newbody)
 
     # Create a new reply.
     newmessage = {
@@ -238,32 +227,25 @@ def createReply(ticketid, subject, address, body):
         'http://localhost:5000/api/email/ticket/newmessage',
         json=newmessage)
 
-    print("HIERRR NEW REPLY")
-    print(newmessage)
-
-    print("RESPONSE CODE: ")
-    print(result)
-
     # Below is for debugging. An error mail will be send if
     # the reply is not posted.
     if (result.status_code != 201):
         print("Something went wrong creating a new reply from an email.")
+
 
 def createTicket(subject, body, files, sender, address, courseid):
     '''
     Create a ticket from the acquired information from an email.
     Note: New tickets will only be displayed after refreshing the page.
     '''
-    # Check if an email is a reply, if so, a new message must be created to a ticket.
-    print("#"*20)
-    print(subject)
-    print("checking reply")
+    # Check if an email is a reply, if so, a
+    # new message must be created to a ticket.
     if "Ticket ID:" in subject:
         ticketid = subject.split("Ticket ID:")[1]
-        print('ticketid:',ticketid)
+        print('ticketid:', ticketid)
         ticketid = ticketid.replace("\n", "")
         ticketid = ticketid.replace(" ", "")
-        print('ticketid:',ticketid)
+        print('ticketid:', ticketid)
         createReply(ticketid, subject, address, body)
         return
     print("Not a reply")
@@ -285,7 +267,6 @@ def createTicket(subject, body, files, sender, address, courseid):
         print("Mail fetching failed, notifed user\nSubject:",
               subject, '\nSender:', address)
         return
-
 
     # Get all labels available for this course.
     labels = retrieveLabels(courseid)
