@@ -32,11 +32,9 @@ def create_request(json_data):
         bound_tas = get_label_tas(label)
 
     if len(bound_tas) < 1:
-        status_id = 1
+        status_id = TicketStatus.unassigned
     else:
-        status_id = 3
-
-    print(status_id)
+        status_id = TicketStatus.waiting_for_help
 
     ticket = Ticket(id=uuid.uuid4(), user_id=studentid, course_id=courseid,
                     status_id=status_id, title=subject, email=email,
@@ -77,12 +75,14 @@ def add_ta_to_ticket(json_data):
         id=uuid.UUID(json_data['ticketid'])).first()
     ta = User.query.filter_by(id=json_data['taid']).first()
 
+    if ticket.status_id != TicketStatus.receiving_help:
+        ticket.status_id = TicketStatus.receiving_help
+        database.db.session.commit()
+
     # Check if the ta and ticket were found and add if not already there.
     if ticket and ta:
         if ta not in ticket.bound_tas:
             ticket.bound_tas.append(ta)
-            ticket.status_id = 4
-            database.db.session.commit()
             level_up = levels.add_experience(levels.EXP_FOR_ASSING, ta.id)
             levels.notify_level_change(ta.id, ticket, level_up)
             return Iresponse.create_response({'ta': ta.serialize,
@@ -113,6 +113,6 @@ def get_label_tas(label):
 
 def close_ticket(ticket):
     if ticket:
-        ticket.status_id = 2
+        ticket.status_id = TicketStatus.closed
         database.db.session.commit()
         return "Closed"

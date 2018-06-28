@@ -56,7 +56,7 @@ class Ticket(db.Model):
 
     # Many to many relationship
     owner = db.relationship(
-            "User", backref=db.backref('created_tickets', lazy=True))
+        "User", backref=db.backref('created_tickets', lazy=True))
 
     # Many to many relationship
     files = db.relationship(
@@ -154,6 +154,12 @@ class TicketStatus(db.Model):
     Use numbers for comparison instead of text comparison
 
     """
+
+    unassigned = 1
+    closed = 2
+    waiting_for_help = 3
+    receiving_help = 4
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, default="Pending")
 
