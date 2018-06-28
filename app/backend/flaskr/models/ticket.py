@@ -218,7 +218,6 @@ class File(db.Model):
     is_duplicate = db.Column(db.Boolean, default=False, nullable=False)
     is_ocrable = db.Column(db.Boolean, default=False, nullable=False)
 
-
     @property
     def serialize(self):
         """
