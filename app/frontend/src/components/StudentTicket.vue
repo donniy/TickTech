@@ -76,6 +76,7 @@
                         this.getCourseTas()
                     })
                     .catch(error => {
+                        this.$router.go(-1)
                         console.log(error)
                     })
             },

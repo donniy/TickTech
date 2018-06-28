@@ -25,31 +25,31 @@
                 <md-button class="md-primary" @click="closeTicket()">Yes, close it!</md-button>
             </md-dialog-actions>
             </md-dialog>
-            <md-card class="md-layout">
-                <md-card-content class="md-layout-item md-size-100">
-                    <div>
-                        <md-speed-dial md-event="click" class="close-button" md-direction="bottom">
-                            <md-speed-dial-target>
-                                <md-icon class="md-morph-initial">more_vert</md-icon>
-                                <md-icon class="md-morph-final">close</md-icon>
-                            </md-speed-dial-target>
-                            <md-speed-dial-content>
-                                <md-button class="md-icon-button md-raised md-accent" @click="showModal = true">
-                                    <md-icon>lock</md-icon>
-                                    <md-tooltip md-direction="left">Close ticket</md-tooltip>
-                                </md-button>
-                                <md-button class="md-icon-button md-raised md-accent" @click="">
-                                    <md-icon>delete</md-icon>
-                                    <md-tooltip md-direction="left">Delete ticket</md-tooltip>
-                                </md-button>
-                            </md-speed-dial-content>
-                        </md-speed-dial>
-                    </div>
-                    <h4>Subject: {{ticket.title}}</h4>
-                    Response email: <b>{{ticket.email}}</b><br/>
-                    Status: {{ticket.status.name}}<br/>
-                    TAs:
-                    <b v-for="ta in ticket.tas" v-bind:key="ta.id" v-bind:ta="ta">
+			<md-card class="md-layout">
+				<md-card-content class="md-layout-item md-size-100">
+					<div>
+			            <md-speed-dial md-event="click" class="close-button" md-direction="bottom">
+			                <md-speed-dial-target class="important-red">
+			                    <md-icon class="md-morph-initial">more_vert</md-icon>
+			                    <md-icon class="md-morph-final">close</md-icon>
+			                </md-speed-dial-target>
+			                <md-speed-dial-content>
+			                    <md-button class="important-red md-icon-button md-raised md-accent" @click="showModal = true">
+			                        <md-icon>lock</md-icon>
+			                        <md-tooltip md-direction="left">Close ticket</md-tooltip>
+			                    </md-button>
+			                    <md-button class="important-red md-icon-button md-raised md-accent" @click="">
+			                        <md-icon>delete</md-icon>
+			                        <md-tooltip md-direction="left">Delete ticket</md-tooltip>
+			                    </md-button>
+			                </md-speed-dial-content>
+			            </md-speed-dial>
+			        </div>
+					<h4>Subject: {{ticket.title}}</h4>
+					Response email: <b>{{ticket.email}}</b><br/>
+					Status: {{ticket.status.name}}<br/>
+					TAs:
+					<b v-for="ta in ticket.tas" v-bind:key="ta.id" v-bind:ta="ta">
             {{ ta.name}}
         </b>
                     <b v-if="ticket.tas.length < 1">No one assigned yet</b>

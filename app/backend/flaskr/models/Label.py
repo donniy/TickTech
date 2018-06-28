@@ -111,9 +111,10 @@ class Label(db.Model):
                     pls[p.display_name] = info
         return pls
 
-    def create(self, id, name):
+    def create(self, id, name, course_id):
         self.label_id = id
         self.label_name = name
+        self.course_id = course_id
 
 
 class LabelPlugin(db.Model):

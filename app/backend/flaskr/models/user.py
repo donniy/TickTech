@@ -1,5 +1,6 @@
 from flaskr import database, sockets
 from sqlalchemy_utils import UUIDType
+from datetime import datetime
 import bcrypt
 
 db = database.db
@@ -25,6 +26,8 @@ class User(db.Model):
                              backref="users")
     experience = db.Column(db.Integer, nullable=False, default=1)
     level = db.Column(db.Integer, nullable=False, default=1)
+    code = db.Column(UUIDType(binary=False), nullable=True)
+    code_expiration = db.Column(db.DateTime, nullable=True)
 
     def __repr__(self):
         """

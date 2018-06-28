@@ -37,6 +37,10 @@ a.breadcrumb {
     height: 6em;
 }
 
+.important-red {
+    background-color: $default-red !important;
+    color: white !important;
+}
 p.def-error-msg {
     margin-top: 0.5em;
     opacity:0.9;

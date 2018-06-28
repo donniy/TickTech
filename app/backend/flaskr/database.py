@@ -168,7 +168,8 @@ def populate_database_dummy_data():
                    "test2@test.com", "", "", "")
 
     label1 = Label.Label()
-    label1.create(uuid.UUID("fa1b7b20307e4250b59c6d0811315203"), "PSE FAQ")
+    label1.create(uuid.UUID("fa1b7b20307e4250b59c6d0811315203"), "PSE FAQ",
+                  uuid.UUID('71d929a86b1311e8adc0fa7ae01bbebc'))
 
     items = [user1, user2, user3, user4, user5, user6, user7,
              mail_server, course1, course2, course3, label1]
@@ -196,7 +197,6 @@ def populate_database_dummy_data():
         course2.supervisors.append(user7)
         course3.supervisors.append(user7)
 
-        course1.labels.append(label1)
         user6.labels.append(label1)
         db.session.commit()
         print("Inserted dummy links")
