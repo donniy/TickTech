@@ -219,14 +219,14 @@ def createReply(ticketid, subject, address, body):
     result = requests.post(
         'http://localhost:5000/api/email/ticket/' + ticketid + '/messages',
         json=newmessage)
-    
+
     print("HIERRR NEW REPLY")
     print(newmessage)
 
     print("RESPONSE CODE: ")
     print(result)
-    
-    # Below is for debugging. An error mail will be send if 
+
+    # Below is for debugging. An error mail will be send if
     # the reply is not posted.
     if (result.status_code != 201):
         print("Something went wrong creating a new ticket from an email.")
@@ -291,8 +291,8 @@ def createTicket(subject, body, files, sender, address, courseid):
     result = requests.post(
         'http://localhost:5000/api/email/ticket/submit',
         json=newticket)
-    
-    # Below is for debugging. An errormail will be send if 
+
+    # Below is for debugging. An errormail will be send if
     # the ticket is not posted.
     if (result.status_code != 201):
         print("Something went wrong creating a new ticket from an email.")
@@ -305,7 +305,7 @@ def createTicket(subject, body, files, sender, address, courseid):
         print("Body: " + body)
 
 
-def checkMail(host, port, user, password, courseid, debug=0):
+def checkMail(host, port, user, password, courseid, debug=1):
     '''
     Start a mail server and sync all emails once.
     Set debug to anything but 0 to enable debugging. This will make sure
@@ -359,6 +359,7 @@ if __name__ == '__main__':
         courseid = courses["json_data"][0]["id"]
     else:
         print("Could not retrieve courses, error code: ", result.status_code)
+        print(result.text)
 
     # Check mail for current course.
     checkMail("pop.gmail.com", "995",

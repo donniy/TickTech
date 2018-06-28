@@ -59,7 +59,7 @@ def create_app(test_config=None):
     app.config['MAIL_DEBUG'] = False
     Mail(app)
 
-    app.config['SEND_MAIL_ON_MESSAGE'] = False
+    app.config['SEND_MAIL_ON_MESSAGE'] = True
 
     # Make user logged in for 1 day.
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(seconds=86400)

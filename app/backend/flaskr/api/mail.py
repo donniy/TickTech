@@ -10,6 +10,7 @@ from flaskr.utils.json_validation import validate_json
 from mail.thread import MailThread
 from mail.Message import ticketErrorEmail, createdEmailMessage
 from mail.Message import somethingWentWrong, replyErrorEmail
+from mail.Message import createdTicketEmail
 from flask_mail import Mail
 from threading import Thread
 from flask import current_app
