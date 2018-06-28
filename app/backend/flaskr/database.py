@@ -124,43 +124,54 @@ def populate_database_dummy_data():
     items = []
 
     user1 = user.User()
-    user1.create(12345678,"Erik","erik@a.a", "1")
+    user1.create(12345678, "Erik", "erik@a.a", "1")
 
     user2 = user.User()
-    user2.create(87654321,"Kire","kire@a.a","1")
+    user2.create(87654321, "Kire", "kire@a.a", "1")
 
     user3 = user.User()
-    user3.create(10203040, "student1","studend1@a.a","1")
+    user3.create(10203040, "student1", "studend1@a.a", "1")
 
     user4 = user.User()
-    user4.create(50617080, "student2","student2@a.a","1")
+    user4.create(50617080, "student2", "student2@a.a", "1")
 
     user5 = user.User()
-    user5.create(50627080, "Test McTestie","a@a.a","1")
+    user5.create(50627080, "Test McTestie", "a@a.a", "1")
 
     user6 = user.User()
-    user6.create(50637080, "EK","b@b.b","1")
+    user6.create(50637080, "EK", "b@b.b", "1")
 
     user7 = user.User()
-    user7.create(10000, "Supervisor","super@visor.nl","1")
+    user7.create(10000, "Supervisor", "super@visor.nl", "1")
 
     # !IMPORTANT! This is for the mail server - ask phtephan
     mail_server = user.User()
-    mail_server.create(107584259, "Mail server", "uvapsetest@gmail.com", "NotNull")
+    mail_server.create(107584259, "Mail server", "uvapsetest@gmail.com", "1")
 
     course1 = Course.Course()
-    course1.create(uuid.UUID('71d929a86b1311e8adc0fa7ae01bbebc'),"Project Software Engineering","this is a test description",Config.EMAIL_FETCH_EMAIL,"pop.gmail.com","955",Config.EMAIL_FETCH_PASSWORD)
+    course1.create(uuid.UUID('71d929a86b1311e8adc0fa7ae01bbebc'),
+                   "Project Software Engineering",
+                   "this is a test description",
+                   Config.EMAIL_FETCH_EMAIL,
+                   "pop.gmail.com", "955", Config.EMAIL_FETCH_PASSWORD)
 
     course2 = Course.Course()
-    course2.create(uuid.UUID('51d929a86b1311e8adc0fa7ae01bbebc'),"Operating Systems","this is a test description 2","test@test.com","","","")
+    course2.create(uuid.UUID('51d929a86b1311e8adc0fa7ae01bbebc'),
+                   "Operating Systems",
+                   "this is a test description 2",
+                   "test@test.com", "", "", "")
 
     course3 = Course.Course()
-    course3.create(uuid.UUID('31d929a86b1311e8adc0fa7ae01bbebc'),"Compiler Construction","this is a test description 3","test2@test.com","","","")
+    course3.create(uuid.UUID('31d929a86b1311e8adc0fa7ae01bbebc'),
+                   "Compiler Construction",
+                   "this is a test description 3",
+                   "test2@test.com", "", "", "")
 
     label1 = Label.Label()
-    label1.create(uuid.UUID("fa1b7b20307e4250b59c6d0811315203"), "PSE questions")
+    label1.create(uuid.UUID("fa1b7b20307e4250b59c6d0811315203"), "PSE FAQ")
 
-    items = [user1, user2, user3, user4, user5, user6, user7, mail_server, course1, course2, course3, label1]
+    items = [user1, user2, user3, user4, user5, user6, user7,
+             mail_server, course1, course2, course3, label1]
 
     for item in items:
         addItemSafelyToDB(item, populate_database_dummy_data)
