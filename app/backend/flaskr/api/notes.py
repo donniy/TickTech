@@ -2,6 +2,7 @@ from . import apiBluePrint
 from flask import request
 from flaskr.request_processing import notes as rp_notes
 from flaskr import Iresponse
+from flaskr.auth import require_role
 
 
 # remember to add file in __init__
@@ -9,6 +10,7 @@ from flaskr import Iresponse
 
 # Add rights check.
 @apiBluePrint.route('/notes/<ticket_id>')
+@require_role(['ta', 'supervisor'])
 def retrieve_notes(ticket_id):
     """
     Return all the notes for a ticket.
@@ -21,6 +23,7 @@ def retrieve_notes(ticket_id):
 
 # Add right check
 @apiBluePrint.route('/notes', methods=['POST'])
+@require_role(['ta', 'supervisor'])
 def add_new_note():
     """
     Creates a new note.
@@ -36,6 +39,7 @@ def add_new_note():
 
 
 @apiBluePrint.route('/notes/<note_id>/close', methods=['POST'])
+@require_role(['ta', 'supervisor'])
 def remove_note(note_id):
     """
     Deletes a note.

@@ -129,14 +129,14 @@ export default {
                 })
                 return;
             }
-				    this.status = 'getting ticket'
-				    const path = '/api/user/tickets/course/' + this.lti_course.id
-				    this.$ajax.get(path).then(response => {
-					      this.tickets = response.data.json_data
-				    }).catch(error => {
-					      console.log(error)
-				    })
-			  },
+                    this.status = 'getting ticket'
+                    const path = '/api/user/tickets/course/' + this.lti_course.id
+                    this.$ajax.get(path).then(response => {
+                          this.tickets = response.data.json_data
+                    }).catch(error => {
+                          console.log(error)
+                    })
+              },
 
         /* Helper function to check if course is the current lti course. */
         is_lti_course(course) {

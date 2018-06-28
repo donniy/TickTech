@@ -4,6 +4,7 @@ import uuid
 from flaskr.models.Note import Note
 from flaskr.models.ticket import Ticket
 from flaskr.models.Course import Course
+from flaskr.request_processing import levels
 from datetime import datetime
 import re
 
@@ -36,16 +37,15 @@ def parse_note(message, ticket):
     ta_in_course = course.ta_courses
     for mention in mentions:
         user_id = mention.group(0).split('@')[1]
-        print(user_id)
 
         for ta in ta_in_course:
             if str(ta.id) == user_id:
                 if ta in ticket.bound_tas:
                     continue
                 ticket.bound_tas.append(ta)
+                level_up = levels.add_experience(levels.EXP_FOR_MENTION, ta.id)
+                levels.notify_level_change(ta.id, None, level_up)
                 database.db.session.commit()
-
-    print(ticket.bound_tas)
 
 
 # TODO: Add checking to getting data from json.
@@ -57,9 +57,23 @@ def create_request(jsonData):
     user_id = escape(jsonData["user_id"])
     message = escape(jsonData["text"])
 
+    response_body = {}
+
+    if message == '':
+        response_body['message'] = "empty message"
+
+    if ticket_id == '':
+        response_body['ticket_id'] = "No ticket id has been supplied"
+
+    if user_id == '':
+        response_body['user_id'] = "No user id has been supplieds"
+
     ticket = Ticket.query.get(ticket_id)
     if ticket is None:
-        return Iresponse.create_response("", 404)
+        response_body['ticket'] = "No ticket exists with this id"
+
+    if len(response_body) != 0:
+        return Iresponse.create_response(response_body, 400)
 
     note = Note()
     note.id = uuid.uuid4()
@@ -72,6 +86,7 @@ def create_request(jsonData):
         return Iresponse.internal_server_error()
 
     parse_note(message, ticket)
+    levels.add_experience(levels.EXP_FOR_NOTE, note.user_id)
     # add header location.
     return Iresponse.create_response(note.serialize, 201)
 
@@ -84,6 +99,7 @@ def delete_request(note_id):
     if note is None:
         return Iresponse.create_response("", 404)
     try:
+        levels.deduct_experience(levels.EXP_FOR_NOTE, note.user_id)
         database.db.session.delete(note)
         database.db.session.commit()
     except Exception:

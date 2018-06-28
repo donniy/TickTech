@@ -14,18 +14,24 @@ from flaskr.request_processing import file as rp_file
 from flaskr import Iresponse
 from flaskr.utils import notifications
 from flask_mail import Mail
-from mail.Message import create_email_message
+from mail.Message import createEmailMessage
 from flaskr.utils import course_validation, json_validation, ocr
 from os.path import expanduser
 import base64
 import mimetypes
 from flaskr import database
+from threading import Thread
+from flask import current_app
+from flaskr.auth import require_role
 
 
 @apiBluePrint.route('/ticket/<ticket_id>/close', methods=['POST', 'PATCH'])
 @jwt_required
 def close_ticket(ticket_id):
-    """ Update this with a rights check."""
+    """
+    Close ticket when is has been handled.
+    TODO: Update this with a rights check.
+    """
     current_identity = get_current_user()
     try:
         ticket = Ticket.query.get(ticket_id)
@@ -46,7 +52,7 @@ def close_ticket(ticket_id):
 @jwt_required
 def retrieve_single_ticket(ticket_id):
     """
-    Geeft een enkel ticket.
+    Retrieve single ticket from database.
     """
     # TODO: Controlleer rechten
     ticketObj = Ticket.query.get(ticket_id)
@@ -56,7 +62,7 @@ def retrieve_single_ticket(ticket_id):
 
 
 @apiBluePrint.route('/ticket/<ticket_id>/plugins', methods=['GET'])
-@jwt_required
+@require_role(['ta', 'supervisor'])
 def retrieve_plugins(ticket_id):
     """
     List the plugins available for this ticket.
@@ -75,7 +81,7 @@ def retrieve_plugins(ticket_id):
 @jwt_required
 def create_message(ticket_id):
     """
-    Maak een nieuw bericht.
+    Create a new message.
     """
     json_data = request.get_json()
     if request is None:
@@ -91,27 +97,42 @@ def create_message(ticket_id):
     user = User.query.get(userId)
 
     if(ticket.user_id != user.id):
-        message = create_email_message(ticket.title,
-                                       [ticket.email], ticket_id,
-                                       json_data['message'], user.name)
+        message = createEmailMessage(ticket.title,
+                                     [ticket.email], ticket_id,
+                                     json_data['message'], user.name)
         if current_app.config['SEND_MAIL_ON_MESSAGE']:
-            res = Mail().send(message)
-            res = res  # for flake8
+            print("send email")
+            app = current_app._get_current_object()
+            thr = Thread(target=send_async_email, args=[message, app])
+            thr.start()
     return msg
+
+
+def send_async_email(message, app):
+    with app.app_context():
+        print("SENDED EMAIL")
+        res = Mail().send(message)
+        print(res)
 
 
 @apiBluePrint.route('/ticket/<ticket_id>/messages', methods=['GET'])
 @jwt_required
 def get_ticket_messages(ticket_id):
-    # TODO: Check if user is related to ticket.
+    """
+    Retrieve messages in ticket.
+    TODO: Check if user is related to ticket.
+    """
     return rp_message.retrieve_all_request(ticket_id,
                                            get_current_user(),
                                            read=True)
 
 
 @apiBluePrint.route('ticket/addta', methods=['POST'])
-@jwt_required
+@require_role(['ta', 'supervisor'])
 def add_ta_to_ticket():
+    """
+    Assign teaching assistant to ticket.
+    """
     json_data = request.get_json()
     if json_data:
         if json_validation.validate_json(json_data, ['taid', 'ticketid']):
@@ -120,8 +141,11 @@ def add_ta_to_ticket():
 
 
 @apiBluePrint.route('ticket/removeta', methods=['POST'])
-@jwt_required
+@require_role(['ta', 'supervisor'])
 def remove_ta_from_ticket():
+    """
+    Unassign teaching assistant from ticket.
+    """
     json_data = request.get_json()
     if json_data:
         if json_validation.validate_json(json_data, ['taid', 'ticketid']):
@@ -130,7 +154,7 @@ def remove_ta_from_ticket():
 
 
 @apiBluePrint.route('/ticket/submit', methods=['POST'])
-@jwt_required
+@require_role(['student'])
 def create_ticket():
     """
     Check ticket submission and add to database.
@@ -202,7 +226,9 @@ def create_ticket():
 @apiBluePrint.route('/ticket/filedownload', methods=['POST'])
 @jwt_required
 def download_file():
-    """ Download a file from server (check rights in future)"""
+    """
+    Download a file from server (check rights in future).
+    """
     json_data = request.get_json()
     if 'address' in json_data:
         homefolder = expanduser("~")
@@ -215,7 +241,7 @@ def download_file():
         fileType, fileEncoding = mimetypes.guess_type(full_path)
 
         if folder and file:
-            fp = open(folder+'/'+file, 'br').read()
+            fp = open(folder + '/' + file, 'br').read()
             encoded = base64.b64encode(fp).decode("utf-8")
             return Iresponse.create_response({'encstring': str(encoded),
                                              'mimetype': fileType}, 200)
@@ -226,7 +252,9 @@ def download_file():
 @apiBluePrint.route('/ticket/gettext', methods=["POST"])
 @jwt_required
 def get_text():
-    """ Convert an image file to text using Optical character recognition"""
+    """
+    Convert an image file to text using Optical character recognition.
+    """
     try:
         json_data = request.get_json()
         if 'address' in json_data:

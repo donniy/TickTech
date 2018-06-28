@@ -34,7 +34,7 @@ def launch_lti_session():
     user_id = lti_instance.user_id
     curr_user = user.User.query.get(user_id)
     if curr_user is None:
-        return Iresponse.create_repsonse("Invalid user", 403)
+        return Iresponse.create_response("Invalid user", 403)
 
     expires = datetime.timedelta(minutes=1)
     lti_instance.params['in_lti'] = True

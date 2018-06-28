@@ -1,11 +1,11 @@
 <template>
 <div>
-	<div id="loading-icon" class="loading">
-		<md-progress-spinner class="md-accent" md-mode="indeterminate"></md-progress-spinner>
-	</div>
-	<div class="md-layout md-gutter">
+    <div id="loading-icon" class="loading">
+        <md-progress-spinner class="md-accent" md-mode="indeterminate"></md-progress-spinner>
+    </div>
+    <div class="md-layout md-gutter">
 
-		<div class="md-layout-item md-size-65 md-small-size-100">
+		<div class="md-layout-item md-size-70 md-small-size-60">
 			<div class="md-gutter">
 				<div class="md-size-20">
 					<router-link :to="'/course/' + ticket.course_id " class="btn btn-primary">&laquo; Back to course</router-link>
@@ -24,34 +24,53 @@
             </md-dialog>
 			<md-card class="md-layout">
 				<md-card-content class="md-layout-item md-size-100">
+					<div>
+			            <md-speed-dial md-event="click" class="close-button" md-direction="bottom">
+			                <md-speed-dial-target>
+			                    <md-icon class="md-morph-initial">more_vert</md-icon>
+			                    <md-icon class="md-morph-final">close</md-icon>
+			                </md-speed-dial-target>
+			                <md-speed-dial-content>
+			                    <md-button class="md-icon-button md-raised md-accent" @click="showModal = true">
+			                        <md-icon>lock</md-icon>
+			                        <md-tooltip md-direction="left">Close ticket</md-tooltip>
+			                    </md-button>
+			                    <md-button class="md-icon-button md-raised md-accent" @click="">
+			                        <md-icon>delete</md-icon>
+			                        <md-tooltip md-direction="left">Delete ticket</md-tooltip>
+			                    </md-button>
+			                </md-speed-dial-content>
+			            </md-speed-dial>
+			        </div>
 					<h4>Subject: {{ticket.title}}</h4>
-					<p>Status: {{ticket.status.name}}</p>
+					Response email: <b>{{ticket.email}}</b><br/>
+					Status: {{ticket.status.name}}<br/>
 					TAs:
 					<b v-for="ta in ticket.tas" v-bind:key="ta.id" v-bind:ta="ta">
             {{ ta.name}}
         </b>
-					<b v-if="ticket.tas.length < 1">No one assigned yet</b>
-					<br/><br/> Uploaded files (Click OCR to turn photos into text):
+                    <b v-if="ticket.tas.length < 1">No one assigned yet</b>
+                    <br/><br/> Uploaded files (Click OCR to turn photos into text):
                     <p v-show="ticket.files.length == 0">No files</p>
                     <md-card-content>
-					<div class="md-layout md-gutter" v-if="ticket.files.length > 0" v-for="file in ticket.files" v-bind:key="file.id">
-						<div class="md-size-80 md-layout-item file-listing-small" v-on:click="downloadFile(file.file_location, file.file_name)">
-							<i class="material-icons download-icon">folder</i> {{ file.file_name }}
-						</div>
+                    <div class="md-layout md-gutter" v-if="ticket.files.length > 0" v-for="file in ticket.files" v-bind:key="file.id">
+                        <div class="md-size-80 md-layout-item file-listing-small" v-on:click="downloadFile(file.file_location, file.file_name)">
+                            <i class="material-icons download-icon">folder</i> {{ file.file_name }}
+                        </div>
                         <div v-if="file.is_ocrable"class="md-size-10 md-layout-item ocrbutton" v-on:click="downloadOcrFile(file.file_location, file.file_name)">
                             OCR
                         </div>
-					</div>
+                    </div>
                 </md-card-content>
-				</md-card-content>
-			</md-card>
-			<md-card class="md-layout-item message-container">
-				<div>
-					<md-card-content>
-						<message v-bind:user="{id: user_id}" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
-					</md-card-content>
-				</div>
-			</md-card>
+                </md-card-content>
+            </md-card>
+            <md-card class="md-layout-item message-container">
+                <div>
+                    <md-card-content>
+                        <message v-bind:user="{id: user_id}" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
+                    </md-card-content>
+                </div>
+            </md-card>
 
 			<md-card class="md-layout-item message-reply-container">
 				<div>
@@ -67,7 +86,7 @@
 				</div>
 			</md-card>
 		</div>
-		<div class="md-layout-item md-size-30 md-medium-size-50">
+		<div class="md-layout-item md-size-30 md-small-size-40">
 			<h3 class="note-title">Notes</h3>
 			<note v-for="note in notes" v-bind:key="note.id" v-bind:note="note"></note>
 
@@ -76,19 +95,19 @@
 			</md-button>
 			<b-popover ref="popoverRef" target="popoverButton-sync" triggers="click blur" placement='top'>
 				<vue-tribute :options="mentionOptions" v-on:tribute-replaced="matchFound">
-					<textarea name="notefield" v-validate="'required'" v-model="noteTextArea" class="form-control" id="textAreaForNotes" style="height:200px;width:250px;" placeholder="Enter a comment"></textarea>
+					<textarea autofocus name="notefield" v-model="noteTextArea" class="form-control" id="textAreaForNotes" style="height:200px;width:250px;" placeholder="Enter a comment"></textarea>
 				</vue-tribute>
 				<button @click="addNote" class="btn btn-primary" style="margin-top:10px">Send</button>
 			</b-popover>
 
-			<md-content class="md-elevation-2 plugin-container" v-bind:key="plugin.id" v-for="(data, plugin) in plugins">
-				<md-card-header>
-					<div class="md-title">
-						{{plugin}}
-					</div>
-				</md-card-header>
-				<md-list>
-					<template v-for="(value, key) in data">
+            <md-content class="md-elevation-2 plugin-container" v-bind:key="plugin.id" v-for="(data, plugin) in plugins">
+                <md-card-header>
+                    <div class="md-title">
+                        {{plugin}}
+                    </div>
+                </md-card-header>
+                <md-list>
+                    <template v-for="(value, key) in data">
                 <md-subheader>
                     {{key}}
                 </md-subheader>
@@ -109,24 +128,7 @@
 				</md-list>
 			</md-content>
 		</div>
-        <div class="md-layout-item md-size-5">
-            <md-speed-dial md-event="click" class="close-button" md-direction="bottom">
-                <md-speed-dial-target>
-                    <md-icon class="md-morph-initial">more_vert</md-icon>
-                    <md-icon class="md-morph-final">close</md-icon>
-                </md-speed-dial-target>
-                <md-speed-dial-content>
-                    <md-button class="md-icon-button md-raised md-accent" @click="showModal = true">
-                        <md-icon>lock</md-icon>
-                        <md-tooltip md-direction="left">Close ticket</md-tooltip>
-                    </md-button>
-                    <md-button class="md-icon-button md-raised md-accent" @click="">
-                        <md-icon>delete</md-icon>
-                        <md-tooltip md-direction="left">Delete ticket</md-tooltip>
-                    </md-button>
-                </md-speed-dial-content>
-            </md-speed-dial>
-        </div>
+
 	</div>
 </div>
 </template>
@@ -189,6 +191,7 @@ export default {
                     this.getCourseTas()
                 }).catch(error => {
                     console.log(error)
+                    this.$router.go(-1)
                 })
         },
         getPlugins() {
@@ -230,7 +233,8 @@ export default {
                 })
                 .then(response => {
                     this.reply = ''
-                    this.getMessages()
+                    this.bind_ta_to_ticket(this.ticket.id, this.$user.get().id)
+					this.getMessages()
                 })
                 .catch(error => {
                     console.log(error)
@@ -243,7 +247,7 @@ export default {
             this.$ajax.post(path)
                 .then(response => {
                     // TODO: Iets van een notificatie ofzo? '234 closed this ticket'? iig niet meer hardcoden "closed"
-                    this.ticket.status.name = "closed"
+                    this.ticket.status.name = "Closed"
                 })
 
         },
@@ -267,7 +271,6 @@ export default {
                 var blob = new Blob([byteArray], {mimetype});
                 const url = window.URL.createObjectURL(blob)
                 const link = document.createElement('a')
-
                 // Ref to the link and activate download.
                 link.href = url
                 link.setAttribute('download', name)
@@ -306,15 +309,25 @@ export default {
             })
         },
         addNote() {
-            console.log(this.noteTextArea)
-            const path = '/api/notes'
-            var noteData = {
-                "ticket_id": this.$route.params.ticket_id,
-                "user_id": this.$user.get().id,
-                "text": this.noteTextArea
+            if (this.noteTextArea.length > 0) {
+                console.log(this.noteTextArea)
+                const path = '/api/notes'
+                var noteData = {
+                    "ticket_id": this.$route.params.ticket_id,
+                    "user_id": this.$user.get().id,
+                    "text": this.noteTextArea
+                }
+                this.$ajax.post(path, noteData)
+                    .then(response => {
+                        this.noteTextArea = ""
+                        this.$refs.popoverRef.$emit('close')
+                        this.notes.push(response.data.json_data)
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
             }
-            console.log("Note")
-            console.log(this.noteTextArea)
+
             this.$ajax.post(path, noteData)
                 .then(response => {
                     this.noteTextArea = ""
@@ -369,15 +382,19 @@ export default {
         },
         bind_ta_to_ticket(ticketid, taid) {
             const path = '/api/ticket/addta'
-            console.log(ticketid, taid)
-            this.$ajax.post(path, {'ticketid': ticketid, 'taid': taid})
-            .then(response => {
-                console.log("Succes")
-                this.ticket.tas[length(this.ticket.tas)] = taid
-            }).catch(error => {
-                console.log(error)
-            })
-        }
+            this.$ajax.post(path, { 'ticketid': ticketid, 'taid': taid })
+                .then(response => {
+                    console.log("OK",response)
+					if (response.status == 200) {
+						this.ticket.tas.push(response.data.json_data['ta'])
+						this.ticket.status.name = response.data.json_data['status']
+					} else {
+						this.ticket.status.name = "Assigned"
+					}
+                }).catch(error => {
+                    console.log(error)
+                })
+        },
     },
     mounted: function () {
         if (!this.$user.logged_in()) {
