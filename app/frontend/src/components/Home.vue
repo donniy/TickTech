@@ -121,6 +121,9 @@
 <script>
 
 export default {
+    /*
+     * Check if user is already logged in and then redirect to user homepage.
+     */
 	mounted: function () {
 		if (this.$auth.ready() && this.$auth.check()){
             if (window.$rederict_to_ticket){

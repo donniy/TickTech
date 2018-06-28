@@ -40,6 +40,9 @@
             }
         },
         methods: {
+            /* 
+             * Get all info from a course.
+             */
             getCourse() {
                 const path = '/api/courses/single/' + this.$route.params.course_id
                 this.$ajax.get(path).then(response => {
@@ -49,12 +52,18 @@
                     this.$router.go(-1)
                 })
             },
+            /*
+             * Get all labels in a coures.
+             */
             getLabels() {
                 const path = '/api/labels/' + this.$route.params.course_id
                 this.$ajax.get(path, response => {
                     this.labels = response.data.json_data
                 })
             },
+            /*
+             * Insert new label to the list of labels in a course.
+             */
             createLabel() {
                 if (this.new_label_name == '') {
                     return

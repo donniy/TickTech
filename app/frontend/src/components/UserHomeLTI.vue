@@ -105,8 +105,9 @@ export default {
         }
     },
     methods: {
-        /* Function that gets the ticket for this lti course.
-           The api call depends on the role of the user.
+        /* 
+         * Function that gets the ticket for this lti course.
+         * The api call depends on the role of the user.
          */
         getTickets() {
             if (this.isTA || this.isTeacher) {
@@ -125,13 +126,16 @@ export default {
                     })
               },
 
-        /* Helper function to check if course is the current lti course. */
+        /* 
+         * Helper function to check if course is the current lti course. 
+         */
         is_lti_course(course) {
             return this.lti_course_id === course.id
         },
 
-        /* Function that gets the unassigned tickets in this course.
-           Is used to show a badge with updates for the course overview.
+        /* 
+         * Function that gets the unassigned tickets in this course.
+         * Is used to show a badge with updates for the course overview.
          */
         getCourseUnassignedTickets() {
             const path = '/api/courses/' + this.lti_course_id + '/tickets/unassigned';
@@ -140,8 +144,9 @@ export default {
             })
         },
 
-        /* Get the notifications for for this lti course,
-           for the current user.
+        /* 
+         * Get the notifications for for this lti course,
+         * for the current user.
          */
         getTodos() {
             this.$ajax.get(
@@ -153,8 +158,9 @@ export default {
                 })
         },
 
-        /* Gets the current lti course from the user object,
-           based on the lti session.
+        /* 
+         * Gets the current lti course from the user object,
+         * based on the lti session.
          */
         getLtiCourse() {
             let lti_data = this.$lti.data.lti_data;
@@ -174,8 +180,9 @@ export default {
             }
         },
 
-        /* Function that determines the role of a user.
-           The ui of the site gets adapted to the role.
+        /* 
+         * Function that determines the role of a user.
+         * The ui of the site gets adapted to the role.
          */
         determineRole() {
             let lti_data = this.$lti.data.lti_data;

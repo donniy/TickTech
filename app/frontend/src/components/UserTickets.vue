@@ -41,6 +41,9 @@
             }
         },
         methods: {
+            /*
+             * Get all tickets for a specific user.
+             */
             getTickets() {
                 this.status = 'getting tickets'
                 const path = '/api/user/' + this.$user.get().id + '/tickets'
@@ -54,7 +57,9 @@
                     this.status = 'failed getting tickets'
                 })
             },
-
+            /*
+             * Get all courses for a specific user.
+             */
             getCourses() {
                 const path = '/api/user/' + this.$user.get().id + '/courses'
                 this.$ajax.get(path).then(response => {

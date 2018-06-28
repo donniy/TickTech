@@ -94,7 +94,9 @@ export default {
         }
     },
     methods: {
-        // Upload the supplied files.
+        /*
+         * Upload the supplied files.
+         */
         handleFilesUpload() {
             if (this.fileTooMany || this.fileTooLarge) {
                 return
@@ -120,7 +122,9 @@ export default {
                 this.fileTooLarge = false
             }
         },
-        // Removes the supplied files.
+        /*
+         * Removes the supplied files.
+         */
         removeFile(key) {
             this.files.splice(key, 1)
 
@@ -145,13 +149,17 @@ export default {
             }
 
         },
-        // Adds supplied files.
+        /*
+         * Adds supplie files.
+         */
         addFiles() {
             if (!this.fileTooMany && !this.fileTooLarge) {
                 this.$refs.files.click()
             }
         },
-        // Check if all required boxes are filled correctly.
+        /*
+         * Check if all required boxes are filled correctly.
+         */
         sendTicket() {
             this.$validator.validateAll().then((result) => {
                 if (result) {
@@ -193,6 +201,9 @@ export default {
 
         },
 
+        /*
+         * Get all labels in a course.
+         */
         get_course_labels() {
             const pathLabels = '/api/labels/' + this.courseid;
             this.$ajax.get(pathLabels)
@@ -204,6 +215,9 @@ export default {
         },
     },
     mounted() {
+        /*
+         * Verify if a user is logged in, otherwise redirect to login page.
+         */
         if (!this.$user.logged_in()) {
             this.$router.push('/login')
         }
