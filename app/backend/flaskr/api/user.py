@@ -8,6 +8,7 @@ from flaskr.models.user import User
 from flaskr.request_processing.user import validate_userdata
 from flaskr.utils.json_validation import validate_json
 from flaskr.auth import require_role
+import bcrypt
 
 
 @apiBluePrint.route('/user/tickets')
@@ -125,33 +126,39 @@ def register_user():
 
     email = escape(json_data["email"])
     name = escape(json_data["name"])
-    studentid = escape(json_data["studentid"])
+    studentid = int(escape(json_data["studentid"]))
     password = escape(json_data["password"])
     repassword = escape(json_data["password_confirmation"])
 
-    if not validate_userdata(email, name, studentid, password, repassword):
-        return Iresponse.empty_json_request()
+    validated = validate_userdata(email, name, studentid, password, repassword)
+    if validated != '':
+        return Iresponse.create_response({"status": validated}, 200)
 
     # Backend check if email/studentid already exists
     user = User.query.filter_by(email=email).first()
     if user:
-        return Iresponse.create_response({"status": False}, 200)
+        return Iresponse.create_response({"status": "Email is taken"}, 200)
 
     studentid = json_data["studentid"]
     user = User.query.filter_by(id=studentid).first()
 
     if user:
-        return Iresponse.create_response({"status": False}, 200)
+        return Iresponse.create_response({"status": "Studentid taken"}, 200)
 
     new_user = User()
+    salt = bcrypt.gensalt()
+    hashedpsw = bcrypt.hashpw(password.encode('utf-8'), salt)
+    new_user.password = hashedpsw
     new_user.id = studentid
     new_user.name = name
     new_user.email = email
+    new_user.level = 1
+    new_user.experience = 1
 
     if not database.addItemSafelyToDB(new_user):
         return Iresponse.internal_server_error()
 
-    return Iresponse.create_response("", 201)
+    return Iresponse.create_response({"status": "OK"}, 201)
 
 
 @apiBluePrint.route('/user/exists', methods=["POST"])

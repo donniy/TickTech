@@ -7,11 +7,11 @@ insert or replace into course values ('31d929a86b1311e8adc0fa7ae01bbebc',"Compil
 -- SET @ta2 = 87654321;
 -- SET @student1 = 10203040;
 -- SET @student2 = 50607080;
-/* Add test users */
-insert or replace into user values (12345678,"Erik","ERIK@mail.com");
-insert or replace into user values (87654321,"Kire","KIRE@mail.com");
-insert or replace into user values (10203040, "student1","student1@mail.com");
-insert or replace into user values (50607080, "student2","student2@mail.com");
+/* Add test users psw=1*/
+insert or replace into user values (12345678,"Erik","erik@a.a", b'$2b$12$1Y21IaNbwu357bI4ipaZO.GVvzouAEvnrAy80TGCBRtX5q8OUlIr2');
+insert or replace into user values (87654321,"Kire","kire@a.a", b'$2b$12$1Y21IaNbwu357bI4ipaZO.GVvzouAEvnrAy80TGCBRtX5q8OUlIr2');
+insert or replace into user values (10203040, "student1","studend1@a.a", b'$2b$12$1Y21IaNbwu357bI4ipaZO.GVvzouAEvnrAy80TGCBRtX5q8OUlIr2');
+insert or replace into user values (50607080, "student2","student2@a.a", b'$2b$12$1Y21IaNbwu357bI4ipaZO.GVvzouAEvnrAy80TGCBRtX5q8OUlIr2');
 
 /* link users to course as ta */
 insert or replace into ta_link_course values (12345678,'71d929a86b1311e8adc0fa7ae01bbebc');
