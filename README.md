@@ -80,9 +80,7 @@ date.
  - Flask: https://flask.pocoo.org/docs/1.0
  - Vue: https://vuejs.org/v2/guide
 
-
-
- ### Canvas and LTI
+### Canvas and LTI
  In order to test the lti integration and canvas environment we provided a docker image, filled with some test data.
  In order to use this docker image use the following commands after having your docker setup and your
  docker daemon running.
@@ -103,7 +101,9 @@ docker start -i canvas-docker-tiktech
 
 When your docker has fully started go to:
 http://localhost:3000 or 0.0.0.0:3000 where you can login with the following credentials:
+
 username = canvas@example.edu
+
 and password = canvas-docker
 
 Now you can browse courses and act as users. If u click on a course on the side will show
