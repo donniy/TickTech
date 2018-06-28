@@ -5,10 +5,9 @@ from flaskr.jwt_wrapper import get_current_user
 from flaskr import Iresponse, database
 from flask import request, escape
 from flaskr.models.user import User
-from flaskr.request_processing.user import validate_userdata
+import flaskr.request_processing.user as rp_user
 from flaskr.utils.json_validation import validate_json
 from flaskr.auth import require_role
-import bcrypt
 
 
 @apiBluePrint.route('/user/tickets')
@@ -124,41 +123,7 @@ def register_user():
                                      "password_confirmation"]):
         return Iresponse.empty_json_request()
 
-    email = escape(json_data["email"])
-    name = escape(json_data["name"])
-    studentid = int(escape(json_data["studentid"]))
-    password = escape(json_data["password"])
-    repassword = escape(json_data["password_confirmation"])
-
-    validated = validate_userdata(email, name, studentid, password, repassword)
-    if validated != '':
-        return Iresponse.create_response({"status": validated}, 200)
-
-    # Backend check if email/studentid already exists
-    user = User.query.filter_by(email=email).first()
-    if user:
-        return Iresponse.create_response({"status": "Email is taken"}, 200)
-
-    studentid = json_data["studentid"]
-    user = User.query.filter_by(id=studentid).first()
-
-    if user:
-        return Iresponse.create_response({"status": "Studentid taken"}, 200)
-
-    new_user = User()
-    salt = bcrypt.gensalt()
-    hashedpsw = bcrypt.hashpw(password.encode('utf-8'), salt)
-    new_user.password = hashedpsw
-    new_user.id = studentid
-    new_user.name = name
-    new_user.email = email
-    new_user.level = 1
-    new_user.experience = 1
-
-    if not database.addItemSafelyToDB(new_user):
-        return Iresponse.internal_server_error()
-
-    return Iresponse.create_response({"status": "OK"}, 201)
+    return rp_user.register_user(json_data)
 
 
 @apiBluePrint.route('/user/exists', methods=["POST"])
@@ -176,6 +141,31 @@ def user_exists():
     if user is None:
         return Iresponse.create_response({"status": False}, 200)
     return Iresponse.create_response({"status": True}, 200)
+
+
+@apiBluePrint.route('/user/resetpsw', methods=["POST"])
+def user_reset_password():
+    """
+    Function that checks a code, resets it if correct and changes user pass
+    """
+    json_data = request.get_json()
+    if not validate_json(json_data, ["code", "password", "psw_confirmation"]):
+        return Iresponse.empty_json_request()
+
+    return rp_user.reset_password(json_data)
+
+
+@apiBluePrint.route('/user/setresetcode', methods=["POST"])
+def user_set_reset_code():
+    """
+    Sets user reset code.
+    """
+    json_data = request.get_json()
+    if not validate_json(json_data, ["email"]):
+        return Iresponse.empty_json_request()
+
+    email = json_data["email"]
+    return rp_user.set_reset_code(email)
 
 
 @apiBluePrint.route('/user/idexists', methods=["POST"])
