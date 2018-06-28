@@ -118,6 +118,13 @@ class CoursePlugin(db.Model):
                              lazy=True,
                              backref=db.backref('plugins'))
 
+
+    def __repr__(self):
+        return "<CoursePlugin: {}>".format(self.plugin)
+
+    def __hash__(self):
+        return hash(str(self))
+
     def get_settings(self):
         """
         Returns the settings of this plugin, along with the types and

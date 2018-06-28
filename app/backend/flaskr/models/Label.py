@@ -85,11 +85,26 @@ class Label(db.Model):
         for plugin in self.get_active_plugins():
             p = plugins.get_plugin(plugin['id'])
             cp = self.course.get_plugin(plugin['id'])
-            ta_id = p.get_ta(cp.settings, user_id, plugin['lp'].assignment_id)
+            ta_id = p.get_ta(cp.get_settings(), user_id, plugin['lp'].assignment_id)
             if ta_id:
                 tmp.append(User.query.get(ta_id))
         # TODO: If the list is empty, assign random TA?
         return set(tmp)
+
+    def get_assignment_info(self, user_id):
+        """
+        Get the assignment info for all plugins connected to this label.
+        """
+        pls = {}
+        for plugin in self.get_active_plugins():
+            p = plugins.get_plugin(plugin['id'])
+            cp = self.course.get_plugin(plugin['id'])
+            if cp.active:
+                print("Getting assignment info for {}".format(plugin['id']))
+                info = p.get_assignment_info(cp.get_setting_values(), user_id, plugin['lp'].assignment_id)
+                if info:
+                    pls[p.display_name] = info
+        return pls
 
 
 class LabelPlugin(db.Model):

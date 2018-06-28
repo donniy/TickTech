@@ -101,9 +101,15 @@ def update_plugin_settings(course_id, plugin_id):
     # We iterate over the known settings to prevent setting arbitrary
     # settings from evil requests, which could waste database space.
     if not cp.settings:
+        print("cp.settings: {}".format(cp.settings))
+        print("cp.settings not set. assign empty dict")
+        print("cp: {}".format(cp))
         cp.settings = {}
+        print("done")
     for key in cp.get_setting_values():
+        print("add {} to settings".format(key))
         cp.settings[key] = js[key]
+        print('done')
 
     try:
         db.session.commit()
