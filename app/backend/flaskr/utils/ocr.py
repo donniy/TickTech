@@ -6,6 +6,9 @@ from os.path import expanduser
 
 
 def ocr_process_image(url):
+    """
+    Convert an image file into text file using Optical Character Recognition.
+    """
     try:
         image = cv2.imread(url)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -17,6 +20,9 @@ def ocr_process_image(url):
 
 
 def isOcrable(address):
+    """
+    Checks wether file is an image file to apply ocr on.
+    """
     try:
         homefolder = expanduser("~")
         base = '/serverdata/'

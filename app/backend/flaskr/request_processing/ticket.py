@@ -12,6 +12,9 @@ from datetime import datetime
 
 # TODO: CHECK IF JSON IS VALID.
 def create_request(json_data):
+    """
+    Function that handles the create request for a ticket.
+    """
     name = escape(json_data["name"])
     name = name  # flake8
     studentid = escape(json_data["studentid"])
