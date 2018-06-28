@@ -89,7 +89,7 @@ def add_ta_to_ticket(json_data):
             level_up = levels.add_experience(levels.EXP_FOR_ASSING, ta.id)
             levels.notify_level_change(ta.id, ticket, level_up)
             return Iresponse.create_response({'ta': ta.serialize,
-                                             'status': "Assigned"},
+                                             'status': "Receiving help"},
                                              200)
         return Iresponse.create_response({'status': "OK"}, 201)
     return Iresponse.create_response("Failure", 400)
