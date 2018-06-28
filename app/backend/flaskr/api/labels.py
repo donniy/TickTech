@@ -122,7 +122,8 @@ def activate_plugin(label_id):
     label = Label.query.get_or_404(label_id)
     plugin_id = request.get_json()['plugin_id']
     if plugin_id not in plugins.plugin_list():
-        return Iresponse.create_response({"error": "Plugin does not exist"}, 404)
+        return Iresponse.create_response({"error": "Plugin does not exist"},
+                                         404)
     lp = LabelPlugin()
     lp.id = uuid.uuid4()
     lp.plugin = plugin_id
@@ -131,7 +132,8 @@ def activate_plugin(label_id):
     if database.addItemSafelyToDB(lp):
         return Iresponse.create_response({"status": "success"}, 200)
     else:
-        return Iresponse.create_response({"error": "Something went wrong"}, 500)
+        return Iresponse.create_response({"error": "Something went wrong"},
+                                         500)
 
 
 @apiBluePrint.route('/labels/<label_id>/plugins/<plugin_id>', methods=['PUT'])
@@ -154,7 +156,8 @@ def update_plugin(label_id, plugin_id):
         return Iresponse.create_response({"status": "failure"}, 500)
 
 
-@apiBluePrint.route('/labels/<label_id>/plugins/<plugin_id>', methods=['DELETE'])
+@apiBluePrint.route('/labels/<label_id>/plugins/<plugin_id>',
+                    methods=['DELETE'])
 def deactivate_plugin(label_id, plugin_id):
     """
     Remove this plugin-label combination from the database to deactivate it.

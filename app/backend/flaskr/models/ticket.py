@@ -28,7 +28,10 @@ class Ticket(db.Model):
     """
     id = db.Column(UUIDType(binary=False), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    course_id = db.Column(UUIDType(binary=False), db.ForeignKey('course.id'), unique=False, nullable=False)
+    course_id = db.Column(UUIDType(binary=False),
+                          db.ForeignKey('course.id'),
+                          unique=False,
+                          nullable=False)
 
     ta_id = db.Column(db.Integer, nullable=True)
 
@@ -43,8 +46,10 @@ class Ticket(db.Model):
         UUIDType(binary=False), db.ForeignKey('label.label_id'), unique=False,
         nullable=True)
 
-    label = db.relationship('Label', backref=db.backref('tickets', lazy=True))
-    course = db.relationship('Course', backref=db.backref('tickets', lazy=False))
+    label = db.relationship('Label',
+                            backref=db.backref('tickets', lazy=True))
+    course = db.relationship('Course',
+                             backref=db.backref('tickets', lazy=False))
 
     # Dit is hoe je een relatie maakt. ticket.status geeft een TicketStatus
     # object met de status van dit ticket. backref betekent: maak een veld

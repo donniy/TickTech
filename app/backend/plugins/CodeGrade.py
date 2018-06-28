@@ -48,4 +48,3 @@ def get_assignment_info(course_settings, student_id, assignment_id):
     tmp['Assignment'] = {'type': 'url', 'value': 'https://www.google.com'}
     tmp['Visit CodeGrade'] = {'type': 'url', 'value': 'https://codegra.de'}
     return tmp
-

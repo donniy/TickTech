@@ -50,7 +50,8 @@ def retrieve_course_plugins(course_id):
     return Iresponse.create_response(tmp, 200)
 
 
-@apiBluePrint.route('/courses/<course_id>/plugins/<plugin_id>', methods=['GET'])
+@apiBluePrint.route('/courses/<course_id>/plugins/<plugin_id>',
+                    methods=['GET'])
 @jwt_required
 def get_plugin_configurations(course_id, plugin_id):
     """
@@ -60,11 +61,13 @@ def get_plugin_configurations(course_id, plugin_id):
     # TODO: Check if user is supervisor in this course.
 
     if plugin_id not in plugins.plugin_list():
-        return Iresponse.create_response({"error": "Plugin does not exist"}, 404)
+        return Iresponse.create_response({"error": "Plugin does not exist"},
+                                         404)
 
     pids = [p.plugin for p in course.plugins]
     if plugin_id not in pids:
-        return Iresponse.create_response({"error": "Plugin not available for this course"}, 403)
+        return Iresponse.create_response({"error": "Plugin not available for\
+                this course"}, 403)
 
     cp = next((p for p in course.plugins if p.plugin == plugin_id), None)
     if cp:
@@ -73,7 +76,8 @@ def get_plugin_configurations(course_id, plugin_id):
         return Iresponse.create_response({"error": "Not found"}, 404)
 
 
-@apiBluePrint.route('/courses/<course_id>/plugins/<plugin_id>', methods=['PUT'])
+@apiBluePrint.route('/courses/<course_id>/plugins/<plugin_id>',
+                    methods=['PUT'])
 @jwt_required
 def update_plugin_settings(course_id, plugin_id):
     """
@@ -83,12 +87,14 @@ def update_plugin_settings(course_id, plugin_id):
     # TODO: Check if user is supervisor in this course.
 
     if plugin_id not in plugins.plugin_list():
-        return Iresponse.create_response({"error": "Plugin does not exist"}, 400)
+        return Iresponse.create_response({"error": "Plugin does not exist"},
+                                         400)
 
     cp = next((p for p in course.plugins if p.plugin == plugin_id), None)
 
     if cp is None:
-        return Iresponse.create_response({"error": "Cannot configure plugin"}, 400)
+        return Iresponse.create_response({"error": "Cannot configure plugin"},
+                                         400)
 
     js = request.get_json()
 
@@ -109,10 +115,12 @@ def update_plugin_settings(course_id, plugin_id):
         # input triggers this response, the cause of it should be detected
         # before adding to db and return a 400 instead of letting it arrive
         # here.
-        return Iresponse.create_response({"status": "could not process your request"}, 500)
+        return Iresponse.create_response({"status": "could not process your\
+                request"}, 500)
 
 
-@apiBluePrint.route('/courses/<course_id>/plugins/<plugin_id>', methods=['PATCH'])
+@apiBluePrint.route('/courses/<course_id>/plugins/<plugin_id>',
+                    methods=['PATCH'])
 @jwt_required
 def update_plugin_state(course_id, plugin_id):
     """
@@ -122,11 +130,15 @@ def update_plugin_state(course_id, plugin_id):
     # TODO: Check if user is supervisor in this course.
 
     if plugin_id not in plugins.plugin_list():
-        return Iresponse.create_response({"error": "Plugin does not exist"}, 400)
+        return Iresponse.create_response({"error": "Plugin does not exist"},
+                                         400)
 
     pids = [p.plugin for p in course.plugins]
     if plugin_id not in pids:
-        cp = CoursePlugin(id=uuid.uuid4(), plugin=plugin_id, course_id=course_id, active=request.get_json()['active'])
+        cp = CoursePlugin(id=uuid.uuid4(),
+                          plugin=plugin_id,
+                          course_id=course_id,
+                          active=request.get_json()['active'])
         course.plugins.append(cp)
         try:
             db.session.add(course)
@@ -134,8 +146,10 @@ def update_plugin_state(course_id, plugin_id):
         except Exception as e:
             db.session.rollback()
             print(e)
-            return Iresponse.create_response({"status": "could not process your request"}, 500)
-        return Iresponse.create_response({"status": "success", "active": cp.active}, 200)
+            return Iresponse.create_response({"status": "could not process\
+                                                         your request"}, 500)
+        return Iresponse.create_response({"status": "success",
+                                          "active": cp.active}, 200)
     else:
         cp = next((p for p in course.plugins if p.plugin == plugin_id), None)
         cp.active = request.get_json()['active']
@@ -145,8 +159,10 @@ def update_plugin_state(course_id, plugin_id):
         except Exception as e:
             db.session.rollback()
             print(e)
-            return Iresponse.create_response({"status": "could not process your request"}, 500)
-        return Iresponse.create_response({"status": "success", "active": cp.active}, 200)
+            return Iresponse.create_response({"status": "could not process\
+                                              your request"}, 500)
+        return Iresponse.create_response({"status": "success",
+                                          "active": cp.active}, 200)
 
 
 @apiBluePrint.route('/courses', methods=['POST'])

@@ -104,7 +104,9 @@ class CoursePlugin(db.Model):
                          unique=False,
                          nullable=True)
 
-    course = db.relationship('Course', lazy=True, backref=db.backref('plugins'))
+    course = db.relationship('Course',
+                             lazy=True,
+                             backref=db.backref('plugins'))
 
     def get_settings(self):
         """

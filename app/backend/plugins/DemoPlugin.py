@@ -47,4 +47,3 @@ def get_assignment_info(course_settings, student_id, assignment_id):
     tmp['Feedback'] = {'type': 'text', 'value': 'Code was not PEP8 compliant.'}
     tmp['Assignment'] = {'type': 'url', 'value': 'https://www.google.com'}
     return tmp
-
