@@ -46,7 +46,7 @@ def create_app(test_config=None):
 
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    app.config['JWT_SECRET_KEY'] = 'very-secure'
+    app.config['JWT_SECRET_KEY'] = 'very-secure'  # Test value
     app.config['TIKTECH_BASE_URL'] = 'http://localhost:5000'
     # Send email settings, for now hardcoded
     app.config['MAIL_SERVER'] = Config.EMAIL_SEND_SERVER
