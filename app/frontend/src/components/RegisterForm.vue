@@ -99,6 +99,9 @@
 
             }
         }, methods: {
+            /*
+             * Add new user to the database after all checks are passed.
+             */
             Register() {
                 this.$validator.validateAll().then((result) => {
                     if (result) {
@@ -114,23 +117,39 @@
                         })
                     }
                 })
-            }, checkEmailAvailability() {
+            }, 
+            /*
+             * Check if email is already present in database.
+             */
+            checkEmailAvailability() {
                 const path = '/api/user/exists'
                 this.$ajax.post(path, { email: this.form.email }, response => {
                     this.emailstatus = response.data.json_data.status;
                     console.log(this.emailstatus)
 
                 })
-            }, checkIDAvailability() {
+            }, 
+            /*
+             * Check if ID is already present in database.
+             */
+            checkIDAvailability() {
                 const path = '/api/user/idexists';
                 this.$ajax.post(path, { studentid: this.form.studentid }, response => {
                     this.idstatus = response.data.json_data.status;
                     console.log(this.idstatus)
 
                 })
-            }, checkPswConfirmation() {
+            },
+            /*
+             * Check if password is the same as the confirmation password.
+             */ 
+            checkPswConfirmation() {
                 this.pswstatus = (this.form.password === this.form.password_confirmation) || this.form.password === ""
-            }, logUserIn() {
+            }, 
+            /*
+             * If ID is already taken try to log user in.
+             */
+            logUserIn() {
                 const path = '/auth'
                 this.$ajax.post(path, {
                     username: this.form.studentid,

@@ -183,6 +183,9 @@ export default {
         }
     },
     methods: {
+        /*
+         * Get all information from a specific ticket.
+         */
         getTicket() {
             const path = '/api/ticket/' + this.$route.params.ticket_id
             this.$ajax.get(path)
@@ -193,12 +196,18 @@ export default {
                     console.log(error)
                 })
         },
+        /*
+         * Get all plugins attached to the ticket.
+         */
         getPlugins() {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/plugins'
             this.$ajax.get(path, response => {
                 this.plugins = response.data.json_data
             })
         },
+        /*
+         * Load all messages between TA and student in the ticket.
+         */
         getMessages() {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
             this.$ajax.get(path)
@@ -209,6 +218,9 @@ export default {
                     console.log(error)
                 })
         },
+        /*
+         * Get all notes attached to a ticket.
+         */
         getNotes() {
             //get all notes
             this.$ajax.get('/api/notes/' + this.$route.params.ticket_id)
@@ -220,6 +232,9 @@ export default {
                     console.log(err)
                 })
         },
+        /*
+         * Send reply in to the database.
+         */
         sendReply() {
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/messages'
             let reply = this.reply
@@ -240,6 +255,9 @@ export default {
                 })
             }
         },
+        /*
+         * Close the ticket if the question has been answered by a TA.
+         */
         closeTicket() {
             this.showModal = false
             const path = '/api/ticket/' + this.$route.params.ticket_id + '/close'
@@ -250,6 +268,9 @@ export default {
                 })
 
         },
+        /*
+         * Create a downloadable link. Retrieve location from the database and create a link to download the file.
+         */
         downloadFile(key, name){
 
             const path = '/api/ticket/filedownload'
