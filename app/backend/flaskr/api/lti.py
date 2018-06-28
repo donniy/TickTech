@@ -94,9 +94,9 @@ def auth_lti_session():
     lti_api_code = request.args.get('code')
     lti_data = get_jwt_identity()
     custom_canvas_course_id = lti_data['custom_canvas_course_id']
-    if lti_api_code:
-        get_all_users_of_canvas_course_via_api(lti_api_code, token,
-                                               custom_canvas_course_id)
+    #if lti_api_code:
+    #   get_all_users_of_canvas_course_via_api(lti_api_code, token,
+    #                                         custom_canvas_course_id)
     access_token = create_access_token(identity=get_jwt_identity())
     return Iresponse.create_response({'access_token': access_token}, 200)
 

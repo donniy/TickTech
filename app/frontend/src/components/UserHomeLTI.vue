@@ -182,6 +182,7 @@ export default {
                 console.log(this.lti_course)
             } else if (this.isTeacher) {
                 let teacher_courses = this.$user.get().supervisor;
+                console.log(this.$user.get())
                 this.lti_course = teacher_courses.find(this.is_lti_course);
                 this.getCourseUnassignedTickets();
             }

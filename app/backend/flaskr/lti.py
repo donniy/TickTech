@@ -87,7 +87,8 @@ class LTI_instance_database_helper:
         print(user_id)
         user = User.query.get(user_id)
         if user is None:
-            user = User(id=user_id,
+            user = User()
+            user.create(id=user_id,
                         name=self.lti_instance.user_full_name,
                         email=self.lti_instance.user_primary_email,
                         password="1")
@@ -300,7 +301,8 @@ def fill_new_course_with_canvas_data(headers, course_id):
         if existing_user is None:
             name = user.get('name')
             email = user.get('email')
-            existing_user = User(id=user_id, name=name, email=email,
+            existing_user = User()
+            existing_user.create(id=user_id, name=name, email=email,
                                  password="1")
             if not database.addItemSafelyToDB(existing_user,
                                               fill_new_course_with_canvas_data):
