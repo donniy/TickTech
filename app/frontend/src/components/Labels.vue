@@ -42,8 +42,11 @@
         methods: {
             getCourse() {
                 const path = '/api/courses/single/' + this.$route.params.course_id
-                this.$ajax.get(path, response => {
+                this.$ajax.get(path).then(response => {
                     this.course = response.data.json_data
+                }).catch(error => {
+                    console.log(error)
+                    this.$router.go(-1)
                 })
             },
             getLabels() {
