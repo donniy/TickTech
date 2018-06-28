@@ -25,7 +25,7 @@
         <md-card class="md-layout-item message-container">
             <div>
                 <md-card-content>
-                    <message v-bind:user="{id: user.id}" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
+                    <message v-bind:user="{id: user.id}" v-bind:tas="course_tas" v-for="message in messages" v-bind:key="message.id" v-bind:message="message"></message>
                 </md-card-content>
             </div>
         </md-card>
@@ -60,7 +60,8 @@
                 reply: '',
                 messages: [],
                 ret_url: '',
-                user: this.$user.get()
+                user: this.$user.get(),
+                course_tas: [],
             }
         },
         methods: {
@@ -72,6 +73,7 @@
                 this.$ajax.get(path)
                     .then(response => {
                         this.ticket = response.data.json_data
+                        this.getCourseTas()
                     })
                     .catch(error => {
                         this.$router.go(-1)
@@ -132,6 +134,33 @@
 
                   var blob = new Blob(byteArrays, {type: contentType});
                   return blob;
+            },
+            getCourseTas() {
+                const path = '/api/courses/' + this.ticket.course_id + '/tas'
+                this.$ajax.get(path)
+                    .then(response => {
+                        this.course_tas = response.data.json_data
+                        build_ta_matching_table(this)
+                    }).catch(error => {
+                        console.log(error)
+                    })
+
+                /* Function to build the matching table for mentioning.
+                * It grabs all ta's for this course and appends them to the
+                * table.
+                */
+                function build_ta_matching_table(obj) {
+                    console.log(obj.mentionOptions)
+                    // Vue-tribute keeps an instance of the Optionsarray, so clear it.
+                    // Yes this is a valid way to clear out an array in JS.
+                    obj.mentionOptions.values.length = 0;
+                    for (let i = 0; i < obj.course_tas.length; i++) {
+                        let ta = obj.course_tas[i]
+                        console.log(ta)
+                        obj.mentionOptions.values.push(
+                            { name: String(ta.name), id: String(ta.id) })
+                    }
+                }
             },
             /*
              * Create a downloadable link with the corresponding blob.
