@@ -10,6 +10,7 @@ from threading import Thread
 from flask import current_app
 from flask import escape
 
+
 def validate_userdata(email, name, studentid, password, repassword):
     # Check email.
     regex = re.compile(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$")
@@ -66,6 +67,7 @@ def register_user(json_data):
 
     return Iresponse.create_response({"status": "OK"}, 201)
 
+
 def reset_password(json_data):
     password = json_data["password"]
     psw_confirmation = json_data["psw_confirmation"]
@@ -88,7 +90,6 @@ def reset_password(json_data):
                             database.db.session.commit()
                             return Iresponse.create_response("Succes", 201)
                         else:
-                            print(code, user.code)
                             return Iresponse.create_response("Wrong code", 200)
                     else:
                         return Iresponse.create_response("No code", 200)
@@ -101,6 +102,7 @@ def reset_password(json_data):
     else:
         return Iresponse.create_response("Passwords don't match", 200)
 
+
 def set_reset_code(email):
 
     user_data = User.query.filter_by(email=email).first()
@@ -109,7 +111,8 @@ def set_reset_code(email):
     if not user_data:
         return Iresponse.create_response("No user found by this email", 200)
 
-    if user_data.code_expiration is None or user_data.code_expiration < present:
+    expiration = user_data.code_expiration
+    if expiration is None or expiration < present:
         user_data.code = uuid.uuid4()
         user_data.code_expiration = present + timedelta(0, 7200)
         database.db.session.commit()
@@ -120,8 +123,8 @@ def set_reset_code(email):
         thr.start()
         return Iresponse.create_response(str(user_data.code), 201)
 
-
     return Iresponse.create_response("Your previous link hasn't expired", 200)
+
 
 def send_async_email(message, app):
     with app.app_context():
