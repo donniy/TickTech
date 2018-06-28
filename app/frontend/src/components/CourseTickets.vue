@@ -137,7 +137,7 @@
         methods: {
             showTicket(item) {
                 clearTimeout(this.timeout)
-                this.timeout = setTimeout(() => { this.ticketSum = item }, 500)
+                this.timeout = setTimeout(() => { this.ticketSum = item }, 400)
             },
             navTicket(item) {
                 this.$router.push("/ticket/" + item)
