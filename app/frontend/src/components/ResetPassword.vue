@@ -1,7 +1,7 @@
 <template>
 <div v-if="$auth.ready()">
 	<h2 class="form-header center-display">Set password</h2>
-	<md-dialog-alert :md-active.sync="succes" md-content="Your password has been reset!" @md-confirm="onConfirm" md-confirm-text="Login now!" />
+	<md-dialog-alert :md-active.sync="succes" md-content="Your password has been reset!" @click="onConfirm" md-confirm-text="Login now!" />
 
 	<form class="md-layout center-display" v-on:submit.prevent="resetPassword">
 		<md-card class="md-layout-item md-size-50 md-small-size-100">
@@ -78,10 +78,11 @@ export default {
                     this.succes = true
                 }
 			}).catch(error => {
-				console.log(error)			
+				console.log(error)
 			})
 		},
         onConfirm() {
+			console.log("got here")
             this.$router.push('/login')
         }
 	},
