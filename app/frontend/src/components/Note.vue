@@ -21,10 +21,10 @@
     import Modal from './ClosePrompt.vue'
 
     export default {
-    	props: ['note'],
-    	data: function() {
-    		return {
-    			showModal: false,
+        props: ['note'],
+        data: function() {
+            return {
+                showModal: false,
                 exists: true,
                 user: ''
             }

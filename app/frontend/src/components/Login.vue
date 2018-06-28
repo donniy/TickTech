@@ -49,7 +49,8 @@ import Router from 'vue-router';
 					psw: ''
                 },
 				loginstatus: false,
-				message: ''
+				message: '',
+                path: null
             }
         },
         methods: {
@@ -75,8 +76,16 @@ import Router from 'vue-router';
             }
         },
         mounted() {
+            window.$rederict_to_ticket = this.$route.query.redirect
+            console.log(window.$rederict_to_ticket)
             if (this.$user.logged_in()) {
-                this.$router.back()
+                if (window.$rederict_to_ticket){
+                    this.$router.push('/ticket/'+window.$rederict_to_ticket)
+                    window.$rederict_to_ticket = null
+                }
+                else{
+                    this.$router.back()
+                }
             }
         }
     }

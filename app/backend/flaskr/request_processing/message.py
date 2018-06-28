@@ -25,11 +25,12 @@ def create_request(jsonData, ticket_id):
         return Iresponse.create_response(response_body, 400)
 
     try:
-        notification = notifications.notify(user_id,
-                                            ticket,
-                                            text,
-                                            Message.NTFY_TYPE_MESSAGE)
-        notification = notification  # flake8
+        if user_id != ticket.user_id:
+            notification = notifications.notify(user_id,
+                                                ticket,
+                                                text,
+                                                Message.NTFY_TYPE_MESSAGE)
+            notification = notification  # flake8
 
         # Add experience if its a ta who is commenting.
         user = User.query.get(user_id)

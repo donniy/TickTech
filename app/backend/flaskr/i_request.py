@@ -10,6 +10,7 @@ class Irequest:
     In other functions and to extract enformation from the request
     easily. This is mostly done for LTI at the moment.
     """
+
     def __init__(self):
         """
         @params headers: the headers of the request in a python dict.

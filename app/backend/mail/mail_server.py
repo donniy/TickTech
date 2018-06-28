@@ -1,4 +1,6 @@
 from email.header import decode_header
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
 import email
 import poplib
 import requests
@@ -6,68 +8,99 @@ import base64
 import html2text
 import socket
 
-'''
-Rabbitmqueue: Message mpass system between flask en mail server
-'''
+poplib._MAXLINE = 2048
 
 
 def connect(host, port, user, password):
     '''
     Connects to and authenticates with a POP3 mail server.
-    Returns None on failure, server_connection on success.
+    Returns None on failure, server connection on success.
     '''
     server = None
     try:
         server = poplib.POP3_SSL(host, port)
         server.user(user)
         server.pass_(password)
+    # Check if poplib raises any kind of error.
     except (poplib.error_proto) as msg:
         print(msg)
         return None
+    # Check if the server address and name are valid.
     except socket.gaierror as msg:
         print(msg)
         return None
+    # Check if any system-related errors are raised.
     except OSError as msg:
         print(msg)
         return None
     return server
 
 
-def parse_email(bytes_email):
+def parseEmail(emailBytes):
     '''
     Parses a raw email. Returns the subject, body and sender in string format.
     '''
-    # Parse email.
-    parsed_email = email.message_from_bytes(bytes_email)
+    # Parse the email.
+    parsedEmail = email.message_from_bytes(emailBytes)
 
-    # Get subject.
-    subject_parsed = decode_header(parsed_email['Subject'])
-    if subject_parsed[0][1] is not None:
-        subject = subject_parsed[0][0].decode(subject_parsed[0][1])
+    # Get subject of email.
+    subjectParsed = decode_header(parsedEmail['Subject'])
+    if subjectParsed[0][1] is not None:
+        subject = subjectParsed[0][0].decode(subjectParsed[0][1])
     else:
-        subject = subject_parsed[0][0]
+        subject = subjectParsed[0][0]
 
-    # Get body.
+    # Parse the body of the email.
+    body, html, attachments, files = parseBody(parsedEmail)
+
+    # Transform html to text and add it to body.
+    if body == '':
+        body += html2text.html2text(html)
+
+    # Get sender.
+    sender_parsed = decode_header(parsedEmail['From'])
+    if sender_parsed[0][1] is not None:
+        sender = sender_parsed[0][0].decode(sender_parsed[0][1])
+    else:
+        sender = sender_parsed[0][0]
+
+    # Sender is either of the format "Firstname Lastname <email@email.com>"
+    # or just plain email@email.com.
+    try:
+        name = sender.split("<")
+        address = name[1].split(">")
+        return subject, body, attachments, name[0], address[0]
+    except IndexError:
+        name = 'unknown'
+        address = sender
+
+    return subject, body, attachments, name, address
+
+
+def parseBody(parsedEmail):
+    '''
+    Parses the body of an email.
+    Returns the body and optional attachments on success.
+    '''
     body = ''
     html = ''
-    files = {}
     attachments = []
-    # print("parsing body")
-    if parsed_email.is_multipart():
-        for part in parsed_email.walk():
+    files = {}
+
+    # Add all text and html to the final body.
+    if parsedEmail.is_multipart():
+        for part in parsedEmail.walk():
             ctype = part.get_content_type()
             if (ctype == 'text/plain'):
                 body += str(part.get_payload())
             elif ctype == "text/html":
                 html += str(part.get_payload())
+            # If not html or plain text, check if it's some kind of file.
             else:
                 data = part.get_payload(decode=True)
                 ctype_split = ctype.split('/')
-                # print("splitted", ctype_split)
                 try:
                     if (ctype_split[0] == 'text' or ctype_split[0] == 'image'):
-                        # print("Attachment text")
-                        # print("Found:", ctype_split[1])
                         attachments.append((part.get_filename(),
                                             data))
                         files[part.get_filename()] = data
@@ -76,199 +109,250 @@ def parse_email(bytes_email):
                           ctype, ctype_split)
     else:
         # Emails are always multipart?
-        if (parsed_email.get_content_type() == 'text/plain'):
-            body += str(parsed_email.get_payload())
-        elif parsed_email.get_content_type() == "text/html":
+        if (parsedEmail.get_content_type() == 'text/plain'):
+            body += str(parsedEmail.get_payload())
+        elif parsedEmail.get_content_type() == "text/html":
             html += str(part.get_payload())
         else:
-            print("Not multipart and  not plain")
+            print("Could not parse email. It was neither multipart nor plain.")
 
-    print("BODY!!!", body)
-    if body == '':
-        body += html2text.html2text(html)
-        print("body was empty", body)
-
-    # Get sender.
-    sender_parsed = decode_header(parsed_email['From'])
-    if sender_parsed[0][1] is not None:
-        sender = sender_parsed[0][0].decode(sender_parsed[0][1])
-    else:
-        sender = sender_parsed[0][0]
-
-    # Sender is of format "Firstname Lastname <email@email.com>".
-    print(sender, '\n\n')
-    try:
-        name = sender.split("<")
-        address = name[1].split(">")
-    except IndexError:
-        name = sender
-        address = sender
-
-    return subject, body, attachments, name[0], address[0]
+    return body, html, attachments, files
 
 
-def find_user_id(body, sender, sendermail):
+def requestStudentID(result):
     '''
-    Parses a given body in string format. Returns the student id,
-    name and label, if possible.
+    Helper function to send json request to retrieve information
+    from the database.
+    Returns studentid on success, None on failure.
     '''
-
-    print("Trying to link user to this email", sender, sendermail)
-    info = {
-        'email': sendermail
-    }
-    result = requests.post(
-        'http://localhost:5000/api/email/user/match',
-        json=info)
-
-    # sprint(result.text)
-    if(result.status_code == 200):
+    if (result.status_code == 200):
         json = result.json()
-        if (json['json_data']['succes']):
-            id = json['json_data']['studentid']
-            if id is not None:
-                return id
-
-    return None
-
-    # body = body.split()
-    # for words in body:
-    #     if words.isdigit() and len(words) > 6 and len(words) < 9:
-    # > old ids 6 digits, new ones 8.
-    #         studentid = words
-    #
-    # TODO: find the keywords of labels in the text
-    # if words in labels
-    # labelid = words
-    # print('Found matching label ID: ' + labelid)
-    # return studentid, 1
+        if (json['json_data']['success']):
+            studentid = json['json_data']['studentid']
+            return studentid
 
 
-def retrieve_labels(courseid):
+def retrieveLabels(courseid):
     '''
-    Retrieve all available labels of a course from the server.
+    Helper function to retrieve all available labels of a
+    course from the server.
     '''
-    labels = None
+    labels = []
     result = requests.get('http://localhost:5000/api/labels/' + courseid)
+
     if (result.status_code == 200):
         data = result.json()
         labels = data['json_data']
-        if (labels == []):
-            print("No labels available")
-        else:
-            # This is how it works
-            print(labels[0]['label_id'], labels[0]['label_name'])
-    else:
-        print("Failed retrieving labels", result.text)
 
     return labels
 
 
-def check_mail(host, port, user, password, courseid, debug=0):
+# TODO: Labels will be many-to-many in thebackend (Ravi), so this is outdated.
+def findLabel(body, labels):
+    '''
+    Parse the body for words that might be labels. Using the fuzzywuzzy module,
+    a score will be calculated on the match of a substring.
+    The best match will be returned.
+    '''
+    # Put all labels in a list.
+    labelcount = len(labels)
+    result = []
+    for i in range(0, labelcount):
+        result.append(labels[i]['label_name'])
+
+    bestScore = 0
+    bestLabel = None
+
+    # Find the best match between labels and the body of the e-mail.
+    for i in range(0, labelcount):
+        currentScore = fuzz.ratio(result[i], body)
+        if (currentScore > 1):
+            if (currentScore > bestScore):
+                bestScore = currentScore
+                bestLabel = labels[i]
+
+    return bestLabel['label_id']
+
+
+def findUser(body, sender, address):
+    '''
+    Parses a given email body in string format. Returns the student id,
+    name and label, if possible.
+    '''
+    # Check if the email is in the database.
+    info = {'email': address}
+    result = requests.post(
+        'http://localhost:5000/api/email/user/match/email',
+        json=info)
+
+    # If request was succesful, try and connect mail to student id in database.
+    if (requestStudentID(result) is not None):
+        return requestStudentID(result)
+
+    # Parse for studentd ids: Old ids are 6 digits long, new ones are 8.
+    body = body.split()
+    studentid = None
+    for words in body:
+        if (words.isdigit() and len(words) > 6 and len(words) < 9):
+            studentid = int(words)
+
+    # Check if the student id is in the database.
+    info = {'studentid': studentid}
+    result = requests.post(
+        'http://localhost:5000/api/email/user/match/studentid',
+        json=info)
+
+    # Either return the student ID or None if not found.
+    return requestStudentID(result)
+
+# TODO: Create a reply instead of a ticket.
+
+
+def createReply(subject, body, files, sender, address, courseid):
+    '''
+    Create a reply to a ticket from the acquired information from an email.
+    '''
+    # TODO: Finish this functione.
+    # Find original ticket with subject / meta data?
+
+    # Create a new reply.
+    # newmessage = {}
+
+    # Add the reply to the database.
+    # result = requests.post(SOMETHING, json=newmessage)
+
+    # if (result.status_code != 201):
+    # replyErrorMail()
+
+
+def createTicket(subject, body, files, sender, address, courseid):
+    '''
+    Create a ticket from the acquired information from an email.
+    Note: New tickets will only be displayed after refreshing the page.
+    '''
+    # Find student in database or by email parsing.
+    studentid = findUser(body, sender, address)
+
+    if studentid is None:
+        info = {'subject': subject,
+                'body': body,
+                'address': address}
+        result = requests.post(
+            'http://localhost:5000/api/email/user/match/failed',
+            json=info)
+        print("Mail fetching failed, notifed user\nSubject:",
+              subject, '\nSender:', address)
+        return
+
+    # TODO: Check if an email is a reply or a new email.
+    if "Ticket ID: " in subject:
+        print(subject)
+        return
+    # createReply(subject, body, files, sender, address, courseid)
+    #     else
+
+    # Get all labels available for this course.
+    labels = retrieveLabels(courseid)
+    if (labels != []):
+        labelid = findLabel(body, labels)
+    else:
+        labelid = ''
+
+    newticket = {
+        'name': sender,
+        'studentid': studentid,
+        'email': address,
+        'subject': subject,
+        'message': body,
+        'courseid': courseid,
+        'labelid': labelid
+    }
+
+    # Add attachments to tickets.
+    attachments = {}
+    for name, bytes in files:
+        attachments[name] = base64.b64encode(bytes).decode("utf-8")
+    newticket['files'] = attachments
+
+    # Add the ticket to the database.
+    result = requests.post(
+        'http://localhost:5000/api/email/ticket/submit',
+        json=newticket)
+
+    if (result.status_code != 201):
+        # ticketErrorEmail()
+        print("Something went wrong creating a new ticket from an email.")
+        print("******")
+        print("Sender: " + str(sender) + "\nStudentid: " +
+              str(studentid) + "\nEmail: " + str(address) +
+              "\nSubject: " + str(subject))
+        print("Course ID: ", courseid)
+        print("Label ID: ", labelid)
+        print("Body: " + body)
+    # else:
+
+    # TODO: Send confirmation email.
+    # createdTicketEmail(subject, address, TODO TICKETID, body)
+    # res = Mail().send(message)
+    # res = res  # for flake8
+    # return
+
+
+def checkMail(host, port, user, password, courseid, debug=0):
     '''
     Start a mail server and sync all emails once.
-
     Set debug to anything but 0 to enable debugging. This will make sure
-    emails will keep comming in.
+    emails will keep coming in.
     '''
-    # connect
+    # Connect to the server.
     server = connect(host, port, user, password)
-    # Cannot connect. Try again later
     if server is None:
         return 1
 
     mailcount = server.stat()[0]
     if (mailcount == 0):
-        print("No emails found.")
+        print("No new emails found. Quitting!")
         server.quit()
         return 0
     else:
-        print(mailcount, "emails found. parsing...")
+        print(mailcount, "new email(s) found!")
 
-    # Get all labels available for this course
-    labels = retrieve_labels(courseid)
+    # Parse all new emails.
     for i in range(mailcount):
+        try:
+            emailBytes = b"\n".join(server.retr(i + 1)[1])
+        except poplib.error_proto:
+            # we have no email information yet so no warning possible
+            print("To many char's in line")
+            continue
 
-        # parse email
-        bytes_email = b"\n".join(server.retr(i + 1)[1])
-        subject, body, files, sender, address = parse_email(bytes_email)
+        subject, body, files, sender, address = parseEmail(emailBytes)
 
-        # print("FILES:", files)
-
-        # Check for succes
         if (subject is None or body is None or sender is None):
             print("Error parsing email.")
-            print("subject", subject)
-            print('body', body)
-            print('sender', sender)
+            print("Found subject:", subject)
+            print("Found body:", body)
+            print("Found sender:", sender)
         else:
-            # validate user
-            studentid = find_user_id(body, sender, address)
-            if studentid is None:
-                # TODO: What to do?
-                studentid = 123123123
+            createTicket(subject, body, files, sender, address, courseid)
 
-            # Check if email with subject exists
-
-            # Try To attach label
-            if (labels != []):
-                labelid = labels[0]['label_id']
-            else:
-                labelid = ''
-            # print("CHECKLABEL:",labelid, labels)
-
-            newticket = {
-                'name': sender,
-                'studentid': studentid,
-                'email': address,
-                'subject': subject,
-                'message': body,
-                'courseid': courseid,
-                'labelid': labelid
-            }
-            print("labelid", labelid)
-            print("body=upload", body)
-            attachments = {}
-            for name, bytes in files:
-                attachments[name] = base64.b64encode(bytes)
-
-            newticket['files'] = attachments
-
-            # Add the new variables to a new ticket.
-            # print(newticket)
-            result = requests.post(
-                'http://localhost:5000/api/email/ticket/submit',
-                json=newticket)
-
-            print("RESULT:", result.status_code)
-            if (result.status_code != 201):
-                print("Something went wrong creating a"
-                      "new ticket from an email.")
-                print("******")
-                print("Sender: " + str(sender) + "\nStudentid: " +
-                      str(studentid) + "\nEmail: " + str(address) +
-                      "\nSubject: " + str(subject))
-                print("Course ID: ", courseid)
-                print("Label ID: ", labelid, "\n\n")
-                print("Body: " + body)
-
-    # Somehow makes you up-to-date with server
-    # disable this when debugging
+    # Update with server, disable this when debugging.
     if (debug == 0):
         server.quit()
     return 0
 
 
+# TODO: For debugging. Can be removed later (we use thread.py).
 if __name__ == '__main__':
-    print("Run this")
+    # Retrieve courses, get current course id.
     result = requests.get('http://localhost:5000/api/courses')
+
     if (result.status_code == 200):
         courses = result.json()
         courseid = courses["json_data"][0]["id"]
     else:
-        print(result.status_code)
-        # print("Failed", result.text)
+        print("Could not retrieve courses, error code: ", result.status_code)
 
-    check_mail("pop.gmail.com", "995",
-               "uvapsetest@gmail.com", "stephanandrea", courseid)
-    print("Finished")
+    # Check mail for current course.
+    checkMail("pop.gmail.com", "995",
+              "uvapsetest@gmail.com", "stephanandrea", courseid)

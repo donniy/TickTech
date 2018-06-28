@@ -1,6 +1,6 @@
 <template>
 <div class="student-ticket-wrapper md-layout md-gutter">
-	<div class="md-layout-item">
+    <div class="md-layout-item">
         <div class="md-gutter">
             <div class="md-size-20">
                 <router-link :to="{path: ret_url}" class="btn btn-primary">&laquo; Back home</router-link>
