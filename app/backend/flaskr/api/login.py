@@ -49,7 +49,7 @@ def retrieve_user():
     """
     current_identity = get_current_user()
     if current_identity is None:
-        return Iresponse.create_response("", 500)
+        return Iresponse.create_response("", 404)
 
     student, ta, supv, usr = {}, {}, {}, {}
     student = database.serialize_list(current_identity.student_courses)
