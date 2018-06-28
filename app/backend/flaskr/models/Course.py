@@ -64,7 +64,6 @@ class Course(db.Model):
     def __repr__(self):
         return '<Course {}>'.format(self.title)
 
-
     def get_plugin(self, plugin_id):
         """
         Get the given plugin.
@@ -117,7 +116,6 @@ class CoursePlugin(db.Model):
     course = db.relationship('Course',
                              lazy=True,
                              backref=db.backref('plugins'))
-
 
     def __repr__(self):
         return "<CoursePlugin: {}>".format(self.plugin)

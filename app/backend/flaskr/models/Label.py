@@ -72,7 +72,7 @@ class Label(db.Model):
         """
         tmp = []
         for lp in self.plugins:
-            if not lp in self.course.plugins:
+            if lp not in self.course.plugins:
                 continue
             tmp.append({'id': lp.plugin, 'lp': lp})
         return tmp
@@ -85,7 +85,9 @@ class Label(db.Model):
         for plugin in self.get_active_plugins():
             p = plugins.get_plugin(plugin['id'])
             cp = self.course.get_plugin(plugin['id'])
-            ta_id = p.get_ta(cp.get_settings(), user_id, plugin['lp'].assignment_id)
+            ta_id = p.get_ta(cp.get_settings(),
+                             user_id,
+                             plugin['lp'].assignment_id)
             if ta_id:
                 tmp.append(User.query.get(ta_id))
         # TODO: If the list is empty, assign random TA?
@@ -101,7 +103,9 @@ class Label(db.Model):
             cp = self.course.get_plugin(plugin['id'])
             if cp.active:
                 print("Getting assignment info for {}".format(plugin['id']))
-                info = p.get_assignment_info(cp.get_setting_values(), user_id, plugin['lp'].assignment_id)
+                info = p.get_assignment_info(cp.get_setting_values(),
+                                             user_id,
+                                             plugin['lp'].assignment_id)
                 if info:
                     pls[p.display_name] = info
         return pls
