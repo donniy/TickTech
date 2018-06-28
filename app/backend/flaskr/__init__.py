@@ -57,6 +57,7 @@ def create_app(test_config=None):
     app.config['MAIL_PASSWORD'] = Config.EMAIL_SEND_PASSWORD
     app.config['MAIL_DEFAULT_SENDER'] = Config.EMAIL_SEND_EMAIL
     app.config['MAIL_DEBUG'] = False
+    app.config['MAIL_WAIT_TIME_BEFORE_FETCH'] = 30
     Mail(app)
 
     app.config['SEND_MAIL_ON_MESSAGE'] = True
@@ -173,7 +174,7 @@ def create_app(test_config=None):
         port = data['port']
         server = data['pop']
         course_id = data['course_id']
-        sleeptime = 10
+        sleeptime = app.config['MAIL_WAIT_TIME_BEFORE_FETCH']
 
         thread = MailThread.existThreadCourseID(course_id)
         if (MailThread.existThreadEmail(email)):
