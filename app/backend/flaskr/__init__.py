@@ -57,9 +57,10 @@ def create_app(test_config=None):
     app.config['MAIL_PASSWORD'] = Config.EMAIL_SEND_PASSWORD
     app.config['MAIL_DEFAULT_SENDER'] = Config.EMAIL_SEND_EMAIL
     app.config['MAIL_DEBUG'] = False
+    app.config['MAIL_WAIT_TIME_BEFORE_FETCH'] = 30
     Mail(app)
 
-    app.config['SEND_MAIL_ON_MESSAGE'] = False
+    app.config['SEND_MAIL_ON_MESSAGE'] = True
 
     # Make user logged in for 1 day.
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(seconds=86400)
@@ -173,10 +174,10 @@ def create_app(test_config=None):
         port = data['port']
         server = data['pop']
         course_id = data['course_id']
-        sleeptime = 60
+        sleeptime = app.config['MAIL_WAIT_TIME_BEFORE_FETCH']
 
-        thread = MailThread.exist_thread_courseid(course_id)
-        if (MailThread.exist_thread_email(email)):
+        thread = MailThread.existThreadCourseID(course_id)
+        if (MailThread.existThreadEmail(email)):
             if thread is None:
                 emit('setup-email',
                      {'result': 'fail', 'data': 'Email already exists'})

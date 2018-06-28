@@ -2,9 +2,9 @@
 <div v-if="$auth.ready()">
 	<h2 class="form-header center-display">Login</h2>
 
-	<form class="md-layout center-display" v-on:submit.prevent="checkUser">
-		<md-card class="md-layout-item md-size-50 md-small-size-100">
-			<md-card-content>
+    <form class="md-layout center-display" v-on:submit.prevent="checkUser">
+        <md-card class="md-layout-item md-size-50 md-small-size-100">
+            <md-card-content>
 
 				<md-field>
 					<label for="email">Email address</label>

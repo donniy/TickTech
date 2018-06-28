@@ -1,8 +1,8 @@
+from datetime import datetime
 from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
-import uuid
 from flaskr.config import Config
+import uuid
 
 db = SQLAlchemy()
 

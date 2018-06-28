@@ -1,12 +1,14 @@
 from email.header import decode_header
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
-import email
-import poplib
-import requests
 import base64
+import email
 import html2text
+import poplib
+import re
+import requests
 import socket
+
 
 poplib._MAXLINE = 2048
 
@@ -38,7 +40,8 @@ def connect(host, port, user, password):
 
 def parseEmail(emailBytes):
     '''
-    Parses a raw email. Returns the subject, body and sender in string format.
+    Parses a raw email.
+    Returns the subject, body and sender in string format.
     '''
     # Parse the email.
     parsedEmail = email.message_from_bytes(emailBytes)
@@ -91,13 +94,13 @@ def parseBody(parsedEmail):
     if parsedEmail.is_multipart():
         for part in parsedEmail.walk():
             ctype = part.get_content_type()
+            data = part.get_payload(decode=True)
             if (ctype == 'text/plain'):
-                body += str(part.get_payload())
+                body += str(data.decode("utf-8"))
             elif ctype == "text/html":
-                html += str(part.get_payload())
+                html += str(data.decode("utf-8"))
             # If not html or plain text, check if it's some kind of file.
             else:
-                data = part.get_payload(decode=True)
                 ctype_split = ctype.split('/')
                 try:
                     if (ctype_split[0] == 'text' or ctype_split[0] == 'image'):
@@ -110,11 +113,12 @@ def parseBody(parsedEmail):
     else:
         # Emails are always multipart?
         if (parsedEmail.get_content_type() == 'text/plain'):
-            body += str(parsedEmail.get_payload())
+            body += str(parsedEmail.get_payload(decode=True).decode("utf-8"))
         elif parsedEmail.get_content_type() == "text/html":
-            html += str(part.get_payload())
+            html += str(parsedEmail.get_payload(decode=True).decode("utf-8"))
         else:
-            print("Could not parse email. It was neither multipart nor plain.")
+            print("Could not parse email. " +
+                  "It was neither multipart nor plain.")
 
     return body, html, attachments, files
 
@@ -122,8 +126,7 @@ def parseBody(parsedEmail):
 def requestStudentID(result):
     '''
     Helper function to send json request to retrieve information
-    from the database.
-    Returns studentid on success, None on failure.
+    from the database. Returns studentid on success, None on failure.
     '''
     if (result.status_code == 200):
         json = result.json()
@@ -138,21 +141,19 @@ def retrieveLabels(courseid):
     course from the server.
     '''
     labels = []
-    result = requests.get('http://localhost:5000/api/labels/' + courseid)
+    result = requests.get('http://localhost:5000/api/email/labels/' + courseid)
 
-    if (result.status_code == 200):
+    if (result.status_code != 200):
         data = result.json()
         labels = data['json_data']
-
     return labels
 
 
-# TODO: Labels will be many-to-many in thebackend (Ravi), so this is outdated.
 def findLabel(body, labels):
     '''
     Parse the body for words that might be labels. Using the fuzzywuzzy module,
     a score will be calculated on the match of a substring.
-    The best match will be returned.
+    The UUID of the best match will be returned.
     '''
     # Put all labels in a list.
     labelcount = len(labels)
@@ -177,7 +178,7 @@ def findLabel(body, labels):
 def findUser(body, sender, address):
     '''
     Parses a given email body in string format. Returns the student id,
-    name and label, if possible.
+    name and label, if possible, else None.
     '''
     # Check if the email is in the database.
     info = {'email': address}
@@ -205,24 +206,32 @@ def findUser(body, sender, address):
     # Either return the student ID or None if not found.
     return requestStudentID(result)
 
-# TODO: Create a reply instead of a ticket.
 
-
-def createReply(subject, body, files, sender, address, courseid):
+def createReply(ticketid, subject, address, body):
     '''
     Create a reply to a ticket from the acquired information from an email.
     '''
-    # TODO: Finish this functione.
-    # Find original ticket with subject / meta data?
+    # Split body on old message
+    newbody = re.split('(On )(Mon|Tue|Wed|Thu|Fri|Sat|Sun)(,)', body, 1)[0]
+    newbody = re.split('--------', newbody, 1)[0]
 
     # Create a new reply.
-    # newmessage = {}
+    newmessage = {
+        'email': address,
+        'ticketid': ticketid,
+        'subject': subject,
+        'message': newbody
+    }
 
     # Add the reply to the database.
-    # result = requests.post(SOMETHING, json=newmessage)
+    result = requests.post(
+        'http://localhost:5000/api/email/ticket/newmessage',
+        json=newmessage)
 
-    # if (result.status_code != 201):
-    # replyErrorMail()
+    # Below is for debugging. An error mail will be send if
+    # the reply is not posted.
+    if (result.status_code != 201):
+        print("Something went wrong creating a new reply from an email.")
 
 
 def createTicket(subject, body, files, sender, address, courseid):
@@ -230,29 +239,34 @@ def createTicket(subject, body, files, sender, address, courseid):
     Create a ticket from the acquired information from an email.
     Note: New tickets will only be displayed after refreshing the page.
     '''
-    # Find student in database or by email parsing.
-    studentid = findUser(body, sender, address)
+    # Check if an email is a reply, if so,
+    # a new message must be created instead of a new ticket.
+    if "Ticket ID:" in subject:
+        ticketid = subject.split("Ticket ID:")[1]
+        ticketid = ticketid.replace("\n", "")
+        ticketid = ticketid.replace(" ", "")
+        createReply(ticketid, subject, address, body)
+        return
 
+    # Find student in database or by email parsing.
+    sender = sender.replace(' ', '')
+    studentid = findUser(body, sender, address)
     if studentid is None:
         info = {'subject': subject,
                 'body': body,
                 'address': address}
+
+        # If result returned an error status code, an email is sent
         result = requests.post(
             'http://localhost:5000/api/email/user/match/failed',
             json=info)
-        print("Mail fetching failed, notifed user\nSubject:",
-              subject, '\nSender:', address)
+
         return
 
-    # TODO: Check if an email is a reply or a new email.
-    if "Ticket ID: " in subject:
-        print(subject)
-        return
-    # createReply(subject, body, files, sender, address, courseid)
-    #     else
-
-    # Get all labels available for this course.
+    # Get all labels available for this course, find the best matching one.
     labels = retrieveLabels(courseid)
+    print('#'*20)
+    print(labels)
     if (labels != []):
         labelid = findLabel(body, labels)
     else:
@@ -279,8 +293,9 @@ def createTicket(subject, body, files, sender, address, courseid):
         'http://localhost:5000/api/email/ticket/submit',
         json=newticket)
 
+    # Below is for debugging. An errormail will be send if
+    # the ticket is not posted.
     if (result.status_code != 201):
-        # ticketErrorEmail()
         print("Something went wrong creating a new ticket from an email.")
         print("******")
         print("Sender: " + str(sender) + "\nStudentid: " +
@@ -289,13 +304,6 @@ def createTicket(subject, body, files, sender, address, courseid):
         print("Course ID: ", courseid)
         print("Label ID: ", labelid)
         print("Body: " + body)
-    # else:
-
-    # TODO: Send confirmation email.
-    # createdTicketEmail(subject, address, TODO TICKETID, body)
-    # res = Mail().send(message)
-    # res = res  # for flake8
-    # return
 
 
 def checkMail(host, port, user, password, courseid, debug=0):
@@ -315,21 +323,21 @@ def checkMail(host, port, user, password, courseid, debug=0):
         server.quit()
         return 0
     else:
-        print(mailcount, "new email(s) found!")
+        print(mailcount, "new email(s) found. Parsing now!")
 
     # Parse all new emails.
     for i in range(mailcount):
         try:
             emailBytes = b"\n".join(server.retr(i + 1)[1])
         except poplib.error_proto:
-            # we have no email information yet so no warning possible
-            print("To many char's in line")
+            # We have no email information yet, so no warning possible.
+            print("Found too many chars in a line, while parsing an email.")
             continue
 
         subject, body, files, sender, address = parseEmail(emailBytes)
 
         if (subject is None or body is None or sender is None):
-            print("Error parsing email.")
+            print("An error occurred while parsing email.")
             print("Found subject:", subject)
             print("Found body:", body)
             print("Found sender:", sender)
@@ -340,19 +348,3 @@ def checkMail(host, port, user, password, courseid, debug=0):
     if (debug == 0):
         server.quit()
     return 0
-
-
-# TODO: For debugging. Can be removed later (we use thread.py).
-if __name__ == '__main__':
-    # Retrieve courses, get current course id.
-    result = requests.get('http://localhost:5000/api/courses')
-
-    if (result.status_code == 200):
-        courses = result.json()
-        courseid = courses["json_data"][0]["id"]
-    else:
-        print("Could not retrieve courses, error code: ", result.status_code)
-
-    # Check mail for current course.
-    checkMail("pop.gmail.com", "995",
-              "uvapsetest@gmail.com", "stephanandrea", courseid)

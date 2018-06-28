@@ -15,7 +15,7 @@ from flaskr.request_processing import file as rp_file
 from flaskr import Iresponse
 from flaskr.utils import notifications
 from flask_mail import Mail
-from mail.Message import createEmailMessage
+from mail.Message import createdEmailMessage
 from flaskr.utils import course_validation, json_validation, ocr
 from os.path import expanduser
 import base64
@@ -104,18 +104,18 @@ def create_message(ticket_id):
     user = User.query.get(userId)
 
     if(ticket.user_id != user.id):
-        message = createEmailMessage(ticket.title,
-                                     [ticket.email], ticket_id,
-                                     json_data['message'], user.name)
+        message = createdEmailMessage(ticket.title,
+                                      [ticket.email], ticket_id,
+                                      json_data['message'], user.name)
         if current_app.config['SEND_MAIL_ON_MESSAGE']:
             print("send email")
             app = current_app._get_current_object()
-            thr = Thread(target=send_async_email, args=[message, app])
+            thr = Thread(target=sendAsyncEmail, args=[message, app])
             thr.start()
     return msg
 
 
-def send_async_email(message, app):
+def sendAsyncEmail(message, app):
     with app.app_context():
         print("SENDED EMAIL")
         res = Mail().send(message)
@@ -140,7 +140,7 @@ def get_ticket_messages(ticket_id):
 
 
 @apiBluePrint.route('/ticket/addta', methods=['POST'])
-@require_role(['supervisor','ta'])
+@require_role(['supervisor', 'ta'])
 def add_ta_to_ticket():
     """
     Assign teaching assistant to ticket.
@@ -256,7 +256,7 @@ def download_file():
             fp = open(folder + '/' + file, 'br').read()
             encoded = base64.b64encode(fp).decode("utf-8")
             return Iresponse.create_response({'encstring': str(encoded),
-                                             'mimetype': fileType}, 200)
+                                              'mimetype': fileType}, 200)
     else:
         return Iresponse.create_response("No address", 404)
 

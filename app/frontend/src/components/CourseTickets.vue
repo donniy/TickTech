@@ -36,7 +36,8 @@
 
                                     <md-field md-clearable class="md-toolbar-section-end">
                                         <label for="searchField">Search by title...</label>
-                                        <md-input autofocus id="searchField" v-model="search" @input="searchOnTable" style="color = white; background-color = white;" />
+                                        <md-input autofocus id="searchField" v-model="search" @input="searchOnTable" style="color:white; background-color:white;"
+                                        />
                                     </md-field>
                                 </md-table-toolbar>
 
@@ -69,15 +70,24 @@
                     </div>
                 </div>
                 <div class="row">
-                    <b-button class="btn note-add-button btn btn-primary" button v-on:click="pushLocation('/course/' + $route.params.course_id + '/labels')">Course labels</b-button>
-                    <b-button v-if="isTA" class="btn note-add-button btn btn-primary">Add students</b-button>
-                    <b-button class="btn note-add-button btn btn-primary" @click="emailSettings" :to="''">Mail settings</b-button>
-                    <b-button v-if="isSupervisor" class="btn note-add-button btn btn-primary" :to="''">Add TA's</b-button>
-
+                    <p>
+                        <b-button class="btn note-add-button btn btn-primary" button v-on:click="pushLocation('/course/' + $route.params.course_id + '/labels')">Course labels</b-button>
+                    </p>
+                    <p v-if="email_running">
+                        <b-button class="btn note-add-button btn btn-primary" @click="emailSettings" :to="''">Update email fetcher</b-button>
+                        <emodal v-if="showEmailModal" warning="Configure your email fetcher" @close="showEmailModal = false">
+                        </emodal>
+                    </p>
+                    <p v-else>
+                        <b-button class="btn note-add-button btn btn-primary" @click="emailSettings" :to="''">Configure email fetcher</b-button>
+                        <emodal v-if="showEmailModal" warning="Configure your email fetcher" @close="showEmailModal = false">
+                        </emodal>
+                    </p>
+                    <p>
+                        <b-button v-if="isTA" class="btn note-add-button btn btn-primary">Add students</b-button>
+                        <b-button v-if="isSupervisor" class="btn note-add-button btn btn-primary" :to="''">Add TAs</b-button>
+                    </p>
                 </div>
-                <p v-if="email_running">EMAIL IS RUNNING</p>
-                <emodal v-if="showEmailModal" warning="Setup a fetcher to your mailinglist." @close="showEmailModal = false">
-                </emodal>
             </div>
             <p v-if="email_running">EMAIL IS RUNNING</p>
             <emodal v-if="showEmailModal" warning="Setup a fetcher to your mailinglist." @close="showEmailModal = false">
@@ -88,14 +98,8 @@
             <summodal @close="showSum = false, ticketSum = 0" v-for="ticket in tickets" v-if="ticket.id == ticketSum" v-bind:key="ticket.id" v-bind:ticket="ticket" class="singleTicket">
             </summodal>
         </div>
-        <p v-if="email_running">EMAIL IS RUNNING</p>
-        <emodal v-if="showEmailModal" warning="Setup a fetcher to your mailinglist." @close="showEmailModal = false">
-        </emodal>
-        <addusers v-if="wantsToAddUsers" v-bind:title="'Add students to this course'" v-bind:label_message="'Students:'" v-bind:api_path="this.addStudentsPath">
-
-        </addusers>
-        <addusers v-if="wantsToAddTa" v-bind:title="'Add TAs to this course'" v-bind:label_message="'TAs:'" v-bind:api_path="this.addTasPath">
-        </addusers>
+        <addusers v-if="wantsToAddUsers" v-bind:title="'Add students to this course'" v-bind:label_message="'Students:'" v-bind:api_path="this.addStudentsPath"></addusers>
+        <addusers v-if="wantsToAddTa" v-bind:title="'Add TAs to this course'" v-bind:label_message="'TAs:'" v-bind:api_path="this.addTasPath"></addusers>
     </div>
 </template>
 
@@ -198,7 +202,7 @@ const toLower = text => {
 
             /*
              * Go to the corresponding label page from a course.
-             */ 
+             */
             pushLocation(here) {
                 this.$router.push(here)
             },
@@ -316,8 +320,8 @@ const toLower = text => {
              */
             filter_tickets() {
                 this.searched = this.tickets.filter(ticket => {
-                                    return (ticket.label.label_name == this.label_filter || this.label_filter == "Any label")
-                                    && (ticket.status.name == this.status_filter || this.status_filter == "Any status")
+                    return (ticket.label.label_name == this.label_filter || this.label_filter == "Any label")
+                        && (ticket.status.name == this.status_filter || this.status_filter == "Any status")
                 })
             }
         },
@@ -344,10 +348,10 @@ const toLower = text => {
             showEmailModal: function () {
                 this.emailRunning()
             },
-            label_filter: function() {
+            label_filter: function () {
                 this.filter_tickets()
             },
-            status_filter: function() {
+            status_filter: function () {
                 this.filter_tickets()
             }
         },

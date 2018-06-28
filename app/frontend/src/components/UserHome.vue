@@ -1,42 +1,42 @@
 <!-- UserHome.vue is the homepage for a logged in student. -->
 <template>
 <div class="container">
-	<div class="md-layout welcome-header">
-		<h2>Welcome back {{ $user.get().name }}</h2>
-	</div>
-	<div class="md-layout md-gutter wrapper md-size-20 md-small-size-100">
-		<div class="md-layout-item" v-if="isTA">
-			<md-content class="md-elevation-5">
-				<md-subheader>Courses</md-subheader>
+    <div class="md-layout welcome-header">
+        <h2>Welcome back {{ $user.get().name }}</h2>
+    </div>
+    <div class="md-layout md-gutter wrapper md-size-20 md-small-size-100">
+        <div class="md-layout-item" v-if="isTA">
+            <md-content class="md-elevation-5">
+                <md-subheader>Courses</md-subheader>
 
-				<md-content class="md-scrollbar courses-section">
-					<md-list class="md-triple-line">
-						<course v-for="course in ta_courses" v-bind:key="course.id" v-bind:course="course"></course>
-					</md-list>
-				</md-content>
+                <md-content class="md-scrollbar courses-section">
+                    <md-list class="md-triple-line">
+                        <course v-for="course in ta_courses" v-bind:key="course.id" v-bind:course="course"></course>
+                    </md-list>
+                </md-content>
 
-			</md-content>
-		</div>
-		<div class="md-layout-item" v-if="!isTA">
-			<md-content class="md-elevation-5">
-				<md-subheader>Tickets</md-subheader>
+            </md-content>
+        </div>
+        <div class="md-layout-item" v-if="!isTA">
+            <md-content class="md-elevation-5">
+                <md-subheader>Tickets</md-subheader>
 
-				<md-content class="md-scrollbar courses-section">
-					<md-list class="md-triple-line">
+                <md-content class="md-scrollbar courses-section">
+                    <md-list class="md-triple-line">
 
-						<ticket v-for="ticket in tickets" v-bind:key="ticket.id" v-bind:ticket="ticket"></ticket>
+                        <ticket v-for="ticket in tickets" v-bind:key="ticket.id" v-bind:ticket="ticket"></ticket>
 
-					</md-list>
-				</md-content>
+                    </md-list>
+                </md-content>
 
-			</md-content>
-		</div>
-		<div class="md-layout-item">
-			<md-content class="md-elevation-5">
-				<md-list class="md-double-line padding-bottom-0">
-					<md-subheader>Notifications</md-subheader>
-					<md-content class="md-scrollbar notification-section">
-						<template v-for="notification in notifications">
+            </md-content>
+        </div>
+        <div class="md-layout-item">
+            <md-content class="md-elevation-5">
+                <md-list class="md-double-line padding-bottom-0">
+                    <md-subheader>Notifications</md-subheader>
+                    <md-content class="md-scrollbar notification-section">
+                        <template v-for="notification in notifications">
                                 <p style="padding-left: 16px;" v-if="tickets.length < 1">No notifications</p>
                                 <md-ripple>
                                     <md-list-item :to="{name: (notification.ta ? 'SingleTicket' : 'StudentTicket'), params: {ticket_id: notification.ticket.id}}">
@@ -49,30 +49,30 @@
                                 </md-ripple>
                                 <md-divider></md-divider>
                             </template>
-					</md-content>
-				</md-list>
-			</md-content>
-			<md-content>
-				<md-card class="md-elevation-5 create-ticket-section1">
-					<md-card-content v-if="isTA" class="md-gutter md-size-100 center-display md-layout-item">
-						<h5 class="md-title">Teaching assistant level {{this.level}} <md-tooltip md-direction="bottom"> Earn experience by being a helpful TA</md-tooltip></h5>
+                    </md-content>
+                </md-list>
+            </md-content>
+            <md-content>
+                <md-card class="md-elevation-5 create-ticket-section1">
+                    <md-card-content v-if="isTA" class="md-gutter md-size-100 center-display md-layout-item">
+                        <h5 class="md-title">Teaching assistant level {{this.level}} <md-tooltip md-direction="bottom"> Earn experience by being a helpful TA</md-tooltip></h5>
 
                         <br/>
-						<md-progress-bar md-mode="determinate" :md-value="amount"></md-progress-bar>
+                        <md-progress-bar md-mode="determinate" :md-value="amount"></md-progress-bar>
                         <div class="md-subhead">{{this.experience}}/{{this.exp_to_next}} experience to next level</div>
-					</md-card-content>
-				</md-card>
-			</md-content>
+                    </md-card-content>
+                </md-card>
+            </md-content>
 
-			<md-card v-if="$user.isStudent()"  md-with-hover class="md-elevation-5 md-raised md-primary create-ticket-section1" @click.native="$router.push('/ticket/submit')">
-				<md-ripple>
-					<md-card-content class="create-ticket-section2">
-						<h1 style="opacity:1;">Create ticket</h1>
-					</md-card-content>
-				</md-ripple>
-			</md-card>
-		</div>
-	</div>
+            <md-card v-if="$user.isStudent()"  md-with-hover class="md-elevation-5 md-raised md-primary create-ticket-section1" @click.native="$router.push('/ticket/submit')">
+                <md-ripple>
+                    <md-card-content class="create-ticket-section2">
+                        <h1 style="opacity:1;">Create ticket</h1>
+                    </md-card-content>
+                </md-ripple>
+            </md-card>
+        </div>
+    </div>
 </div>
 </template>
 

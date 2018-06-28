@@ -2,42 +2,42 @@
 <template>
 <div>
     <div class="md-layout center-display">
-	<form class="md-layout-item md-size-60 md-small-size-100" v-on:submit.prevent="Register">
-		<md-steppers class="md-elevation-5" :md-active-step.sync="active" md-sync-route md-dynamic-height>
-			<md-step :md-error="firstStepError" id="first" md-label="Student details" :md-done.sync="first" md-description="Required">
-				<md-field>
-					<label for="email">Email address</label>
-					<md-input autofocus v-on:keyup="checkEmailAvailability" id="email" name="email" v-model="form.email" v-validate="'required'" type="email" />
-				</md-field>
-				<p class="def-error-msg" v-show="this.emailstatus">
-					This email address is taken.
-				</p>
-				<md-field>
-					<label for="studentid">Student ID</label>
-					<md-input v-on:keyup="checkIDAvailability" id="studentid" name="studentid" v-model="form.studentid" v-validate="'required'" type="tel" />
-				</md-field>
-				<p class="def-error-msg" v-show="this.idstatus">
-					This student id is taken.
-				</p>
-				<md-field>
-					<label for="name">Full Name</label>
-					<md-input autofocus id="name" name="name" v-model="form.name" v-validate="'required'" type="text" />
-				</md-field>
+    <form class="md-layout-item md-size-60 md-small-size-100" v-on:submit.prevent="Register">
+        <md-steppers class="md-elevation-5" :md-active-step.sync="active" md-sync-route md-dynamic-height>
+            <md-step :md-error="firstStepError" id="first" md-label="Student details" :md-done.sync="first" md-description="Required">
+                <md-field>
+                    <label for="email">Email address</label>
+                    <md-input autofocus v-on:keyup="checkEmailAvailability" id="email" name="email" v-model="form.email" v-validate="'required'" type="email" />
+                </md-field>
+                <p class="def-error-msg" v-show="this.emailstatus">
+                    This email address is taken.
+                </p>
+                <md-field>
+                    <label for="studentid">Student ID</label>
+                    <md-input v-on:keyup="checkIDAvailability" id="studentid" name="studentid" v-model="form.studentid" v-validate="'required'" type="tel" />
+                </md-field>
+                <p class="def-error-msg" v-show="this.idstatus">
+                    This student id is taken.
+                </p>
+                <md-field>
+                    <label for="name">Full Name</label>
+                    <md-input autofocus id="name" name="name" v-model="form.name" v-validate="'required'" type="text" />
+                </md-field>
                 <div class="center-display">
                     <md-button class=" btn btn-primary" @click="nextArea" v-bind:disabled="checkErrors">
                         Next
                     </md-button>
                 </div>
-			</md-step>
-			<md-step @click="setError(1)" :md-active="second" :md-done.sync="second" id="second" md-label="Password" md-description="Required">
-				<md-field>
-					<label for="password">Password</label>
-					<md-input tabindex="-1" id="password" name="password" v-model="form.password" v-validate="'required'" type="password" />
-				</md-field>
-				<md-field>
-					<label for="password_confirmation">Repeat password</label>
-					<md-input tabindex="-1" v-on:keyup="checkPswConfirmation" id="password_confirmation" name="password_confirmation" v-model="form.password_confirmation" v-validate="'required'" type="password" />
-				</md-field>
+            </md-step>
+            <md-step @click="setError(1)" :md-active="second" :md-done.sync="second" id="second" md-label="Password" md-description="Required">
+                <md-field>
+                    <label for="password">Password</label>
+                    <md-input tabindex="-1" id="password" name="password" v-model="form.password" v-validate="'required'" type="password" />
+                </md-field>
+                <md-field>
+                    <label for="password_confirmation">Repeat password</label>
+                    <md-input tabindex="-1" v-on:keyup="checkPswConfirmation" id="password_confirmation" name="password_confirmation" v-model="form.password_confirmation" v-validate="'required'" type="password" />
+                </md-field>
                 <div class="alert alert-danger" v-show="checkErrors">
                     <div v-if="errors.has('name')">
                         {{ errors.first('name') }}
@@ -71,9 +71,9 @@
                 <p class="def-error-msg" v-show="checkErrors">
                     Please fill out the form correctly.
                 </p>
-			</md-step>
-		</md-steppers>
-	</form>
+            </md-step>
+        </md-steppers>
+    </form>
 </div>
 </div>
 </template>
@@ -84,22 +84,22 @@ import VeeValidate from 'vee-validate'
 import Router from 'vue-router'
 
 export default {
-	data() {
-		return {
-			form: {
-				name: "",
-				studentid: "",
-				email: "",
-				password: "",
-				password_confirmation: "",
+    data() {
+        return {
+            form: {
+                name: "",
+                studentid: "",
+                email: "",
+                password: "",
+                password_confirmation: "",
 
-			},
-			emailstatus: false,
-			idstatus: false,
-			pswstatus: true,
-			first: false,
-			second: false,
-			secondStepError: null,
+            },
+            emailstatus: false,
+            idstatus: false,
+            pswstatus: true,
+            first: false,
+            second: false,
+            secondStepError: null,
             firstStepError: null,
             active: 'first'
 		}
@@ -194,12 +194,12 @@ export default {
                     this.second = true
                 }
             }
-		}
-	},
-	computed: {
-		checkErrors() {
-			return this.errors.any() || this.idstatus || this.emailstaus || !this.pswstatus
-		}
-	}
+        }
+    },
+    computed: {
+        checkErrors() {
+            return this.errors.any() || this.idstatus || this.emailstaus || !this.pswstatus
+        }
+    }
 }
 </script>
