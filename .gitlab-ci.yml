@@ -4,7 +4,6 @@ test:
         - ./INSTALL
         - make install
         - make build
-        - make test-frontend
         - make test-backend
         - make validate-backend
     cache:
