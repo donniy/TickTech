@@ -24,6 +24,6 @@ def isOcrable(address):
         image = Image.open(address)
         if image:
             return True
-            # image.close()
+            image.close()
     except IOError:
         return False
