@@ -91,13 +91,22 @@ def parseBody(parsedEmail):
     if parsedEmail.is_multipart():
         for part in parsedEmail.walk():
             ctype = part.get_content_type()
+            data = part.get_payload(decode=True)
+            print("CTYPE", ctype)
+            if part.get_payload() is not None:
+                print("DATA", part.get_payload())
+                try:
+                    print("decode", part.get_payload(decode = True))
+                except:
+                    print("no decode")
+            else:
+                print("NONE")
             if (ctype == 'text/plain'):
-                body += str(part.get_payload())
+                body += str(data.decode("utf-8"))
             elif ctype == "text/html":
-                html += str(part.get_payload())
+                html += str(data.decode("utf-8"))
             # If not html or plain text, check if it's some kind of file.
             else:
-                data = part.get_payload(decode=True)
                 ctype_split = ctype.split('/')
                 try:
                     if (ctype_split[0] == 'text' or ctype_split[0] == 'image'):
@@ -110,9 +119,9 @@ def parseBody(parsedEmail):
     else:
         # Emails are always multipart?
         if (parsedEmail.get_content_type() == 'text/plain'):
-            body += str(parsedEmail.get_payload())
+            body += str(parsedEmail.get_payload(decode=True).decode("utf-8"))
         elif parsedEmail.get_content_type() == "text/html":
-            html += str(part.get_payload())
+            html += str(parsedEmail.get_payload(decode=True).decode("utf-8"))
         else:
             print("Could not parse email. It was neither multipart nor plain.")
 
@@ -209,14 +218,19 @@ def createReply(ticketid, subject, address, body):
     Create a reply to a ticket from the acquired information from an email.
     '''
     # Split body on old message
-    newbody = re.split('(On )(Mon|Tue|Wed|Thu|Fri|Sat|Sun)(,)', body, 1)
+    print('*'*80)
+    print(body)
+    newbody = re.split('(On )(Mon|Tue|Wed|Thu|Fri|Sat|Sun)(,)', body, 1)[0]
+    print("newbody", newbody)
+    newbody = re.split('--------', newbody, 1)[0]
+    print("newbody", newbody)
 
     # Create a new reply.
     newmessage = {
         'email': address,
         'ticketid': ticketid,
         'subject': subject,
-        'message': newbody[0]
+        'message': newbody
     }
 
     # Add the reply to the database.
@@ -240,13 +254,31 @@ def createTicket(subject, body, files, sender, address, courseid):
     Create a ticket from the acquired information from an email.
     Note: New tickets will only be displayed after refreshing the page.
     '''
-    # Find student in database or by email parsing.
-    studentid = findUser(body, sender, address)
+    # Check if an email is a reply, if so, a new message must be created to a ticket.
+    print("#"*20)
+    print(subject)
+    print("checking reply")
+    if "Ticket ID:" in subject:
+        ticketid = subject.split("Ticket ID:")[1]
+        print('ticketid:',ticketid)
+        ticketid = ticketid.replace("\n", "")
+        ticketid = ticketid.replace(" ", "")
+        print('ticketid:',ticketid)
+        createReply(ticketid, subject, address, body)
+        return
+    print("Not a reply")
 
+    # Find student in database or by email parsing.
+    sender = sender.replace(' ', '')
+    studentid = findUser(body, sender, address)
     if studentid is None:
+        print('sender', sender)
+        print('address', address)
+
         info = {'subject': subject,
                 'body': body,
                 'address': address}
+        print("IT WAS HERE\n\n\n\n")
         result = requests.post(
             'http://localhost:5000/api/email/user/match/failed',
             json=info)
@@ -254,12 +286,6 @@ def createTicket(subject, body, files, sender, address, courseid):
               subject, '\nSender:', address)
         return
 
-    # Check if an email is a reply, if so, a new message must be created to a ticket.
-    if "Ticket ID: " in subject:
-        ticketid = subject.split("Ticket ID: ")
-        print(ticketid, '\n\n\n\n\n\n')
-        createReply(ticketid[1], subject, address, body)
-        return
 
     # Get all labels available for this course.
     labels = retrieveLabels(courseid)

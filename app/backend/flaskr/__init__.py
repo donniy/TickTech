@@ -173,7 +173,7 @@ def create_app(test_config=None):
         port = data['port']
         server = data['pop']
         course_id = data['course_id']
-        sleeptime = 60
+        sleeptime = 10
 
         thread = MailThread.exist_thread_courseid(course_id)
         if (MailThread.exist_thread_email(email)):

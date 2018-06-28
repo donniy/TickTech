@@ -36,6 +36,7 @@ def mail_match_on_mail():
 
     # Match on first succes
     email = json_data["email"]
+    email = email.lower()
     user = User.query.filter_by(email=email).first()
 
     if user is not None:
@@ -92,7 +93,7 @@ def mail_notify_failed_match():
     subject = json_data["subject"]
     address = json_data["address"]
     body = json_data["body"]
-
+    subject = subject.replace('\n', '')
     message = ticketErrorEmail(subject, [address], body)
     app = current_app._get_current_object()
     thr = Thread(target=send_async_email, args=[message, app])
@@ -112,9 +113,10 @@ def create_email_ticket():
     files = formdata['files']
 
     if(len(files.keys()) > 5):
+        print("TICKET: TO MANY FILES\n")
         something_went_wrong_message(formdata['subject'],
                                      formdata['email'],
-                                     'To many files',
+                                     'Ticket: To many files',
                                      formdata['message'])
         return Iresponse.create_response("Too many files", 400)
 
@@ -123,9 +125,10 @@ def create_email_ticket():
         file = base64.b64decode(files[filename])
 
         if not rp_file.save_file_from_mail(file, filename, file_names):
+            print("TICKET: INVALID FILE SIZE\n")
             something_went_wrong_message(formdata['subject'],
                                          formdata['email'],
-                                         'File to large',
+                                         'Ticket: File to large',
                                          formdata['message'])
             return Iresponse.create_response("File too large", 400)
     formdata['files'] = file_names
@@ -134,9 +137,10 @@ def create_email_ticket():
                                                     'subject',
                                                     'courseid',
                                                     'labelid']):
+        print("TICKET: INVALID JSON\n")
         something_went_wrong_message(formdata['subject'],
                                      formdata['email'],
-                                     'validate json data',
+                                     'Ticket: validate json data',
                                      formdata['message'])
         return Iresponse.create_response("Malformed request", 400)
 
@@ -149,15 +153,17 @@ def create_email_ticket():
     if not json_validation.validate_ticket_data(formdata):
         for file in file_names:
             rp_file.remove_file(file)
+        print("TICKET: INVALID FILES\n")
         something_went_wrong_message(formdata['subject'],
                                      formdata['email'],
-                                     'validate ticket data',
+                                     'Ticket: validate ticket data',
                                      formdata['message'])
         return Iresponse.create_response("Invalid ticket data", 400)
 
     response = rp_ticket.create_request(formdata)
 
     if (response.status_code == 201):
+        print("TICKET: INVALID REQUEST\n")
         ticketid = response.get_json()['json_data']['ticketid']
         message = createdTicketEmail(formdata['subject'],
                                      [formdata['email']],
@@ -176,9 +182,10 @@ def create_email_message():
     """
     formdata = request.get_json()
     if not json_validation.validate_json(formdata, ['ticketid']):
+        print("MESSAGE: Invalid json\n")
         something_went_wrong_message(formdata['subject'],
                                      formdata['email'],
-                                     'validate json data',
+                                     'Message: validate json data',
                                      formdata['message'])
         return Iresponse.create_response("Malformed request", 400)
 
@@ -189,9 +196,10 @@ def create_email_message():
     print('*********************')
     ticket = Ticket.query.get(formdata['ticketid'])
     if ticket is None:
+        print("MESSAGE: Invalid ticket id\n")
         something_went_wrong_message(formdata['subject'],
                                      formdata['email'],
-                                     'Could not find ticket with that id',
+                                     'Message: Could not find ticket with that id',
                                      formdata['message'])
         return Iresponse.create_response("Could not find ticket", 400)
 
@@ -200,6 +208,7 @@ def create_email_message():
     msg = rp_message.create_request(formdata, formdata['ticketid'])
 
     if (msg.status_code != 201):
+        print("MESSAGE: invalid request\n")
         message = replyErrorEmail(ticket.title,
                                      [ticket.email], formdata['ticketid'],
                                      json_data['message'])

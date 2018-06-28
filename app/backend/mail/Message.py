@@ -87,16 +87,13 @@ def somethingWentWrong(title, recipients, part, body):
     '''
     string = "TIKTECH error. We could not process: " + title
     string = string.replace('\n', '')
-    print('#'*20)
-    print(string)
-    print('#'*20)
     message = Message(
         subject=string,
                 recipients=recipients)
     message.html = (
         '<body> We received your e-mail, but encountered an' +
         'error while processing.<br /> ' +
-        'error message: ' + part + '<br />' +
+        'error message: \"' + part + '\"<br /><br />' +
         'Please resent it or contact your TA' +
         'Please do not reply to this e-mail.' +
         'Your original e-mail:' + body + '</body>'
