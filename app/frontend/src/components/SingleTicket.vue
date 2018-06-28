@@ -1,15 +1,18 @@
 <template>
-<div>
-    <div id="loading-icon" class="loading">
-        <md-progress-spinner class="md-accent" md-mode="indeterminate"></md-progress-spinner>
-    </div>
-    <div class="md-layout md-gutter">
+<div v-if="$auth.ready()">
+	<div id="loading-icon" class="loading">
+		<md-progress-spinner class="md-accent" md-mode="indeterminate"></md-progress-spinner>
+	</div>
+	<div class="md-layout md-gutter">
 
 		<div class="md-layout-item md-size-70 md-small-size-60">
 			<div class="md-gutter">
-				<div class="md-size-20">
+				<div v-if="$auth.check('ta') || $auth.check('supervisor')" class="md-size-20">
 					<router-link :to="'/course/' + ticket.course_id " class="btn btn-primary">&laquo; Back to course</router-link>
 				</div>
+                <div v-else class="md-size-20">
+                    <div @click="$router.go(-1)" class="btn btn-primary">&laquo; Back</div>
+                </div>
 				<div class="md-size-80 center-display">
 					<h3 class="">Ticket info</h3>
 				</div>
@@ -125,10 +128,10 @@
                     {{value.value}}
                 </md-list-item>
             </template>
+                        <md-divider v-if="index != Object.keys(plugins).length - 1" />
 				</md-list>
 			</md-content>
 		</div>
-
 	</div>
 </div>
 </template>

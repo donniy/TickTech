@@ -32,7 +32,10 @@ class Ticket(db.Model):
     """
     id = db.Column(UUIDType(binary=False), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    course_id = db.Column(UUIDType(binary=False), unique=False, nullable=False)
+    course_id = db.Column(UUIDType(binary=False),
+                          db.ForeignKey('course.id'),
+                          unique=False,
+                          nullable=False)
 
     ta_id = db.Column(db.Integer, nullable=True)
 
@@ -47,7 +50,10 @@ class Ticket(db.Model):
         UUIDType(binary=False), db.ForeignKey('label.label_id'), unique=False,
         nullable=True)
 
-    label = db.relationship('Label', backref=db.backref('tickets', lazy=True))
+    label = db.relationship('Label',
+                            backref=db.backref('tickets', lazy=True))
+    course = db.relationship('Course',
+                             backref=db.backref('tickets', lazy=False))
 
     bound_tas = db.relationship(
         "User", secondary=bound_tas_helper, lazy='subquery',
@@ -141,7 +147,6 @@ class Ticket(db.Model):
 
 
 class TicketStatus(db.Model):
-
     """
     De status van een ticket die kan worden ingesteld.
 
@@ -151,8 +156,7 @@ class TicketStatus(db.Model):
     3.  Assigned but waiting for reply
     4.  Receiving help
 
-    Use numbers for comparison instead of text comparison
-
+    Use LabelA == LabelB for comparison instead of text comparison
     """
 
     unassigned = 1
@@ -181,6 +185,12 @@ class TicketStatus(db.Model):
     @property
     def checkValid(self):
         pass
+
+    def __eq__(self, other):
+        """
+        Set the == and != behavior.
+        """
+        return self.id == other.id
 
 
 class TicketLabel(db.Model):
