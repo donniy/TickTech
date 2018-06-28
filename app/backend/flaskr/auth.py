@@ -107,3 +107,4 @@ def require_role(roles):
             return fn(*args, **kwargs)
         return verify_roles
     return wrapper
+
