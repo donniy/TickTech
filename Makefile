@@ -25,3 +25,5 @@ validate-backend:
 	python3 -m pycodestyle app/backend
 
 test: 	test-backend validate-backend
+
+.PHONY: install
