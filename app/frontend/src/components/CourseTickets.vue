@@ -69,7 +69,7 @@
             <emodal v-if="showEmailModal" warning="Setup a fetcher to your mailinglist." @close="showEmailModal = false">
             </emodal>
             <div class=summary-sub-container>
-                <summodal @close="showSum = false, ticketSum = 0" v-for="ticket in tickets" v-if="ticket.id == ticketSum" v-bind:key="ticket.id" v-bind:ticket="ticket" class="singleTicket">
+                <summodal v-show="false"@close="showSum = false, ticketSum = 0" v-for="ticket in tickets" v-if="ticket.id == ticketSum" v-bind:key="ticket.id" v-bind:ticket="ticket" class="singleTicket">
                 </summodal>
             </div>
 		</div>
@@ -159,6 +159,7 @@ export default {
 					this.tickets = response.data.json_data
 					this.searched = this.tickets
 					this.status = 'Retrieved data'
+                    console.log(this.status)
 					console.log(response.data.json_data)
 					console.log(response)
 				})

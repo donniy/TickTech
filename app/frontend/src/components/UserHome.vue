@@ -124,9 +124,9 @@
 							</md-tab>
 						</md-tabs>
 						<md-content>
-							<md-card class="md-elevation-5 create-ticket-section1">
+							<md-card class="md-elevation-5 create-ticket-section3">
 								<md-card-content class="md-gutter md-size-100 center-display md-layout-item">
-									<h5 class="md-title">Teaching assistant level {{this.level}} <md-tooltip md-direction="bottom"> Earn experience by being a helpful TA</md-tooltip></h5>
+									<p class="center-display md-title">Teaching assistant level {{this.level}} <md-tooltip md-direction="bottom"> Earn experience by being a helpful TA</md-tooltip></p>
 									<p class="md-caption">{{rank}}</p>
 									<md-progress-bar md-mode="determinate" :md-value="amount"></md-progress-bar>
 									<div v-if="this.experience == 0" class="md-subhead">Start helping people to earn experience</div>
@@ -163,9 +163,9 @@
 							</md-ripple>
 						</template>
 					</md-content>
-					<md-card md-with-hover class="md-elevation-5 md-raised md-primary create-ticket-section1" @click.native="$router.push('/ticket/submit')">
+					<md-card md-with-hover class="md-elevation-5 md-raised md-primary create-ticket-section3" @click.native="$router.push('/ticket/submit')">
 						<md-ripple>
-							<md-card-content class="create-ticket-section2">
+							<md-card-content class="create-ticket-section4">
 								<h3 style="opacity:1;">Create ticket</h3>
 							</md-card-content>
 						</md-ripple>

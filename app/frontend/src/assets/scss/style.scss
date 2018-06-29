@@ -908,6 +908,13 @@ hr {
     overflow: auto;
 }
 
+.create-ticket-section3 {
+    margin-top: 2vh;
+    min-height: 15vh;
+    max-height: 15vh;
+    overflow: auto;
+}
+
 .notification-container-medium {
     margin-top: 2vh;
     min-height: 35vh;
@@ -997,6 +1004,16 @@ hr {
     margin-bottom: -4px;
     min-height: 11vh;
     max-height: 11vh;
+    display:flex;
+    overflow: auto;
+    align-items: center;
+    justify-content: center;
+}
+
+.create-ticket-section4 {
+    margin-bottom: -4px;
+    min-height: 15vh;
+    max-height: 15vh;
     display:flex;
     overflow: auto;
     align-items: center;
