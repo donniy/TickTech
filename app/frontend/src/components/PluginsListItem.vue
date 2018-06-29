@@ -45,7 +45,6 @@ export default {
                 tmp[key] = this.settings[key].value
             }
             this.$ajax.put(path, tmp, response => {
-                console.log(response)
             })
         },
         trigger_modal: function() {

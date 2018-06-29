@@ -82,7 +82,6 @@ export default {
 			})
 		},
         onConfirm() {
-			console.log("got here")
             this.$router.push('/login')
         }
 	},

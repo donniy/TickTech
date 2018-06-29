@@ -114,7 +114,6 @@
                 this.error.text = ''
                 const path = '/api/email'
                 if (this.checkForm()) {
-                    console.log("i will  emit")
                     this.isLoading = true
                     this.$socket.emit('setup-email', {
                         email: this.form.email,
