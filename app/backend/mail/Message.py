@@ -24,8 +24,9 @@ def createdTicketEmail(title, recipients, ticketid, body):
 
 def createdEmailMessage(title, recipients, ticketid, body, sender):
     '''
-    Sends an email to the student, confirming a teaching assistant has responded
-    to their ticket on TIKTECH (e.g. a message has been added to the ticket).
+    Sends an email to the student, confirming a teaching assistant has
+    responded to their ticket on TIKTECH
+    (e.g. a message has been added to the ticket).
     '''
     subject = "TIKTECH Notification. Ticket ID: " + ticketid
     message = Message(subject=subject, recipients=recipients)
