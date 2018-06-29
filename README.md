@@ -53,8 +53,8 @@ So it is recommended to use these to login with on the site, or be linked via ca
 | kire@a.a                  |        1 | TA in PSE & TA in Compiler construction                            |
 | student1@a.a              |        1 | Student in PSE & Student in Compiler construction                  |
 | student2@a.a              |        1 | Student in PSE & Student in Operating systems                      |
-| a@a.nl                    |        1 | Student in PSE & Student in Compiler construction                  |
-| b@b.nl                    |        1 | TA in PSE & TA in Operating systems                                |
+| a@a.a                     |        1 | Student in PSE & Student in Compiler construction                  |
+| b@b.b                     |        1 | TA in PSE & TA in Operating systems                                |
 | super@visor.nl            |        1 | Supervisor in all the courses                                      |
 | rensvanderveldt@gmail.com |        1 | Student in all the courses                                         |
 
