@@ -144,6 +144,10 @@ def populate_database_dummy_data():
     user7 = user.User()
     user7.create(10000, "Supervisor", "super@visor.nl", "1")
 
+    user8 = user.User()
+    user8.create(10766162, "Rens van der Veldt",
+                 "rensvanderveldt@gmail.com", "1")
+
     # !IMPORTANT! This is for the mail server - ask phtephan
     mail_server = user.User()
     mail_server.create(107584259, "Mail server", "uvapsetest@gmail.com", "1")
@@ -192,6 +196,9 @@ def populate_database_dummy_data():
         course1.student_courses.append(user4)
         course3.student_courses.append(user3)
         course2.student_courses.append(user4)
+        course1.student_courses.append(user8)
+        course2.student_courses.append(user8)
+        course3.student_courses.append(user8)
 
         course1.supervisors.append(user7)
         course2.supervisors.append(user7)
