@@ -5,7 +5,7 @@
 - python3
 - pip3
 
-### Installation using make
+### Installation and running using make
 We supplied a makefile to ease installation and setup.
 The first time you use the app run the following commands
 Start with setting up your pip environment, this can be done
@@ -38,7 +38,7 @@ Now everything should be running. Go to http://localhost:5000 or http://127.0.0.
 this is where the application will be running.
 
 
-### Installation
+### Installation without make
 First make sure you have all the dependencies, that are listed above, installed.
 The other dependencies will be managed using pip.
 
