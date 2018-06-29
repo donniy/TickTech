@@ -41,6 +41,24 @@ Now everything should be running. Go to http://localhost:5000 or http://127.0.0.
 this is where the application will be running.
 If u want to run canvas, see the documentation below, for canvas this app should be running as well.
 
+#### Users inside Tiktech.
+The registration functionality is rather redundant, because most data comes in via LTI, and
+when you register you are not linked to anything. However we do provide some initial data,
+to test with. Below it will state the email address, so login and password, and what role.
+So it is recommended to use these to login with on the site, or be linked via canvas.
+
+| Username/email            | password | role                                                               |
+| --------------            | -------- | ----                                                               |
+| erik@a.a                  |        1 | TA in project software engineering &  Student in Operating systems |
+| kire@a.a                  |        1 | TA in PSE & TA in Compiler construction                            |
+| student1@a.a              |        1 | Student in PSE & Student in Compiler construction                  |
+| student2@a.a              |        1 | Student in PSE & Student in Operating systems                      |
+| a@a.nl                    |        1 | Student in PSE & Student in Compiler construction                  |
+| b@b.nl                    |        1 | TA in PSE & TA in Operating systems                                |
+| super@visor.nl            |        1 | Supervisor in all the courses                                      |
+| rensvanderveldt@gmail.com |        1 | Student in all the courses                                         |
+
+
 ### Installation
 First make sure you have all the dependencies, that are listed above, installed.
 The other dependencies will be managed using pip.
