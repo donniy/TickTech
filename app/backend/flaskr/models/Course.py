@@ -41,7 +41,6 @@ class Course(db.Model):
 
     canvas_unique_id = db.Column(db.Integer, nullable=True, unique=True)
 
-    # TODO: controle length of data
     course_email = db.Column(db.String(120), unique=False, nullable=True)
     mail_server_url = db.Column(db.String(120), unique=False, nullable=True)
     mail_port = db.Column(db.Integer, nullable=True)

@@ -80,7 +80,7 @@ class Label(db.Model):
 
     def get_tas(self, user_id):
         """
-        Get the TAs for this label using the plugins.
+        Get the teaching assistants for this label using the plugins.
         """
         tmp = []
         for plugin in self.get_active_plugins():
@@ -91,7 +91,6 @@ class Label(db.Model):
                              plugin['lp'].assignment_id)
             if ta_id:
                 tmp.append(User.query.get(ta_id))
-        # TODO: If the list is empty, assign random TA?
         return set(tmp)
 
     def get_assignment_info(self, user_id):

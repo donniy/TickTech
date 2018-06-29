@@ -28,7 +28,6 @@ class Ticket(db.Model):
     A ticket is created when a user has a question. The ticket
     will then own multiple entities, like notes and messages.
     The ticket is a container class for a question.
-
     """
     id = db.Column(UUIDType(binary=False), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -149,14 +148,12 @@ class Ticket(db.Model):
 
 class TicketStatus(db.Model):
     """
-    De status van een ticket die kan worden ingesteld.
-
+    The ticket status that can be set
     Pre-defined statuses:
     1.  Unassigned
     2.  Closed
     3.  Assigned but waiting for reply
     4.  Receiving help
-
     Use LabelA == LabelB for comparison instead of text comparison
     """
 
