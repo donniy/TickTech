@@ -203,7 +203,7 @@
 							<md-content class="md-scrollbar">
 								<md-list>
 									<md-list-item v-bind:key="ticket.id" v-for="ticket in filteredTAItems">
-										<ticket v-bind:ticket="ticket"></ticket>
+										<taticket v-bind:ticket="ticket"></taticket>
 									</md-list-item>
 								</md-list>
 							</md-content>
@@ -259,6 +259,7 @@
 <script>
 import Course from './Course.vue'
 import Ticket from './Ticket.vue'
+import TATicket from './TATicket.vue'
 
 export default {
 	data() {
@@ -467,7 +468,8 @@ export default {
 	},
 	components: {
 		'course': Course,
-		'ticket': Ticket
+		'ticket': Ticket,
+		'taticket': TATicket
 	},
 	computed: {
 	    filteredItems() {

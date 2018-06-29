@@ -96,9 +96,9 @@ def add_ta_to_ticket(json_data):
 
 
 def get_assigned_tickets(user):
-    tickets = Ticket.query.filter(bound_tas.contains(user)).all()
+    tickets = Ticket.query.filter(Ticket.bound_tas.contains(user)).all()
     print("TICKETS",tickets)
-    return Iresponse.create_response(tickets, 200)
+    return Iresponse.create_response(database.serialize_list(tickets), 200)
 
 
 # TODO: CHECK IF JSON IS VALID.
