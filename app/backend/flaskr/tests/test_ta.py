@@ -40,5 +40,3 @@ def test_get_ta_tickets(app, client):
     print(json_data[0]['tas'])
     assert len(json_data[0]['tas']) == 1
     assert json_data[0]['tas'][0]['id'] == taId
-
-# TODO add @apiBluePrint.route('/ta/<user_id>/courses')
