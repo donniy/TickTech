@@ -33,9 +33,9 @@ def create_request(jsonData, ticket_id):
                                                 ticket,
                                                 text,
                                                 Message.NTFY_TYPE_MESSAGE)
-            notification = notification  # flake8
+            notification = notification
 
-        # Add experience if its a ta who is commenting.
+        # Add experience if its a teaching assistant who is commenting.
         user = User.query.get(user_id)
         course = Course.query.get(ticket.course_id)
         if user in course.ta_courses:

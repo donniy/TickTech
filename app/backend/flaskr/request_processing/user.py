@@ -69,6 +69,9 @@ def register_user(json_data):
 
 
 def reset_password(json_data):
+    """
+    Function that resets the password if the user forgot his password.
+    """
     password = json_data["password"]
     psw_confirmation = json_data["psw_confirmation"]
     code = json_data["code"]
@@ -104,7 +107,9 @@ def reset_password(json_data):
 
 
 def set_reset_code(email):
-
+    """
+    Set a password reset code for user.
+    """
     user_data = User.query.filter_by(email=email).first()
     present = datetime.utcnow()
 

@@ -10,7 +10,6 @@ from flaskr.utils import notifications
 from datetime import datetime
 
 
-# TODO: CHECK IF JSON IS VALID.
 def create_request(json_data):
     """
     Function that handles the create request for a ticket.
@@ -56,15 +55,10 @@ def create_request(json_data):
                                    ticket,
                                    message,
                                    Message.NTFY_TYPE_MESSAGE)
-        msg = msg  # flake8
+        msg = msg
     except Exception as e:
         raise e
         return Iresponse.create_response(str(e), 400)
-#    new_message = Message(ticket_id=ticket.id, user_id=studentid,
-#                          text=message, timestamp=datetime.now(),
-#                          ticket=ticket)
-#    if not database.addItemSafelyToDB(new_message):
-#        return Iresponse.internal_server_error()
 
     response_body['ticketid'] = ticket.id
     response = Iresponse.create_response(response_body, 201)
@@ -72,8 +66,10 @@ def create_request(json_data):
     return response
 
 
-# TODO: Should check is the json_data is valid.
 def add_ta_to_ticket(json_data):
+    """
+    Add a teaching assistant to a ticket.
+    """
     ticket = Ticket.query.filter_by(
         id=uuid.UUID(json_data['ticketid'])).first()
     ta = User.query.filter_by(id=json_data['taid']).first()
@@ -100,7 +96,6 @@ def get_assigned_tickets(user):
     return Iresponse.create_response(database.serialize_list(tickets), 200)
 
 
-# TODO: CHECK IF JSON IS VALID.
 def remove_ta_from_ticket(json_data):
     ticket = Ticket.get(uuid.UUID(json_data['ticketid']))
     ta = User.query.filter_by(id=json_data['taid']).first()
