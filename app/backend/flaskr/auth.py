@@ -10,7 +10,7 @@ def require_ta_rights_in_course(course_id):
     Function that can be used as a decorator, to require
     that an api path can only be accessed if the user
     has ta rights in the specified course. This means the user
-    is either TA or supervisor(teacher) in this course.
+    is either teaching assistant or supervisor(teacher) in this course.
     The course_id of the course should be given to
     this decorator and a valid jwt should be present
     from which the user can be extracted.
@@ -32,7 +32,8 @@ def require_ta_rights_in_course(course_id):
             Returns on failure:
             - Iresponse 400: if the user can not be extracted from the jwt.
             - Iresponse 404: if the course can not be found.
-            - Iresponse 403: if the user is not a ta in the course.
+            - Iresponse 403: if the user is not a teaching assistant
+            in the course.
 
             Returns on succes:
             - Calls the decorated function, with the following params:
@@ -75,7 +76,8 @@ def require_role(roles):
             Returns on failure:
             - Iresponse 400: if the user can not be extracted from the jwt.
             - Iresponse 404: if the course can not be found.
-            - Iresponse 403: if the user is not a ta in the course.
+            - Iresponse 403: if the user is not a teaching assistant
+            in the course.
 
             Returns on succes:
             - Calls the decorated function, with the following params:

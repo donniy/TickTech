@@ -25,7 +25,6 @@ class Irequest:
         self.method = None  # Type: str
         self.url = None  # Type: str
 
-    # TODO: Maybe add an execption to this function.
     def transform_request_to_internal_request(self, framework_request_type):
         """
         This is the function that transforms a certrain framework request type
@@ -51,7 +50,6 @@ class IrequestFlask(Irequest):
         self.method = flask_request.method
         self.url = flask_request.url
 
-    # TODO: Add support for multiple request types.
     def _extract_body_from_request(self, flask_request):
         """
         Extract the data from the flask_request.
