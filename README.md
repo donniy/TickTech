@@ -5,6 +5,38 @@
 - python3
 - pip3
 
+### Installation using make
+We supplied a makefile to ease installation and setup.
+The first time you use the app run the following commands
+Start with setting up your pip environment, this can be done
+by running the INSTALL script we provided.
+So run the INSTALL script.
+After that we need to install npm and other pip requirements.
+This can be done with the following command
+```sh
+make install
+```
+Then run
+```sh
+make build
+```
+This will build the assets and npm.
+
+Now we have setup the environment, now we can run the application.
+In order to run the application we need to run vue and flask. These need to be
+both running, to work, so open another terminal in the same directory.
+In this directory run in one shell the following command
+```sh
+make run-vue
+```
+In the other shell run
+```sh
+make run-flask
+```
+
+Now everything should be running. Go to http://localhost:5000 or http://127.0.0.1:5000
+this is where the application will be running.
+
 
 ### Installation
 First make sure you have all the dependencies, that are listed above, installed.
@@ -108,3 +140,21 @@ and password = canvas-docker
 
 Now you can browse courses and act as users. If u click on a course on the side will show
 tiktech, if u click on tiktech a tiktech session inside lti will start.
+
+The first time u log in you are a supervisor of all the courses and an admin in canvas.
+The first time the database is empty, so you can not see any tickets. However there are two
+extra user supplied in the docker. In order to switch to another user, in canvas on the side
+click on admin(beheerder) then canvas Docker, then in the view click on Users. Now you will see all
+the users in this docker. Besides the admin, which is given by canvas@example.edu, there are two other users.
+Namely: Jesse Klaven and Klaas Dijkhof. Jesse Klaver is a student in all the courses and Klaas Dijkhof
+is a teaching assistant in all the courses. If u click on a user u will see the user information. In this screen
+in the header: Name and Email, u will see a small link, with the name: act as User, if the language is in dutch, this might
+be called differently. If click on this link u will act as the user. If u then choose a course as, for example, Jesse Klaver
+u can create tickets in the chosen course. If u want to stop acting as the user, in the below right of the screen is a button
+with the name: Stop acting as user. If u click on this, u will stop acting as the user and go back to
+the admin account.
+
+##### Users and Roles
+canvas@example.edu : admin at canvas and teacher/supervisor of all the courses.
+Klaas Dijkhof : Teaching assistant at all the courses.
+Jesse Klaver : Student at all the courses.
