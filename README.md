@@ -10,7 +10,10 @@ We supplied a makefile to ease installation and setup.
 The first time you use the app run the following commands
 Start with setting up your pip environment, this can be done
 by running the INSTALL script we provided.
-So run the INSTALL script.
+So run the INSTALL script, this can be done using the following command
+```sh
+./INSTALL
+```
 After that we need to install npm and other pip requirements.
 This can be done with the following command
 ```sh
