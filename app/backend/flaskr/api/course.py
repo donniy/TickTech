@@ -11,7 +11,6 @@ from werkzeug.utils import secure_filename
 from flaskr.models.ticket import Ticket, TicketStatus
 import csv
 import os
-from flask_jwt_extended import jwt_required
 import uuid
 
 
@@ -33,7 +32,6 @@ def retreive_course(course_id):
 def retrieve_course_tickets(course_id):
     """
     Function that returns all tickets of a the given course.
-    TODO: Controle if user has permissions.
     """
     return rp_courses.retrieve_course_tickets_request(course_id)
 
@@ -46,7 +44,6 @@ def retrieve_course_plugins(course_id):
     of all plugins and the active state for each of them.
     """
     course = Course.query.get_or_404(course_id)
-    # TODO: Check if user is supervisor in this course.
 
     all_plugins = plugins.plugin_list()
     tmp = {}
@@ -67,7 +64,6 @@ def get_plugin_configurations(course_id, plugin_id):
     Returns the configuration options for this plugin.
     """
     course = Course.query.get_or_404(course_id)
-    # TODO: Check if user is supervisor in this course.
 
     if plugin_id not in plugins.plugin_list():
         return Iresponse.create_response({"error": "Plugin does not exist"},
@@ -93,7 +89,6 @@ def update_plugin_settings(course_id, plugin_id):
     Update the settings for given plugin.
     """
     course = Course.query.get_or_404(course_id)
-    # TODO: Check if user is supervisor in this course.
 
     if plugin_id not in plugins.plugin_list():
         return Iresponse.create_response({"error": "Plugin does not exist"},
@@ -142,7 +137,6 @@ def update_plugin_state(course_id, plugin_id):
     Change the active state of a plugin.
     """
     course = Course.query.get_or_404(course_id)
-    # TODO: Check if user is supervisor in this course.
 
     if plugin_id not in plugins.plugin_list():
         return Iresponse.create_response({"error": "Plugin does not exist"},
@@ -225,20 +219,6 @@ def retrieve_all_courses():
     """
     courses = Course.query.all()
     return Iresponse.create_response(database.serialize_list(courses), 200)
-
-
-# not used at the moment. If still not used in the future delete this function
-# @apiBluePrint.route('/courses/ta/<user_id>', methods=['GET'])
-# def retrieve_courses(user_id):
-#     # TODO get courses from LTI api
-#     # TODO put user id in data and not in link
-
-#     user = User.query.get(user_id)
-#     if user is None:
-#         return Iresponse.create_response("", 404)
-#     courses = user.ta_courses
-
-#     return Iresponse.create_response(database.serialize_list(courses), 200)
 
 
 @apiBluePrint.route('/courses/<course_id>/tas', methods=['GET'])

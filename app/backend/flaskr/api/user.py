@@ -41,7 +41,6 @@ def retrieve_active_user_tickets(user_id):
     """
     Gets all the active tickets of a user with id: <user_id>
     """
-    # TODO: Controleer of degene die hierheen request permissies heeft.
     current_identity = get_current_user()
     user_id = current_identity.id
     tickets = Ticket.query.filter(
@@ -54,9 +53,8 @@ def retrieve_active_user_tickets(user_id):
 @jwt_required
 def retrieve_user_leveldata():
     """
-    Geeft level en xp van ingelogde user.
+    Retrieves the level and experience points of loged in user
     """
-    # TODO: Controleer of degene die hierheen request permissies heeft.
     current_identity = get_current_user()
     user_id = current_identity.id
     user = User.query.get(user_id)
@@ -70,7 +68,7 @@ def retrieve_user_leveldata():
 @jwt_required
 def retrieve_single_userlevel(user_id):
     """
-    Geeft level van gegeven user.
+    Retrieves the level of given user.
     """
     user = User.query.get(user_id)
     if user:

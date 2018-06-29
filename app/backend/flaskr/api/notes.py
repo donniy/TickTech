@@ -5,9 +5,6 @@ from flaskr import Iresponse
 from flaskr.auth import require_role
 
 
-# remember to add file in __init__
-
-
 # Add rights check.
 @apiBluePrint.route('/notes/<ticket_id>')
 @require_role(['ta', 'supervisor'])
