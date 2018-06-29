@@ -6,11 +6,11 @@ import bcrypt
 db = database.db
 socketio = sockets.get_socketio()
 
-association_table = db.Table('association', db.Model.metadata,
-                             db.Column('left_id', db.Integer,
-                                       db.ForeignKey('user.id')),
-                             db.Column('right_id', UUIDType(binary=False),
-                                       db.ForeignKey('label.label_id')))
+label_linker = db.Table('label_link', db.Model.metadata,
+                        db.Column('user_id', db.Integer,
+                                  db.ForeignKey('user.id')),
+                        db.Column('label_id', UUIDType(binary=False),
+                                  db.ForeignKey('label.label_id')))
 
 
 class User(db.Model):
@@ -22,7 +22,7 @@ class User(db.Model):
     name = db.Column(db.String(120), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=False, nullable=True)
     password = db.Column(db.String(120), unique=False, nullable=False)
-    labels = db.relationship("Label", secondary=association_table,
+    labels = db.relationship("Label", secondary=label_linker,
                              backref="users")
     experience = db.Column(db.Integer, nullable=False, default=1)
     level = db.Column(db.Integer, nullable=False, default=1)
