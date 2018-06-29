@@ -44,7 +44,6 @@ export default {
                         this.$router.push('/home');
                     },
                     error: function (response_fetch) {
-                        console.error(response_fetch)
                         return;
                     },
                 });

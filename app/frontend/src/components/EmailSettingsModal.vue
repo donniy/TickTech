@@ -123,7 +123,6 @@
                         course_id: this.form.course_id
                     })
                 }
-                console.log("emitted")
             },
 
             /*
@@ -179,22 +178,13 @@
                 if (data.result != "update") {
                     this.isLoading = false
                 }
-                else {
-                    console.log(data.data)
-                }
-                console.log("recieve data")
-                console.log(data)
-                console.log(data.result)
                 if (data.result == 'succes') {
-                    console.log("SUCCES")
                     this.$parent.showEmailModal = false
                 }
                 if (data.result == 'fail') {
-                    console.log('fail')
                     this.error.show = true
                     this.error.text = data.data
                 }
-                console.log("finished")
             }
         },
         components: {

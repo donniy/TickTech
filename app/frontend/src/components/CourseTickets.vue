@@ -159,9 +159,6 @@ export default {
 					this.tickets = response.data.json_data
 					this.searched = this.tickets
 					this.status = 'Retrieved data'
-                    console.log(this.status)
-					console.log(response.data.json_data)
-					console.log(response)
 				})
 				.catch(error => {
 					console.log(error)
@@ -175,7 +172,6 @@ export default {
 			})
 		},
 		updatePluginState(data) {
-			console.log(data)
 			const path = '/api/courses/' + this.$route.params.course_id + '/plugins/' + data
 			this.$ajax.patch(path, {
 				active: this.plugins[data].active
@@ -199,11 +195,9 @@ export default {
 		 */
 		updateEmail(form) {
 			this.showEmailModal = false
-			console.log(form)
 			const path = '/api/email'
 			this.$ajax.post(path, form, response => {
 				// TODO: Implement authentication on back-end to work with Canvas.
-				console.log(response)
 			})
 		},
 
@@ -212,11 +206,9 @@ export default {
 		 */
 		stopEmail(form) {
 			this.showEmailModal = false
-			console.log(form)
 			const path = '/api/email/stop'
 			this.$ajax.post(path, form, response => {
 				// TODO: Implement authentication on back-end to work with Canvas.
-				console.log(response)
 			})
 		},
 		created() {
@@ -231,16 +223,10 @@ export default {
 		},
 		emailRunning: function() {
 			// Get the current email settings from server
-			// console.log("Check if email is running")
 			const path = '/api/email/' + this.$route.params.course_id + '/online'
 			this.$ajax.get(path, response => {
 				// TODO: Implement authentication on back-end to work with Canvas.
-				// console.log("repsone email running")
-				// console.log(response)
 				if (response.status == 201) {
-					// console.log("Here")
-					// console.log(response.data.json_data.running)
-					// console.log(response)
 					this.email_running = response.data.json_data.running
 				}
 			})
@@ -266,9 +252,7 @@ export default {
 			const path = '/api/courses/single/' + this.$route.params.course_id
 			this.$ajax.get(path)
 				.then(response => {
-					this.course = response.data.json_data
-					console.log("COURSE")
-					console.log(response.data.json_data)
+					this.course = response.data.json_datas
 					window.$current_course_id = this.course.id
 					this.status = 'Retrieved data'
 					this.addStudentsPath = '/api/courses/' + this.course.id + '/students'
