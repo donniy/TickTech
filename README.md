@@ -51,7 +51,7 @@ So it is recommended to use these to login with on the site, or be linked via ca
 | --------------            | -------- | ----                                                               |
 | erik@a.a                  |        1 | TA in project software engineering &  Student in Operating systems |
 | kire@a.a                  |        1 | TA in PSE & TA in Compiler construction                            |
-| student1@a.a              |        1 | Student in PSE & Student in Compiler construction                  |
+| studend1@a.a              |        1 | Student in PSE & Student in Compiler construction                  |
 | student2@a.a              |        1 | Student in PSE & Student in Operating systems                      |
 | a@a.a                     |        1 | Student in PSE & Student in Compiler construction                  |
 | b@b.b                     |        1 | TA in PSE & TA in Operating systems                                |
