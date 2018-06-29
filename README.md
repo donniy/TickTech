@@ -36,9 +36,9 @@ make run-flask
 
 Now everything should be running. Go to http://localhost:5000 or http://127.0.0.1:5000
 this is where the application will be running.
+If u want to run canvas, see the documentation below, for canvas this app should be running as well.
 
-
-### Installation without make
+### Installation
 First make sure you have all the dependencies, that are listed above, installed.
 The other dependencies will be managed using pip.
 
