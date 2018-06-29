@@ -33,7 +33,7 @@ def get_ta(course_settings, student_id, assignment_id):
     Should receive an assignment_id that is
     in the format of the api this plugin suppors.
 
-    Demo: This returns the id of demo TA Erik Kooistra.
+    Demo: This returns the id of demo teaching assistant Erik Kooistra.
     '''
     return 50637080
 

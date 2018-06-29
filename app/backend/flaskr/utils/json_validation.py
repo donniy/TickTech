@@ -1,6 +1,7 @@
 def validate_json(json_data, tags):
-    ''' Requires a jsondata object and an array of strings (keys)
-        it should contain, returns true if complete.
+    '''
+    Requires a jsondata object and an array of strings (keys)
+    it should contain, returns true if complete.
     '''
     if json_data is None:
         return False

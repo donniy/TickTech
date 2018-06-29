@@ -80,7 +80,7 @@ def create_app(test_config=None):
     fs.init_app(app)
 
     csrf = CSRFProtect(app)
-    csrf = csrf  # flake8
+    csrf = csrf
 
     db_uri = os.environ.get('DATABASE_CONNECTION')
 
@@ -139,7 +139,6 @@ def create_app(test_config=None):
 
     @socketio.on('join-room')
     def sock_join_room(data):
-        # TODO: Check if allowed to join room
         print(data)
         print("Want to join {}".format(data['room']))
         r_type, r_id = tuple(data['room'].split('-', maxsplit=1))
@@ -158,7 +157,6 @@ def create_app(test_config=None):
 
     @socketio.on('leave-room')
     def sock_leave_room(data):
-        # TODO: Need to check if in room?
         print(data)
         print("Want to leave {}".format(data['room']))
         try:

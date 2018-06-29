@@ -32,7 +32,6 @@ def remove_label(label_id):
 def retrieve_labels(course_id):
     """
     Returns all labels of given course.
-    TODO: Controle if user has permissions.
     """
     course = Course.query.get(course_id)
     if course is None:
@@ -120,7 +119,6 @@ def get_plugins(label_id):
     Retrieve all available plugins for this label, along with the active state
     and assignment id.
     """
-    # TODO: Check if user is supervisor in this label's course.
     label = Label.query.get_or_404(label_id)
     return Iresponse.create_response(label.get_plugins(), 200)
 
@@ -130,7 +128,6 @@ def activate_plugin(label_id):
     """
     Create a record in the database to activate this plugin.
     """
-    # TODO: Check if user is supervisor in this label's course.
     label = Label.query.get_or_404(label_id)
     plugin_id = request.get_json()['plugin_id']
     if plugin_id not in plugins.plugin_list():
@@ -153,7 +150,6 @@ def update_plugin(label_id, plugin_id):
     """
     Change the assignment id of this plugin for this label.
     """
-    # TODO: Check if user is supervisor in this label's course.
     label = Label.query.get_or_404(label_id)
     plugin = label.get_plugin(plugin_id)
     if not plugin:
@@ -176,7 +172,6 @@ def deactivate_plugin(label_id, plugin_id):
     Note that dis also removes the assignment id which is stored in the
     pivot table.
     """
-    # TODO: Check if user is supervisor in this label's course.
     label = Label.query.get_or_404(label_id)
     plugin = label.get_plugin(plugin_id)
     if not plugin:

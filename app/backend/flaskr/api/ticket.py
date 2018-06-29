@@ -31,7 +31,6 @@ from flaskr.auth import require_role
 def close_ticket(ticket_id):
     """
     Close ticket when is has been handled.
-    TODO: Update this with a rights check.
     """
     current_identity = get_current_user()
     try:
@@ -130,7 +129,6 @@ def sendAsyncEmail(message, app):
 def get_ticket_messages(ticket_id):
     """
     Retrieve messages in ticket.
-    TODO: Check if user is related to ticket.
     """
     current_identity = get_current_user()
     ticket = Ticket.query.get(ticket_id)
@@ -172,7 +170,7 @@ def remove_ta_from_ticket():
 @jwt_required
 def get_ta_tickets():
     """
-    Get tickets by ta
+    Get tickets for given teaching assistant
     """
     current_identity = get_current_user()
     return rp_ticket.get_assigned_tickets(current_identity)
@@ -252,7 +250,7 @@ def create_ticket():
 @jwt_required
 def download_file():
     """
-    Download a file from server (check rights in future).
+    Download a file from server.
     """
     json_data = request.get_json()
     if 'address' in json_data:

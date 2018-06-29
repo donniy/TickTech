@@ -106,7 +106,7 @@ def test_close_ticket(app, client):
 
 def test_add_message_to_ticket(app, client):
     """
-        Add message to existing ticket
+    Add message to existing ticket
     """
     userId = 1234
     testMessage = "this is a test message"
@@ -142,7 +142,7 @@ def test_add_message_to_ticket(app, client):
 
 def test_get_ticket_messages(app, client):
     """
-        Get messages which belong to a ticket
+    Get messages which belong to a ticket
     """
     userId1 = 1234
     userId2 = 4321
@@ -181,10 +181,3 @@ def test_get_ticket_messages(app, client):
     assert json_data['json_data'][1]['user_id'] == userId2
     assert len(json_data['json_data']) == 2
     print(rv2.get_json())
-
-
-def test_ticket_file_download(app, client):
-    """
-        Download a file
-    """
-    # TODO to be filled in by RensiePensie

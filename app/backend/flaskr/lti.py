@@ -170,7 +170,6 @@ class LTI_instance:
                 print("Required key is missing: {}".format(key))
                 raise InvalidLTIRequest
 
-    # TODO: add getting of secret key from consumerKey
     def _validate_lti_Irequest_signature(self, i_req):
         """
         Function that validates an LTI request by

@@ -271,7 +271,6 @@ def isEmailFetching(course_id):
 def email_retrieve_labels(course_id):
     """
     Returns all labels of given course.
-    TODO: Controle if user has permissions.
     """
     course = Course.query.get(course_id)
     if course is None:

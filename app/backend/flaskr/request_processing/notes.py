@@ -20,9 +20,6 @@ def retrieve_all_request(ticket_id):
     return Iresponse.create_response(database.serialize_list(notes), 200)
 
 
-# Catch datbase session commit exceptions.
-# Maybe make a different call in the database file.
-# TODO: Add error handling when a TA is not found.
 def parse_note(message, ticket):
     """
     Function that parses a note for mentioned users.
@@ -48,7 +45,6 @@ def parse_note(message, ticket):
                 database.db.session.commit()
 
 
-# TODO: Add checking to getting data from json.
 def create_request(jsonData):
     """
     Process the request to create a node.
