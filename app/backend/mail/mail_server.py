@@ -265,8 +265,6 @@ def createTicket(subject, body, files, sender, address, courseid):
 
     # Get all labels available for this course, find the best matching one.
     labels = retrieveLabels(courseid)
-    print('#'*20)
-    print(labels)
     if (labels != []):
         labelid = findLabel(body, labels)
     else:
