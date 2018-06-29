@@ -46,9 +46,6 @@
                 path_list: []
             };
         },
-        mounted: () => {
-            console.log("navbar user: " + this.$user)
-        },
         methods: {
             // Checks if a user is student, supervisor or both.
             rights: function () {

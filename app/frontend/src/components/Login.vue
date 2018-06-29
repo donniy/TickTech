@@ -68,8 +68,6 @@ export default {
 							password: this.form.psw
 						},
 						error: function(resp) {
-							// On failed login, show error
-							console.error(resp);
 							this.message = resp.response.data.json_data
 							this.loginstatus = true
 						}
@@ -80,7 +78,6 @@ export default {
 	},
 	mounted() {
 		window.$rederict_to_ticket = this.$route.query.redirect
-		console.log(window.$rederict_to_ticket)
 		if (this.$user.logged_in()) {
 			if (window.$rederict_to_ticket) {
 				this.$router.push('/ticket/' + window.$rederict_to_ticket)
