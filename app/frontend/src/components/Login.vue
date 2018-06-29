@@ -27,7 +27,7 @@
 					Submit
 				</md-button>
                 <div>
-                    <router-link to="/forgotpassword">I forgot my password</router-link>
+                    <router-link style="text-decoration: underline;"to="/forgotpassword">I forgot my password</router-link>
                 </div>
 			</md-card-content>
 		</md-card>

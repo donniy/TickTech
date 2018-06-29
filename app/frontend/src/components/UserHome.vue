@@ -177,7 +177,7 @@
 	</template>
 
 	<!-- TA only userhome. -->
-	<template v-if="isTA == true && isStudent == false">
+	<template v-if="isTA == true && isSupervisor == false && isStudent == false">
 		<div class="container">
 			<div class="md-layout welcome-header">
 				<h3>Welcome back {{ $user.get().name }}</h3>
@@ -253,6 +253,60 @@
 			</div>
 		</div>
 	</template>
+	<!-- Supervisor only userhome. -->
+	<template v-if="isSupervisor == true">
+		<div class="container">
+			<div class="md-layout welcome-header">
+				<h3>Welcome back {{ $user.get().name }}</h3>
+			</div>
+			<div class="md-layout center-display md-gutter">
+				<div class="md-layout-item md-size-60">
+					<div class="md-layout-item">
+						<md-content class="md-elevation-5 course-container-medium">
+							<md-subheader>Courses I'm supervising</md-subheader>
+
+							<md-content class="md-scrollbar">
+								<md-list class="md-triple-line">
+									<course v-for="course in sv_courses" v-bind:key="course.id" v-bind:course="course"></course>
+								</md-list>
+							</md-content>
+
+						</md-content>
+						<md-content class="md-elevation-5 course-container-half">
+							<md-subheader>Courses I'm TA in</md-subheader>
+
+							<md-content class="md-scrollbar">
+								<md-list class="md-triple-line">
+									<course v-for="course in ta_courses" v-bind:key="course.id" v-bind:course="course"></course>
+								</md-list>
+							</md-content>
+
+						</md-content>
+					</div>
+				</div>
+				<div class="md-layout md-size-40">
+					<div class="md-layout-item">
+
+					<md-content class="md-layout-item md-elevation-5 notification-container">
+						<md-subheader>Notifications</md-subheader>
+						<p style="padding-left: 16px;" v-if="notifications.length < 1">No notifications</p>
+						<template v-for="notification in notifications">
+							<md-ripple>
+								<md-list-item :to="{name: (notification.ta ? 'SingleTicket' : 'StudentTicket'), params: {ticket_id: notification.ticket.id}}">
+									<div class="md-list-item-text">
+										<span>{{notification.ticket.title}}</span>
+										<span>{{notification.ticket.message}}</span>
+									</div>
+									<md-badge class="md-primary" :md-content="notification.n" />
+								</md-list-item>
+							</md-ripple>
+						</template>
+					</md-content>
+				</div>
+				</div>
+			</div>
+		</div>
+	</template>
 </div>
 </template>
 
@@ -270,6 +324,7 @@ export default {
 			TAtickets: [],
 			isTA: false,
 			isStudent: false,
+			isSupervisor: false,
 			notifications: [],
 			amount: 0.0,
 			experience: 0,
@@ -280,6 +335,7 @@ export default {
 			selectedcourse: '',
 			selectedTAcourse: '',
 			student_courses: [],
+			sv_courses: [],
 			rank: ''
 		}
 	},
@@ -307,6 +363,14 @@ export default {
 			}).catch(error => {
 				console.log(error)
 			})
+		},
+		getSvCourses() {
+			this.sv_courses = this.$user.get().supervisor
+			if (this.sv_courses && this.sv_courses.length > 0) {
+				return;
+			}
+			this.isTA = false;
+			this.ta_courses = []
 		},
 		/*
 		 * Get all courses a TA is bound to.
@@ -443,17 +507,23 @@ export default {
 		 */
 		created() {
 			this.status = 'created'
-			if (this.$user.get().ta) {
-
+			console.log(this.$user.get().ta, this.$user.get().student, this.$user.get().supervisor)
+			if (this.$user.get().ta.length > 0) {
+				this.isTA = true
 				this.getTaCourses()
 				this.getTaTickets()
 				this.setLevelProgress()
 			}
-			if (this.$user.isStudent) {
-				console.log("STUDENT")
+			if (this.$user.get().student.length > 0) {
+				this.isStudent = true
 				this.getStudentCourses()
 				this.getTickets()
 			}
+			if (this.$user.get().supervisor.length > 0) {
+				this.isSupervisor = true
+				this.getSvCourses()
+			}
+			console.log(this.isTA, this.isStudent, this.isSupervisor)
 			this.getTodos()
 		}
 	},
@@ -461,6 +531,7 @@ export default {
 	 * Called when page is loaded.
 	 */
 	mounted: function() {
+
 		if (!this.$user.logged_in()) {
 			this.$router.push('/login')
 		}
