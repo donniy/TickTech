@@ -95,6 +95,11 @@ def add_ta_to_ticket(json_data):
     return Iresponse.create_response("Failure", 400)
 
 
+def get_assigned_tickets(user):
+    tickets = Ticket.query.filter(Ticket.bound_tas.contains(user)).all()
+    return Iresponse.create_response(database.serialize_list(tickets), 200)
+
+
 # TODO: CHECK IF JSON IS VALID.
 def remove_ta_from_ticket(json_data):
     ticket = Ticket.get(uuid.UUID(json_data['ticketid']))

@@ -12,16 +12,15 @@
 <script>
 
 export default {
-		props: {
-			  ticket: Object,
- 			  base_url: {
-				    type: String,
-				    default: "/student/ticket/"
-			  },
-        TA_view: false,
-		},
-		data: function () {
-			  return {
+        props: {
+            ticket: Object,
+             base_url: {
+                type: String,
+                default: "/ticket/"
+            }
+        },
+        data: function () {
+              return {
             course: ''
         }
         }, methods: {
@@ -34,12 +33,8 @@ export default {
                     this.course = response.data.json_data
                 })
             }
-    }, mounted() {
-        if (this.TA_view) {
-            this.base_url = '/ticket/'
-        }
-
-        this.getCourse()
+        }, mounted() {
+            this.getCourse()
         }
     }
 </script>
