@@ -14,6 +14,7 @@ def get_current_user():
     if curr_identity is None:
         return None
     if curr_identity['in_lti']:
+        print(curr_identity['lis_person_sourcedid'])
         return user.User.query.get(curr_identity['lis_person_sourcedid'])
     return user.User.query.get(curr_identity['user_id'])
 

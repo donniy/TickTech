@@ -2,7 +2,7 @@
 </template>
 <script>
 /*
-Function that start an lti session. It gets an acess token from the
+Function that starts an lti session. It gets an acess token from the
 redirect function. It then checks if the access token is valid,
 if the token is not valid we redirect to the login page.
 If the token is valid, we authenticate the user and
@@ -14,14 +14,18 @@ export default {
         get_lti_data () {
             const path = '/api/lti/get_lti_params';
             this.$ajax.get(path).then(response => {
+                console.log(response.data)
                 this.$lti.data.lti_data = response.data.json_data;
 
             })
         }
     },
     mounted: function () {
+        let auth_url = '/api/lti/auth_session';
+        if (this.$route.query.code)
+            auth_url += '?code=' + this.$route.query.code;
         this.$auth.login({
-            url: '/api/lti/auth_session',
+            url: auth_url,
             headers: {Authorization: 'Bearer ' + this.$route.params.access_token},
             success: function (response) {
                 if (response.data.json_data.access_token) {
@@ -43,6 +47,7 @@ export default {
                     },
                     error: function (response_fetch) {
                         console.error(response_fetch)
+                        return;
                     },
                 });
             },
@@ -52,6 +57,7 @@ export default {
             },
             rememberMe: true,
             fetchUser: false,
+            fetchData: false,
         })
     }
 }

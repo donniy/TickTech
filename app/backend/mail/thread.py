@@ -1,71 +1,58 @@
-from threading import Thread
 from mail.mail_server import checkMail
+from threading import Thread
 from time import sleep
 
 
 class MailThread(Thread):
-
     '''
     Create a thread that fetches email on pop3 server. It will keep running
     until you stop the thread by calling <threadname>.stop().
-    TODO: change email while running
     '''
     global threads
     threads = []
 
     def __init__(self, sleep_time, server, port, email, password, course_id):
-        ''' Constructor. '''
+        '''
+        Constructor to initialize the thread.
+        '''
         Thread.__init__(self)
+        self.course_id = course_id
+        self.email = email
+        self.firstRun = True
+        self.password = password
+        self.port = port
         self.running = True
         self.sleep_time = sleep_time
         self.server = server
-        self.port = port
-        self.email = email
-        self.password = password
-        self.course_id = course_id
         threads.append(self)
-        self.firstRun = True
 
     def run(self):
-        print("***** STARTED MAIL THREAD ******")
-        # result = checkMail(self.server, self.port, self.email,
-        #                     self.password, self.course_id)
-        # if (result == 1):
-        # Something went wrong
-        #     print("Something went wrong, stop thread" + self.getName())
-        #     self.stop()
-        # else:
-        #     print("Succes!\n\n")
-        #     result = requests.post('http://localhost:5000/api/email',
-        # "nothing")
-        #     print(result)
-        #     print("made post request")
-        # notify somehow
-
+        '''
+        Start fetching mail from a server on a thread.
+        '''
         while (self.running):
-            print("Checking", self.email + ". On thread " + self.getName())
+            print("--- Checking email ---", self.email,
+                  ". On thread ",  self.getName())
             checkMail(self.server, self.port, self.email,
                       self.password, self.course_id)
-            print("Sleeping for ", self.sleep_time, " seconds.")
+            print("Sleeping for ", self.sleep_time,  " seconds.")
             sleep(self.sleep_time)
 
-        print("Stopped fetching mail on thread: ", self.getName(),
-              " email: ", self.email)
+        print("--- Stopped fetching mail on thread: ", self.getName(),
+              " email: ", self.email, " ---")
 
     def stop(self):
         '''
-        Stop Thread
+        Stop a running thread.
         '''
         self.running = False
         threads.remove(self)
 
-    def force_fetch(self):
-        print("Checking", self.email + ". On thread " + self.getName())
-        checkMail(self.server, self.port, self.email,
-                  self.password, self.course_id)
-
     def update(self, sleep_time=None, server=None,
                port=None, email=None, password=None):
+        '''
+        Update a running thread.
+        '''
         if sleep_time is not None:
             self.sleep_time = sleep_time
         if server is not None:
@@ -78,17 +65,26 @@ class MailThread(Thread):
             self.password = password
 
     def print_threads():
+        '''
+        Helper function to print all threads for debugging purposes.
+        '''
         print(threads)
         for t in threads:
             print(t.getName())
 
-    def exist_thread_courseid(course_id):
+    def existThreadCourseID(courseid):
+        '''
+        Helper function to match a thread to a course id.
+        '''
         for thread in threads:
-            if (thread.getName() == course_id):
+            if (thread.getName() == courseid):
                 return thread
         return None
 
-    def exist_thread_email(email):
+    def existThreadEmail(email):
+        '''
+        Helper function to match a thread to an email address.
+        '''
         for thread in threads:
             if (thread.email == email):
                 return True

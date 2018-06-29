@@ -75,33 +75,33 @@
                 </div>
             </md-card>
 
-			<md-card class="md-layout-item message-reply-container">
-				<div>
-					<md-card-content>
-						<form v-on:submit.prevent="sendReply">
-							<md-field>
-								<label>Respond</label>
-								<md-textarea name="replyfield" v-validate="'required'" v-model="reply"></md-textarea>
-							</md-field>
-							<button class="btn btn-primary">Submit reply</button>
-						</form>
-					</md-card-content>
-				</div>
-			</md-card>
-		</div>
-		<div class="md-layout-item md-size-30 md-small-size-40">
-			<h3 class="note-title">Notes</h3>
-			<note v-for="note in notes" v-bind:key="note.id" v-bind:note="note"></note>
+            <md-card class="md-layout-item message-reply-container">
+                <div>
+                    <md-card-content>
+                        <form v-on:submit.prevent="sendReply">
+                            <md-field>
+                                <label>Respond</label>
+                                <md-textarea name="replyfield" v-validate="'required'" v-model="reply"></md-textarea>
+                            </md-field>
+                            <button class="btn btn-primary">Submit reply</button>
+                        </form>
+                    </md-card-content>
+                </div>
+            </md-card>
+        </div>
+        <div class="md-layout-item md-size-30 md-small-size-40">
+            <h3 class="note-title">Notes</h3>
+            <note v-for="note in notes" v-bind:key="note.id" v-bind:note="note"></note>
 
-			<md-button id="popoverButton-sync" class="center-display md-primary">
-				Add a note.
-			</md-button>
-			<b-popover ref="popoverRef" target="popoverButton-sync" triggers="click blur" placement='top'>
-				<vue-tribute :options="mentionOptions" v-on:tribute-replaced="matchFound">
-					<textarea autofocus name="notefield" v-model="noteTextArea" class="form-control" id="textAreaForNotes" style="height:200px;width:250px;" placeholder="Enter a comment"></textarea>
-				</vue-tribute>
-				<button @click="addNote" class="btn btn-primary" style="margin-top:10px">Send</button>
-			</b-popover>
+            <md-button id="popoverButton-sync" class="center-display md-primary">
+                Add a note.
+            </md-button>
+            <b-popover ref="popoverRef" target="popoverButton-sync" triggers="click blur" placement='top'>
+                <vue-tribute :options="mentionOptions" v-on:tribute-replaced="matchFound">
+                    <textarea autofocus name="notefield" v-model="noteTextArea" class="form-control" id="textAreaForNotes" style="height:200px;width:250px;" placeholder="Enter a comment"></textarea>
+                </vue-tribute>
+                <button @click="addNote" class="btn btn-primary" style="margin-top:10px">Send</button>
+            </b-popover>
 
             <md-content class="md-elevation-2 plugin-container" v-bind:key="plugin.id" v-for="(data, plugin) in plugins">
                 <md-card-header>
@@ -252,7 +252,7 @@ export default {
                 .then(response => {
                     this.reply = ''
                     this.bind_ta_to_ticket(this.ticket.id, this.$user.get().id)
-					this.getMessages()
+                    this.getMessages()
                 })
                 .catch(error => {
                     console.log(error)
