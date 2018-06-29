@@ -37,7 +37,6 @@ export default {
     },
     watch:{
         $route (to, from) {
-            console.log(to.name)
             if(to.name === 'Home') {
                 this.isHome = true
                 this.handleNavbarTransparency()

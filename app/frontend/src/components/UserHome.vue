@@ -138,7 +138,6 @@ export default {
 				this.experience = response.data.json_data['experience'] - this.level_to_xp(this.level - 1)
 				this.exp_to_next = this.level_to_xp(this.level) - this.level_to_xp(this.level - 1)
 
-                console.log(this.experience, this.exp_to_next)
 				// Set the level progress
 				this.amount = Math.round(100 * (this.experience / this.exp_to_next))
 

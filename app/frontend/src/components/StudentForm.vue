@@ -206,7 +206,6 @@
                             }
                         })
                             .then(response => {
-                                console.log(response)
                                 this.$router.push({
                                     name: 'StudentTicket',
                                     params: {
@@ -249,7 +248,6 @@
                         this.$ajax.get(currLabelPath)
                             .then(response => {
                                 this.categories.labels[courseid] = response.data.json_data
-                                console.log(this.categories.labels[courseid])
                             }).catch(error => {
                                 console.log(error)
                             })

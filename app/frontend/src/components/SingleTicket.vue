@@ -230,7 +230,6 @@ export default {
             this.$ajax.get('/api/notes/' + this.$route.params.ticket_id)
                 .then(response => {
                     this.notes = response.data.json_data
-                    console.log(response)
                 })
                 .catch(err => {
                     console.log(err)
@@ -316,7 +315,6 @@ export default {
             this.$ajax.post(path, {address: key})
             .then((response) => {
                 // Get data from response
-                console.log(response.data)
                 const url = window.URL.createObjectURL(new Blob([response.data.json_data]))
                 const link = document.createElement('a')
                 document.getElementById('loading-icon').style.visibility = "hidden"
@@ -337,7 +335,6 @@ export default {
          */
         addNote() {
             if (this.noteTextArea.length > 0) {
-                console.log(this.noteTextArea)
                 const path = '/api/notes'
                 var noteData = {
                     "ticket_id": this.$route.params.ticket_id,
@@ -374,13 +371,11 @@ export default {
              * table.
              */
             function build_ta_matching_table(obj) {
-                console.log(obj.mentionOptions)
                 // Vue-tribute keeps an instance of the Optionsarray, so clear it.
                 // Yes this is a valid way to clear out an array in JS.
                 obj.mentionOptions.values.length = 0;
                 for (let i = 0; i < obj.course_tas.length; i++) {
                     let ta = obj.course_tas[i]
-                    console.log(ta)
                     obj.mentionOptions.values.push(
                         { name: String(ta.name), id: String(ta.id) })
                 }
@@ -394,7 +389,6 @@ export default {
          */
         matchFound(e) {
             let matchedValue = document.getElementById("textAreaForNotes").value
-            console.log("found", e)
             this.noteTextArea = matchedValue
         },
         /*
@@ -404,7 +398,6 @@ export default {
             const path = '/api/ticket/addta'
             this.$ajax.post(path, { 'ticketid': ticketid, 'taid': taid })
                 .then(response => {
-                    console.log("OK",response)
 					if (response.status == 200) {
 						this.ticket.tas.push(response.data.json_data['ta'])
 						this.ticket.status.name = response.data.json_data['status']
@@ -431,7 +424,6 @@ export default {
         connect: function () {
         },
         messageAdded: function (data) {
-            console.log(data)
             this.messages.push(data)
         }
     },
