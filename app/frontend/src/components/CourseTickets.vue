@@ -252,7 +252,7 @@ export default {
 			const path = '/api/courses/single/' + this.$route.params.course_id
 			this.$ajax.get(path)
 				.then(response => {
-					this.course = response.data.json_datas
+					this.course = response.data.json_data
 					window.$current_course_id = this.course.id
 					this.status = 'Retrieved data'
 					this.addStudentsPath = '/api/courses/' + this.course.id + '/students'
