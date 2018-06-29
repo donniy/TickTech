@@ -184,7 +184,6 @@ export default {
                         }
                     })
                         .then(response => {
-                            console.log(response)
                             this.$router.push({
                                 name: 'StudentTicket',
                                 params: {

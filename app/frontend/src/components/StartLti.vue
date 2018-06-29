@@ -14,7 +14,6 @@ export default {
         get_lti_data () {
             const path = '/api/lti/get_lti_params';
             this.$ajax.get(path).then(response => {
-                console.log(response.data)
                 this.$lti.data.lti_data = response.data.json_data;
 
             })
@@ -42,17 +41,14 @@ export default {
                 this.$auth.fetch({
                     data: {},
                     success: function () {
-                        console.log(this.$auth.user())
                         this.$router.push('/home');
                     },
                     error: function (response_fetch) {
-                        console.error(response_fetch)
                         return;
                     },
                 });
             },
             error: function (response) {
-                console.error(response)
                 this.$router.push('/login')
             },
             rememberMe: true,

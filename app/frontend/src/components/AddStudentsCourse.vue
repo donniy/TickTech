@@ -41,7 +41,6 @@ export default {
          */
         attachFile(e) {
             const file = this.$refs.student_file.files[0]
-            console.log(file)
             if (file.name.split('.').pop() != "csv") {
                 this.file = null;
                 this.resetFileName();

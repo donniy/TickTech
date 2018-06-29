@@ -69,7 +69,6 @@
                 this.$ajax.get(path)
                     .then(response => {
                         this.messages = response.data.json_data
-                        console.log(this.messages)
                         this.messages = this.messages.filter(el=>el.type==0)
                     })
                     .catch(error => {
@@ -83,7 +82,6 @@
                 this.$ajax.get('/api/notes/' + this.ticket.id)
                     .then(res => {
                         this.notes = res.data.json_data
-                        console.log(res)
                     })
                     .catch(err => {
                         console.log(err)
@@ -104,13 +102,11 @@
                 * table.
                 */
                 function build_ta_matching_table(obj) {
-                    console.log(obj.mentionOptions)
                     // Vue-tribute keeps an instance of the Optionsarray, so clear it.
                     // Yes this is a valid way to clear out an array in JS.
                     obj.mentionOptions.values.length = 0;
                     for (let i = 0; i < obj.course_tas.length; i++) {
                         let ta = obj.course_tas[i]
-                        console.log(ta)
                         obj.mentionOptions.values.push(
                             { name: String(ta.name), id: String(ta.id) })
                     }

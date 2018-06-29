@@ -81,7 +81,6 @@ export default {
                     let ta = this.tas[i]
                     this.ta_names.push(ta.name)
                 }
-                console.log(this.ta_names)
 
 			}).catch(error => {
 				console.log(error)

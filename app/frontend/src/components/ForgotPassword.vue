@@ -57,7 +57,6 @@ export default {
                         this.succes = true
 						this.form.email = ''
 					} else {
-						console.log(response.data.json_data)
 						this.message = response.data.json_data
 						this.forgotstatus = true
 					}

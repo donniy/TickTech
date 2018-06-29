@@ -34,7 +34,6 @@ function handle_ajax_error(error) {
   if (error.response.status === 401) {
     console.warn("Not authorized!");
     let prev = '/';
-    console.log(router.currentRoute.fullPath);
     if(router.currentRoute.fullPath !== '/login')
       prev = router.currentRoute.fullPath;
     else if (typeof router.params !== 'undefined' && typeof router.params.prev_url !== 'undefined')

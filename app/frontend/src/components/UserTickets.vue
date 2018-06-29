@@ -50,8 +50,6 @@
                 this.$ajax.get(path).then(response => {
                     this.tickets = response.data.json_data
                     this.status = 'Retrieved data'
-                    // console.log(response.data.json_data)
-                    // console.log(response)
                 }).catch(error => {
                     console.log(error)
                     this.status = 'failed getting tickets'
@@ -64,7 +62,6 @@
                 const path = '/api/user/' + this.$user.get().id + '/courses'
                 this.$ajax.get(path).then(response => {
                     this.courses = response.data.json_data
-                    // console.log(response.data)
                 }).catch(error => {
                     console.log(error)
                 })
@@ -78,18 +75,12 @@
         },
         mounted: function () {
             if (!this.$user.logged_in()) {
-                console.log("fuck")
                 this.$router.push('/login')
             }
 
             this.created()
             this.$emit('tab-activate', 'my-tickets')
         },
-        // watch: {
-        //     '$route': function() {
-        //         this.created()
-        //     }
-        // },
         components: {
             'ticket': Ticket,
         }

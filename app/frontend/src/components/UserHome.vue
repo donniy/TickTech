@@ -507,7 +507,6 @@ export default {
 		 */
 		created() {
 			this.status = 'created'
-			console.log(this.$user.get().ta, this.$user.get().student, this.$user.get().supervisor)
 			if (this.$user.get().ta.length > 0) {
 				this.isTA = true
 				this.getTaCourses()
@@ -523,7 +522,6 @@ export default {
 				this.isSupervisor = true
 				this.getSvCourses()
 			}
-			console.log(this.isTA, this.isStudent, this.isSupervisor)
 			this.getTodos()
 		}
 	},

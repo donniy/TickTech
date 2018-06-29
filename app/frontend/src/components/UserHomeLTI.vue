@@ -182,7 +182,6 @@ export default {
                 '/api/user/notifications?course_id='
                     + this.lti_course_id,
                 response => {
-                    console.log(response.data.json_data)
                     this.notifications = response.data.json_data
                 })
         },
@@ -201,10 +200,8 @@ export default {
             } else if (this.isStudent) {
                 let student_courses = this.$user.get().student
                 this.lti_course = student_courses.find(this.is_lti_course);
-                console.log(this.lti_course)
             } else if (this.isTeacher) {
                 let teacher_courses = this.$user.get().supervisor;
-                console.log(this.$user.get())
                 this.lti_course = teacher_courses.find(this.is_lti_course);
                 this.getCourseUnassignedTickets();
             }
@@ -232,7 +229,6 @@ export default {
 				        this.experience = response.data.json_data['experience'] - this.level_to_xp(this.level - 1)
 				        this.exp_to_next = this.level_to_xp(this.level) - this.level_to_xp(this.level - 1)
 
-                console.log(this.experience, this.exp_to_next)
 				        // Set the level progress
 				        this.amount = Math.round(100 * (this.experience / this.exp_to_next))
 

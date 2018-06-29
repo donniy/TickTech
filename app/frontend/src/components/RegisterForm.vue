@@ -113,7 +113,6 @@ export default {
 				if (result) {
 					const path = '/api/user/register';
 					this.$ajax.post(path, this.form, response => {
-						console.log(response);
 						if (response.data.json_data["status"] != "OK") {
 							window.alert("We could not register you at this time!\n" + response.data.json_data["status"] )
 							return
@@ -124,7 +123,6 @@ export default {
                                 },
                                 error: function (resp) {
                                     window.alert("Authentication is down!")
-                                    console.error(resp);
                                 }
                             });
 						}
@@ -141,8 +139,6 @@ export default {
 				email: this.form.email
 			}, response => {
 				this.emailstatus = response.data.json_data.status;
-				console.log(this.emailstatus)
-
 			})
         },
         /*
@@ -154,8 +150,6 @@ export default {
 				studentid: this.form.studentid
 			}, response => {
 				this.idstatus = response.data.json_data.status;
-				console.log(this.idstatus)
-
 			})
         },
         /*
