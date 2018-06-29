@@ -7,10 +7,10 @@ db = database.db
 socketio = sockets.get_socketio()
 
 label_linker = db.Table('label_link', db.Model.metadata,
-                             db.Column('user_id', db.Integer,
-                                       db.ForeignKey('user.id')),
-                             db.Column('label_id', UUIDType(binary=False),
-                                       db.ForeignKey('label.label_id')))
+                        db.Column('user_id', db.Integer,
+                                  db.ForeignKey('user.id')),
+                        db.Column('label_id', UUIDType(binary=False),
+                                  db.ForeignKey('label.label_id')))
 
 
 class User(db.Model):
