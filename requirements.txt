@@ -31,7 +31,7 @@ opencv-python==3.4.1.15
 Pillow==5.1.0
 pluggy==0.6.0
 pluginbase==0.7
-py==1.5.3
+py==1.10.0
 pycodestyle==2.4.0
 PyJWT==1.4.2
 pytesseract==0.2.2
