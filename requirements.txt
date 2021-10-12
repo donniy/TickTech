@@ -27,7 +27,7 @@ Jinja2==2.10
 MarkupSafe==1.0
 more-itertools==4.2.0
 numpy==1.14.5
-opencv-python==3.4.1.15
+opencv-python==3.4.7.28
 Pillow==5.1.0
 pluggy==0.6.0
 pluginbase==0.7
